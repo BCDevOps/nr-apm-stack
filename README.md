@@ -26,7 +26,7 @@ tar -xzf filebeat-7.7.0-linux-x86_64.tar.gz
 1. Run filebeat:
 ```
 cd ~/filebeat-7.7.0-linux-x86_64
-rm -Rf data/* && rm -f nohup.out && nohup bash -c 'source .env && time /home/cvarjao/filebeat-7.6.2-linux-x86_64/filebeat run -e --once' &
+rm -Rf data/* && rm -f nohup.out && nohup bash -c 'source .env && time ~/filebeat-7.6.2-linux-x86_64/filebeat run -e --once' &
 ```
 # How to uninstall
 ```
