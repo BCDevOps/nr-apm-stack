@@ -23,6 +23,7 @@ tar -xzf filebeat-7.7.0-linux-x86_64.tar.gz
 
 ## How to run filebeat
 1. Create a .env file at `~/filebeat-7.7.0-linux-x86_64/.env`.
+1. Copy the `configurations/filebeat.yaml` to `~/filebeat-7.6.2-linux-x86_64/`
 1. Run filebeat:
 ```
 cd ~/filebeat-7.7.0-linux-x86_64
