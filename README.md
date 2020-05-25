@@ -1,4 +1,5 @@
-# How to install
+# Elastic Search + Kibana
+## How to install
 IMPORTANT: helm chart does NOT support variable reference within `values.yaml` so we need to pre-process `values.yaml` with `sed`. Please not that `nr-ess` is repeated in the `sed` substitution and in the helm execution.
 
 ```
@@ -6,7 +7,7 @@ sed -E 's/{{\s*\.Release\.Name\s*}}/nr-ess/g' chart/values.yaml | helm install n
 
 ```
 
-# Applying Configurations
+## How to configure
 ```
 ( cd configurations && ./apply.sh )
 ```
