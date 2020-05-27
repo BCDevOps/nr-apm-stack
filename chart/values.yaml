@@ -23,6 +23,7 @@ es-master: &es
   esConfig:
     elasticsearch.yml: |
       xpack.security.enabled: true
+      xpack.monitoring.collection.enabled: true
       xpack.security.transport.ssl.enabled: true
       xpack.security.transport.ssl.verification_mode: certificate
       xpack.security.transport.ssl.keystore.path: /usr/share/elasticsearch/config/certs/elasticsearch.p12

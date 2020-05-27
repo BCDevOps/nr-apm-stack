@@ -68,7 +68,7 @@
         "ignore_missing" : true,
         "field" : "log.file.path",
         "patterns" : [
-          "^(/([^/]+/)*)(?<url.domain>.+)-access.*.log$"
+          "^(/([^/]+/)*)(?<url.domain>.+)-access.*.log.*$"
         ]
       }
     },
@@ -284,7 +284,7 @@
     {
       "set" : {
         "field" : "error.message",
-        "value" : "{{ _ingest.on_failure_message }}"
+        "value" : "{{_ingest.on_failure_processor_type}} - {{_ingest.on_failure_processor_tag}} - {{_ingest.on_failure_pipeline}} - {{ _ingest.on_failure_message }}"
       }
     }
   ]

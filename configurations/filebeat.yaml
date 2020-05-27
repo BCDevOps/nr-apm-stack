@@ -23,12 +23,12 @@ filebeat.modules:
 - module: apache
   access:
     enabled: true
-    var.paths: ["/sw_ux/httpd01/logs/*-access*.log"]
+    var.paths: ["/sw_ux/httpd01/logs/*-access*.log*"]
     input:
       close_eof: true
   error:
     enabled: false
-    var.paths: ["/sw_ux/httpd01/logs/*-error*.log"]
+    var.paths: ["/sw_ux/httpd01/logs/*-error*.log*"]
     input:
       close_eof: true
 
