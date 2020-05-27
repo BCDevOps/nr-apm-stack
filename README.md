@@ -3,8 +3,9 @@
 IMPORTANT: helm chart does NOT support variable reference within `values.yaml` so we need to pre-process `values.yaml` with `sed`. Please note that `nr-ess` is repeated in the `sed` substitution and in the helm execution. So, if you want to use a different release name, make sure to update both places
 
 ```
-# fetch dependencies
+# Install repository and fetch dependencies
 ( cd chart && helm repo add elastic https://helm.elastic.co && helm dependency build )
+
 sed -E 's/{{\s*\.Release\.Name\s*}}/nr-ess/g' chart/values.yaml | helm install nr-ess chart/ -f -
 
 ```
