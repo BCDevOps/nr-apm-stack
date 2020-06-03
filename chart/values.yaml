@@ -48,6 +48,11 @@ es-master: &es
       path: /usr/share/elasticsearch/config/certs
   persistence:
     enabled: false
+  volumeClaimTemplate:
+    storageClassName: netapp-block-standard
+    resources:
+      requests:
+        storage: 2Gi
   extraVolumes:
     - name: data
       emptyDir: {}
@@ -72,6 +77,11 @@ es-data:
     master: "false"
     ingest: "false"
     data: "true"
+  volumeClaimTemplate:
+    storageClassName: netapp-block-standard
+    resources:
+      requests:
+        storage: 10Gi
 
 kibana:
   podSecurityContext:

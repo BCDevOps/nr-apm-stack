@@ -5,11 +5,11 @@ IMPORTANT: helm chart does NOT support variable reference within `values.yaml` s
 ## Install repository and fetch dependencies
 > Note: exec below first initial time only
 ```
-cd chart && helm repo add elastic https://helm.elastic.co && helm dependency build
+( cd chart && helm repo add elastic https://helm.elastic.co && helm dependency build )
 ```
 > then exec below
 ```
-cd .. && sed -E 's/{{\s*\.Release\.Name\s*}}/nr-ess/g' chart/values.yaml | helm install --debug nr-ess chart/ -f -
+( sed -E 's/{{\s*\.Release\.Name\s*}}/nr-ess/g' chart/values.yaml | helm install --debug nr-ess chart/ -f - )
 ```
 
 ## How to configure
@@ -23,7 +23,7 @@ export ELASTICSEARCH_URL=
 2. Fill above env variables from Openshift secrets/routes
 3. Finally, exec below:
 ```
-cd configurations && ./apply.sh
+( cd configurations && ./apply.sh )
 ```
 > This script will configure ES templates and ingest pipeline as well as Kibana patterns
 
