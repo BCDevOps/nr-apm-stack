@@ -9,7 +9,7 @@ data:
     }
 
     function start_supporting_pod {
-      #oc create sa 'elasticserach-installer' || true 
+      #oc create sa 'elasticserach-installer' || true
       #oc policy add-role-to-user admin -z 'elasticserach-installer' || true
 
       pod_status="$(oc get "pod/${ESCT_POD_NAME}" -o custom-columns=phase:.status.phase --no-headers)"

@@ -1,8 +1,8 @@
 setup.kibana:
   host: "${KIBANA_URL}"
   protocol: "https"
-  username: '${ELASTICSEARCH_USERNAME}'
-  password: '${ELASTICSEARCH_PASSWORD}'
+  username: "${ELASTICSEARCH_USERNAME}"
+  password: "${ELASTICSEARCH_PASSWORD}"
 
 setup.kibana.ssl.enabled: true
 
@@ -35,10 +35,10 @@ filebeat.modules:
 output.elasticsearch:
   bulk_max_size: 3200
   worker: 3
-  username: '${ELASTICSEARCH_USERNAME}'
-  password: '${ELASTICSEARCH_PASSWORD}'
+  username: "${ELASTICSEARCH_USERNAME}"
+  password: "${ELASTICSEARCH_PASSWORD}"
   hosts: ["${ELASTICSEARCH_URL}"]
   index: "logs-access-%{[agent.version]}-%{+yyyy.MM.dd}"
   ssl.verification_mode: none
   ssl.certificate_authorities:
-    - /home/cvarjao/certs/elasticsearch.pem
+    - /home/${IDIR_USERNAME}/certs/elasticsearch.pem

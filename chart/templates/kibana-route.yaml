@@ -1,0 +1,22 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  creationTimestamp: null
+  labels:
+    app:  "{{.Release.Name}}-kibana"
+    app.kubernetes.io/managed-by: Helm
+    heritage: Helm
+    release: "{{.Release.Name}}"
+  name: "{{.Release.Name}}-kibana"
+spec:
+  host: ""
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+  to:
+    kind: "Service"
+    name: "{{.Release.Name}}-kibana"
+    weight: 100
+status:
+  ingress: []
