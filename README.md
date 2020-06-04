@@ -19,6 +19,7 @@ export KIBANA_URL=
 export ELASTICSEARCH_USERNAME=
 export ELASTICSEARCH_PASSWORD=
 export ELASTICSEARCH_URL=
+export IDIR=
 ```
 2. Fill above env variables from Openshift secrets/routes
 3. Finally, exec below:

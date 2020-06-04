@@ -41,4 +41,4 @@ output.elasticsearch:
   index: "logs-access-%{[agent.version]}-%{+yyyy.MM.dd}"
   ssl.verification_mode: none
   ssl.certificate_authorities:
-    - ~/certs/elasticsearch.pem
+    - /home/${IDIR}/certs/elasticsearch.pem
