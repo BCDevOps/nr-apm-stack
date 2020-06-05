@@ -71,6 +71,7 @@
     {"set": {"field": "pipeline.step","value": "Parsing url.domain"}},
     {
       "grok" : {
+        "if": "ctx.url.domain != null",
         "ignore_missing" : true,
         "field" : "log.file.path",
         "patterns" : [
