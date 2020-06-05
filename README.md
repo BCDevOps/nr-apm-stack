@@ -6,7 +6,8 @@ IMPORTANT: helm chart does NOT support variable reference within `values.yaml` s
 # Install repository and fetch dependencies
 ( cd chart && helm repo add elastic https://helm.elastic.co && helm dependency build )
 
-sed -E 's/{{\s*\.Release\.Name\s*}}/nr-ess/g' chart/values.yaml | helm install nr-ess chart/ -f -
+# adjust 'nr-ess' to have your release name. e.g.: nr-ess-john
+sed -E 's/\{\{\s*\.Release\.Name\s*\}\}/nr-ess/g' chart/values.yaml | helm install nr-ess chart/ -f - --set 'es-data.replicas=1'
 
 ```
 
