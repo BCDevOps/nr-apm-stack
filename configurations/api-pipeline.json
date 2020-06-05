@@ -278,7 +278,7 @@
     {
       "date_index_name" : {
         "field" : "@timestamp",
-        "index_name_prefix" : "logs-access-7.6.2-",
+        "index_name_prefix" : "logs-access-7.7.0-",
         "date_rounding" : "d"
       }
     },

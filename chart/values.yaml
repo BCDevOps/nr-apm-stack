@@ -46,11 +46,19 @@ es-master: &es
     - name: elasticsearch-certificates
       secretName: "{{.Release.Name}}-elasticsearch-cert"
       path: /usr/share/elasticsearch/config/certs
+  persistence:
+    enabled: false
   volumeClaimTemplate:
     storageClassName: netapp-block-standard
     resources:
       requests:
         storage: 2Gi
+  extraVolumes:
+    - name: data
+      emptyDir: {}
+  extraVolumeMounts:
+    - name: data
+      mountPath: /usr/share/elasticsearch/data
 
 es-ingest:
   <<: *es
@@ -73,7 +81,7 @@ es-data:
     storageClassName: netapp-block-standard
     resources:
       requests:
-        storage: 15Gi
+        storage: 10Gi
 
 kibana:
   podSecurityContext:
@@ -109,5 +117,8 @@ kibana:
       path: /usr/share/kibana/config/certs
   replicas: 2
   elasticsearchHosts: https://{{.Release.Name}}-master:9200
-  resources.requests.cpu: 200m
-  resources.limits.cpu: 500m
+  resources:
+    requests:
+      cpu: 200m
+    limits:
+      cpu: 500m
