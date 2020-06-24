@@ -1,21 +1,40 @@
 {
   "description" : "Pipeline for parsing Apache HTTP Server access logs. Requires the geoip and user_agent plugins.",
   "processors" : [
+    {
+      "rename" : {
+        "field" : "@timestamp",
+        "target_field" : "event.created"
+      }
+    },
     {"set": {"field": "labels.step","value": "Parsing message"}},
     {
       "grok" : {
         "ignore_missing" : false,
         "field" : "message",
         "patterns" : [
-          "v1\\.0 %{NUMBER:apache.version} \"%{WORD:url.scheme}:\/\/%{IPORHOST:url.domain}(?::%{POSINT:url.port})?\" \"%{IPORHOST:source.address}\" \\[%{HTTPDATE:apache.access.time}\\] \"(?:%{WORD:http.request.method} %{DATA:url.original} HTTP/%{NUMBER:http.version}|-)?\" %{NUMBER:http.response.status_code:long} (?:%{NUMBER:http.request.bytes:long}|-) bytes (?:%{NUMBER:http.response.bytes:long}|-) bytes \"%{DATA:http.request.referrer}\" \"%{DATA:user_agent.original}\" %{NUMBER:event.duration:long} ms, \"(?:%{DATA:tls.version_protocol}v%{DATA:tls.version}|-)\" \"(?:%{DATA:tls.cipher}|-)\"",
-          "v1\\.0 %{NUMBER:apache.version} \"%{WORD:url.scheme}:\/\/%{IPORHOST:url.domain}(?::%{POSINT:url.port})?\" \"%{IPORHOST:source.address}\" \\[%{HTTPDATE:apache.access.time}\\] \"(?<url.original>[^\"]*)\" %{NUMBER:http.response.status_code:long} (?:%{NUMBER:http.request.bytes:long}|-) bytes (?:%{NUMBER:http.response.bytes:long}|-) bytes \"%{DATA:http.request.referrer}\" \"%{DATA:user_agent.original}\" %{NUMBER:event.duration:long} ms, \"(?:%{DATA:tls.version_protocol}v%{DATA:tls.version}|-)\" \"(?:%{DATA:tls.cipher}|-)\"",
-          "%{IPORHOST:source.address} - %{DATA:user.name} \\[%{HTTPDATE:apache.access.time}\\] \"(?:%{WORD:http.request.method} %{DATA:url.original} HTTP/%{NUMBER:http.version}|-)?\" %{NUMBER:http.response.status_code:long} (?:%{NUMBER:http.response.body.bytes:long}|-)( \"%{DATA:http.request.referrer}\")?( \"%{DATA:user_agent.original}\")?( %{NUMBER:event.duration:long}|-)?"
+          "(?<labels.format>v1\\.0) %{NUMBER:apache.version} \"%{WORD:url.scheme}:\/\/%{IPORHOST:url.domain}(?::%{POSINT:url.port})?\" \"%{IPORHOST:source.address}\" \\[%{HTTPDATE:apache.access.time}\\] \"(?<http.request.line>.*)\" %{NUMBER:http.response.status_code:long} (?:%{NUMBER:http.request.bytes:long}|-) bytes (?:%{NUMBER:http.response.bytes:long}|-) bytes \"%{DATA:http.request.referrer.original}\" \"%{DATA:user_agent.original}\" %{NUMBER:event.duration:long} ms, \"(?:%{DATA:tls.version_protocol}v%{DATA:tls.version}|-)\" \"(?:%{DATA:tls.cipher}|-)\"",
+          "%{IPORHOST:source.address} - %{DATA:user.name} \\[%{HTTPDATE:apache.access.time}\\] \"(?<http.request.line>.*)\" %{NUMBER:http.response.status_code:long} (?:%{NUMBER:http.response.body.bytes:long}|-)( \"%{DATA:http.request.referrer.original}\")?( \"%{DATA:user_agent.original}\")?( %{NUMBER:event.duration:long}|-)?"
+        ]
+      }
+    },
+    {"remove": {"if":"ctx.http?.request?.referrer?.original == '-'", "field": "http.request.referrer.original"}},
+    {"set": {"field": "labels.step","value": "Parsing http.request.line"}},
+    {
+      "grok" : {
+        "ignore_missing" : false,
+        "ignore_failure": true,
+        "field" : "http.request.line",
+        "patterns" : [
+          "%{WORD:http.request.method} %{DATA:url.original} HTTP/%{NUMBER:http.version}",
+          "(?<url.original>.*)"
         ]
       }
     },
     {"set": {"field": "labels.step","value": "Parsing labels.application"}},
     {
       "grok" : {
+        "if": "ctx.http != null && ctx.http.version != null",
         "ignore_missing" : true,
         "field" : "url.original",
         "ignore_failure": true,
@@ -36,6 +55,7 @@
     {"set": {"field": "labels.step","value": "Parsing labels.context"}},
     {
       "grok" : {
+        "if": "ctx.http != null && ctx.http.version != null",
         "ignore_missing" : true,
         "field" : "url.original",
         "ignore_failure": true,
@@ -55,6 +75,7 @@
     {"set": {"field": "labels.step","value": "Parsing labels.prefix"}},
     {
       "grok" : {
+        "if": "ctx.http != null && ctx.http.version != null",
         "ignore_missing" : true,
         "field" : "url.original",
         "ignore_failure": true,
@@ -72,7 +93,7 @@
     {"set": {"field": "labels.step","value": "Parsing url.domain"}},
     {
       "grok" : {
-        "if": "ctx.url != null && ctx.url.domain != null",
+        "if": "ctx.url?.domain != null",
         "ignore_missing" : true,
         "field" : "log.file.path",
         "patterns" : [
@@ -86,6 +107,17 @@
         "field": "url.domain"
       }
     },
+    {"set": {"field": "labels.step","value": "Parsing http.request.referrer.original"}},
+    {
+      "grok" : {
+        "ignore_missing" : true,
+        "field" : "http.request.referrer.original",
+        "ignore_failure": true,
+        "patterns" : [
+          "%{URIPROTO:http.request.referrer.scheme}://(?:%{USER:http.request.referrer.username}(?::[^@]*)?@)?(?:%{URIHOST:http.request.referrer.domain})?(?:%{URIPATH:http.request.referrer.path}(?:%{URIPARAM:http.request.referrer.query})?)?"
+        ]
+      }
+    },
     {"set": {"field": "labels.step","value": "Parsing url.path"}},
     {
       "grok" : {
@@ -93,10 +125,21 @@
         "field" : "url.original",
         "ignore_failure": true,
         "patterns" : [
-          "%{URIPATH:url.path}"
+          "%{URIPATH:url.path}%{URIPARAM:url.query}?"
         ]
       }
     },
+    {
+      "grok" : {
+        "ignore_missing" : true,
+        "field" : "url.query",
+        "ignore_failure": true,
+        "patterns" : [
+          "^\\?(?<url.query>.*)$"
+        ]
+      }
+    },
+    {"remove": {"if":"ctx.url?.query == ''", "field": "url.query"}},
     {
       "lowercase": {
         "ignore_missing" : true,
@@ -111,12 +154,6 @@
         "patterns" : [
           "^(%{IP:source.ip}|%{HOSTNAME:source.domain})$"
         ]
-      }
-    },
-    {
-      "rename" : {
-        "field" : "@timestamp",
-        "target_field" : "event.created"
       }
     },
     {
@@ -274,7 +311,13 @@
     {
       "set": {
         "field": "url.full",
-        "value": "//{{url.domain}}{{url.original}}"
+        "value": "{{url.scheme}}://{{url.domain}}{{url.path}}"
+      }
+    },
+    {
+      "set": {
+        "field": "url.uri",
+        "value": "//{{url.domain}}{{url.path}}"
       }
     },
     {
@@ -285,7 +328,9 @@
       }
     },
     {"remove": {"field" : "message"}},
-    {"remove": {"field": "labels.step"}}
+    {"remove": {"field": "labels.step"}},
+    {"remove": {"field": "http.request.line"}},
+    {"remove": {"field": "url.original"}}
   ],
   "on_failure" : [
     {
