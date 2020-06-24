@@ -1,18 +1,19 @@
 {
   "description" : "Pipeline for parsing Apache HTTP Server access logs. Requires the geoip and user_agent plugins.",
   "processors" : [
-    {"set": {"field": "pipeline.step","value": "Parsing message"}},
+    {"set": {"field": "labels.step","value": "Parsing message"}},
     {
       "grok" : {
-        "ignore_missing" : true,
+        "ignore_missing" : false,
         "field" : "message",
         "patterns" : [
-          "v1\\.0 %{NUMBER:apache.version} \"%{WORD:url.scheme}://%{IPORHOST:url.domain}(?::%{POSINT:url.port})?\" \"%{IPORHOST:source.address}\" \\[%{HTTPDATE:apache.access.time}\\] \"(?:%{WORD:http.request.method} %{DATA:url.original} HTTP/%{NUMBER:http.version}|-)?\" %{NUMBER:http.response.status_code:long} (?:%{NUMBER:http.request.bytes:long}|-) bytes (?:%{NUMBER:http.response.bytes:long}|-) bytes \"%{DATA:http.request.referrer}\" \"%{DATA:user_agent.original}\" %{NUMBER:event.duration:long} ms, \"(?:%{DATA:tls.version_protocol}v%{DATA:tls.version}|-)\" \"(?:%{DATA:tls.cipher}|-)\"",
+          "v1\\.0 %{NUMBER:apache.version} \"%{WORD:url.scheme}:\/\/%{IPORHOST:url.domain}(?::%{POSINT:url.port})?\" \"%{IPORHOST:source.address}\" \\[%{HTTPDATE:apache.access.time}\\] \"(?:%{WORD:http.request.method} %{DATA:url.original} HTTP/%{NUMBER:http.version}|-)?\" %{NUMBER:http.response.status_code:long} (?:%{NUMBER:http.request.bytes:long}|-) bytes (?:%{NUMBER:http.response.bytes:long}|-) bytes \"%{DATA:http.request.referrer}\" \"%{DATA:user_agent.original}\" %{NUMBER:event.duration:long} ms, \"(?:%{DATA:tls.version_protocol}v%{DATA:tls.version}|-)\" \"(?:%{DATA:tls.cipher}|-)\"",
+          "v1\\.0 %{NUMBER:apache.version} \"%{WORD:url.scheme}:\/\/%{IPORHOST:url.domain}(?::%{POSINT:url.port})?\" \"%{IPORHOST:source.address}\" \\[%{HTTPDATE:apache.access.time}\\] \"(?<url.original>[^\"]*)\" %{NUMBER:http.response.status_code:long} (?:%{NUMBER:http.request.bytes:long}|-) bytes (?:%{NUMBER:http.response.bytes:long}|-) bytes \"%{DATA:http.request.referrer}\" \"%{DATA:user_agent.original}\" %{NUMBER:event.duration:long} ms, \"(?:%{DATA:tls.version_protocol}v%{DATA:tls.version}|-)\" \"(?:%{DATA:tls.cipher}|-)\"",
           "%{IPORHOST:source.address} - %{DATA:user.name} \\[%{HTTPDATE:apache.access.time}\\] \"(?:%{WORD:http.request.method} %{DATA:url.original} HTTP/%{NUMBER:http.version}|-)?\" %{NUMBER:http.response.status_code:long} (?:%{NUMBER:http.response.body.bytes:long}|-)( \"%{DATA:http.request.referrer}\")?( \"%{DATA:user_agent.original}\")?( %{NUMBER:event.duration:long}|-)?"
         ]
       }
     },
-    {"set": {"field": "pipeline.step","value": "Parsing labels.application"}},
+    {"set": {"field": "labels.step","value": "Parsing labels.application"}},
     {
       "grok" : {
         "ignore_missing" : true,
@@ -32,7 +33,7 @@
         "field": "labels.application"
       }
     },
-    {"set": {"field": "pipeline.step","value": "Parsing labels.context"}},
+    {"set": {"field": "labels.step","value": "Parsing labels.context"}},
     {
       "grok" : {
         "ignore_missing" : true,
@@ -51,7 +52,7 @@
         "field": "labels.context"
       }
     },
-    {"set": {"field": "pipeline.step","value": "Parsing labels.prefix"}},
+    {"set": {"field": "labels.step","value": "Parsing labels.prefix"}},
     {
       "grok" : {
         "ignore_missing" : true,
@@ -68,10 +69,10 @@
         "field": "labels.prefix"
       }
     },
-    {"set": {"field": "pipeline.step","value": "Parsing url.domain"}},
+    {"set": {"field": "labels.step","value": "Parsing url.domain"}},
     {
       "grok" : {
-        "if": "ctx.url.domain != null",
+        "if": "ctx.url != null && ctx.url.domain != null",
         "ignore_missing" : true,
         "field" : "log.file.path",
         "patterns" : [
@@ -85,7 +86,7 @@
         "field": "url.domain"
       }
     },
-    {"set": {"field": "pipeline.step","value": "Parsing url.path"}},
+    {"set": {"field": "labels.step","value": "Parsing url.path"}},
     {
       "grok" : {
         "ignore_missing" : true,
@@ -102,7 +103,7 @@
         "field": "url.path"
       }
     },
-    {"set": {"field": "pipeline.step","value": "Parsing soure.ip/source.domain"}},
+    {"set": {"field": "labels.step","value": "Parsing soure.ip/source.domain"}},
     {
       "grok" : {
         "field" : "source.address",
@@ -284,7 +285,7 @@
       }
     },
     {"remove": {"field" : "message"}},
-    {"remove": {"field": "pipeline.step"}}
+    {"remove": {"field": "labels.step"}}
   ],
   "on_failure" : [
     {

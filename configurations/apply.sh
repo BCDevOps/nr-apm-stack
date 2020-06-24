@@ -20,7 +20,7 @@ curl -kSsL --user "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" -w "\n" 
 
 curl -kSsL --user "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" -w "\n" \
     -X PUT -H 'Content-Type: application/json' --data-binary @api-pipeline.json \
-    "${ELASTICSEARCH_URL}/_ingest/pipeline/filebeat-7.7.0-apache-access-default"
+    "${ELASTICSEARCH_URL}/_ingest/pipeline/filebeat-7.7.0-apache-access-pipeline"
 
 #set -x
 #curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
