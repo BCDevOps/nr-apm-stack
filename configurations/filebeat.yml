@@ -23,22 +23,24 @@ filebeat.modules:
 - module: apache
   access:
     enabled: true
-    var.paths: ["/sw_ux/httpd01/logs/*-access*.log*"]
+    var.paths: ["/sw_ux/httpd01/logs/hot/*-access*.log*"]
     input:
       close_eof: true
   error:
     enabled: false
-    var.paths: ["/sw_ux/httpd01/logs/*-error*.log*"]
+    var.paths: ["/sw_ux/httpd01/logs/hot/*-error*.log*"]
     input:
       close_eof: true
 
-output.elasticsearch:
-  bulk_max_size: 3200
-  worker: 3
-  username: "${ELASTICSEARCH_USERNAME}"
-  password: "${ELASTICSEARCH_PASSWORD}"
-  hosts: ["${ELASTICSEARCH_URL}"]
-  index: "logs-access-%{[agent.version]}-%{+yyyy.MM.dd}"
-  ssl.verification_mode: none
-  ssl.certificate_authorities:
-    - /home/${IDIR}/certs/elasticsearch.pem
+output:
+  elasticsearch:
+    bulk_max_size: 3200
+    worker: 3
+    username: "${ELASTICSEARCH_USERNAME}"
+    password: "${ELASTICSEARCH_PASSWORD}"
+    hosts: ["${ELASTICSEARCH_URL}"]
+    index: "logs-access-%{[agent.version]}-%{+yyyy.MM.dd}"
+    ssl:
+      verification_mode: none
+      certificate_authorities:
+        - ${HOME}/certs/elasticsearch.pem
