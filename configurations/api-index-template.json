@@ -190,6 +190,12 @@
           "http.request.body.content",
           "http.request.method",
           "http.request.referrer",
+          "http.request.referrer.original",
+          "http.request.referrer.scheme",
+          "http.request.referrer.username",
+          "http.request.referrer.domain",
+          "http.request.referrer.path",
+          "http.request.referrer.query",
           "http.response.body.content",
           "http.version",
           "log.level",
@@ -7237,8 +7243,27 @@
             "type" : "object",
             "properties" : {
               "referrer" : {
-                "ignore_above" : 1024,
-                "type" : "keyword"
+                "type" : "object",
+                "properties" : {
+                  "original" : {
+                    "type" : "text"
+                  },
+                  "scheme" : {
+                    "type" : "text"
+                  },
+                  "username" : {
+                    "type" : "text"
+                  },
+                  "domain" : {
+                    "type" : "text"
+                  },
+                  "path" : {
+                    "type" : "text"
+                  },
+                  "query" : {
+                    "type" : "text"
+                  }
+                }
               },
               "method" : {
                 "ignore_above" : 1024,
@@ -8079,7 +8104,7 @@
                     "type" : "keyword"
                   },
                   "http_refer" : {
-                    "path" : "http.request.referrer",
+                    "path" : "http.request.referrer.original",
                     "type" : "alias"
                   },
                   "length" : {
