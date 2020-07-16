@@ -32,6 +32,11 @@ filebeat.modules:
     input:
       close_eof: true
 
+processors:
+  - add_labels:
+      labels:
+        env: "%{ENV}"
+
 output:
   elasticsearch:
     bulk_max_size: 3200
@@ -39,7 +44,7 @@ output:
     username: "${ELASTICSEARCH_USERNAME}"
     password: "${ELASTICSEARCH_PASSWORD}"
     hosts: ["${ELASTICSEARCH_URL}"]
-    index: "logs-access-%{[agent.version]}-%{+yyyy.MM.dd}"
+    index: "logs-access-%{ENV}-%{[agent.version]}-%{+yyyy.MM.dd}"
     ssl:
       verification_mode: none
       certificate_authorities:
