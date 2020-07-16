@@ -7,13 +7,13 @@ setup.kibana:
 setup.kibana.ssl.enabled: true
 
 setup.ilm.enabled: false
-setup.ilm.rollover_alias: "logs-access-%{[agent.version]}"
-setup.ilm.policy_name: "logs-access"
+setup.ilm.rollover_alias: "logs-access-%{ENV}-%{[agent.version]}"
+setup.ilm.policy_name: "logs-access-%{ENV}"
 setup.template.name: "logs-access-%{ENV}"
 setup.template.pattern: "logs-access-%{ENV}-*"
 
 setup.dashboards.enabled: false
-setup.dashboards.index: "logs-access-*"
+setup.dashboards.index: "logs-access-%{ENV}-*"
 
 #logging.level: "debug"
 logging.metrics.enabled: false
