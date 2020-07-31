@@ -36,4 +36,14 @@ curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
       -X PUT -H "Content-Type: application/json" -H "kbn-xsrf:true" --data-binary @api-index-pattern.json \
       "${KIBANA_URL}/api/saved_objects/index-pattern/logs-access-*" -o /dev/null
 
+echo "Import Visializations"
+curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
+      -X POST -H "kbn-xsrf:true" --form file=@visualizations.ndjson \
+      "${KIBANA_URL}/api/saved_objects/_import"
+
+echo "Import Dashboard"
+curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
+      -X POST -H "kbn-xsrf:true" --form file=@dashboard.ndjson \
+      "${KIBANA_URL}/api/saved_objects/_import"
+
 echo "done"
