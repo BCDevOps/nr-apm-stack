@@ -38,7 +38,25 @@ curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
 
 echo "Import Visializations"
 curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
-      -X POST -H "kbn-xsrf:true" --form file=@visualizations.ndjson \
+      -X POST -H "kbn-xsrf:true" --form file=@./visualizations/applications.ndjson \
+      "${KIBANA_URL}/api/saved_objects/_import"
+curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
+      -X POST -H "kbn-xsrf:true" --form file=@./visualizations/browsers.ndjson \
+      "${KIBANA_URL}/api/saved_objects/_import"
+curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
+      -X POST -H "kbn-xsrf:true" --form file=@./visualizations/cities.ndjson \
+      "${KIBANA_URL}/api/saved_objects/_import"
+curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
+      -X POST -H "kbn-xsrf:true" --form file=@./visualizations/os.ndjson \
+      "${KIBANA_URL}/api/saved_objects/_import"
+curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
+      -X POST -H "kbn-xsrf:true" --form file=@./visualizations/provinces.ndjson \
+      "${KIBANA_URL}/api/saved_objects/_import"
+curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
+      -X POST -H "kbn-xsrf:true" --form file=@./visualizations/statuses.ndjson \
+      "${KIBANA_URL}/api/saved_objects/_import"
+curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
+      -X POST -H "kbn-xsrf:true" --form file=@./visualizations/success-failture.ndjson \
       "${KIBANA_URL}/api/saved_objects/_import"
 
 echo "Import Dashboard"
