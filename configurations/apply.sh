@@ -36,4 +36,12 @@ curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
       -X PUT -H "Content-Type: application/json" -H "kbn-xsrf:true" --data-binary @api-index-pattern.json \
       "${KIBANA_URL}/api/saved_objects/index-pattern/logs-access-*" -o /dev/null
 
+curl -kSsL --user "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" -w "\n" \
+    -X PUT -H 'Content-Type: application/json' --data-binary @./oracle/api-pipeline.json \
+    "${ELASTICSEARCH_URL}/_ingest/pipeline/oracle-syslog-pipeline"
+
+curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
+      -X PUT -H "Content-Type: application/ndjson" --data-binary @./oracle/api-index-pattern.ndjson \
+      "${KIBANA_URL}/api/saved_objects/index-pattern/oracle-syslog-*" -o /dev/null
+
 echo "done"
