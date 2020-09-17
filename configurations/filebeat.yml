@@ -7,13 +7,13 @@ setup.kibana:
 setup.kibana.ssl.enabled: true
 
 setup.ilm.enabled: false
-setup.ilm.rollover_alias: "logs-access-%{[agent.version]}"
-setup.ilm.policy_name: "logs-access"
-setup.template.name: "logs-access"
-setup.template.pattern: "logs-access-*"
+setup.ilm.rollover_alias: "logs-access-${ENV}-%{[agent.version]}"
+setup.ilm.policy_name: "logs-access-${ENV}"
+setup.template.name: "logs-access-${ENV}"
+setup.template.pattern: "logs-access-${ENV}-*"
 
 setup.dashboards.enabled: false
-setup.dashboards.index: "logs-access-*"
+setup.dashboards.index: "logs-access-${ENV}-*"
 
 #logging.level: "debug"
 logging.metrics.enabled: false
@@ -32,6 +32,11 @@ filebeat.modules:
     input:
       close_eof: true
 
+processors:
+  - add_labels:
+      labels:
+        env: "${ENV}"
+
 output:
   elasticsearch:
     bulk_max_size: 3200
@@ -39,7 +44,7 @@ output:
     username: "${ELASTICSEARCH_USERNAME}"
     password: "${ELASTICSEARCH_PASSWORD}"
     hosts: ["${ELASTICSEARCH_URL}"]
-    index: "logs-access-%{[agent.version]}-%{+yyyy.MM.dd}"
+    index: "logs-access-${ENV}-%{[agent.version]}-%{+yyyy.MM.dd}"
     ssl:
       verification_mode: none
       certificate_authorities:

@@ -36,6 +36,33 @@ curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
       -X PUT -H "Content-Type: application/json" -H "kbn-xsrf:true" --data-binary @api-index-pattern.json \
       "${KIBANA_URL}/api/saved_objects/index-pattern/logs-access-*" -o /dev/null
 
+curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
+      -X POST -H "kbn-xsrf:true" --form file=@./visualizations/applications.ndjson \
+      "${KIBANA_URL}/api/saved_objects/_import"
+curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
+      -X POST -H "kbn-xsrf:true" --form file=@./visualizations/browsers.ndjson \
+      "${KIBANA_URL}/api/saved_objects/_import"
+curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
+      -X POST -H "kbn-xsrf:true" --form file=@./visualizations/cities.ndjson \
+      "${KIBANA_URL}/api/saved_objects/_import"
+curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
+      -X POST -H "kbn-xsrf:true" --form file=@./visualizations/os.ndjson \
+      "${KIBANA_URL}/api/saved_objects/_import"
+curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
+      -X POST -H "kbn-xsrf:true" --form file=@./visualizations/provinces.ndjson \
+      "${KIBANA_URL}/api/saved_objects/_import"
+curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
+      -X POST -H "kbn-xsrf:true" --form file=@./visualizations/statuses.ndjson \
+      "${KIBANA_URL}/api/saved_objects/_import"
+curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
+      -X POST -H "kbn-xsrf:true" --form file=@./visualizations/success-failture.ndjson \
+      "${KIBANA_URL}/api/saved_objects/_import"
+
+echo "Importing Dashboard"
+curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
+      -X POST -H "kbn-xsrf:true" --form file=@dashboard.ndjson \
+      "${KIBANA_URL}/api/saved_objects/_import"
+
 curl -kSsL --user "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" -w "\n" \
     -X PUT -H 'Content-Type: application/json' --data-binary @./oracle/api-pipeline.json \
     "${ELASTICSEARCH_URL}/_ingest/pipeline/oracle-syslog-pipeline"
