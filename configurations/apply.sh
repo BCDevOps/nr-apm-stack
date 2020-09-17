@@ -36,7 +36,6 @@ curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
       -X PUT -H "Content-Type: application/json" -H "kbn-xsrf:true" --data-binary @api-index-pattern.json \
       "${KIBANA_URL}/api/saved_objects/index-pattern/logs-access-*" -o /dev/null
 
-echo "Import Visializations"
 curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
       -X POST -H "kbn-xsrf:true" --form file=@./visualizations/applications.ndjson \
       "${KIBANA_URL}/api/saved_objects/_import"
@@ -59,9 +58,17 @@ curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
       -X POST -H "kbn-xsrf:true" --form file=@./visualizations/success-failture.ndjson \
       "${KIBANA_URL}/api/saved_objects/_import"
 
-echo "Import Dashboard"
+echo "Importing Dashboard"
 curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
       -X POST -H "kbn-xsrf:true" --form file=@dashboard.ndjson \
       "${KIBANA_URL}/api/saved_objects/_import"
+
+curl -kSsL --user "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" -w "\n" \
+    -X PUT -H 'Content-Type: application/json' --data-binary @./oracle/api-pipeline.json \
+    "${ELASTICSEARCH_URL}/_ingest/pipeline/oracle-syslog-pipeline"
+
+curl  -kSsL -u "${ELASTICSEARCH_USERNAME}:${ELASTICSEARCH_PASSWORD}" \
+      -X PUT -H "Content-Type: application/ndjson" --data-binary @./oracle/api-index-pattern.ndjson \
+      "${KIBANA_URL}/api/saved_objects/index-pattern/oracle-syslog-*" -o /dev/null
 
 echo "done"
