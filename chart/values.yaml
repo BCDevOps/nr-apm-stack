@@ -52,7 +52,7 @@ es-master: &es
     storageClassName: netapp-block-standard
     resources:
       requests:
-        storage: 5Gi
+        storage: 2Gi
 
 es-ingest:
   <<: *es
