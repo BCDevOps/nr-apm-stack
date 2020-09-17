@@ -75,7 +75,7 @@ es-data:
     storageClassName: netapp-block-standard
     resources:
       requests:
-        storage: 10Gi
+        storage: 25Gi
 
 kibana:
   podSecurityContext:

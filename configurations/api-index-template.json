@@ -1,7 +1,7 @@
 {
   "order" : 1,
   "index_patterns" : [
-    "logs-access-*"
+    "logs-access-prod-*"
   ],
   "settings" : {
     "index" : {
