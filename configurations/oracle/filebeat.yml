@@ -1,0 +1,27 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths: "/path_to_logs/*"
+    pipeline: "filebeat-oracle-syslog-pipeline"
+
+setup.ilm.enabled: false
+setup.template.name: "filebeat-oracle-syslog"
+setup.template.pattern: "filebeat-oracle-syslog-*"
+
+setup.kibana:
+  host: "${KIBANA_URL}"
+  protocol: "https"
+  username: "${ELASTICSEARCH_USERNAME}"
+  password: "${ELASTICSEARCH_PASSWORD}"
+
+output:
+  elasticsearch:
+    bulk_max_size: 3200
+    worker: 3
+    username: "${ELASTICSEARCH_USERNAME}"
+    password: "${ELASTICSEARCH_PASSWORD}"
+    hosts: ["${ELASTICSEARCH_URL}"]
+    index: "filebeat-oracle-syslog-%{+yyyy-MM-dd}"
+    pipeline: "filebeat-oracle-syslog-pipeline"
+    ssl:
+      verification_mode: none
