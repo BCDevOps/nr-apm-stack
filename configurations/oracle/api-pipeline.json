@@ -8,13 +8,37 @@
       }
     },
     {
+      "gsub": {
+        "field": "message",
+        "pattern": "\\s\\'",
+        "replacement": " `"
+      }
+    },
+    {
+      "gsub": {
+        "field": "message",
+        "pattern": "\\'\\s",
+        "replacement": "` "
+      }
+    },
+    {
+      "gsub": {
+        "field": "message",
+        "pattern": "\\'$",
+        "replacement": "`"
+      }
+    },
+    {
       "grok": {
         "ignore_missing": false,
         "field": "message",
         "patterns": [
           "%{SYSLOGTIMESTAMP:timestamp} %{HOSTNAME} %{DATA:pidname}\\[(%{POSINT:pid}\\]): %{DATA:lengthname}: %{QUOTEDSTRING:lengthname} %{DATA:actionname}:\\[(%{POSINT:actionid}\\]) %{DATA:action} DATABASE USER:\\[(%{POSINT:databaseuser}\\]) %{QUOTEDSTRING:databaseuser} PRIVILEGE :\\[(%{POSINT:privilege}\\]) %{QUOTEDSTRING:privilege} CLIENT USER:\\[%{DATA:clientuser}\\] %{QUOTEDSTRING:clientuser} CLIENT TERMINAL:\\[%{DATA:clienterminal}\\] %{QUOTEDSTRING:clienterminal} STATUS:\\[%{DATA:status}\\] %{QUOTEDSTRING:status} DBID:\\[%{DATA:dbid}\\] %{QUOTEDSTRING:dbid} SESSIONID:\\[%{DATA:sessionid}\\] %{QUOTEDSTRING:sessionid} USERHOST:\\[%{DATA:userhost}\\] %{QUOTEDSTRING:userhost} CLIENT ADDRESS:\\[%{DATA:clientaddress}\\] %{QUOTEDSTRING:clientaddress} ACTION NUMBER:\\[%{DATA:actionumber}\\] %{QUOTEDSTRING:actionumber}",
           "%{SYSLOGTIMESTAMP:timestamp} %{HOSTNAME} %{DATA:pidname}\\[(%{POSINT:pid}\\]): LENGTH: %{QUOTEDSTRING:length} SESSIONID:\\[(%{DATA:sessionid}\\]) %{QUOTEDSTRING:session} ENTRYID:\\[(%{DATA:entryid}\\]) %{QUOTEDSTRING:entryidname} STATEMENT:\\[(%{DATA:statementid}\\]) %{QUOTEDSTRING:statement} USERID:\\[(%{DATA:userid}\\]) %{QUOTEDSTRING:user} USERHOST:\\[(%{DATA:userhostid}\\]) %{QUOTEDSTRING:userhost} TERMINAL:\\[(%{DATA:terminalid}\\]) %{QUOTEDSTRING:terminal} ACTION:\\[(%{DATA:actionid}\\]) %{QUOTEDSTRING:action} RETURNCODE:\\[(%{DATA:returncodeid}\\]) %{QUOTEDSTRING:returncode} COMMENT\\$TEXT:\\[(%{DATA:commentid}\\]) %{QUOTEDSTRING:comment} OS\\$USERID:\\[(%{DATA:osuserid}\\]) %{QUOTEDSTRING:osuser} DBID:\\[(%{DATA:dbid}\\]) %{QUOTEDSTRING:db} PRIV\\$USED:\\[(%{DATA:privusedid}\\]) %{QUOTEDSTRING:priveused} CURRENT_USER:\\[(%{DATA:currentuserid}\\]) %{QUOTEDSTRING:currentuser}",
-          "%{SYSLOGTIMESTAMP:timestamp} %{HOSTNAME} %{DATA:pidname}\\[(%{POSINT:pid}\\]): LENGTH: %{QUOTEDSTRING:length} SESSIONID:\\[(%{DATA:sessionid}\\]) %{QUOTEDSTRING:session} ENTRYID:\\[(%{DATA:entryid}\\]) %{QUOTEDSTRING:entryidname} STATEMENT:\\[(%{DATA:statementid}\\]) %{QUOTEDSTRING:statement} USERID:\\[(%{DATA:userid}\\]) %{QUOTEDSTRING:user} USERHOST:\\[(%{DATA:userhostid}\\]) %{QUOTEDSTRING:userhost} TERMINAL:\\[(%{DATA:terminalid}\\]) %{QUOTEDSTRING:terminal} ACTION:\\[(%{DATA:actionid}\\]) %{QUOTEDSTRING:action} RETURNCODE:\\[(%{DATA:returncodeid}\\]) %{QUOTEDSTRING:returncode} OBJ\\$CREATOR:\\[(%{DATA:objcreatorid}\\]) %{QUOTEDSTRING:objcreatorid} OBJ\\$NAME:\\[(%{DATA:objnameid}\\]) %{QUOTEDSTRING:objname} OS\\$USERID:\\[(%{DATA:osuserid}\\]) %{QUOTEDSTRING:osuser} DBID:\\[(%{DATA:dbid}\\]) %{QUOTEDSTRING:dbidname} CURRENT_USER:\\[(%{DATA:currentuserid}\\]) %{QUOTEDSTRING:currentuser}"
+          "%{SYSLOGTIMESTAMP:timestamp} %{HOSTNAME} %{DATA:pidname}\\[(%{POSINT:pid}\\]): LENGTH: %{QUOTEDSTRING:length} SESSIONID:\\[(%{DATA:sessionid}\\]) %{QUOTEDSTRING:session} ENTRYID:\\[(%{DATA:entryid}\\]) %{QUOTEDSTRING:entryidname} STATEMENT:\\[(%{DATA:statementid}\\]) %{QUOTEDSTRING:statement} USERID:\\[(%{DATA:userid}\\]) %{QUOTEDSTRING:user} USERHOST:\\[(%{DATA:userhostid}\\]) %{QUOTEDSTRING:userhost} TERMINAL:\\[(%{DATA:terminalid}\\]) %{QUOTEDSTRING:terminal} ACTION:\\[(%{DATA:actionid}\\]) %{QUOTEDSTRING:action} RETURNCODE:\\[(%{DATA:returncodeid}\\]) %{QUOTEDSTRING:returncode} OBJ\\$CREATOR:\\[(%{DATA:objcreatorid}\\]) %{QUOTEDSTRING:objcreatorid} OBJ\\$NAME:\\[(%{DATA:objnameid}\\]) %{QUOTEDSTRING:objname} OS\\$USERID:\\[(%{DATA:osuserid}\\]) %{QUOTEDSTRING:osuser} DBID:\\[(%{DATA:dbid}\\]) %{QUOTEDSTRING:dbidname} CURRENT_USER:\\[(%{DATA:currentuserid}\\]) %{QUOTEDSTRING:currentuser}",
+          "%{SYSLOGTIMESTAMP:timestamp} %{HOSTNAME} %{DATA:pidname}\\[(%{POSINT:pid}\\]): LENGTH: %{QUOTEDSTRING:length} SESSIONID:\\[(%{DATA:sessionid}\\]) %{QUOTEDSTRING:session} ENTRYID:\\[(%{DATA:entryid}\\]) %{QUOTEDSTRING:entryidname} USERID:\\[(%{DATA:userid}\\]) %{QUOTEDSTRING:user} ACTION:\\[(%{DATA:actionid}\\]) %{QUOTEDSTRING:action} RETURNCODE:\\[(%{DATA:returncodeid}\\]) %{QUOTEDSTRING:returncode} LOGOFF\\$PREAD:\\[(%{DATA:logoffpreadid}\\]) %{QUOTEDSTRING:logoffpread} LOGOFF\\$LREAD:\\[(%{DATA:logofflreadid}\\]) %{QUOTEDSTRING:logofflread} LOGOFF\\$LWRITE:\\[(%{DATA:logofflwriteid}\\]) %{QUOTEDSTRING:logofflwrite} LOGOFF\\$DEAD:\\[(%{DATA:logoffdeadid}\\]) %{QUOTEDSTRING:logoffdead} DBID:\\[(%{DATA:dbid}\\]) %{QUOTEDSTRING:dbidname} SESSIONCPU:\\[(%{DATA:sessioncpuid}\\]) %{QUOTEDSTRING:sessioncpu}",
+          "%{SYSLOGTIMESTAMP:timestamp} %{HOSTNAME} %{DATA:pidname}\\[(%{POSINT:pid}\\]): LENGTH : %{QUOTEDSTRING:length} ACTION :\\[(%{DATA:actionid}\\]) %{QUOTEDSTRING:action} DATABASE USER:\\[(%{POSINT:databaseuser}\\]) %{QUOTEDSTRING:databaseuser} PRIVILEGE :\\[(%{POSINT:privilege}\\]) %{QUOTEDSTRING:privilege} CLIENT USER:\\[(%{DATA:clientuser}\\]) %{QUOTEDSTRING:clientuser} CLIENT TERMINAL:\\[(%{DATA:clienterminal}\\]) %{QUOTEDSTRING:clienterminal} STATUS:\\[(%{DATA:status}\\]) %{QUOTEDSTRING:status} DBID:\\[(%{DATA:dbid}\\]) %{QUOTEDSTRING:dbid} SESSIONID:\\[(%{DATA:sessionid}\\]) %{QUOTEDSTRING:sessionid} USERHOST:\\[(%{DATA:userhost}\\]) %{QUOTEDSTRING:userhost} CLIENT ADDRESS:\\[(%{DATA:clientaddress}\\]) %{QUOTEDSTRING:clientaddress} ACTION NUMBER:\\[(%{DATA:actionumber}\\]) %{QUOTEDSTRING:actionumber}",
+          "%{SYSLOGTIMESTAMP:timestamp} %{HOSTNAME} %{DATA:pidname}\\[(%{POSINT:pid}\\]): LENGTH: %{QUOTEDSTRING:length} SESSIONID:\\[(%{DATA:sessionid}\\]) %{QUOTEDSTRING:session} ENTRYID:\\[(%{DATA:entryid}\\]) %{QUOTEDSTRING:entryidname} STATEMENT:\\[(%{DATA:statementid}\\]) %{QUOTEDSTRING:statement} USERID:\\[(%{DATA:userid}\\]) %{QUOTEDSTRING:user} USERHOST:\\[(%{DATA:userhostid}\\]) %{QUOTEDSTRING:userhost} ACTION:\\[(%{DATA:actionid}\\]) %{QUOTEDSTRING:action} RETURNCODE:\\[(%{DATA:returncodeid}\\]) %{QUOTEDSTRING:returncode} COMMENT\\$TEXT:\\[(%{DATA:commentid}\\]) %{QUOTEDSTRING:comment} OS\\$USERID:\\[(%{DATA:osuserid}\\]) %{QUOTEDSTRING:osuser} DBID:\\[(%{DATA:dbid}\\]) %{QUOTEDSTRING:db} PRIV\\$USED:\\[(%{DATA:privusedid}\\]) %{QUOTEDSTRING:priveused} CURRENT_USER:\\[(%{DATA:currentuserid}\\]) %{QUOTEDSTRING:currentuser}"
         ]
       }
     },
@@ -31,7 +55,7 @@
     {
       "date_index_name": {
         "field": "@timestamp",
-        "index_name_prefix": "oracle-syslog-",
+        "index_name_prefix": "filebeat-oracle-syslog-",
         "date_rounding": "d"
       }
     },
