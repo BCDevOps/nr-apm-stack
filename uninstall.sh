@@ -7,7 +7,7 @@ OC_NAMESPACE=$1
 OC_NAMESPACE_EXT=$2
 
 if [ -z "$1" ]; then 
-    echo 'Please provide the OC namespace to uninstall the EBK stack objects from and re run'
+    echo 'Please provide the OC namespace to uninstall the EBK stack objects from and re run .e.g ./uninstall.sh perrsi-test'
     exit 1;
 fi
 
