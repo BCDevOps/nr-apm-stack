@@ -31,9 +31,8 @@ export IDIR=
 
 ## How to uninstall
 ```
-helm uninstall nr-ess; oc delete pvc -l 'app in (nr-ess-master, nr-ess-data, nr-ess-ingest)'
+helm uninstall nr-ess; ./uninstall.sh
 ```
-TODO: make that `oc delete` more specific! it is kinda dangerous as is.
 
 # Filebeat
 ## How to Install on a server with logs to parse
