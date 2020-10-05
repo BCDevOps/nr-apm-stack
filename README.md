@@ -43,7 +43,7 @@ oc delete secret nr-ess-ca  nr-ess-elasticsearch-cert nr-ess-elasticsearch-cred 
 oc delete serviceaccount nr-ess-installer
 
 ```
-GitHub issue has been opened to allow secrets and service acounts to be deleted using the labels
+GitHub issue https://github.com/BCDevOps/nr-elasticsearch-stack/issues/8 has been opened to all OC objects to be deleted using the labels
 TODO: make that `oc delete` more specific! it is kinda dangerous as is.
 
 3. Wait for a couple of minutes before trying to reinstall the EBK stack 
