@@ -30,9 +30,23 @@ export IDIR=
 > This script will configure ES templates and ingest pipeline as well as Kibana patterns
 
 ## How to uninstall
+1. To uninstall verify you are logged on the desired target OpenShift namespace e.g. perrsi-test - Natural Resource Ministries Continuous Deployment Service (test) by running 
+```oc projects```
+and if not, switch to desired namespace(e.g. perrsi-test) by running.
+```oc project perrsi-test```
+2. Run the commands below
+
 ```
-helm uninstall nr-ess; ./uninstall.sh
+helm uninstall nr-ess; 
+oc delete pvc -l 'app in (nr-ess-master, nr-ess-data, nr-ess-ingest)';
+oc delete secret nr-ess-ca  nr-ess-elasticsearch-cert nr-ess-elasticsearch-cred nr-ess-kibana-cert nr-ess-kibana-key
+oc delete serviceaccount nr-ess-installer
+
 ```
+GitHub issue has been opened to allow secrets and service acounts to be deleted using the labels
+TODO: make that `oc delete` more specific! it is kinda dangerous as is.
+
+3. Wait for a couple of minutes before trying to reinstall the EBK stack 
 
 # Filebeat
 ## How to Install on a server with logs to parse
