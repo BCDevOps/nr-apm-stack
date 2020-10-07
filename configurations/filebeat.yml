@@ -9,7 +9,8 @@ setup.kibana.ssl.enabled: true
 setup.ilm.enabled: false
 setup.ilm.rollover_alias: "logs-access-${ENV}-%{[agent.version]}"
 setup.ilm.policy_name: "logs-access-${ENV}"
-setup.template.name: "logs-access-${ENV}"
+setup.template.enabled: false
+setup.template.name: "logs-access"
 setup.template.pattern: "logs-access-${ENV}-*"
 
 setup.dashboards.enabled: false
