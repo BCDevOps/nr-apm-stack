@@ -7,6 +7,20 @@
         "target_field" : "event.created"
       }
     },
+    {
+      "gsub": {
+        "field": "log.file.path",
+        "pattern": "\\\\+",
+        "replacement": "/"
+      }
+    },
+    {
+      "gsub": {
+        "field": "log.file.path",
+        "pattern": "^\\S:/",
+        "replacement": "/C:/"
+      }
+    },
     {"set": {"field": "labels.step","value": "Parsing message"}},
     {
       "grok" : {
