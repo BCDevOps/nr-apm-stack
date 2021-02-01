@@ -1,0 +1,118 @@
+secretsName:
+  elasticsearch:
+    certs: "abc"
+
+es-master: &es
+  clusterName: "{{.Release.Name}}"
+  nodeGroup: master
+  roles:
+    master: "true"
+    ingest: "false"
+    data: "false"
+  replicas: 3
+  resources:
+    requests:
+      cpu: 500m
+    limits:
+      cpu: 1000m
+  securityContext: null
+  podSecurityContext: null
+  sysctlInitContainer:
+    enabled: false
+  protocol: https
+  esConfig:
+    elasticsearch.yml: |
+      xpack.security.enabled: true
+      xpack.monitoring.collection.enabled: true
+      xpack.security.transport.ssl.enabled: true
+      xpack.security.transport.ssl.verification_mode: certificate
+      xpack.security.transport.ssl.keystore.path: /usr/share/elasticsearch/config/certs/elasticsearch.p12
+      xpack.security.transport.ssl.truststore.path: /usr/share/elasticsearch/config/certs/elasticsearch.p12
+      xpack.security.http.ssl.enabled: true
+      xpack.security.http.ssl.truststore.path: /usr/share/elasticsearch/config/certs/elasticsearch.p12
+      xpack.security.http.ssl.keystore.path: /usr/share/elasticsearch/config/certs/elasticsearch.p12
+  extraEnvs:
+    - name: ELASTIC_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: "{{.Release.Name}}-elasticsearch-cred"
+          key: password
+    - name: ELASTIC_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: "{{.Release.Name}}-elasticsearch-cred"
+          key: username
+  secretMounts:
+    - name: elasticsearch-certificates
+      secretName: "{{.Release.Name}}-elasticsearch-cert"
+      path: /usr/share/elasticsearch/config/certs
+  persistence:
+    enabled: true
+  volumeClaimTemplate:
+    storageClassName: netapp-block-standard
+    resources:
+      requests:
+        storage: 2Gi
+
+es-ingest:
+  <<: *es
+  replicas: 2
+  nodeGroup: ingest
+  roles:
+    master: "false"
+    ingest: "true"
+    data: "false"
+
+es-data:
+  <<: *es
+  replicas: 4
+  nodeGroup: data
+  roles:
+    master: "false"
+    ingest: "false"
+    data: "true"
+  volumeClaimTemplate:
+    storageClassName: netapp-block-standard
+    resources:
+      requests:
+        storage: 25Gi
+
+kibana:
+  podSecurityContext:
+    fsGroup: null
+  securityContext:
+    runAsUser: null
+  extraEnvs:
+    - name: 'ELASTICSEARCH_USERNAME'
+      valueFrom:
+        secretKeyRef:
+          name: "{{.Release.Name}}-elasticsearch-cred"
+          key: username
+    - name: 'ELASTICSEARCH_PASSWORD'
+      valueFrom:
+        secretKeyRef:
+          name: "{{.Release.Name}}-elasticsearch-cred"
+          key: password
+    - name: 'KIBANA_ENCRYPTION_KEY'
+      valueFrom:
+        secretKeyRef:
+          name: "{{.Release.Name}}-kibana-key"
+          key: key
+  kibanaConfig:
+    kibana.yml: |
+      xpack.security.encryptionKey: ${KIBANA_ENCRYPTION_KEY}
+      elasticsearch.ssl:
+        certificateAuthorities: /usr/share/kibana/config/certs/elasticsearch.pem
+        verificationMode: certificate
+  protocol: http
+  secretMounts:
+    - name: elastic-certificate-pem
+      secretName: "{{.Release.Name}}-elasticsearch-cert"
+      path: /usr/share/kibana/config/certs
+  replicas: 2
+  elasticsearchHosts: https://{{.Release.Name}}-master:9200
+  resources:
+    requests:
+      cpu: 200m
+    limits:
+      cpu: 500m

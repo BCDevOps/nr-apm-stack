@@ -1,0 +1,127 @@
+apiVersion: v1
+data:
+  certutil.sh: |
+    #!/usr/bin/env bash
+    set -Eeuo pipefail
+    function clear {
+      oc delete --ignore-not-found --wait --now "pod/${ESCT_POD_NAME}"
+      oc delete --ignore-not-found --wait --now 'sa/elasticserach-installer' secret/elastic-certificates secret/elastic-certificate-pem secret/elastic-credentials
+    }
+
+    function start_supporting_pod {
+      #oc create sa 'elasticserach-installer' || true
+      #oc policy add-role-to-user admin -z 'elasticserach-installer' || true
+
+      pod_status="$(oc get "pod/${ESCT_POD_NAME}" -o custom-columns=phase:.status.phase --no-headers)"
+      if [ "$pod_status" != "Running" ]; then
+        echo "Starting support pod ..."
+        oc delete "pod/${ESCT_POD_NAME}" --ignore-not-found --wait --now
+        container_certutil='{"name":"certutil","image":"'${ELASTICSEARCH_IMAGE}'","command":["sleep","1200"],"imagePullPolicy":"IfNotPresent", "volumeMounts":[{"name":"certs", "mountPath":"/certs"}]}'
+        container_openssl='{"name":"openssl","image":"frapsoft/openssl","command":["sleep","1200"],"imagePullPolicy":"IfNotPresent", "volumeMounts":[{"name":"certs", "mountPath":"/certs"}]}'
+        container_oc='{"name":"oc","image":"registry.access.redhat.com/openshift3/ose-cli:v3.11","command":["sleep", "1200"], "imagePullPolicy":"IfNotPresent", "volumeMounts":[{"name":"certs", "mountPath":"/certs"}]}'
+        oc run "${ESCT_POD_NAME}" --wait '--overrides={"spec":{"serviceAccountName":"elasticserach-installer", "containers":['"${container_certutil}"','"${container_openssl}"','"${container_oc}"'], "volumes":[{"name":"certs","emptyDir":{}}]}}' --quiet=true --restart=Never --image=overriden --command -- overriden
+      fi
+      oc wait "pod/${ESCT_POD_NAME}" --timeout=60s --for condition=Ready
+    }
+
+    : "${STACK_VERSION:=7.7.0}"
+    : "${ESCT_POD_NAME:=tmp-ess-support}"
+    ELASTICSEARCH_IMAGE="docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}"
+
+    case "$1" in
+      ca)
+        shift
+        while test ${#} -gt 0
+        do
+          case "$1" in
+            --secret-name)
+              SECRET_NAME="$1"
+              ;;
+            *)
+              SECRET_NAME="$1"
+          esac
+          shift
+        done
+        start_supporting_pod
+        oc rsh -c certutil "${ESCT_POD_NAME}" bash -c 'rm -rf /certs/ca.*'
+        oc rsh -c certutil "${ESCT_POD_NAME}" elasticsearch-certutil ca --out /certs/ca.p12 --pass ''
+        oc rsh -c openssl "${ESCT_POD_NAME}" openssl pkcs12 -nodes -passin pass:'' -in "/certs/ca.p12" -out "/certs/ca.pem"
+        oc rsh -c oc "${ESCT_POD_NAME}" kubectl create secret generic "${SECRET_NAME}" "--from-file=/certs/ca.p12" "--from-file=/certs/ca.pem" || true
+        ;;
+      cert)
+        shift
+        while test ${#} -gt 0
+        do
+          case "$1" in
+            --ca-secret-name=*)
+              CA_SECRET_NAME="${1#*=}"
+              ;;
+            --secret-name=*)
+              SECRET_NAME="${1#*=}"
+              ;;
+            *)
+              CERT_NAME="$1"
+          esac
+          shift
+        done
+        start_supporting_pod
+        oc rsh -c oc "${ESCT_POD_NAME}" bash -c "oc get 'secret/${CA_SECRET_NAME}' -o 'custom-columns=CERT:.data.ca\.p12' --no-headers | base64 --decode > /certs/ca.p12"
+        oc rsh -c certutil "${ESCT_POD_NAME}" bash -c "rm -rf /certs/$CERT_NAME.*"
+        oc rsh -c certutil "${ESCT_POD_NAME}" elasticsearch-certutil cert --name "$CERT_NAME" --dns "$CERT_NAME" --ca "/certs/ca.p12" --pass '' --ca-pass '' --out "/certs/$CERT_NAME.p12"
+        oc rsh -c openssl "${ESCT_POD_NAME}" openssl pkcs12 -nodes -passin pass:'' -in "/certs/$CERT_NAME.p12" -out "/certs/$CERT_NAME.pem"
+        oc rsh -c openssl "${ESCT_POD_NAME}" sh -c "openssl pkcs12 -nokeys -passin pass:'' -in '/certs/$CERT_NAME.p12' | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > '/certs/$CERT_NAME-chain.pem'"
+        oc rsh -c oc "${ESCT_POD_NAME}" kubectl create secret generic "${SECRET_NAME}" "--from-file=/certs/$CERT_NAME.pem" "--from-file=/certs/$CERT_NAME.p12" "--from-file=/certs/$CERT_NAME-chain.pem"  || true
+        ;;
+      cred)
+        shift
+        while test ${#} -gt 0
+        do
+          case "$1" in
+            --secret-name=*)
+              SECRET_NAME="${1#*=}"
+              ;;
+            *)
+              SECRET_NAME="$1"
+          esac
+          shift
+        done
+        start_supporting_pod
+        password=$([ ! -z "${ELASTIC_PASSWORD:-}" ] && echo "${ELASTIC_PASSWORD:-}" || echo $(oc rsh "${ESCT_POD_NAME}" /bin/sh -c "< /dev/urandom tr -cd '[:alnum:]' | head -c20"))
+        oc rsh -c oc "${ESCT_POD_NAME}" kubectl create secret generic "${SECRET_NAME}" "--from-literal=password=${password}" --from-literal=username=elastic  || true
+        ;;
+      key)
+        shift
+        KEY_SIZE='20'
+        while test ${#} -gt 0
+        do
+          case "$1" in
+            --size=*)
+              KEY_SIZE="${1#*=}"
+              ;;
+            --=*)
+              echo $"Unknown argument: $1"
+              exit 1
+              ;;
+            *)
+              SECRET_NAME="$1"
+          esac
+          shift
+        done
+        start_supporting_pod
+        set -x
+        key=$(oc rsh "${ESCT_POD_NAME}" /bin/sh -c "< /dev/urandom tr -cd '[:alnum:]' | head -c${KEY_SIZE}")
+        oc rsh -c oc "${ESCT_POD_NAME}" kubectl create secret generic "${SECRET_NAME}" "--from-literal=key=${key}"  || true
+        ;;
+      *)
+        echo $"Usage: $0 {ca|cert|cred}"
+        exit 0
+    esac
+
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "-8"
+  name: "{{ .Release.Name }}-pre-install-scripts"
