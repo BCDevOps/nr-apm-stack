@@ -3,6 +3,9 @@
 # * https://medium.com/neiman-marcus-tech/building-a-secure-aws-managed-elasticsearch-cluster-using-terraform-ea876f79d297
 # * https://github.com/BCDevOps/terraform-octk-aws-sea-network-info/blob/master/main.tf
 
+# Space tygsv5-dev
+
+
 variable "region" {
   type = string
   description = "AWS Region, where to deploy ELK cluster."
@@ -29,11 +32,13 @@ resource "random_password" "es_master_password" {
   min_upper = 2
   min_numeric = 2
 }
+
 locals {
   aws_space_name = "Dev"
   aws_vpc_main_name       = "${local.aws_space_name}_vpc"
   aws_availability_zones  = list("a", "b")
   aws_web_subnet_names   = [for az in local.aws_availability_zones : "Web_${local.aws_space_name}_az${az}_net"]
+  es_domain_name =  "ess${var.suffix}"
 }
 
 # Retrieve the main VPC
@@ -43,6 +48,7 @@ data "aws_vpc" "main" {
     values = [local.aws_vpc_main_name]
   }
 }
+
 # Retrieve the web subnets in the main VPC
 data "aws_subnet_ids" "web" {
   vpc_id = data.aws_vpc.main.id
@@ -60,13 +66,17 @@ data "aws_security_groups" "web" {
   }
 }
 
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
 resource "aws_elasticsearch_domain" "es" {
-  domain_name           = "ess${var.suffix}"
+  domain_name           = local.es_domain_name
   elasticsearch_version = "7.9"
-  vpc_options {
-    subnet_ids         = data.aws_subnet_ids.web.ids
-    security_group_ids = data.aws_security_groups.web.ids
-  }
+  # VPC deployment is not supported atm. We can used public endpoint while we experiment
+  #vpc_options {
+  #  subnet_ids         = data.aws_subnet_ids.web.ids
+  #  security_group_ids = data.aws_security_groups.web.ids
+  #}
   domain_endpoint_options {
     enforce_https       = true
     tls_security_policy = "Policy-Min-TLS-1-2-2019-07"
@@ -100,6 +110,19 @@ resource "aws_elasticsearch_domain" "es" {
   node_to_node_encryption {
     enabled = true
   }
+  access_policies = <<CONFIG
+{
+  "Version": "2012-10-17",
+  "Statement": [
+      {
+          "Action": "es:*",
+          "Principal": "*",
+          "Effect": "Allow",
+          "Resource": "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/${local.es_domain_name}/*"
+      }
+  ]
+}
+  CONFIG
 }
 
 output "ess_admin_password" {
