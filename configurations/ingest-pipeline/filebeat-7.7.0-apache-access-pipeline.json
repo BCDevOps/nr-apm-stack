@@ -193,39 +193,6 @@
       }
     },
     {
-      "geoip" : {
-        "field" : "source.ip",
-        "target_field" : "source.geo",
-        "ignore_missing" : true
-      }
-    },
-    {
-      "geoip" : {
-        "field" : "source.ip",
-        "target_field" : "source.as",
-        "properties" : [
-          "asn",
-          "organization_name"
-        ],
-        "ignore_missing" : true,
-        "database_file" : "GeoLite2-ASN.mmdb"
-      }
-    },
-    {
-      "rename" : {
-        "target_field" : "source.as.number",
-        "ignore_missing" : true,
-        "field" : "source.as.asn"
-      }
-    },
-    {
-      "rename" : {
-        "field" : "source.as.organization_name",
-        "target_field" : "source.as.organization.name",
-        "ignore_missing" : true
-      }
-    },
-    {
       "set": {
         "field": "event.outcome",
         "value": "unknown"
