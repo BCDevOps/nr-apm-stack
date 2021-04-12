@@ -311,7 +311,6 @@ const MyDeployer = class extends BasicDeployer {
         "securitytenant": "infraops",
         "kbn-xsrf":"true",
         host: hostname,
-        "Content-Type":"multipart/form-data",
         ...form.getHeaders()
       },
       hostname,
@@ -344,6 +343,6 @@ const MyDeployer = class extends BasicDeployer {
   } //end deploy
 }
 
-module.exports = async (settings) => {  
+module.exports = async (settings) => {
   await new MyDeployer(settings).deploy();
 }
