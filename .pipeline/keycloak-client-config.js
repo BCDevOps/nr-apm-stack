@@ -27,7 +27,7 @@ module.exports.process = function (p) {
             'saml.onetimeuse.condition': 'false'
         },
         redirectUris: [`${baseUrl}/*`],
-        roles: [{name:'kibana_user'}, {name: 'all_access'}, {name: 'test'}],
+        roles: [{name:'kibana_user'}, {name: 'all_access'}, {name: 'irs-developer'}],
         protocolMappers: [
             {name: 'role list', protocol: 'saml', protocolMapper: 'saml-role-list-mapper', consentRequired: false, config: {single:'true', 'attribute.nameformat': 'Basic', 'attribute.name': 'roles', 'friendly.name': 'roles'}},
         ]
