@@ -13,10 +13,6 @@ const FormData = require.main.require("form-data");
 
 const BasicDeployer = require.main.exports.BasicDeployer
 const path = require('path');
-const fs = require('fs');
-const { Readable } = require('stream');
-
-
 
 async function describeDomain(client, domainName){
   const cmdParams= {DomainName:domainName}
@@ -41,6 +37,17 @@ async function waitForDomainStatusReady(client, domainName){
   return cmdOutput
 }
 
+async function createHttpRequest(httpRequestParams) {
+  const { HttpRequest } = require.main.require("@aws-sdk/protocol-http")
+  const httpRequest = new HttpRequest(httpRequestParams);
+  return httpRequest;
+}
+async function executeHttpRequest(httpRequestParams) {
+  const signedHttpRequest = await createHttpRequest(httpRequestParams)
+  const { NodeHttpHandler } = require.main.require("@aws-sdk/node-http-handler")
+  const nodeHttpHandler = new NodeHttpHandler();
+  return nodeHttpHandler.handle(signedHttpRequest);
+}
 async function createSignedHttpRequest(httpRequestParams) {
   const { HttpRequest } = require.main.require("@aws-sdk/protocol-http")
   const { Sha256 } = require.main.require("@aws-crypto/sha256-js")
@@ -89,13 +96,28 @@ async function waitAndReturnResponseBody(res) {
 
 const MyDeployer = class extends BasicDeployer {
   #stsCallerIdentity = null;
+
   async deployElasticSearchDomain() {
     const settings = this.settings
     const phases = settings.phases
     const phase = phases[settings.phase]
     const client = new ElasticsearchServiceClient({ region: "ca-central-1" });
     const domainName = `${phase.name}${phase.suffix}`
-    const createCmdParams = require('../aws-elasticsearch-domain-config').process({DomainName:domainName, stsCallerIdentity: this.#stsCallerIdentity})
+    const keycloakBaseUrl = new URL(phase.keycloak.baseURL)
+    const keycloakRealmUrl = new URL(path.posix.join(keycloakBaseUrl.pathname, 'realms', phase.keycloak.realmName), phase.keycloak.baseURL)
+    // console.dir(keycloakRealmUrl); process.exit(1);
+    let samlMetadataContent = (await executeHttpRequest({
+      method: 'GET',
+      hostname: keycloakRealmUrl.hostname,
+      port:443,
+      // body: '',
+      path: path.posix.join(keycloakRealmUrl.pathname, 'protocol/saml/descriptor'),
+      headers:{host: keycloakRealmUrl.hostname,}
+    })
+    .then(waitAndReturnResponseBody)).body
+    samlMetadataContent=samlMetadataContent.substring(samlMetadataContent.indexOf('<EntitiesDescriptor'))
+    const samlOptionsDef = {EntityId:keycloakRealmUrl.toString(), MetadataContent:samlMetadataContent}
+    const createCmdParams = require('../aws-elasticsearch-domain-config').process({DomainName:domainName, stsCallerIdentity: this.#stsCallerIdentity, samlOptions: samlOptionsDef})
     // SAML options CANNOT be defined when creating a domain, so we remove it to be used by the creation call
     const samlOptions = createCmdParams.AdvancedSecurityOptions.SAMLOptions
     delete createCmdParams.AdvancedSecurityOptions.SAMLOptions
@@ -123,10 +145,12 @@ const MyDeployer = class extends BasicDeployer {
     const keycloakClientConfig = require('../keycloak-client-config').process({endpoint:endpoint})
     let clientId = keycloakClientConfig.clientId
     const roles = keycloakClientConfig.roles
+    const expectedMappers = keycloakClientConfig.protocolMappers
     delete keycloakClientConfig.roles
+    delete keycloakClientConfig.protocolMappers
     const kcAdminClient = new KcAdminClient({baseUrl:phase.keycloak.baseURL, realmName:phase.keycloak.realmName});
     await kcAdminClient.auth({clientId: phase.keycloak.clientId, clientSecret: phase.keycloak.clientSecret, grantType: 'client_credentials'})
-    
+
     // Look for a client with the defined clientId
     let keycloakRealmClients = await kcAdminClient.clients.find({clientId:clientId, max: 2});
     if (keycloakRealmClients.length === 0 ) {
@@ -159,6 +183,22 @@ const MyDeployer = class extends BasicDeployer {
     for (const role of kcExistingroles) {
       console.log(`Deleting role ${role.name}`)
       await kcAdminClient.clients.delRole({id: clientUniqueId,roleName: role.name});
+    }
+    let keycloakProtocolMappers = await kcAdminClient.clients.listProtocolMappers({id:clientUniqueId});
+    // Create any missing client role
+    for (const mapper of expectedMappers) {
+      const index = keycloakProtocolMappers.findIndex(element => element.name === mapper.name)
+      if (index >= 0){
+        keycloakProtocolMappers.splice(index, 1)
+      } else {
+        console.log(`Creating mapper ${mapper.name}`)
+        await kcAdminClient.clients.addProtocolMapper({id: clientUniqueId}, mapper);
+      }
+    }
+    // Whatever mappers are left, delete them (we don't want things that are not documented)
+    for (const mapper of keycloakProtocolMappers) {
+      console.log(`Deleting role ${mapper.name}`)
+      await kcAdminClient.clients.delProtocolMapper({id: clientUniqueId, mapperId: mapper.id});
     }
   }
   async configureElasticSearch(hostname){
@@ -244,11 +284,26 @@ const MyDeployer = class extends BasicDeployer {
     .then(waitAndReturnResponseBody)
     .then(output=>console.dir(output))
 
+    await executeSignedHttpRequest({
+      method: "POST",
+      body: JSON.stringify({type:['index-pattern']}),
+      headers: {
+        "Content-Type": "application/json",
+        "securitytenant": "infraops",
+        "kbn-xsrf":"true",
+        host: hostname,
+      },
+      hostname,
+      path: `/_plugin/kibana/api/saved_objects/_export`,
+    })
+    .then(waitAndReturnResponseBody)
+    .then(output=>console.dir(output))
+
     const form = new FormData();
     const vizualizationFile = path.resolve(__dirname, '../../configurations/visualizations/applications.ndjson')
-    form.append("file", fs.readFileSync(vizualizationFile,{encoding:'utf8'}), {contentType:'application/json'});
+    form.append("file", fs.readFileSync(vizualizationFile,{encoding:'utf8'}), {contentType:'application/json', filename:'applications.ndjson'});
     const buffer = form.getBuffer()
-    console.dir({indexPatternFile, readble: form instanceof Readable})
+    //console.dir({vizualizationFile, form})
     await executeSignedHttpRequest({
       method: "POST",
       body: buffer,
@@ -256,14 +311,16 @@ const MyDeployer = class extends BasicDeployer {
         "securitytenant": "infraops",
         "kbn-xsrf":"true",
         host: hostname,
+        "Content-Type":"multipart/form-data",
         ...form.getHeaders()
       },
       hostname,
       path: '/_plugin/kibana/api/saved_objects/_import',
+      //path: '/api/saved_objects/_import',
       query: {overwrite: 'true'}
     })
     .then(waitAndReturnResponseBody)
-    .then(output=>console.dir(output))
+    .then(output=>console.dir(output, {depth:1}))
   }
 
   async init() {
@@ -277,14 +334,13 @@ const MyDeployer = class extends BasicDeployer {
       stsCallerIdentity.AssumedRole = `arn:aws:iam::${stsCallerIdentity.Account}:role/${stsCallerIdentity.Arn.split('/')[1]}`
     }
     this.#stsCallerIdentity = stsCallerIdentity
-    //console.dir(this.#stsCallerIdentity)
   }
+
   async deploy() {
     await this.init()
-    const domainConfig = await deployElasticSearchDomain()
+    const domainConfig = await this.deployElasticSearchDomain()
     await this.configureElasticSearch(domainConfig.DomainStatus.Endpoint)
-    
-    //await this.deployKeycloakClientUsingAdmin(domainConfig.DomainStatus.Endpoint)
+    await this.deployKeycloakClientUsingAdmin(domainConfig.DomainStatus.Endpoint)
   } //end deploy
 }
 
