@@ -11,8 +11,10 @@ const { ElasticsearchServiceClient, CreateElasticsearchDomainCommand, DescribeEl
 const KcAdminClient = require.main.require('keycloak-admin').default
 const FormData = require.main.require("form-data");
 
+const GenericError = require.main.exports.GenericError
 const BasicDeployer = require.main.exports.BasicDeployer
 const path = require('path');
+const fs = require('fs');
 
 async function describeDomain(client, domainName){
   const cmdParams= {DomainName:domainName}
@@ -149,58 +151,64 @@ const MyDeployer = class extends BasicDeployer {
     delete keycloakClientConfig.roles
     delete keycloakClientConfig.protocolMappers
     const kcAdminClient = new KcAdminClient({baseUrl:phase.keycloak.baseURL, realmName:phase.keycloak.realmName});
-    await kcAdminClient.auth({clientId: phase.keycloak.clientId, clientSecret: phase.keycloak.clientSecret, grantType: 'client_credentials'})
+    try{
+      await kcAdminClient.auth({clientId: phase.keycloak.clientId, clientSecret: phase.keycloak.clientSecret, grantType: 'client_credentials'})
 
-    // Look for a client with the defined clientId
-    let keycloakRealmClients = await kcAdminClient.clients.find({clientId:clientId, max: 2});
-    if (keycloakRealmClients.length === 0 ) {
-      // Create a client if one is not found
-      console.log(`Creating keycloak client: ${clientId}`)
-      await kcAdminClient.clients.create({clientId})
-      keycloakRealmClients = await kcAdminClient.clients.find({clientId:clientId, max: 2});
-    }
+      // Look for a client with the defined clientId
+      let keycloakRealmClients = await kcAdminClient.clients.find({clientId:clientId, max: 2});
+      if (keycloakRealmClients.length === 0 ) {
+        // Create a client if one is not found
+        console.log(`Creating keycloak client: ${clientId}`)
+        await kcAdminClient.clients.create({clientId})
+        keycloakRealmClients = await kcAdminClient.clients.find({clientId:clientId, max: 2});
+      }
 
-    // Update the client
-    const {id: clientUniqueId} = keycloakRealmClients[0];
-    await kcAdminClient.clients.update(
-      {id: clientUniqueId},
-      keycloakClientConfig,
-    );
-    // Lookup client roles
-    const kcExistingroles = await kcAdminClient.clients.listRoles({id:clientUniqueId,});
-    // Create any missing client role
-    for (const role of roles) {
-      const index = kcExistingroles.findIndex(element => element.name === role.name)
-      if (index >= 0){
-        kcExistingroles.splice(index, 1)
-      } else {
-        console.log(`Creating role ${role.name}`)
-        await kcAdminClient.clients.createRole({id: clientUniqueId, ...role});
+      // Update the client
+      const {id: clientUniqueId} = keycloakRealmClients[0];
+      console.dir(keycloakRealmClients[0])
+      await kcAdminClient.clients.update(
+        {id: clientUniqueId},
+        keycloakClientConfig,
+      );
+      // Lookup client roles
+      const kcExistingroles = await kcAdminClient.clients.listRoles({id:clientUniqueId,});
+      // Create any missing client role
+      for (const role of roles) {
+        const index = kcExistingroles.findIndex(element => element.name === role.name)
+        if (index >= 0){
+          kcExistingroles.splice(index, 1)
+        } else {
+          console.log(`Creating role ${role.name}`)
+          await kcAdminClient.clients.createRole({id: clientUniqueId, ...role});
+        }
       }
-    }
-    // Whatever roles are left, delete them (we don't want things that are not documented)
-    // TODO: we may make exceptions to roles ending with '-developers' as those may be managed outside
-    for (const role of kcExistingroles) {
-      console.log(`Deleting role ${role.name}`)
-      await kcAdminClient.clients.delRole({id: clientUniqueId,roleName: role.name});
-    }
-    let keycloakProtocolMappers = await kcAdminClient.clients.listProtocolMappers({id:clientUniqueId});
-    // Create any missing client role
-    for (const mapper of expectedMappers) {
-      const index = keycloakProtocolMappers.findIndex(element => element.name === mapper.name)
-      if (index >= 0){
-        keycloakProtocolMappers.splice(index, 1)
-      } else {
-        console.log(`Creating mapper ${mapper.name}`)
-        await kcAdminClient.clients.addProtocolMapper({id: clientUniqueId}, mapper);
+      // Whatever roles are left, delete them (we don't want things that are not documented)
+      // TODO: we may make exceptions to roles ending with '-developers' as those may be managed outside
+      for (const role of kcExistingroles) {
+        console.log(`Deleting role ${role.name}`)
+        await kcAdminClient.clients.delRole({id: clientUniqueId,roleName: role.name});
       }
+      let keycloakProtocolMappers = await kcAdminClient.clients.listProtocolMappers({id:clientUniqueId});
+      // Create any missing client role
+      for (const mapper of expectedMappers) {
+        const index = keycloakProtocolMappers.findIndex(element => element.name === mapper.name)
+        if (index >= 0){
+          keycloakProtocolMappers.splice(index, 1)
+        } else {
+          console.log(`Creating mapper ${mapper.name}`)
+          await kcAdminClient.clients.addProtocolMapper({id: clientUniqueId}, mapper);
+        }
+      }
+      // Whatever mappers are left, delete them (we don't want things that are not documented)
+      for (const mapper of keycloakProtocolMappers) {
+        console.log(`Deleting role ${mapper.name}`)
+        await kcAdminClient.clients.delProtocolMapper({id: clientUniqueId, mapperId: mapper.id});
+      }
+    } catch (error) {
+      throw new GenericError(`${error.message}: ${error.config.method} ${error.config.url}`, error)
     }
-    // Whatever mappers are left, delete them (we don't want things that are not documented)
-    for (const mapper of keycloakProtocolMappers) {
-      console.log(`Deleting role ${mapper.name}`)
-      await kcAdminClient.clients.delProtocolMapper({id: clientUniqueId, mapperId: mapper.id});
-    }
-  }
+  } //end deployKeycloakClientUsingAdmin
+
   async configureElasticSearch(hostname){
     await executeSignedHttpRequest({
       method: "POST",
@@ -324,7 +332,7 @@ const MyDeployer = class extends BasicDeployer {
 
   async init() {
     const { STSClient, GetCallerIdentityCommand } = require.main.require("@aws-sdk/client-sts")
-    const stsClient = new STSClient();
+    const stsClient = new STSClient({region:'ca-central-1',});
     const stsGetCallerIdentityCommand = new GetCallerIdentityCommand();
     const stsCallerIdentity = await stsClient.send(stsGetCallerIdentityCommand);
     delete stsCallerIdentity.$metadata

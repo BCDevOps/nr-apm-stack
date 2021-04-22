@@ -46,8 +46,7 @@ module.exports.process = function (p) {
         "Enabled": false
     },
     "EncryptionAtRestOptions": {
-        "Enabled": true,
-        "KmsKeyId": "arn:aws:kms:ca-central-1:675958891276:key/c13394c2-88c5-4c0c-b4bf-194d0f5bd637"
+        "Enabled": true
     },
     "NodeToNodeEncryptionOptions": {
         "Enabled": true
