@@ -5,6 +5,23 @@
 
 # Space tygsv5-dev
 
+terraform {
+  backend "local" {}
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = "3.42.0"
+    }
+    keycloak = {
+      source = "mrparkers/keycloak"
+      version = "3.0.1"
+    }
+    elasticsearch = {
+      source = "phillbaker/elasticsearch"
+      version = "1.5.6"
+    }
+  }
+}
 
 variable "region" {
   type = string
@@ -12,50 +29,38 @@ variable "region" {
   default = "ca-central-1"
 }
 
+variable "env" {
+  type = string
+  description = "Suffix appended to all managed resource names"
+  default = "dev"
+}
+
+variable "pr" {
+  type = string
+  description = "Suffix appended to all managed resource names"
+  default = "0"
+}
+
 variable "suffix" {
   type = string
   description = "Suffix appended to all managed resource names"
-  default = "-dev"
+  default = "-dev-0"
 }
+
+variable "custom_endpoint" {
+  type = string
+  description = "Custom Endpoint"
+  default = null
+}
+
 
 provider "aws" {
   region = var.region
 }
 
-# Creates a randomized password to be used as local admin
-resource "random_password" "es_master_password" {
-  length = 16
-  special = true
-  override_special = "_%@"
-  min_special = 2
-  min_lower = 2
-  min_upper = 2
-  min_numeric = 2
-}
-
 locals {
-  aws_space_name = "Dev"
-  aws_vpc_main_name       = "${local.aws_space_name}_vpc"
-  aws_availability_zones  = list("a", "b")
-  aws_web_subnet_names   = [for az in local.aws_availability_zones : "Web_${local.aws_space_name}_az${az}_net"]
-  es_domain_name =  "ess${var.suffix}"
-}
-
-# Retrieve the main VPC
-data "aws_vpc" "main" {
-  filter {
-    name   = "tag:Name"
-    values = [local.aws_vpc_main_name]
-  }
-}
-
-# Retrieve the web subnets in the main VPC
-data "aws_subnet_ids" "web" {
-  vpc_id = data.aws_vpc.main.id
-  filter {
-    name   = "tag:Name"
-    values = local.aws_web_subnet_names
-  }
+  es_domain_name =  "nress${var.suffix}"
+  iam_service_accounts = ["arn:aws:iam::774621113276:user/project-service-accounts/BCGOV_Project_User_elasticsearch_agent_tygsv5"]
 }
 
 # Retrieve the security groups
@@ -69,6 +74,87 @@ data "aws_security_groups" "web" {
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
+locals {
+  caller_assumed_role = split("/", data.aws_caller_identity.current.arn)[1]
+}
+
+locals {
+  iam_role_arm = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.caller_assumed_role}"
+}
+
+data "aws_iam_policy_document" "access_policies" {
+  # Anonymous access is allowed to support SAML/Keycloak integration
+  statement {
+    effect = "Allow"
+    actions = [
+      "es:*",
+    ]
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+    resources = [
+      "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/${local.es_domain_name}/*",
+    ]
+  }
+
+  # Allows the current account (admin) assumed role to interact with elastic search
+  statement {
+    effect = "Allow"
+    actions = [
+      "es:*",
+    ]
+    principals {
+      type        = "AWS"
+      identifiers = [local.iam_role_arm]
+    }
+    resources = [
+      "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/${local.es_domain_name}/*",
+    ]
+  }
+
+  # Service accounts that are allowed to consume elastic search API
+  /*
+  dynamic "statement" {
+    for_each = ["arn:aws:iam::774621113276:user/project-service-accounts/BCGOV_Project_User_elasticsearch_agent_tygsv5"]
+    iterator = principal
+    content {
+      effect = "Allow"
+      actions = [
+        "es:*",
+      ]
+      principals {
+        type        = "AWS"
+        identifiers = ["*"]
+      }
+      resources = [ principal.value ]
+    }
+  }
+  */
+}
+resource "aws_acm_certificate" "es_custom_endpoint" {
+  domain_name       = var.custom_endpoint
+  validation_method = "DNS"
+
+  count            = var.custom_endpoint == null ?   0 : 1
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_iam_service_linked_role" "es" {
+  aws_service_name = "es.amazonaws.com"
+  count            = var.custom_endpoint == null ?   0 : 1
+}
+
+resource "aws_cloudwatch_log_group" "es_application_logs" {
+  name = "/aws/aes/domains/${ local.es_domain_name }/application-logs"
+}
+
+resource "aws_cloudwatch_log_group" "es_audit_logs" {
+  name = "/aws/aes/domains/${ local.es_domain_name }/audit-logs"
+}
+
 resource "aws_elasticsearch_domain" "es" {
   domain_name           = local.es_domain_name
   elasticsearch_version = "7.9"
@@ -80,24 +166,25 @@ resource "aws_elasticsearch_domain" "es" {
   domain_endpoint_options {
     enforce_https       = true
     tls_security_policy = "Policy-Min-TLS-1-2-2019-07"
+    custom_endpoint_enabled = var.custom_endpoint == null ? false : true
+    custom_endpoint = var.custom_endpoint
+    custom_endpoint_certificate_arn  = var.custom_endpoint == null ? null : aws_acm_certificate.es_custom_endpoint[0].arn
   }
   encrypt_at_rest {
     enabled = true
   }
   advanced_security_options {
     enabled = true
-    internal_user_database_enabled = true
+    internal_user_database_enabled = false
     master_user_options {
-      master_user_name = "admin"
-      master_user_password = random_password.es_master_password.result
+      master_user_arn = local.iam_role_arm
     }
   }
   cluster_config {
     dedicated_master_enabled = false
     warm_enabled = false
     instance_count = 2
-    instance_type = "t3.small.elasticsearch"
-    # instance_type = "r5.large.elasticsearch"
+    instance_type = "r5.large.elasticsearch"
     zone_awareness_enabled = true
     zone_awareness_config {
       availability_zone_count = 2
@@ -110,22 +197,245 @@ resource "aws_elasticsearch_domain" "es" {
   node_to_node_encryption {
     enabled = true
   }
-  access_policies = <<CONFIG
+  access_policies = data.aws_iam_policy_document.access_policies.json
+  log_publishing_options {
+    cloudwatch_log_group_arn = aws_cloudwatch_log_group.es_application_logs.arn # "arn:aws:logs:${data.aws_region.current.name}:${ data.aws_caller_identity.current.account_id }:log-group:/aws/aes/domains/${ local.es_domain_name }/application-logs"
+    enabled                  = true
+    log_type                 = "ES_APPLICATION_LOGS"
+  }
+  log_publishing_options {
+    cloudwatch_log_group_arn = aws_cloudwatch_log_group.es_audit_logs.arn # "arn:aws:logs:${data.aws_region.current.name}:${ data.aws_caller_identity.current.account_id }:log-group:/aws/aes/domains/${ local.es_domain_name }/audit-logs"
+    enabled                  = true
+    log_type                 = "AUDIT_LOGS"
+  }
+  depends_on = [aws_iam_service_linked_role.es]
+}
+
+resource "aws_kinesis_stream" "iit_logs" {
+  name             = "nress${ var.suffix }-iit-logs"
+  enforce_consumer_deletion = true
+  shard_count      = 2
+  retention_period = 24
+
+  shard_level_metrics = [
+    "IncomingRecords",
+    "IncomingBytes",
+    "OutgoingBytes",
+  ]
+
+  tags = {
+    Environment = var.env
+    Instance = "nress${ var.suffix }"
+  }
+}
+
+# This policy needs to be attached to a SA role by the platform team
+resource "aws_iam_policy" "iit_agents" {
+  name        = "nress${ var.suffix }-nrm-agents"
+  path        = "/"
+  description = ""
+
+  # Terraform's "jsonencode" function converts a
+  # Terraform expression result to valid JSON syntax.
+  policy = jsonencode({
+    Version = "2012-10-17"
+    "Statement": [
+        {
+            "Sid": "AllowAccessToKinesisStream",
+            "Effect": "Allow",
+            "Action": [
+                "kinesis:PutRecord",
+                "kinesis:PutRecords"
+            ],
+            "Resource": aws_kinesis_stream.iit_logs.arn
+        }
+    ]
+  })
+}
+
+resource "aws_s3_bucket" "lambda_code" {
+  bucket = "nress${ var.suffix }-lambda-code-${ data.aws_caller_identity.current.account_id }"
+  acl    = "private"
+  versioning {
+    enabled = true
+  }
+  tags = {
+    Environment = var.env
+    Instance = "nress${ var.suffix }"
+  }
+}
+
+resource "null_resource" "lambda_build" {
+  triggers = {
+    always_run = timestamp()
+  }
+
+  provisioner "local-exec" {
+    working_dir = "../event-stream-processing"
+    #command = "npm ci && npm run pack"
+    command = "echo no-op"
+  }
+  depends_on = [aws_s3_bucket.lambda_code]
+}
+
+resource "aws_s3_bucket_object" "lambda_stream_processing_code" {
+  bucket = aws_s3_bucket.lambda_code.bucket
+  key    = "nress${ var.suffix }/event-stream-processing.zip"
+  source = "../event-stream-processing/dist/event-stream-processing.zip"
+  etag = filemd5("../event-stream-processing/dist/event-stream-processing.zip")
+  depends_on = [null_resource.lambda_build]
+}
+
+resource "aws_iam_role" "lambda_iit_agents" {
+  name = "nress${ var.suffix }-lambda-iit-agents"
+  assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
-      {
-          "Action": "es:*",
-          "Principal": "*",
-          "Effect": "Allow",
-          "Resource": "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/${local.es_domain_name}/*"
-      }
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
   ]
 }
-  CONFIG
+EOF
 }
 
-output "ess_admin_password" {
-  value = random_password.es_master_password.result
-  description = "The password for the 'admin' account."
+# custom/inline policy
+resource "aws_iam_role_policy" "lambda_iit_agents_access_to_kinesis" {
+  name = "access_to_kineis"
+  role = aws_iam_role.lambda_iit_agents.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+          "Sid": "VisualEditor0",
+          "Effect": "Allow",
+          "Action": [
+              "kinesis:SubscribeToShard",
+              "kinesis:GetShardIterator",
+              "kinesis:GetRecords",
+              "kinesis:DescribeStream"
+          ],
+          "Resource": aws_kinesis_stream.iit_logs.arn
+      },
+      {
+          "Sid": "VisualEditor1",
+          "Effect": "Allow",
+          "Action": [
+              "kinesis:ListStreams",
+              "kinesis:ListShards"
+          ],
+          "Resource": "*"
+      }
+    ]
+  })
 }
+resource "aws_iam_role_policy_attachment" "lambda_iit_agents_basic_execution" {
+  role       = aws_iam_role.lambda_iit_agents.id
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_lambda_function" "lambda_iit_agents" {
+  function_name = "nress${ var.suffix }-iit-agents"
+  role          = aws_iam_role.lambda_iit_agents.arn
+  runtime       = "nodejs12.x"
+  handler       = "index.kinesisStreamHandler"
+  memory_size   = 1024
+  timeout       = 120
+  s3_bucket     = aws_s3_bucket_object.lambda_stream_processing_code.bucket
+  s3_key        = aws_s3_bucket_object.lambda_stream_processing_code.key
+  s3_object_version = aws_s3_bucket_object.lambda_stream_processing_code.version_id
+  #source_code_hash = filebase64sha256("../event-stream-processing/event-stream-processing.zip")
+  publish       = false
+  environment   {
+    variables   = {
+      "ES_URL"  = "https://${aws_elasticsearch_domain.es.endpoint}"
+    }
+  }
+}
+
+resource "aws_lambda_event_source_mapping" "iit_logs_from_kinesis" {
+  event_source_arn  = aws_kinesis_stream.iit_logs.arn
+  function_name     = aws_lambda_function.lambda_iit_agents.arn
+  parallelization_factor = 2 # equals to number of kinesis shards
+  starting_position = "LATEST"
+  batch_size = 10000
+  maximum_batching_window_in_seconds = 60
+}
+
+resource "null_resource" "es_configure" {
+  triggers = {
+    always_run = timestamp()
+  }
+
+  provisioner "local-exec" {
+    working_dir = "../"
+    #command = "echo %CD%"
+    command = "echo %CD% && npx @bcgov/nrdk deploy --config-script=./_pipeline/lib/config.js --deploy-script=./_pipeline/lib/deploy.js --pr=${var.pr} --env=${var.env}"
+  }
+  depends_on = [aws_elasticsearch_domain.es, null_resource.lambda_build]
+}
+
+
+provider "elasticsearch" {
+  url = "https://${aws_elasticsearch_domain.es.endpoint}"
+}
+
+resource "elasticsearch_opendistro_role" "iit_logs_writer" {
+  role_name   = "iitd-logs-writer"
+  description = "Logs writer role"
+
+  cluster_permissions = ["indices:data/write/bulk","indices:admin/create", "create_index"]
+
+  index_permissions {
+    index_patterns  = ["iitd-*", "iit-*"]
+    allowed_actions = ["indices:data/write/bulk","indices:data/write/index","indices:data/write/bulk*","create_index"]
+  }
+  depends_on = [aws_elasticsearch_domain.es]
+}
+
+resource "elasticsearch_opendistro_roles_mapping" "iit_logs_writer_mapper" {
+  role_name     = elasticsearch_opendistro_role.iit_logs_writer.id
+  description   = "Mapping AWS IAM roles to ES role"
+  backend_roles = [
+    aws_iam_role.lambda_iit_agents.arn
+  ]
+}
+
+/*
+provider "keycloak" {
+    // client_id      env:KEYCLOAK_CLIENT_ID
+    // client_secret  env:KEYCLOAK_CLIENT_SECRET
+    // url            env:KEYCLOAK_URL
+}
+
+data "keycloak_realm" "realm" {
+    realm = "ichqx89w"
+}
+
+resource "keycloak_saml_client" "saml_client" {
+  realm_id  = data.keycloak_realm.realm.id
+  client_id = "https://${aws_elasticsearch_domain.es.endpoint}"
+  idp_initiated_sso_url_name = "https://${aws_elasticsearch_domain.es.endpoint}/_plugin/kibana/_opendistro/_security/saml/acs/idpinitiated"
+  name = "AWS ElasticSearch"
+  name_id_format = "username"
+  sign_assertions = false
+  sign_documents = true
+  signature_algorithm = "RSA_SHA256"
+  valid_redirect_uris = ["https://${aws_elasticsearch_domain.es.endpoint}/*"]
+  force_post_binding = true
+}
+
+resource "keycloak_saml_client_default_scopes" "client_default_scopes" {
+  realm_id  = data.keycloak_realm.realm.id
+  client_id = keycloak_saml_client.saml_client.id
+  default_scopes = [ "web-origins", "profile" , "email" ]
+}
+
+*/
