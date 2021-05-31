@@ -21,9 +21,9 @@ module.exports = class {
       phase:     {build: 'build'                       , dev: 'dev'                                                           , test: 'test'                                                        , prod: 'prod'},
       keycloak:  {
         build: null,
-        dev: {baseURL: process.env.KEYCLOAK_BASEURL, realmName:process.env.KEYCLOAK_REALM_NAME, clientId: process.env.KEYCLOAK_CLIENT_ID, clientSecret: process.env.KEYCLOAK_CLIENT_SECRET},
-        test: {baseURL: process.env.KEYCLOAK_BASEURL, realmName:process.env.KEYCLOAK_REALM_NAME, clientId: process.env.KEYCLOAK_CLIENT_ID, clientSecret: process.env.KEYCLOAK_CLIENT_SECRET},
-        prod: {baseURL: process.env.KEYCLOAK_BASEURL, realmName:process.env.KEYCLOAK_REALM_NAME, clientId: process.env.KEYCLOAK_CLIENT_ID, clientSecret: process.env.KEYCLOAK_CLIENT_SECRET},
+        dev: {baseURL: process.env.KEYCLOAK_URL, realmName:process.env.KEYCLOAK_REALM, clientId: process.env.KEYCLOAK_CLIENT_ID, clientSecret: process.env.KEYCLOAK_CLIENT_SECRET},
+        test: {baseURL: process.env.KEYCLOAK_URL, realmName:process.env.KEYCLOAK_REALM, clientId: process.env.KEYCLOAK_CLIENT_ID, clientSecret: process.env.KEYCLOAK_CLIENT_SECRET},
+        prod: {baseURL: process.env.KEYCLOAK_URL, realmName:process.env.KEYCLOAK_REALM, clientId: process.env.KEYCLOAK_CLIENT_ID, clientSecret: process.env.KEYCLOAK_CLIENT_SECRET},
       },
     };
     const phases = {};

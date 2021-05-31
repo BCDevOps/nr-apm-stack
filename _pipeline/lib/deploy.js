@@ -99,6 +99,14 @@ async function waitAndReturnResponseBody(res) {
 const MyDeployer = class extends BasicDeployer {
   #stsCallerIdentity = null;
 
+  async getElasticSearchDomain() {
+    const settings = this.settings
+    const phases = settings.phases
+    const phase = phases[settings.phase]
+    const client = new ElasticsearchServiceClient({ region: "ca-central-1" });
+    const domainName = `${phase.name}${phase.suffix}`
+    return await waitForDomainStatusReady(client, domainName)
+  }
   async deployElasticSearchDomain() {
     const settings = this.settings
     const phases = settings.phases
@@ -106,8 +114,8 @@ const MyDeployer = class extends BasicDeployer {
     const client = new ElasticsearchServiceClient({ region: "ca-central-1" });
     const domainName = `${phase.name}${phase.suffix}`
     const keycloakBaseUrl = new URL(phase.keycloak.baseURL)
-    const keycloakRealmUrl = new URL(path.posix.join(keycloakBaseUrl.pathname, 'realms', phase.keycloak.realmName), phase.keycloak.baseURL)
-    // console.dir(keycloakRealmUrl); process.exit(1);
+    const keycloakRealmUrl = new URL(path.posix.join(keycloakBaseUrl.pathname, 'auth', 'realms', phase.keycloak.realmName), phase.keycloak.baseURL)
+    // console.dir(`Connecting to ${keycloakRealmUrl}`)
     let samlMetadataContent = (await executeHttpRequest({
       method: 'GET',
       hostname: keycloakRealmUrl.hostname,
@@ -150,10 +158,13 @@ const MyDeployer = class extends BasicDeployer {
     const expectedMappers = keycloakClientConfig.protocolMappers
     delete keycloakClientConfig.roles
     delete keycloakClientConfig.protocolMappers
-    const kcAdminClient = new KcAdminClient({baseUrl:phase.keycloak.baseURL, realmName:phase.keycloak.realmName});
+    const keycloakBaseUrl = new URL(phase.keycloak.baseURL)
+    const keycloakRealmUrl = new URL(path.posix.join(keycloakBaseUrl.pathname, 'auth'), phase.keycloak.baseURL)
+    // console.dir(`Connecting to ${keycloakRealmUrl}`)
+    const kcAdminClient = new KcAdminClient({baseUrl:keycloakRealmUrl.toString(), realmName:phase.keycloak.realmName});
     try{
       await kcAdminClient.auth({clientId: phase.keycloak.clientId, clientSecret: phase.keycloak.clientSecret, grantType: 'client_credentials'})
-
+      console.log(`Searching for client: ${clientId}`)
       // Look for a client with the defined clientId
       let keycloakRealmClients = await kcAdminClient.clients.find({clientId:clientId, max: 2});
       if (keycloakRealmClients.length === 0 ) {
@@ -165,7 +176,8 @@ const MyDeployer = class extends BasicDeployer {
 
       // Update the client
       const {id: clientUniqueId} = keycloakRealmClients[0];
-      console.dir(keycloakRealmClients[0])
+      //console.dir(keycloakRealmClients[0])
+      console.log(`Updating keycloak client: ${clientId} (${clientUniqueId})`)
       await kcAdminClient.clients.update(
         {id: clientUniqueId},
         keycloakClientConfig,
@@ -210,6 +222,7 @@ const MyDeployer = class extends BasicDeployer {
   } //end deployKeycloakClientUsingAdmin
 
   async configureElasticSearch(hostname){
+    /*
     await executeSignedHttpRequest({
       method: "POST",
       body: JSON.stringify({
@@ -225,9 +238,10 @@ const MyDeployer = class extends BasicDeployer {
       path: "_search",
     })
     .then(waitAndReturnResponseBody)
+    */
     const indexTemplateFile = path.resolve(__dirname, '../../configurations/index-template/logs-access.json')
     const indexTemplateName = path.basename(indexTemplateFile, '.json')
-    console.dir({indexTemplateFile,indexTemplateName})
+    // console.dir({indexTemplateFile,indexTemplateName})
     await executeSignedHttpRequest({
       method: "POST",
       body: fs.readFileSync(indexTemplateFile, {encoding:'utf8'}),
@@ -239,11 +253,12 @@ const MyDeployer = class extends BasicDeployer {
       path: `/_template/${indexTemplateName}`,
     })
     .then(waitAndReturnResponseBody)
-    .then(output=>console.dir(output))
+    .then(()=>console.log(`Index Template Loaded - ${indexTemplateName}`))
+    //.then(output=>console.dir(output))
 
     const ingestPipelineFile = path.resolve(__dirname, '../../configurations/ingest-pipeline/filebeat-7.7.0-apache-access-pipeline.json')
     const ingestPipelineName = path.basename(ingestPipelineFile, '.json')
-    console.dir({ingestPipelineFile,ingestPipelineName})
+    // console.dir({ingestPipelineFile,ingestPipelineName})
     await executeSignedHttpRequest({
       method: "PUT",
       body: fs.readFileSync(ingestPipelineFile, {encoding:'utf8'}),
@@ -255,7 +270,8 @@ const MyDeployer = class extends BasicDeployer {
       path: `/_ingest/pipeline/${ingestPipelineName}`,
     })
     .then(waitAndReturnResponseBody)
-    .then(output=>console.dir(output))
+    .then(()=>console.log(`Ingest Pipeline Loaded - ${ingestPipelineName}`))
+    //.then(output=>console.dir(output))
 
     // Create Tenants
     //TODO: I don't know why the direct URL/path didn't work, but it works through through the console proxy
@@ -272,10 +288,12 @@ const MyDeployer = class extends BasicDeployer {
       query: {path:'/_opendistro/_security/api/tenants/infraops', method:'PUT'}
     })
     .then(waitAndReturnResponseBody)
-    .then(output=>console.dir(output))
+    .then(()=>console.log(`Tenant Loaded - infraops`))
+
+    //.then(output=>console.dir(output))
     const indexPatternFile = path.resolve(__dirname, '../../configurations/index-pattern/logs-access.json')
     const indexPatternName = path.basename(indexPatternFile, '.json')
-    console.dir({indexPatternFile,indexPatternName})
+    //console.dir({indexPatternFile,indexPatternName})
     await executeSignedHttpRequest({
       method: "POST",
       body: fs.readFileSync(indexPatternFile, {encoding:'utf8'}),
@@ -290,8 +308,10 @@ const MyDeployer = class extends BasicDeployer {
       query: {overwrite: 'true'}
     })
     .then(waitAndReturnResponseBody)
-    .then(output=>console.dir(output))
+    .then(()=>console.log(`Index Pattern Loaded - ${indexPatternName}`))
+    //.then(output=>console.dir(output))
 
+    /*
     await executeSignedHttpRequest({
       method: "POST",
       body: JSON.stringify({type:['index-pattern']}),
@@ -306,6 +326,7 @@ const MyDeployer = class extends BasicDeployer {
     })
     .then(waitAndReturnResponseBody)
     .then(output=>console.dir(output))
+    */
 
     const form = new FormData();
     const vizualizationFile = path.resolve(__dirname, '../../configurations/visualizations/applications.ndjson')
@@ -327,7 +348,8 @@ const MyDeployer = class extends BasicDeployer {
       query: {overwrite: 'true'}
     })
     .then(waitAndReturnResponseBody)
-    .then(output=>console.dir(output, {depth:1}))
+    .then(()=>console.log(`Vizualization File Loaded - ${vizualizationFile}`))
+    //.then(output=>console.dir(output, {depth:1}))
   }
 
   async init() {
@@ -345,7 +367,7 @@ const MyDeployer = class extends BasicDeployer {
 
   async deploy() {
     await this.init()
-    const domainConfig = await this.deployElasticSearchDomain()
+    const domainConfig = await this.getElasticSearchDomain()
     await this.configureElasticSearch(domainConfig.DomainStatus.Endpoint)
     await this.deployKeycloakClientUsingAdmin(domainConfig.DomainStatus.Endpoint)
   } //end deploy
