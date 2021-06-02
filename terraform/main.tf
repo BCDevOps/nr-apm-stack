@@ -425,15 +425,18 @@ curl -sSL -o /tmp/node-v12.22.1-linux-x64.tar.gz https://nodejs.org/dist/latest-
 mkdir /home/terraform/node
 tar -xf /tmp/node-v12.22.1-linux-x64.tar.gz -C /home/terraform/node --strip-components=1
 set -x
-ls -la /home/terraform/
-ls -la /env/
-ls -la /terraform/
+env
+echo "pwd=$(pwd)"
+#ls -la /home/terraform/
+#ls -la /env/
+#ls -la /terraform/
 export PATH=/home/terraform/node/bin:$PATH
 ps -efww
-echo $(pwd)
 npx @bcgov/nrdk deploy --config-script=./_pipeline/lib/config.js --deploy-script=./_pipeline/lib/deploy.js --pr=${var.pr} --env=${var.env}
 EOF
-
+  environment = {
+    AWS_ASSUME_ROLE = local.iam_role_arm
+  }
   }
   depends_on = [aws_elasticsearch_domain.es]
 }

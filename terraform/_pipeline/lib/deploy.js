@@ -353,7 +353,16 @@ const MyDeployer = class extends BasicDeployer {
   }
 
   async init() {
-    const { STSClient, GetCallerIdentityCommand } = require.main.require("@aws-sdk/client-sts")
+    const { STSClient, GetCallerIdentityCommand, AssumeRoleCommand } = require.main.require("@aws-sdk/client-sts")
+    if (process.env.AWS_ASSUME_ROLE) {
+      const stsClient1 = new STSClient({region:'ca-central-1',});
+      const stsAssumeRoleCommand = new AssumeRoleCommand({RoleArn: process.env.AWS_ASSUME_ROLE, RoleSessionName: 'nrdk'});
+      const stsAssumedRole = await stsClient1.send(stsAssumeRoleCommand);
+      process.env.AWS_ACCESS_KEY_ID = stsAssumedRole.Credentials.AccessKeyId
+      process.env.AWS_SECRET_ACCESS_KEY = stsAssumedRole.Credentials.SecretAccessKey
+      process.env.AWS_SESSION_TOKEN = stsAssumedRole.Credentials.SessionToken
+      // console.dir(stsAssumedRole)
+    }
     const stsClient = new STSClient({region:'ca-central-1',});
     const stsGetCallerIdentityCommand = new GetCallerIdentityCommand();
     const stsCallerIdentity = await stsClient.send(stsGetCallerIdentityCommand);
