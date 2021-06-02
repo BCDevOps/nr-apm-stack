@@ -6,7 +6,6 @@
 # Space tygsv5-dev
 
 terraform {
-  backend "local" {}
   required_providers {
     aws = {
       source = "hashicorp/aws"
@@ -32,7 +31,7 @@ variable "region" {
 variable "env" {
   type = string
   description = "Suffix appended to all managed resource names"
-  default = "dev"
+  default = null
 }
 
 variable "pr" {
@@ -53,9 +52,29 @@ variable "custom_endpoint" {
   default = null
 }
 
+variable "iit_lambda_code_bucket_key_version" {
+  type = string
+  description = "Lambda Code Package Version"
+  default = null
+}
+
+variable "target_aws_account_id" {
+  type = string
+  description = "target_aws_account_id"
+  default = null
+}
+
+variable "target_env" {
+  type = string
+  description = "target_env"
+  default = null
+}
 
 provider "aws" {
   region = var.region
+  assume_role {
+    role_arn = "arn:aws:iam::${var.target_aws_account_id}:role/BCGOV_${var.target_env}_Automation_Admin_Role"
+  }
 }
 
 locals {
@@ -64,13 +83,14 @@ locals {
 }
 
 # Retrieve the security groups
+/*
 data "aws_security_groups" "web" {
   filter {
     name   = "tag:Name"
     values = ["Web_sg"]
   }
 }
-
+*/
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
@@ -81,6 +101,8 @@ locals {
 locals {
   iam_role_arm = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.caller_assumed_role}"
 }
+
+resource "time_static" "log_group_suffix" {}
 
 data "aws_iam_policy_document" "access_policies" {
   # Anonymous access is allowed to support SAML/Keycloak integration
@@ -148,11 +170,38 @@ resource "aws_iam_service_linked_role" "es" {
 }
 
 resource "aws_cloudwatch_log_group" "es_application_logs" {
-  name = "/aws/aes/domains/${ local.es_domain_name }/application-logs"
+  name = "/aws/aes/domains/${ local.es_domain_name }-${ time_static.log_group_suffix.unix }/application-logs"
 }
 
 resource "aws_cloudwatch_log_group" "es_audit_logs" {
-  name = "/aws/aes/domains/${ local.es_domain_name }/audit-logs"
+  name = "/aws/aes/domains/${ local.es_domain_name }-${ time_static.log_group_suffix.unix }/audit-logs"
+}
+
+resource "aws_cloudwatch_log_resource_policy" "es_logs" {
+  policy_name = "${local.es_domain_name}-${ time_static.log_group_suffix.unix }"
+  policy_document = <<CONFIG
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "es.amazonaws.com"
+      },
+      "Action": [
+        "logs:PutLogEvents",
+        "logs:PutLogEventsBatch",
+        "logs:CreateLogStream"
+      ],
+      "Resource": [
+        "arn:aws:logs:*",
+        "${aws_cloudwatch_log_group.es_application_logs.arn}/*",
+        "${aws_cloudwatch_log_group.es_audit_logs.arn}/*"
+      ]
+    }
+  ]
+}
+CONFIG
 }
 
 resource "aws_elasticsearch_domain" "es" {
@@ -208,7 +257,7 @@ resource "aws_elasticsearch_domain" "es" {
     enabled                  = true
     log_type                 = "AUDIT_LOGS"
   }
-  depends_on = [aws_iam_service_linked_role.es]
+  depends_on = [aws_iam_service_linked_role.es, aws_cloudwatch_log_resource_policy.es_logs]
 }
 
 resource "aws_kinesis_stream" "iit_logs" {
@@ -252,7 +301,7 @@ resource "aws_iam_policy" "iit_agents" {
     ]
   })
 }
-
+/*
 resource "aws_s3_bucket" "lambda_code" {
   bucket = "nress${ var.suffix }-lambda-code-${ data.aws_caller_identity.current.account_id }"
   acl    = "private"
@@ -264,26 +313,19 @@ resource "aws_s3_bucket" "lambda_code" {
     Instance = "nress${ var.suffix }"
   }
 }
-
-resource "null_resource" "lambda_build" {
-  triggers = {
-    always_run = timestamp()
-  }
-
-  provisioner "local-exec" {
-    working_dir = "../event-stream-processing"
-    #command = "npm ci && npm run pack"
-    command = "echo no-op"
-  }
-  depends_on = [aws_s3_bucket.lambda_code]
-}
-
 resource "aws_s3_bucket_object" "lambda_stream_processing_code" {
   bucket = aws_s3_bucket.lambda_code.bucket
   key    = "nress${ var.suffix }/event-stream-processing.zip"
   source = "../event-stream-processing/dist/event-stream-processing.zip"
   etag = filemd5("../event-stream-processing/dist/event-stream-processing.zip")
   depends_on = [null_resource.lambda_build]
+}
+*/
+
+data "aws_s3_bucket_object" "lambda_stream_processing_code" {
+  bucket = "nress-lambda-code-${var.env}-148a62ab607aead4cf48e909528347df"
+  key    = "nress-${var.env}-event-stream-processing.zip"
+  version_id = var.iit_lambda_code_bucket_key_version
 }
 
 resource "aws_iam_role" "lambda_iit_agents" {
@@ -336,6 +378,7 @@ resource "aws_iam_role_policy" "lambda_iit_agents_access_to_kinesis" {
     ]
   })
 }
+
 resource "aws_iam_role_policy_attachment" "lambda_iit_agents_basic_execution" {
   role       = aws_iam_role.lambda_iit_agents.id
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
@@ -348,9 +391,9 @@ resource "aws_lambda_function" "lambda_iit_agents" {
   handler       = "index.kinesisStreamHandler"
   memory_size   = 1024
   timeout       = 120
-  s3_bucket     = aws_s3_bucket_object.lambda_stream_processing_code.bucket
-  s3_key        = aws_s3_bucket_object.lambda_stream_processing_code.key
-  s3_object_version = aws_s3_bucket_object.lambda_stream_processing_code.version_id
+  s3_bucket     = data.aws_s3_bucket_object.lambda_stream_processing_code.bucket
+  s3_key        = data.aws_s3_bucket_object.lambda_stream_processing_code.key
+  s3_object_version = data.aws_s3_bucket_object.lambda_stream_processing_code.version_id
   #source_code_hash = filebase64sha256("../event-stream-processing/event-stream-processing.zip")
   publish       = false
   environment   {
@@ -375,11 +418,24 @@ resource "null_resource" "es_configure" {
   }
 
   provisioner "local-exec" {
-    working_dir = "../"
+    #working_dir = "../"
     #command = "echo %CD%"
-    command = "echo %CD% && npx @bcgov/nrdk deploy --config-script=./_pipeline/lib/config.js --deploy-script=./_pipeline/lib/deploy.js --pr=${var.pr} --env=${var.env}"
+    command = <<EOF
+curl -sSL -o /tmp/node-v12.22.1-linux-x64.tar.gz https://nodejs.org/dist/latest-v12.x/node-v12.22.1-linux-x64.tar.gz
+mkdir /home/terraform/node
+tar -xf /tmp/node-v12.22.1-linux-x64.tar.gz -C /home/terraform/node --strip-components=1
+set -x
+ls -la /home/terraform/
+ls -la /env/
+ls -la /terraform/
+export PATH=/home/terraform/node/bin:$PATH
+ps -efww
+echo $(pwd)
+npx @bcgov/nrdk deploy --config-script=./_pipeline/lib/config.js --deploy-script=./_pipeline/lib/deploy.js --pr=${var.pr} --env=${var.env}
+EOF
+
   }
-  depends_on = [aws_elasticsearch_domain.es, null_resource.lambda_build]
+  depends_on = [aws_elasticsearch_domain.es]
 }
 
 
