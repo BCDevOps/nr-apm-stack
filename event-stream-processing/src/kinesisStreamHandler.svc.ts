@@ -23,10 +23,16 @@ export class KinesisStreamHandlerImpl implements KinesisStreamHandler  {
     }
     
     parseMessage (record: any) {
-        for (const parser of this.parsers) {
-            if (parser.matches(record)){
-                parser.apply(record)
+        try{
+            for (const parser of this.parsers) {
+                this.logger.debug(`Processing parse:${parser.constructor.name}`)
+                if (parser.matches(record)){
+                    parser.apply(record)
+                }
             }
+        } catch(error){
+            this.logger.log(`Error Parsing:${JSON.stringify(record)}`)
+            throw error
         }
         return record
     }
@@ -34,17 +40,26 @@ export class KinesisStreamHandlerImpl implements KinesisStreamHandler  {
     async transformToElasticCommonSchema (event: KinesisStreamEvent): Promise<any[]> {
         const result: any[] = [];
         if (event.Records){
+            this.logger.log(`Received ${event.Records.length} records`)
             // Parallel
             await Promise.all(event.Records.map( kinesisRecord => {
                 const _id = Buffer.from(kinesisRecord.kinesis.sequenceNumber + '.' + this.randomizer.randomBytes(16).toString("hex")).toString("hex")
                 return this.convertRecordDataToJson(kinesisRecord)
-                .then(this.parseMessage.bind(this))
                 .then((record)=>{
-                    record._id = _id
-                    result.push(record)
-                }).catch(error=>{
-                    result.push({_id, _error:error})
+                    return Promise.race([
+                        new Promise<any>((resolve)=>{
+                            resolve(this.parseMessage(record))
+                        }),
+                        new Promise((resolve, reject) => setTimeout(() => reject(new Error(`Timeout parsinge message`)), 1000))
+                    ])
+                    .then((record)=>{
+                        record._id = _id
+                        result.push(record)
+                    }).catch(error=>{
+                        result.push({_id, _error:error, ...record})
+                    })
                 })
+
             }))
             //Serial
             /*
@@ -53,8 +68,6 @@ export class KinesisStreamHandlerImpl implements KinesisStreamHandler  {
                     const _id = Buffer.from(kinesisRecord.kinesis.sequenceNumber + '.' + this.randomizer.randomBytes(16).toString("hex")).toString("hex")
                     return this.convertRecordDataToJson(kinesisRecord)
                     .then(this.parseMessage.bind(this))
-                    .then(this.geoIp.bind(this))
-                    .then(this.parseUserAgent.bind(this))
                     .then((record)=>{
                         record._id = _id
                         result.push(record)
@@ -70,13 +83,16 @@ export class KinesisStreamHandlerImpl implements KinesisStreamHandler  {
 
     async handle(event: KinesisStreamEvent, context: Context): Promise<any> {
         const index:Map<string, any> = new Map()
+        this.logger.log(`Transforming kinesis records to ES documents`)
         const docs = await this.transformToElasticCommonSchema(event)
         for (const doc of docs) {
             index.set(doc._id, doc)
         }
+        this.logger.log(`Submitting ${docs.length} documents to ES`)
         // console.log(JSON.stringify(docs, null, 2))
         return this.openSearchClient.bulk(docs).then(value => {
             if (value.errors === true) {
+                this.logger.log(`Parsing errors`)
                 const batchItemFailures = []
                 let successCount = 0;
                 for (const item of value.items) {

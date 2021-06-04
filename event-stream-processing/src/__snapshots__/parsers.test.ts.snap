@@ -19,9 +19,33 @@ Array [
   Object {
     "@timestamp": "2021-04-20T15:10:40.000-07:00",
     "_id": "756e646566696e65642e363237353636363636353732",
-    "_index": "iit-logs-access-2021.04.20",
+    "_index": "nrm-logs-access-2021.04.20",
     "apache": Object {
       "version": "20120211",
+    },
+    "client": Object {
+      "as": Object {
+        "number": 852,
+        "organization": Object {
+          "name": "ASN852",
+        },
+      },
+      "geo": Object {
+        "city_name": "Victoria",
+        "continent_code": "NA",
+        "continent_name": "North America",
+        "country_iso_code": "CA",
+        "country_name": "Canada",
+        "location": Object {
+          "lat": 48.4771,
+          "lon": -123.5313,
+        },
+        "postal_code": "V9B",
+        "region_iso_code": "BC",
+        "region_name": "British Columbia",
+        "timezone": "America/Vancouver",
+      },
+      "ip": "2001:569:be94:4700:61b4:917e:808:e3c6",
     },
     "event": Object {
       "category": "web",
@@ -71,30 +95,6 @@ Array [
       "format": "v1.0",
     },
     "message": "v1.0 20120211 \\"https://testapps.nrs.gov.bc.ca:443\\" \\"2001:569:be94:4700:61b4:917e:808:e3c6\\" [20/Apr/2021:15:10:40 -0700] \\"POST /int/fncs/activities/details.xhtml HTTP/1.1\\" 200 2600 bytes 1112 bytes \\"https://testapps.nrs.gov.bc.ca/int/fncs/activities/details.xhtml?activityGuid=0123C676CBAB461E8C6A0A14567A16AC\\" \\"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36\\" 133 ms, \\"TLSv1.2\\" \\"ECDHE-RSA-AES256-GCM-SHA384\\"",
-    "source": Object {
-      "as": Object {
-        "number": 852,
-        "organization": Object {
-          "name": "ASN852",
-        },
-      },
-      "geo": Object {
-        "city_name": "Victoria",
-        "continent_code": "NA",
-        "continent_name": "North America",
-        "country_iso_code": "CA",
-        "country_name": "Canada",
-        "location": Object {
-          "lat": 48.4771,
-          "lon": -123.5313,
-        },
-        "postal_code": "V9B",
-        "region_iso_code": "BC",
-        "region_name": "British Columbia",
-        "timezone": "America/Vancouver",
-      },
-      "ip": "2001:569:be94:4700:61b4:917e:808:e3c6",
-    },
     "tls": Object {
       "cypher": "ECDHE-RSA-AES256-GCM-SHA384",
       "version_protocol": "TLSv1.2",
@@ -113,27 +113,13 @@ Array [
       "uri": "//testapps.nrs.gov.bc.ca/int/fncs/activities/details.xhtml",
     },
     "user_agent": Object {
-      "browser": Object {
-        "major": "89",
-        "name": "Chrome",
-        "version": "89.0.4389.128",
-      },
-      "cpu": Object {
-        "architecture": "amd64",
-      },
-      "device": Object {
-        "model": undefined,
-        "type": undefined,
-        "vendor": undefined,
-      },
-      "engine": Object {
-        "name": "Blink",
-        "version": "89.0.4389.128",
-      },
+      "name": "Chrome",
+      "original": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36",
       "os": Object {
         "name": "Windows",
         "version": "10",
       },
+      "version": "89.0.4389.128",
     },
   },
 ]

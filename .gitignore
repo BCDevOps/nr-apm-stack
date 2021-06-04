@@ -107,3 +107,9 @@ dist
 /**/.terraform
 *.tfstate
 *.tfstate.backup
+event-stream-processing/lib
+*.local
+*.local.ps1
+.terragrunt-cache
+*.lock.hcl
+*.env

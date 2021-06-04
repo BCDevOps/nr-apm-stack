@@ -3,6 +3,7 @@ import { injectable } from "inversify";
 import { Parser } from "./parser.isvc";
 import * as lodash from 'lodash'
 import {knownDomains} from './known-domains'
+import * as querystring from 'querystring';
 
 const knownAppContextRegex = /^(?<labels__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata))(\/((geoserver)|(pls)))?)\/(?<labels__application>[^\/]*).*$/m;
 
@@ -13,10 +14,7 @@ export class ParserApplicationClasification implements Parser  {
     }
     apply(record: any): void {
         const urlDomain:string = lodash.get(record, 'url.domain');
-        const urlPath:string = lodash.get(record, 'url.path');
-        
-        //lodash.set(record, 'url.uri', '//' + lodash.get(record, 'url.domain','unknown') + lodash.get(record, 'url.path','/unknown'))
-        //lodash.set(record, 'url.full', lodash.get(record, 'url.scheme','unknown') + '://' + lodash.get(record, 'url.domain','unknown') + lodash.get(record, 'url.path','/unknown'))
+        const urlPath:string = lodash.get(record, 'url.path');        
 
         for (const knownDomain of knownDomains) {
             if (lodash.isString(knownDomain.regex)) {
@@ -39,6 +37,16 @@ export class ParserApplicationClasification implements Parser  {
         }
         if (lodash.isNil(lodash.get(record, 'labels.application')) && urlPath.startsWith('/clp-cgi')){
             lodash.set(record, 'labels.application','clp-cgi')
+        }
+        // https://www.oracle-and-apex.com/apex-url-format/
+        if (lodash.get(record, 'labels.application') === 'apex'){
+            const qs = lodash.get(record, 'url.query')
+            if (qs) {
+                const qsmap = querystring.parse(qs)
+                if (qsmap.p){
+                    lodash.set(record, 'labels.application','apex-'+(qsmap.p as string).split(':')[0])
+                }
+            }
         }
     }
 }

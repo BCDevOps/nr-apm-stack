@@ -7,6 +7,8 @@ import { AwsHttpClient, HttpBufferedResponse, HttpRequestOptions, HttpResponseWr
 import { APACHE_ACCESS_LOG_EVENT_SIGNATURE } from "./parser.apache.svc";
 import { Randomizer } from "./randomizer.isvc";
 import { Logger } from "./logger.isvc";
+import { LoggerVoidImpl } from "./logger-void.svc";
+import { APACHE_LOG_COMBINED_FORMAT_1, APACHE_LOG_COMBINED_KEEPALIVE, APACHE_LOG_V1_FORMAT_BAD_1 } from "./fixture-apache-log";
 
 const myContainer = buildContainer()
 
@@ -40,7 +42,7 @@ function mockContext(): Context {
 beforeEach(() => {
     myContainer.snapshot();
     myContainer.rebind<Randomizer>(TYPES.Randomizer).toConstantValue({randomBytes:(size: number)=>{ return Buffer.from([0x62, 0x75, 0x66, 0x66, 0x65, 0x72])}})
-    myContainer.rebind<Logger>(TYPES.Logger).toConstantValue({log:()=>{}})
+    myContainer.rebind<Logger>(TYPES.Logger).to(LoggerVoidImpl)
 })
 
 afterEach(() => {
@@ -125,7 +127,83 @@ for (let index = 1; index <= 2; index++) {
         const events = await myContainer.get<KinesisStreamHandler>(TYPES.KnesisStreamHandler).transformToElasticCommonSchema(event)
         await expect(events).toHaveLength(1);
         await expect(events[0]).toHaveProperty('_index')
-        await expect(events[0]).toHaveProperty('source.ip')
-        await expect(events[0]).toHaveProperty('source.geo')
+        await expect(events[0]).toHaveProperty('client.ip')
+        await expect(events[0]).toHaveProperty('client.geo')
     });    
 }
+
+test('e2e - Apache combined format', async () => {
+    const ctx:Context = mockContext()
+    const logEvent = Object.assign({message: APACHE_LOG_COMBINED_FORMAT_1}, APACHE_ACCESS_LOG_EVENT_SIGNATURE)
+    const record = {
+        kinesis:{
+            sequenceNumber: '123',
+            data: Buffer.from(JSON.stringify(logEvent), 'utf8').toString('base64')
+        }
+    } as any as KinesisStreamRecord
+    const event:KinesisStreamEvent = {Records:[record]}
+    const documents = await myContainer.get<KinesisStreamHandler>(TYPES.KnesisStreamHandler).transformToElasticCommonSchema(event)
+    await expect(documents).toHaveLength(1);
+    for (const document of documents) {
+        expect(document).toHaveProperty('url.uri')
+        expect(document).not.toHaveProperty('url.scheme')
+        expect(document).not.toHaveProperty('url.domain')
+        expect(document).not.toHaveProperty('url.port')
+        expect(document).not.toHaveProperty('url.full')
+    }
+    await expect(documents).toMatchSnapshot('3ac5c5a8-241c-4501-9f25-4981a34e5d02')
+});
+test('e2e - v1 bad 1', async () => {
+    const ctx:Context = mockContext()
+    const logEvent = Object.assign({message: APACHE_LOG_V1_FORMAT_BAD_1}, APACHE_ACCESS_LOG_EVENT_SIGNATURE)
+    const record = {
+        kinesis:{
+            sequenceNumber: '123',
+            data: Buffer.from(JSON.stringify(logEvent), 'utf8').toString('base64')
+        }
+    } as any as KinesisStreamRecord
+    const event:KinesisStreamEvent = {Records:[record]}
+    const documents = await myContainer.get<KinesisStreamHandler>(TYPES.KnesisStreamHandler).transformToElasticCommonSchema(event)
+    await expect(documents).toHaveLength(1);
+    for (const document of documents) {
+        expect(document).toHaveProperty('http.request.line')
+        expect(document).toHaveProperty('http.request.method')
+        expect(document).toHaveProperty('http.request.bytes')
+        expect(document).toHaveProperty('http.response.bytes')
+        expect(document).toHaveProperty('http.response.status_code')
+        expect(document).toHaveProperty('http.version')
+        expect(document).toHaveProperty('url.uri')
+        expect(document).toHaveProperty('url.scheme', 'http')
+        expect(document).toHaveProperty('url.domain')
+        expect(document).toHaveProperty('url.port')
+        expect(document).toHaveProperty('url.full')
+    }
+    //await expect(documents).toMatchSnapshot('3ac5c5a8-241c-4501-9f25-4981a34e5d02')
+});
+
+test('e2e - combined - keepalive', async () => {
+    const ctx:Context = mockContext()
+    const logEvent = Object.assign({message: APACHE_LOG_COMBINED_KEEPALIVE.message}, APACHE_ACCESS_LOG_EVENT_SIGNATURE)
+    const record = {
+        kinesis:{
+            sequenceNumber: '123',
+            data: Buffer.from(JSON.stringify(logEvent), 'utf8').toString('base64')
+        }
+    } as any as KinesisStreamRecord
+    const event:KinesisStreamEvent = {Records:[record]}
+    const documents = await myContainer.get<KinesisStreamHandler>(TYPES.KnesisStreamHandler).transformToElasticCommonSchema(event)
+    await expect(documents).toHaveLength(1);
+    for (const document of documents) {
+        expect(document).toHaveProperty('http.request.line', 'GET /keepalive.html HTTP/1.1')
+        expect(document).toHaveProperty('http.request.method')
+        expect(document).toHaveProperty('http.response.bytes')
+        expect(document).toHaveProperty('http.response.status_code')
+        expect(document).toHaveProperty('http.version')
+        expect(document).toHaveProperty('url.uri')
+        expect(document).not.toHaveProperty('url.scheme')
+        expect(document).not.toHaveProperty('url.domain')
+        expect(document).not.toHaveProperty('url.port')
+        expect(document).not.toHaveProperty('url.full')
+    }
+    //await expect(documents).toMatchSnapshot('3ac5c5a8-241c-4501-9f25-4981a34e5d02')
+});

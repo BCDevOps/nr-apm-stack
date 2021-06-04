@@ -6,12 +6,15 @@ import { Randomizer } from "./randomizer.isvc";
 import * as lodash from 'lodash'
 import { ParserEcs } from "./parser.ecs.svc";
 import { ParserApplicationClasification } from "./parser.apps.svc";
+import { Logger } from "./logger.isvc";
+import { LoggerVoidImpl } from "./logger-void.svc";
 
 const myContainer = buildContainer()
 
 beforeEach(() => {
     myContainer.snapshot();
     myContainer.rebind<Randomizer>(TYPES.Randomizer).toConstantValue({randomBytes:(size: number)=>{ return Buffer.from([0x62, 0x75, 0x66, 0x66, 0x65, 0x72])}})
+    myContainer.rebind<Logger>(TYPES.Logger).to(LoggerVoidImpl)
 })
 
 afterEach(() => {

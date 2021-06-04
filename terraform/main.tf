@@ -70,6 +70,32 @@ variable "target_env" {
   default = null
 }
 
+variable "master_node_instance_count" {
+  type = number
+  default = 0
+}
+
+variable "master_node_instance_type" {
+  type = string
+  default = "r5.large.elasticsearch"
+}
+
+variable "data_node_instance_count" {
+  type = number
+  default = 2
+}
+
+variable "data_node_instance_type" {
+  type = string
+  default = "r5.large.elasticsearch"
+}
+
+variable "data_node_volume_size" {
+  type = number
+  default = 20
+}
+
+
 provider "aws" {
   region = var.region
   assume_role {
@@ -206,7 +232,7 @@ CONFIG
 
 resource "aws_elasticsearch_domain" "es" {
   domain_name           = local.es_domain_name
-  elasticsearch_version = "7.9"
+  elasticsearch_version = "7.10"
   # VPC deployment is not supported atm. We can used public endpoint while we experiment
   #vpc_options {
   #  subnet_ids         = data.aws_subnet_ids.web.ids
@@ -230,18 +256,20 @@ resource "aws_elasticsearch_domain" "es" {
     }
   }
   cluster_config {
-    dedicated_master_enabled = false
+    dedicated_master_enabled = var.master_node_instance_count > 0 ? true : false
+    dedicated_master_count = var.master_node_instance_count
+    dedicated_master_type = var.master_node_instance_type
     warm_enabled = false
-    instance_count = 2
-    instance_type = "r5.large.elasticsearch"
+    instance_count = var.data_node_instance_count
+    instance_type = var.data_node_instance_type
     zone_awareness_enabled = true
     zone_awareness_config {
-      availability_zone_count = 2
+      availability_zone_count = var.master_node_instance_count > 0 ? 2 : 0
     }
   }
   ebs_options {
     ebs_enabled = true
-    volume_size = 10
+    volume_size = var.data_node_volume_size
   }
   node_to_node_encryption {
     enabled = true
@@ -263,7 +291,7 @@ resource "aws_elasticsearch_domain" "es" {
 resource "aws_kinesis_stream" "iit_logs" {
   name             = "nress${ var.suffix }-iit-logs"
   enforce_consumer_deletion = true
-  shard_count      = 2
+  shard_count      = 4
   retention_period = 24
 
   shard_level_metrics = [
@@ -390,7 +418,7 @@ resource "aws_lambda_function" "lambda_iit_agents" {
   runtime       = "nodejs12.x"
   handler       = "index.kinesisStreamHandler"
   memory_size   = 1024
-  timeout       = 120
+  timeout       = 60
   s3_bucket     = data.aws_s3_bucket_object.lambda_stream_processing_code.bucket
   s3_key        = data.aws_s3_bucket_object.lambda_stream_processing_code.key
   s3_object_version = data.aws_s3_bucket_object.lambda_stream_processing_code.version_id
@@ -424,15 +452,8 @@ resource "null_resource" "es_configure" {
 curl -sSL -o /tmp/node-v12.22.1-linux-x64.tar.gz https://nodejs.org/dist/latest-v12.x/node-v12.22.1-linux-x64.tar.gz
 mkdir /home/terraform/node
 tar -xf /tmp/node-v12.22.1-linux-x64.tar.gz -C /home/terraform/node --strip-components=1
-set -x
-env
-echo "pwd=$(pwd)"
-#ls -la /home/terraform/
-#ls -la /env/
-#ls -la /terraform/
 export PATH=/home/terraform/node/bin:$PATH
-ps -efww
-npx @bcgov/nrdk deploy --config-script=./_pipeline/lib/config.js --deploy-script=./_pipeline/lib/deploy.js --pr=${var.pr} --env=${var.env}
+npx -p @aws-sdk/client-secrets-manager -p @bcgov/nrdk nrdk deploy --config-script=./_pipeline/lib/config.js --deploy-script=./_pipeline/lib/deploy.js --pr=${var.pr} --env=${var.env}
 EOF
   environment = {
     AWS_ASSUME_ROLE = local.iam_role_arm
@@ -441,9 +462,11 @@ EOF
   depends_on = [aws_elasticsearch_domain.es]
 }
 
-
 provider "elasticsearch" {
   url = "https://${aws_elasticsearch_domain.es.endpoint}"
+  healthcheck = false
+  elasticsearch_version = aws_elasticsearch_domain.es.elasticsearch_version
+  aws_assume_role_arn = local.iam_role_arm
 }
 
 resource "elasticsearch_opendistro_role" "iit_logs_writer" {
@@ -453,7 +476,7 @@ resource "elasticsearch_opendistro_role" "iit_logs_writer" {
   cluster_permissions = ["indices:data/write/bulk","indices:admin/create", "create_index"]
 
   index_permissions {
-    index_patterns  = ["iitd-*", "iit-*"]
+    index_patterns  = ["iitd-*", "iit-*", "nrm-*"]
     allowed_actions = ["indices:data/write/bulk","indices:data/write/index","indices:data/write/bulk*","create_index"]
   }
   depends_on = [aws_elasticsearch_domain.es]
@@ -466,35 +489,3 @@ resource "elasticsearch_opendistro_roles_mapping" "iit_logs_writer_mapper" {
     aws_iam_role.lambda_iit_agents.arn
   ]
 }
-
-/*
-provider "keycloak" {
-    // client_id      env:KEYCLOAK_CLIENT_ID
-    // client_secret  env:KEYCLOAK_CLIENT_SECRET
-    // url            env:KEYCLOAK_URL
-}
-
-data "keycloak_realm" "realm" {
-    realm = "ichqx89w"
-}
-
-resource "keycloak_saml_client" "saml_client" {
-  realm_id  = data.keycloak_realm.realm.id
-  client_id = "https://${aws_elasticsearch_domain.es.endpoint}"
-  idp_initiated_sso_url_name = "https://${aws_elasticsearch_domain.es.endpoint}/_plugin/kibana/_opendistro/_security/saml/acs/idpinitiated"
-  name = "AWS ElasticSearch"
-  name_id_format = "username"
-  sign_assertions = false
-  sign_documents = true
-  signature_algorithm = "RSA_SHA256"
-  valid_redirect_uris = ["https://${aws_elasticsearch_domain.es.endpoint}/*"]
-  force_post_binding = true
-}
-
-resource "keycloak_saml_client_default_scopes" "client_default_scopes" {
-  realm_id  = data.keycloak_realm.realm.id
-  client_id = keycloak_saml_client.saml_client.id
-  default_scopes = [ "web-origins", "profile" , "email" ]
-}
-
-*/

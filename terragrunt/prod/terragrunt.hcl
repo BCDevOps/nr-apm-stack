@@ -31,8 +31,13 @@ generate "inputs" {
   contents = <<EOF
   env = "prod"
   pr = "0"
-  suffix = "-0"
-  iit_lambda_code_bucket_key_version = "BGBXBdWj2d5QkBPqSiuAHifShr9m6qBE"
+  suffix = "-prod"
+  iit_lambda_code_bucket_key_version = "QWhIlBI6hTQzBjzgCYdymbYis02NOVWQ"
+  master_node_instance_count = 3
+  master_node_instance_type = "c5.large.elasticsearch"
+  data_node_instance_count = 2
+  data_node_instance_type = "r5.large.elasticsearch"
+  data_node_volume_size = 100
 EOF
 }
 
@@ -51,11 +56,5 @@ remote_state {
     config = {
         path = "${get_terragrunt_dir()}/terraform.tfstate"
     }
-}
-inputs = {
-  env = "prod"
-  pr = "0"
-  suffix = ""
-  iit_lambda_code_bucket_key_version = "BGBXBdWj2d5QkBPqSiuAHifShr9m6qBE"
 }
 */

@@ -15,14 +15,24 @@ export class GeoIpImpl implements GeoIp  {
         const asnLookupResponse = this._asnLookup.lookup(ipAddress)
         const resultGeo: any = {}
         if (cityLookupResponse) {
-            Object.assign(resultGeo, {
-                continent_name: cityLookupResponse.continent.names.en,
-                continent_code: cityLookupResponse.continent.code,
-                country_name: cityLookupResponse.country.names.en,
-                country_iso_code: cityLookupResponse.country.iso_code,
-                location: {lat: cityLookupResponse.location.latitude, lon: cityLookupResponse.location.longitude},
-                timezone: cityLookupResponse.location.time_zone,
-            })
+            if (cityLookupResponse.continent){
+                Object.assign(resultGeo, {
+                    continent_name: cityLookupResponse.continent?.names?.en,
+                    continent_code: cityLookupResponse.continent.code,
+                })
+            }
+            if (cityLookupResponse.country){
+                Object.assign(resultGeo, {
+                    country_name: cityLookupResponse.country?.names?.en,
+                    country_iso_code: cityLookupResponse.country?.iso_code,
+                })
+            }
+            if (cityLookupResponse.location){
+                Object.assign(resultGeo, {
+                    location: {lat: cityLookupResponse.location.latitude, lon: cityLookupResponse.location.longitude},
+                    timezone: cityLookupResponse.location.time_zone,
+                })
+            }
             if (cityLookupResponse?.postal?.code) {
                 resultGeo.postal_code = cityLookupResponse.postal.code
             }

@@ -1,17 +1,22 @@
 import { KinesisStreamEvent, KinesisStreamRecord } from "aws-lambda";
 import { create as buildContainer, TYPES } from "./inversify.config";
 import { KinesisStreamHandler } from "./kinesisStreamHandler.isvc";
-import { APACHE_ACCESS_LOG_EVENT_SIGNATURE } from "./parser.apache.svc";
+import { APACHE_ACCESS_LOG_EVENT_SIGNATURE, ParserApacheImpl } from "./parser.apache.svc";
 import { Randomizer } from "./randomizer.isvc";
 import * as lodash from 'lodash'
-import { ParserEcs } from "./parser.ecs.svc";
 import { ParserApplicationClasification } from "./parser.apps.svc";
+import { Logger } from "./logger.isvc";
+import { LoggerVoidImpl } from "./logger-void.svc";
+import { Container } from "inversify";
+import { Parser } from "./parser.isvc";
+import { APACHE_LOG_V1_APEX_1 } from "./fixture-apache-log";
 
 const myContainer = buildContainer()
 
 beforeEach(() => {
     myContainer.snapshot();
     myContainer.rebind<Randomizer>(TYPES.Randomizer).toConstantValue({randomBytes:(size: number)=>{ return Buffer.from([0x62, 0x75, 0x66, 0x66, 0x65, 0x72])}})
+    myContainer.rebind<Logger>(TYPES.Logger).to(LoggerVoidImpl)
 })
 
 afterEach(() => {
@@ -96,3 +101,24 @@ test('app - clp-cgi', async () => {
     }
 });
 
+test('app - apex', async () => {
+    const event:KinesisStreamEvent = {
+        Records: [
+            {
+                kinesis:{
+                    data: Buffer.from(JSON.stringify(lodash.merge({}, APACHE_ACCESS_LOG_EVENT_SIGNATURE,
+                        {message: APACHE_LOG_V1_APEX_1}
+                    )), 'utf8').toString('base64')
+                }
+            } as any as KinesisStreamRecord,
+        ]
+    }
+    const handler = myContainer.get<KinesisStreamHandler>(TYPES.KnesisStreamHandler)
+    const documents = await handler.transformToElasticCommonSchema(event)
+    await expect(documents).toHaveLength(1);
+    //await expect(events).toMatchSnapshot('fe9ed426-57e5-4148-ab8e-0dce6b2c517e')
+    for (const event of documents) {
+        expect(event).toHaveProperty('labels.application', 'apex-200')
+        expect(event).toHaveProperty('labels.context')
+    }
+});

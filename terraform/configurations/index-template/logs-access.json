@@ -2232,7 +2232,28 @@
                     "type" : "text"
                   },
                   "path" : {
-                    "type" : "text"
+                    "ignore_above" : 1024,
+                    "type" : "keyword",
+                    "fields" : {
+                      "tree" : {
+                        "fielddata" : true,
+                        "analyzer" : "path_hierarchy_tree",
+                        "index" : true,
+                        "type" : "text"
+                      }
+                    }
+                  },
+                  "uri" : {
+                    "ignore_above" : 1024,
+                    "type" : "keyword",
+                    "fields" : {
+                      "tree" : {
+                        "fielddata" : true,
+                        "analyzer" : "path_hierarchy_tree",
+                        "index" : true,
+                        "type" : "text"
+                      }
+                    }
                   },
                   "query" : {
                     "type" : "text"
@@ -3289,7 +3310,19 @@
             "type" : "keyword",
             "fields" : {
               "tree" : {
-                "fielddata" : false,
+                "fielddata" : true,
+                "analyzer" : "path_hierarchy_tree",
+                "index" : true,
+                "type" : "text"
+              }
+            }
+          },
+          "uri" : {
+            "ignore_above" : 1024,
+            "type" : "keyword",
+            "fields" : {
+              "tree" : {
+                "fielddata" : true,
                 "analyzer" : "path_hierarchy_tree",
                 "index" : true,
                 "type" : "text"

@@ -94,8 +94,17 @@ export class ParserEcs implements Parser  {
                 const uriOriginal:string = value.substring(firstSpace, lastSpace).trim()
                 lodash.set(record, 'url.original', uriOriginal)
                 if (uriOriginal.startsWith('/')) {
-                    const url = new URL(`${lodash.get(record, 'url.scheme')}://${lodash.get(record, 'url.domain')}:${lodash.get(record, 'url.port')}${uriOriginal}`)
-                    lodash.merge(record.url, explodeURL(url))
+                    if (!lodash.isNil(lodash.get(record, 'url.scheme')) && !lodash.isNil(lodash.get(record, 'url.domain')) && !lodash.isNil(lodash.get(record, 'url.port'))) {
+                        const url = new URL(`${lodash.get(record, 'url.scheme')}://${lodash.get(record, 'url.domain')}:${lodash.get(record, 'url.port')}${uriOriginal}`)
+                        lodash.merge(record.url, explodeURL(url))
+                    } else {
+                        const url = new URL(`http://localhost:80${uriOriginal}`)
+                        lodash.merge(record.url, explodeURL(url))
+                        lodash.unset(record.url, 'scheme')
+                        lodash.unset(record.url, 'port')
+                        lodash.unset(record.url, 'domain')
+                        lodash.unset(record.url, 'full')
+                    }
                 }
             }
         }
@@ -103,8 +112,12 @@ export class ParserEcs implements Parser  {
             delete record.http.request.referrer.original
         }
         if (!lodash.isNil(lodash.get(record, 'http.request.referrer.original'))) {
-            const url = new URL(lodash.get(record, 'http.request.referrer.original'))
-            lodash.merge(record.http.request.referrer, explodeURL(url))
+            try {
+                const url = new URL(lodash.get(record, 'http.request.referrer.original'))
+                lodash.merge(record.http.request.referrer, explodeURL(url))
+            } catch (error) {
+                lodash.set(record, 'http.request.referrer.error', error.toString())
+            }
         }
     }
 }
