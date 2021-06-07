@@ -7,8 +7,9 @@ export interface ResultOperation {
 }
 
 export interface OpenSearchBulkResult {
-    errors: boolean,
-    items: ResultOperation[]
+    success: boolean,
+    errors: any[]
+    //items: ResultOperation[]
 }
 
 export interface OpenSearch {

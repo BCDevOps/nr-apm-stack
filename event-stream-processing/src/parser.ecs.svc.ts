@@ -67,7 +67,9 @@ function explodeURL(url: URL): any {
     if (url.hash.length > 1 ) {
         lodash.set(record, 'fragment', url.hash.substring(1))
     }
-    lodash.set(record, 'uri', `//${lodash.get(record, 'domain')}${lodash.get(record, 'path')}`)
+    const uri = `//${lodash.get(record, 'domain')}${lodash.get(record, 'path')}`
+    lodash.set(record, 'uri', uri)
+    lodash.set(record, 'file.directory', path.dirname(url.pathname))
     lodash.set(record, 'full', formatUrl(url, {auth: false}))
     return record
 }

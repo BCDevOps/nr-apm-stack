@@ -62,6 +62,7 @@ Array [
         "referrer": Object {
           "domain": "testapps.nrs.gov.bc.ca",
           "file": Object {
+            "directory": "/int/fncs/activities",
             "ext": "xhtml",
             "name": "details.xhtml",
           },
@@ -102,6 +103,7 @@ Array [
     "url": Object {
       "domain": "testapps.nrs.gov.bc.ca",
       "file": Object {
+        "directory": "/int/fncs/activities",
         "ext": "xhtml",
         "name": "details.xhtml",
       },
@@ -148,6 +150,9 @@ Object {
     "request": Object {
       "referrer": Object {
         "domain": "somewhere.com",
+        "file": Object {
+          "directory": "/",
+        },
         "full": "http://somewhere.com/",
         "original": "http://somewhere.com",
         "path": "/",
@@ -166,6 +171,9 @@ Object {
     "request": Object {
       "referrer": Object {
         "domain": "somewhere.com",
+        "file": Object {
+          "directory": "/",
+        },
         "full": "http://somewhere.com/",
         "original": "http://somewhere.com/",
         "path": "/",

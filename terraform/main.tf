@@ -489,3 +489,30 @@ resource "elasticsearch_opendistro_roles_mapping" "iit_logs_writer_mapper" {
     aws_iam_role.lambda_iit_agents.arn
   ]
 }
+
+resource "elasticsearch_opendistro_role" "nrm_read_all" {
+  role_name   = "nrm-read-all"
+  description = "NRM read role"
+  cluster_permissions = ["cluster_composite_ops"]
+  index_permissions {
+    index_patterns  = ["iitd-*", "iit-*", "nrm-*"]
+    allowed_actions = ["read"]
+    masked_fields = ["source.ip", "client.ip"]
+    fls = ["~message"]
+  }
+  index_permissions {
+    index_patterns  = [".kibana_*"]
+    allowed_actions = ["kibana_all_read"]
+  }
+  tenant_permissions {
+    tenant_patterns = ["infraops"]
+    allowed_actions = ["kibana_all_read"]
+  }
+  depends_on = [aws_elasticsearch_domain.es]
+}
+
+resource "elasticsearch_opendistro_roles_mapping" "nrm_read_all_mapper" {
+  role_name     = elasticsearch_opendistro_role.nrm_read_all.id
+  description   = "Mapping KC role to ES role"
+  backend_roles = ["nrm-read-all"]
+}

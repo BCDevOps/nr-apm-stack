@@ -21,6 +21,7 @@ Array [
         "referrer": Object {
           "domain": "apps.nrs.gov.bc.ca",
           "file": Object {
+            "directory": "/ext/raad3",
             "name": "map",
           },
           "full": "https://apps.nrs.gov.bc.ca/ext/raad3/map?execution=e1s1",
@@ -73,6 +74,7 @@ Array [
     },
     "url": Object {
       "file": Object {
+        "directory": "/ext/raad3",
         "name": "map",
       },
       "original": "/ext/raad3/map?execution=e1s1&_eventId=agreed",
@@ -119,35 +121,6 @@ Object {
         "data": "eyJtZXNzYWdlIjoidjEuMCAyMDEyMDIxMSBcImh0dHBzOi8vdGVzdGFwcHMubnJzLmdvdi5iYy5jYTo0NDNcIiBcIjIwMDE6NTY5OmJlOTQ6NDcwMDo2MWI0OjkxN2U6ODA4OmUzYzZcIiBbMjAvQXByLzIwMjE6MTU6MTA6NDAgLTA3MDBdIFwiUE9TVCAvaW50L2ZuY3MvYWN0aXZpdGllcy9kZXRhaWxzLnhodG1sIEhUVFAvMS4xXCIgMjAwIDI2MDAgYnl0ZXMgMTExMiBieXRlcyBcImh0dHBzOi8vdGVzdGFwcHMubnJzLmdvdi5iYy5jYS9pbnQvZm5jcy9hY3Rpdml0aWVzL2RldGFpbHMueGh0bWw/YWN0aXZpdHlHdWlkPTAxMjNDNjc2Q0JBQjQ2MUU4QzZBMEExNDU2N0ExNkFDXCIgXCJNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXT1c2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzg5LjAuNDM4OS4xMjggU2FmYXJpLzUzNy4zNlwiIDEzMyBtcywgXCJUTFN2MS4yXCIgXCJFQ0RIRS1SU0EtQUVTMjU2LUdDTS1TSEEzODRcIiIsImV2ZW50Ijp7ImtpbmQiOiJldmVudCIsImNhdGVnb3J5Ijoid2ViIiwiZGF0YXNldCI6ImFwYWNoZS5hY2Nlc3MiLCJpbmdlc3RlZCI6IjIwMjEtMDUtMjZUMTg6NDc6NDAuMzE0LTA3OjAwIn19",
         "sequenceNumber": "456",
       },
-    },
-  ],
-}
-`;
-
-exports[`handler - all errors: e1e643c5-5a81-4695-a367-82a1f093ed49 1`] = `
-Object {
-  "batchItemFailures": Array [
-    Object {
-      "itemIdentifier": "123",
-    },
-    Object {
-      "itemIdentifier": "456",
-    },
-  ],
-}
-`;
-
-exports[`handler - partial error: e1e643c5-5a81-4695-a367-82a1f093ed49 1`] = `
-Object {
-  "batchItemFailures": Array [
-    Object {
-      "itemIdentifier": "1",
-    },
-    Object {
-      "itemIdentifier": "4",
-    },
-    Object {
-      "itemIdentifier": "2",
     },
   ],
 }

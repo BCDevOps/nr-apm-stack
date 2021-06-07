@@ -1,6 +1,8 @@
 import { Container } from "inversify";
 import { AwsHttpClient, HttpBufferedResponse, HttpRequestOptions, HttpResponseWrapper } from "./aws-http-client.isvc";
 import { TYPES } from "./inversify.types";
+import { LoggerVoidImpl } from "./logger-void.svc";
+import { Logger } from "./logger.isvc";
 import { OpenSearch } from "./opensearch.isvc";
 import { OpenSearchImpl } from "./opensearch.svc";
 
@@ -24,10 +26,12 @@ test('index', async () => {
     const myContainer = new Container();
     myContainer.bind<OpenSearch>(TYPES.OpenSearch).to(OpenSearchImpl);
     myContainer.bind<AwsHttpClient>(TYPES.AwsHttpClient).toConstantValue(awsHttpClientMock);
+    myContainer.bind<Logger>(TYPES.Logger).to(LoggerVoidImpl);
     const openSearchClient = myContainer.get<OpenSearch>(TYPES.OpenSearch);
-    const output = await openSearchClient.bulk([
+    const docs = [
         {'@timestamp': new Date(), message:'Hello', _index:'my-index1', _id: '1'},
         {'@timestamp': new Date(), message:'Hello', _index:'my-index2', _id: '2'}
-    ])
-    expect(output).toEqual({"errors": false, items:[{"create":{_id: "1"}}, {"create":{_id: "2"}}]})
+    ]
+    const output = await openSearchClient.bulk(docs)
+    expect(output).toEqual({"success": true, errors:[]})
 });

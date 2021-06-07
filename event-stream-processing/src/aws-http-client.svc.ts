@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
 import {HttpRequest, HttpResponse} from '@aws-sdk/protocol-http'
 import {Sha256} from '@aws-crypto/sha256-js'
 import {defaultProvider} from '@aws-sdk/credential-provider-node'
@@ -7,6 +7,8 @@ import {SignatureV4} from '@aws-sdk/signature-v4'
 import {NodeHttpHandler} from '@aws-sdk/node-http-handler'
 import { AwsHttpClient, HttpRequestOptions } from "./aws-http-client.isvc";
 import { GenericError } from "./GenericError";
+import { Logger } from "./logger.isvc";
+import { TYPES } from "./inversify.types";
 
 async function createSignedHttpRequest(httpRequestParams: HttpRequestOptions): Promise<HttpRequest> { 
   const httpRequest = new HttpRequest(httpRequestParams);
@@ -22,6 +24,7 @@ async function createSignedHttpRequest(httpRequestParams: HttpRequestOptions): P
 
 @injectable()
 export class AwsHttpClientImpl implements AwsHttpClient  {
+  @inject(TYPES.Logger) private logger:Logger;
   async executeSignedHttpRequest(httpRequestParams: HttpRequestOptions): Promise<{ response: HttpResponse; }> {
     const signedHttpRequest = await createSignedHttpRequest(httpRequestParams) as HttpRequest
     const nodeHttpHandler = new NodeHttpHandler();
@@ -34,6 +37,9 @@ export class AwsHttpClientImpl implements AwsHttpClient  {
     return new Promise((resolve, reject) => {
       const incomingMessage = res.response.body;
       let body = "";
+      incomingMessage.on("readable", () => {
+        this.logger.log(`Received ${res.response.statusCode} from ES`)
+      });
       incomingMessage.on("data", (chunk: any) => {
         body += chunk;
       });

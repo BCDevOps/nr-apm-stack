@@ -4,17 +4,21 @@ import { OpenSearch, OpenSearchBulkResult } from "./opensearch.isvc";
 import {URL} from 'url'
 import { TYPES } from "./inversify.types";
 import { AwsHttpClient } from "./aws-http-client.isvc";
+import { Logger } from "./logger.isvc";
 
 @injectable()
 export class OpenSearchImpl implements OpenSearch  {
     @inject(TYPES.AwsHttpClient) private awsHttpClient:AwsHttpClient;
+    @inject(TYPES.Logger) private logger:Logger;
 
     private url: URL = new URL(process.env.ES_URL || 'http://localhost')
     async bulk(documents: any[]): Promise<OpenSearchBulkResult> {
-        const filter_path = '' //process.env.ES_BULK_FILTER_PATCH || 'took,errors,items.*.error,items.*._id'
+        const index:Map<string, any> = new Map()
+        const filter_path = 'took,errors,items.*.error,items.*._id'
         let body = '';
         const parsingErrors: any[] = []
         for (const doc of documents) {
+          index.set(doc._id, doc)
           if (!doc._error) {
             const _index = doc._index
             const _type = doc._type || '_doc'
@@ -36,6 +40,7 @@ export class OpenSearchImpl implements OpenSearch  {
         if (filter_path.length > 0){
           query.filter_path = filter_path
         }
+        this.logger.log(`Posting to ES`)
         return await this.awsHttpClient.executeSignedHttpRequest({
             hostname: this.url.hostname,
             protocol: 'https',
@@ -51,14 +56,29 @@ export class OpenSearchImpl implements OpenSearch  {
           .then(this.awsHttpClient.waitAndReturnResponseBody)
           .then((value: any)=>{
             const body = JSON.parse(value.body)
+            const bodyItems:any[] = body.items
+            const errors: any[] = []
             if (parsingErrors.length > 0 ){
-              const items:any[] = body.items
               for (const doc of parsingErrors) {
-                items.push({create:{_id: doc._id, error: doc._error}})
+                errors.push(doc)
               }
-              return {errors: true, items}
             }
-            return body
+            for (const item of bodyItems) {
+              if (item.create.error) {
+                  const doc = index.get(item.create._id)
+                  if (doc) {
+                    doc._error = item.create.error
+                    this.logger.log('ES_ERROR '+JSON.stringify(doc))
+                    // const _idAsString = Buffer.from(item.create._id, 'hex').toString('utf8')
+                    // const sequenceNumber = _idAsString.substring(0, _idAsString.lastIndexOf('.'))
+                    // batchItemFailures.push({itemIdentifier: sequenceNumber})
+                    errors.push(doc)
+                  } else {
+                    this.logger.log('ES_ERROR_DOC_NOT_FOUND '+JSON.stringify(item))
+                  }
+              }
+            }
+            return {success: errors.length === 0, errors: errors}
           })
     }
 }

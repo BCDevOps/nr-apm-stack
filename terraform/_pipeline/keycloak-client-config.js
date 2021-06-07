@@ -11,7 +11,7 @@ module.exports.process = function (p) {
             'saml.multivalued.roles': 'false',
             'saml.force.post.binding': 'true',
             'saml.encrypt': 'false',
-            'saml_idp_initiated_sso_url_name': `${baseUrl}/_plugin/kibana/_opendistro/_security/saml/acs/idpinitiated`,
+            'saml_idp_initiated_sso_url_name': 'apm',
             'saml.server.signature': 'true',
             'saml.server.signature.keyinfo.ext': 'false',
             'exclude.session.state.from.auth.response': 'false',
@@ -28,7 +28,7 @@ module.exports.process = function (p) {
         },
         redirectUris: [`${baseUrl}/*`],
         defaultClientScopes: [ 'web-origins', 'profile', 'email' ],
-        roles: [{name:'kibana_user'}, {name: 'all_access'}, {name: 'irs-developer'}],
+        roles: [{name:'kibana_user'}, {name: 'all_access'}, {name: 'irs-developer'}, {name: 'nrm-read-all'}],
         protocolMappers: [
             {name: 'role list', protocol: 'saml', protocolMapper: 'saml-role-list-mapper', consentRequired: false, config: {single:'true', 'attribute.nameformat': 'Basic', 'attribute.name': 'roles', 'friendly.name': 'roles'}},
         ]

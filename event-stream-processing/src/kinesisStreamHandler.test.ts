@@ -55,7 +55,7 @@ test('handler - success', async () => {
     //myContainer.unbind(TYPES.OpenSearch)
     let openSearchMock = {
         bulk: (documents: any): Promise<OpenSearchBulkResult> =>{
-            return Promise.resolve({errors: false, items: []})
+            return Promise.resolve({success: true, errors: []})
         }
     }
     //myContainer.rebind()
@@ -71,14 +71,14 @@ test('handler - all errors', async () => {
     let openSearchMock = {
         bulk: (documents: any[]): Promise<OpenSearchBulkResult> =>{
             //return Promise.resolve({errors:false, items:[]})
-            return Promise.resolve({errors: true, items: documents.map(item => {return {create:{"_id":item._id, "error":{}}}})})
+            return Promise.resolve({success: false, errors: documents})
         }
     }
     //myContainer.rebind()
     myContainer.rebind<OpenSearch>(TYPES.OpenSearch).toConstantValue(openSearchMock);
     await expect(event).toMatchSnapshot('d52cf91b-50a5-4f26-9d3e-c312778360e0')
     const result = await myContainer.get<KinesisStreamHandler>(TYPES.KnesisStreamHandler).handle(event, ctx)
-    await expect(result).toMatchSnapshot('e1e643c5-5a81-4695-a367-82a1f093ed49')
+    await expect(result).toBeUndefined()
 });
 
 test('handler - partial error', async () => {
@@ -114,7 +114,7 @@ test('handler - partial error', async () => {
     myContainer.rebind<AwsHttpClient>(TYPES.AwsHttpClient).toConstantValue(awsHttpClientMock);
     // await expect(event).toMatchSnapshot('d52cf91b-50a5-4f26-9d3e-c312778360e0')
     const result = await myContainer.get<KinesisStreamHandler>(TYPES.KnesisStreamHandler).handle(event, ctx)
-    await expect(result).toMatchSnapshot('e1e643c5-5a81-4695-a367-82a1f093ed49')
+    await expect(result).toBeUndefined()
 });
 
 for (let index = 1; index <= 2; index++) {

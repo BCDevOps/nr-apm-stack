@@ -32,7 +32,7 @@ generate "inputs" {
   env = "prod"
   pr = "0"
   suffix = "-prod"
-  iit_lambda_code_bucket_key_version = "QWhIlBI6hTQzBjzgCYdymbYis02NOVWQ"
+  iit_lambda_code_bucket_key_version = "_tz3z4Zpd7Q8BfWTJmIqA8CxwJGAK_wC"
   master_node_instance_count = 3
   master_node_instance_type = "c5.large.elasticsearch"
   data_node_instance_count = 2

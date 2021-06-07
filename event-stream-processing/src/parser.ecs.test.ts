@@ -211,6 +211,7 @@ test('ecs - http.request.line - 04', async () => {
     expect(record).toHaveProperty('url.original', '/ext/farm/farm265.do;jsessionid=JA6pko6NolLG_MPnJNoBbx75a-aAV9x99zjo0ECs1tH-VVS0waj4!1029141353')
     expect(record).toHaveProperty('url.path', '/ext/farm/farm265.do')
     expect(record).toHaveProperty('url.path_param', 'jsessionid=JA6pko6NolLG_MPnJNoBbx75a-aAV9x99zjo0ECs1tH-VVS0waj4!1029141353')
+    expect(record).toHaveProperty('url.file.directory', '/ext/farm')
     expect(record).not.toHaveProperty('url.query')
 });
 
@@ -222,6 +223,7 @@ test('ecs - http.request.line - 05', async () => {
     expect(record).toHaveProperty('http.version', '1.1')
     expect(record).toHaveProperty('url.original', '/pub/oauth2/v1/oauth/token?disableDeveloperFilter=true&grant_type=client_credentials&scope=ACTIVEMQ.*')
     expect(record).toHaveProperty('url.path', '/pub/oauth2/v1/oauth/token')
+    expect(record).toHaveProperty('url.file.directory', '/pub/oauth2/v1/oauth')
     expect(record).toHaveProperty('url.query', 'disableDeveloperFilter=true&grant_type=client_credentials&scope=ACTIVEMQ.*')
 });
 
@@ -246,7 +248,7 @@ test('ecs - http.request.line - 07', async () => {
     expect(record).not.toHaveProperty('url.path_param')
     expect(record).not.toHaveProperty('url.query')
 });
-test.only('ecs - http.request.line - 08', async () => {
+test('ecs - http.request.line - 08', async () => {
     const parser = new ParserEcs()
     const record = {http:{request:{line:'GET /WebID/IISWebAgentIF.dll?postdata=\\"><script>foo</script> HTTP/1.1'}}, url:{scheme: 'https', port: "443", domain: 'localhost'}}
     parser.apply(record)

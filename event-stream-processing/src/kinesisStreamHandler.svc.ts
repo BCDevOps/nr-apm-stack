@@ -82,35 +82,13 @@ export class KinesisStreamHandlerImpl implements KinesisStreamHandler  {
     }
 
     async handle(event: KinesisStreamEvent, context: Context): Promise<any> {
-        const index:Map<string, any> = new Map()
         this.logger.log(`Transforming kinesis records to ES documents`)
         const docs = await this.transformToElasticCommonSchema(event)
-        for (const doc of docs) {
-            index.set(doc._id, doc)
-        }
         this.logger.log(`Submitting ${docs.length} documents to ES`)
         // console.log(JSON.stringify(docs, null, 2))
         return this.openSearchClient.bulk(docs).then(value => {
-            if (value.errors === true) {
-                this.logger.log(`Parsing errors`)
-                const batchItemFailures = []
-                let successCount = 0;
-                for (const item of value.items) {
-                    if (item.create.error) {
-                        this.logger.log(item.create)
-                        const _idAsString = Buffer.from(item.create._id, 'hex').toString('utf8')
-                        const sequenceNumber = _idAsString.substring(0, _idAsString.lastIndexOf('.'))
-                        batchItemFailures.push({itemIdentifier: sequenceNumber})
-                        this.logger.log(index.get(item.create._id))
-                    }else{
-                        successCount++
-                    }
-                }
-                this.logger.log(`${successCount} documents added`)
-                this.logger.log(`${batchItemFailures.length} documents failed`)
-                return Promise.resolve({batchItemFailures})
-            }
-            this.logger.log(`${docs.length} documents added`)
+            this.logger.log(`${docs.length - value.errors.length} documents added`)
+            this.logger.log(`${value.errors.length} documents failed`)
             return Promise.resolve() as Promise<any>
         })
     }
