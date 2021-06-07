@@ -221,6 +221,150 @@ const MyDeployer = class extends BasicDeployer {
     }
   } //end deployKeycloakClientUsingAdmin
 
+  async loadElasticSearchTenants(hostname, tenantsDirPath) {
+    const tenantsDirItems = fs.readdirSync(tenantsDirPath, {withFileTypes: true})
+    for (const tenantDirItem of tenantsDirItems) {
+      if (tenantDirItem.isDirectory()) {
+        const tenantName = tenantDirItem.name
+        //TODO: I don't know why the direct URL/path didn't work, but it works through through the console proxy
+        await executeSignedHttpRequest({
+          method: "POST",
+          body: fs.readFileSync(path.join(tenantsDirPath, tenantName, 'meta.json'), {encoding:'utf8'}),
+          headers: {
+            "Content-Type": "application/json",
+            "kbn-xsrf":"true",
+            host: hostname,
+          },
+          hostname,
+          path: '/_plugin/kibana/api/console/proxy',
+          query: {path:`/_opendistro/_security/api/tenants/${tenantName}`, method:'PUT'}
+        })
+        .then(waitAndReturnResponseBody)
+        .then(()=>console.log(`Tenant Loaded - ${tenantName}`))
+
+        const indexPatternDirItems = fs.readdirSync(path.join(tenantsDirPath, tenantName, 'index-pattern'), {withFileTypes: true})
+        for (const indexPatternItem of indexPatternDirItems) {
+          if (indexPatternItem.isFile() && indexPatternItem.name.endsWith('.json')) {
+            const indexPatternPath = path.join(tenantsDirPath, tenantName, 'index-pattern', indexPatternItem.name)
+            const indexPatternName = path.basename(indexPatternPath, '.json')
+            const indexPattern = JSON.parse(fs.readFileSync(indexPatternPath, {encoding:'utf8'}))
+            // https://search-nress-prod-vknktapr2rxt3aze4bqa3pfirq.ca-central-1.es.amazonaws.com/_plugin/kibana/api/index_patterns/_fields_for_wildcard?pattern=*-logs-access-*&meta_fields=_source&meta_fields=_id&meta_fields=_type&meta_fields=_index&meta_fields=_score
+            await executeSignedHttpRequest({
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                host: hostname,
+              },
+              hostname,
+              path: `/_plugin/kibana/api/index_patterns/_fields_for_wildcard`,
+              query: {pattern:'*-logs-access-*', meta_fields:['_source', '_id', 'type', 'index', '_score']}
+            })
+            .then(waitAndReturnResponseBody)
+            .then((response)=>{
+              // console.log(`Index Pattern Loaded - ${tenantName}/${indexPatternName}`)
+              if (response.statusCode === 200 ){
+                const body = JSON.parse(response.body)
+                if (body.fields.length > indexPattern.attributes.fields.length) {
+                indexPattern.attributes.fields = JSON.stringify(body.fields)
+                }
+              }else{
+                throw new Error(JSON.stringify(body.errors))
+              }
+            })
+            //console.dir({indexPatternFile,indexPatternName})
+            await executeSignedHttpRequest({
+              method: "POST",
+              body: JSON.stringify(indexPattern),
+              headers: {
+                "Content-Type": "application/json",
+                "securitytenant": tenantName,
+                "kbn-xsrf":"true",
+                host: hostname,
+              },
+              hostname,
+              path: `/_plugin/kibana/api/saved_objects/index-pattern/${indexPatternName}`,
+              query: {overwrite: 'true'}
+            })
+            .then(waitAndReturnResponseBody)
+            .then(()=>console.log(`Index Pattern Loaded - ${tenantName}/${indexPatternName}`))
+          }
+        }
+
+        const visualizationsDirItems = fs.readdirSync(path.join(tenantsDirPath, tenantName, 'visualizations'), {withFileTypes: true})
+        for (const visualizationItem of visualizationsDirItems) {
+          if (visualizationItem.isFile() && visualizationItem.name.endsWith('.ndjson')) {
+            const visualizationPath = path.join(tenantsDirPath, tenantName, 'visualizations', visualizationItem.name)
+            const visualizationFileName = path.basename(visualizationPath)
+            const visualizationName = path.basename(visualizationPath, '.ndjson')
+            const form = new FormData();
+            form.append("file", fs.readFileSync(visualizationPath,{encoding:'utf8'}), {contentType:'application/json', filename: visualizationFileName});
+            const buffer = form.getBuffer()
+            //console.dir({visualizationPath, form})
+            await executeSignedHttpRequest({
+              method: "POST",
+              body: buffer,
+              headers: {
+                "securitytenant": tenantName,
+                "kbn-xsrf":"true",
+                host: hostname,
+                ...form.getHeaders()
+              },
+              hostname,
+              path: '/_plugin/kibana/api/saved_objects/_import',
+              //path: '/api/saved_objects/_import',
+              query: {overwrite: 'true'}
+            })
+            .then(waitAndReturnResponseBody)
+            .then((response)=>{
+              if (response.statusCode === 200 ){
+                const body = JSON.parse(response.body)
+                if (body.success !== true ) {
+                  throw new Error(JSON.stringify(body.errors))
+                }
+              }
+            })
+            .then(()=>console.log(`Vizualization File Loaded - ${tenantName}/${visualizationName}`))
+          }
+        } // end for
+        const dashboardsDirPath = path.join(tenantsDirPath, tenantName, 'dashboards')
+        const dashboardsDirItems = fs.readdirSync(dashboardsDirPath, {withFileTypes: true})
+        for (const dashboardItem of dashboardsDirItems) {
+          if (dashboardItem.isFile() && dashboardItem.name.endsWith('.ndjson')) {
+            const dashboardPath = path.join(dashboardsDirPath, dashboardItem.name)
+            const dashboardFileName = path.basename(dashboardPath)
+            const form = new FormData();
+            form.append("file", fs.readFileSync(dashboardPath,{encoding:'utf8'}), {contentType:'application/json', filename: dashboardFileName})
+            const buffer = form.getBuffer()
+            //console.dir({visualizationPath, form})
+            await executeSignedHttpRequest({
+              method: "POST",
+              body: buffer,
+              headers: {
+                "securitytenant": tenantName,
+                "kbn-xsrf":"true",
+                host: hostname,
+                ...form.getHeaders()
+              },
+              hostname,
+              path: '/_plugin/kibana/api/saved_objects/_import',
+              //path: '/api/saved_objects/_import',
+              query: {overwrite: 'true'}
+            })
+            .then(waitAndReturnResponseBody)
+            .then((response)=>{
+              if (response.statusCode === 200 ){
+                const body = JSON.parse(response.body)
+                if (body.success !== true ) {
+                  throw new Error(JSON.stringify(body.errors))
+                }                
+              }
+            })
+            .then(()=>console.log(`Dashboard File Loaded - ${tenantName}/${dashboardFileName}`))
+          }
+        }// end for
+      }
+    } // end tenants for
+  }
   async configureElasticSearch(hostname){
     /*
     await executeSignedHttpRequest({
@@ -273,42 +417,10 @@ const MyDeployer = class extends BasicDeployer {
     .then(()=>console.log(`Ingest Pipeline Loaded - ${ingestPipelineName}`))
     //.then(output=>console.dir(output))
 
-    // Create Tenants
-    //TODO: I don't know why the direct URL/path didn't work, but it works through through the console proxy
-    await executeSignedHttpRequest({
-      method: "POST",
-      body: JSON.stringify({description:"Infrastructure and Operations"}),
-      headers: {
-        "Content-Type": "application/json",
-        "kbn-xsrf":"true",
-        host: hostname,
-      },
-      hostname,
-      path: '/_plugin/kibana/api/console/proxy',
-      query: {path:'/_opendistro/_security/api/tenants/infraops', method:'PUT'}
-    })
-    .then(waitAndReturnResponseBody)
-    .then(()=>console.log(`Tenant Loaded - infraops`))
+    // loadElasticSearchTenants(hostname, path.resolve(__dirname, '../../configurations/tenants'))
 
     //.then(output=>console.dir(output))
-    const indexPatternFile = path.resolve(__dirname, '../../configurations/index-pattern/logs-access.json')
-    const indexPatternName = path.basename(indexPatternFile, '.json')
-    //console.dir({indexPatternFile,indexPatternName})
-    await executeSignedHttpRequest({
-      method: "POST",
-      body: fs.readFileSync(indexPatternFile, {encoding:'utf8'}),
-      headers: {
-        "Content-Type": "application/json",
-        "securitytenant": "infraops",
-        "kbn-xsrf":"true",
-        host: hostname,
-      },
-      hostname,
-      path: `/_plugin/kibana/api/saved_objects/index-pattern/${indexPatternName}`,
-      query: {overwrite: 'true'}
-    })
-    .then(waitAndReturnResponseBody)
-    .then(()=>console.log(`Index Pattern Loaded - ${indexPatternName}`))
+    //const indexPatternFile = path.resolve(__dirname, '../../configurations/index-pattern/logs-access.json')
     //.then(output=>console.dir(output))
 
     /*
@@ -328,27 +440,7 @@ const MyDeployer = class extends BasicDeployer {
     .then(output=>console.dir(output))
     */
 
-    const form = new FormData();
-    const vizualizationFile = path.resolve(__dirname, '../../configurations/visualizations/applications.ndjson')
-    form.append("file", fs.readFileSync(vizualizationFile,{encoding:'utf8'}), {contentType:'application/json', filename:'applications.ndjson'});
-    const buffer = form.getBuffer()
-    //console.dir({vizualizationFile, form})
-    await executeSignedHttpRequest({
-      method: "POST",
-      body: buffer,
-      headers: {
-        "securitytenant": "infraops",
-        "kbn-xsrf":"true",
-        host: hostname,
-        ...form.getHeaders()
-      },
-      hostname,
-      path: '/_plugin/kibana/api/saved_objects/_import',
-      //path: '/api/saved_objects/_import',
-      query: {overwrite: 'true'}
-    })
-    .then(waitAndReturnResponseBody)
-    .then(()=>console.log(`Vizualization File Loaded - ${vizualizationFile}`))
+
     //.then(output=>console.dir(output, {depth:1}))
   }
 
@@ -376,6 +468,12 @@ const MyDeployer = class extends BasicDeployer {
 
   async deploy() {
     await this.init()
+    const { SecretsManagerClient, GetSecretValueCommand } = require.main.require("@aws-sdk/client-secrets-manager")
+    const awsSecretManagerclient = new SecretsManagerClient({region:'ca-central-1',})
+    const awsGetSecretValueCommand = new GetSecretValueCommand({SecretId:`${this.settings.phase}/nrdk/config/keycloak`})
+    const awsSecrets = await awsSecretManagerclient.send(awsGetSecretValueCommand).catch(() =>{ return {SecretString: '{}'}})
+    const keycloakConfigOverrides = JSON.parse(awsSecrets.SecretString)
+    Object.assign(this.settings.phases[this.settings.phase].keycloak, keycloakConfigOverrides)
     const domainConfig = await this.getElasticSearchDomain()
     await this.configureElasticSearch(domainConfig.DomainStatus.Endpoint)
     await this.deployKeycloakClientUsingAdmin(domainConfig.DomainStatus.Endpoint)
