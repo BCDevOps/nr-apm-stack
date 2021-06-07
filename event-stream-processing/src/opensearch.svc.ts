@@ -53,7 +53,7 @@ export class OpenSearchImpl implements OpenSearch  {
             query: query,
             path: "/_bulk",
           })
-          .then(this.awsHttpClient.waitAndReturnResponseBody)
+          .then(this.awsHttpClient.waitAndReturnResponseBody.bind(this.awsHttpClient))
           .then((value: any)=>{
             const body = JSON.parse(value.body)
             const bodyItems:any[] = body.items

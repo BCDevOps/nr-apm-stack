@@ -34,12 +34,11 @@ export class AwsHttpClientImpl implements AwsHttpClient  {
     })
   }
   waitAndReturnResponseBody(res: { response: HttpResponse; }): Promise<{ statusCode: number; body: string; }> {
+    const logger = this.logger
     return new Promise((resolve, reject) => {
+      logger.log(`Received ${res.response.statusCode} from ES`)
       const incomingMessage = res.response.body;
       let body = "";
-      incomingMessage.on("readable", () => {
-        this.logger.log(`Received ${res.response.statusCode} from ES`)
-      });
       incomingMessage.on("data", (chunk: any) => {
         body += chunk;
       });
