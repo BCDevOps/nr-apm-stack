@@ -29,9 +29,35 @@ You will need a client service account with realm admin privilege.
 - `KEYCLOAK_CLIENT_SECRET`
 
 
-## Deployment
+# Deployment
+You will need a terraform cloud team token, and have it setup in `~/terraform.d/credentials.tfrc.json`
 ```
-# npx @bcgov/bcdk cloud aws-login --space=tygsv5-dev --output=~/.aws/credentials.env && source ~/.aws/credentials.env && source .env.local
+{
+  "credentials": {
+    "app.terraform.io": {
+      "token": "<TERRAFORM TEAM TOKEN>"
+    }
+  }
+}
+```
 
-npx @bcgov/nrdk deploy --pr=0 --env=dev
+## DEVELOPMENT
+```
+npx @bcgov/bcdk cloud aws-login --space=tygsv5-dev --output=~/.aws/credentials.dev.env && source ~/.aws/credentials.dev.env && source .env.dev.local
+cd terragrunt/dev
+terragrunt apply
+```
+
+### TEST
+```
+npx @bcgov/bcdk cloud aws-login --space=tygsv5-test --output=~/.aws/credentials.test.env && source ~/.aws/credentials.test.env && source .env.test.local
+cd terragrunt/test
+terragrunt apply
+```
+
+### PRODUCTION
+```
+npx @bcgov/bcdk cloud aws-login --space=tygsv5-prod --output=~/.aws/credentials.prod.env && source ~/.aws/credentials.prod.env && source .env.prod.local
+cd terragrunt/test
+terragrunt apply
 ```
