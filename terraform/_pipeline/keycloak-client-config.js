@@ -6,6 +6,7 @@ module.exports.process = function (p) {
         name: 'AWS ElasticSearch',
         protocol: 'saml',
         frontchannelLogout: true,
+        fullScopeAllowed: false,
         attributes: {
             'saml.assertion.signature': 'false',
             'saml.multivalued.roles': 'false',
@@ -26,11 +27,12 @@ module.exports.process = function (p) {
             'saml_signature_canonicalization_method': 'http://www.w3.org/2001/10/xml-exc-c14n#',
             'saml.onetimeuse.condition': 'false'
         },
+        baseUrl: `${baseUrl}/_plugin/kibana/`,
         redirectUris: [`${baseUrl}/*`],
         defaultClientScopes: [ 'web-origins', 'profile', 'email' ],
         roles: [{name:'kibana_user'}, {name: 'all_access'}, {name: 'irs-developer'}, {name: 'nrm-read-all'}],
         protocolMappers: [
-            {name: 'role list', protocol: 'saml', protocolMapper: 'saml-role-list-mapper', consentRequired: false, config: {single:'true', 'attribute.nameformat': 'Basic', 'attribute.name': 'roles', 'friendly.name': 'roles'}},
+            {name: 'roles', protocol: 'saml', protocolMapper: 'saml-role-list-mapper', consentRequired: false, config: {single:'true', 'attribute.nameformat': 'Basic', 'attribute.name': 'roles', 'friendly.name': 'roles'}},
         ]
     }
 }

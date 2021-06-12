@@ -170,7 +170,7 @@ const MyDeployer = class extends BasicDeployer {
       if (keycloakRealmClients.length === 0 ) {
         // Create a client if one is not found
         console.log(`Creating keycloak client: ${clientId}`)
-        await kcAdminClient.clients.create({clientId})
+        await kcAdminClient.clients.create({clientId,...keycloakClientConfig})
         keycloakRealmClients = await kcAdminClient.clients.find({clientId:clientId, max: 2});
       }
 
@@ -476,7 +476,7 @@ const MyDeployer = class extends BasicDeployer {
     Object.assign(this.settings.phases[this.settings.phase].keycloak, keycloakConfigOverrides)
     const domainConfig = await this.getElasticSearchDomain()
     await this.configureElasticSearch(domainConfig.DomainStatus.Endpoint)
-    await this.deployKeycloakClientUsingAdmin(domainConfig.DomainStatus.Endpoint)
+    await this.deployKeycloakClientUsingAdmin(domainConfig.DomainStatus.DomainEndpointOptions.CustomEndpoint)
   } //end deploy
 }
 

@@ -52,6 +52,12 @@ variable "custom_endpoint" {
   default = null
 }
 
+variable "custom_endpoint_certificate_arn" {
+  type = string
+  description = "Custom Endpoint Certificate ARN"
+  default = null
+}
+
 variable "iit_lambda_code_bucket_key_version" {
   type = string
   description = "Lambda Code Package Version"
@@ -95,6 +101,21 @@ variable "data_node_volume_size" {
   default = 20
 }
 
+variable "ultrawarm_node_instance_count" {
+  type = number
+  default = 0
+}
+
+variable "ultrawarm_node_instance_type" {
+  type = string
+  default = "ultrawarm1.medium.elasticsearch"
+}
+/*
+variable "ultrawarm_node_volume_size" {
+  type = number
+  default = null
+}
+*/
 
 provider "aws" {
   region = var.region
@@ -180,6 +201,7 @@ data "aws_iam_policy_document" "access_policies" {
   }
   */
 }
+/*
 resource "aws_acm_certificate" "es_custom_endpoint" {
   domain_name       = var.custom_endpoint
   validation_method = "DNS"
@@ -194,6 +216,7 @@ resource "aws_iam_service_linked_role" "es" {
   aws_service_name = "es.amazonaws.com"
   count            = var.custom_endpoint == null ?   0 : 1
 }
+*/
 
 resource "aws_cloudwatch_log_group" "es_application_logs" {
   name = "/aws/aes/domains/${ local.es_domain_name }-${ time_static.log_group_suffix.unix }/application-logs"
@@ -243,7 +266,7 @@ resource "aws_elasticsearch_domain" "es" {
     tls_security_policy = "Policy-Min-TLS-1-2-2019-07"
     custom_endpoint_enabled = var.custom_endpoint == null ? false : true
     custom_endpoint = var.custom_endpoint
-    custom_endpoint_certificate_arn  = var.custom_endpoint == null ? null : aws_acm_certificate.es_custom_endpoint[0].arn
+    custom_endpoint_certificate_arn  = var.custom_endpoint_certificate_arn
   }
   encrypt_at_rest {
     enabled = true
@@ -259,13 +282,15 @@ resource "aws_elasticsearch_domain" "es" {
     dedicated_master_enabled = var.master_node_instance_count > 0 ? true : false
     dedicated_master_count = var.master_node_instance_count
     dedicated_master_type = var.master_node_instance_type
-    warm_enabled = false
     instance_count = var.data_node_instance_count
     instance_type = var.data_node_instance_type
     zone_awareness_enabled = true
     zone_awareness_config {
       availability_zone_count = var.master_node_instance_count > 0 ? 2 : 0
     }
+    warm_enabled = var.ultrawarm_node_instance_count > 0 ? true : false
+    warm_count = var.ultrawarm_node_instance_count
+    warm_type = var.ultrawarm_node_instance_type
   }
   ebs_options {
     ebs_enabled = true
@@ -285,7 +310,7 @@ resource "aws_elasticsearch_domain" "es" {
     enabled                  = true
     log_type                 = "AUDIT_LOGS"
   }
-  depends_on = [aws_iam_service_linked_role.es, aws_cloudwatch_log_resource_policy.es_logs]
+  depends_on = [aws_cloudwatch_log_resource_policy.es_logs]
 }
 
 resource "aws_kinesis_stream" "iit_logs" {
@@ -496,9 +521,9 @@ resource "elasticsearch_opendistro_role" "nrm_read_all" {
   cluster_permissions = ["cluster_composite_ops"]
   index_permissions {
     index_patterns  = ["iitd-*", "iit-*", "nrm-*"]
-    allowed_actions = ["read"]
+    allowed_actions = ["read", "indices:admin/resolve/index"]
     masked_fields = ["source.ip", "client.ip"]
-    fls = ["~message"]
+    fls = ["~message", "~http.request.line"]
   }
   index_permissions {
     index_patterns  = [".kibana_*"]
@@ -515,4 +540,10 @@ resource "elasticsearch_opendistro_roles_mapping" "nrm_read_all_mapper" {
   role_name     = elasticsearch_opendistro_role.nrm_read_all.id
   description   = "Mapping KC role to ES role"
   backend_roles = ["nrm-read-all"]
+}
+
+resource "elasticsearch_opendistro_roles_mapping" "all_access" {
+  role_name     = "all_access"
+  description   = "Mapping KC role to ES role"
+  backend_roles = ["all_access"]
 }
