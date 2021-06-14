@@ -1,0 +1,140 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`e2e - Apache combined format: 3ac5c5a8-241c-4501-9f25-4981a34e5d02 1`] = `
+Array [
+  Object {
+    "@timestamp": "2020-06-05T07:23:23.000-07:00",
+    "_id": "3132332e363237353636363636353732",
+    "_index": "nrm-logs-access-2020.06.05",
+    "event": Object {
+      "category": "web",
+      "dataset": "apache.access",
+      "duration": "24",
+      "ingested": "2021-05-26T18:47:40.314-07:00",
+      "kind": "event",
+      "outcome": "success",
+    },
+    "http": Object {
+      "request": Object {
+        "line": "GET /ext/raad3/map?execution=e1s1&_eventId=agreed HTTP/1.1",
+        "method": "GET",
+        "referrer": Object {
+          "domain": "apps.nrs.gov.bc.ca",
+          "file": Object {
+            "directory": "/ext/raad3",
+            "name": "map",
+          },
+          "full": "https://apps.nrs.gov.bc.ca/ext/raad3/map?execution=e1s1",
+          "original": "https://apps.nrs.gov.bc.ca/ext/raad3/map?execution=e1s1",
+          "path": "/ext/raad3/map",
+          "port": "443",
+          "query": "execution=e1s1",
+          "query_k": Array [
+            "execution",
+          ],
+          "query_kv": Array [
+            "execution=e1s1",
+          ],
+          "query_v": Array [
+            "e1s1",
+          ],
+          "scheme": "https",
+          "uri": "//apps.nrs.gov.bc.ca/ext/raad3/map",
+        },
+      },
+      "response": Object {
+        "status_code": "302",
+      },
+      "version": "1.1",
+    },
+    "message": "66.183.191.120 - - [05/Jun/2020:07:23:23 -0700] \\"GET /ext/raad3/map?execution=e1s1&_eventId=agreed HTTP/1.1\\" 302 - \\"https://apps.nrs.gov.bc.ca/ext/raad3/map?execution=e1s1\\" \\"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0\\" 24",
+    "source": Object {
+      "as": Object {
+        "number": 852,
+        "organization": Object {
+          "name": "ASN852",
+        },
+      },
+      "geo": Object {
+        "city_name": "Cranbrook",
+        "continent_code": "NA",
+        "continent_name": "North America",
+        "country_iso_code": "CA",
+        "country_name": "Canada",
+        "location": Object {
+          "lat": 49.5014,
+          "lon": -115.7734,
+        },
+        "postal_code": "V1C",
+        "region_iso_code": "BC",
+        "region_name": "British Columbia",
+        "timezone": "America/Edmonton",
+      },
+      "ip": "66.183.191.120",
+    },
+    "url": Object {
+      "file": Object {
+        "directory": "/ext/raad3",
+        "name": "map",
+      },
+      "original": "/ext/raad3/map?execution=e1s1&_eventId=agreed",
+      "path": "/ext/raad3/map",
+      "query": "execution=e1s1&_eventId=agreed",
+      "query_k": Array [
+        "execution",
+        "_eventId",
+      ],
+      "query_kv": Array [
+        "execution=e1s1",
+        "_eventId=agreed",
+      ],
+      "query_v": Array [
+        "e1s1",
+        "agreed",
+      ],
+      "uri": "//localhost/ext/raad3/map",
+    },
+    "user_agent": Object {
+      "name": "Firefox",
+      "original": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0",
+      "os": Object {
+        "name": "Windows",
+        "version": "10",
+      },
+      "version": "77.0",
+    },
+  },
+]
+`;
+
+exports[`handler - all errors: d52cf91b-50a5-4f26-9d3e-c312778360e0 1`] = `
+Object {
+  "Records": Array [
+    Object {
+      "kinesis": Object {
+        "data": "eyJtZXNzYWdlIjoidjEuMCAyMDEyMDIxMSBcImh0dHBzOi8vdGVzdGFwcHMubnJzLmdvdi5iYy5jYTo0NDNcIiBcIjIwMDE6NTY5OmJlOTQ6NDcwMDo2MWI0OjkxN2U6ODA4OmUzYzZcIiBbMjAvQXByLzIwMjE6MTU6MTA6NDAgLTA3MDBdIFwiUE9TVCAvaW50L2ZuY3MvYWN0aXZpdGllcy9kZXRhaWxzLnhodG1sIEhUVFAvMS4xXCIgMjAwIDI2MDAgYnl0ZXMgMTExMiBieXRlcyBcImh0dHBzOi8vdGVzdGFwcHMubnJzLmdvdi5iYy5jYS9pbnQvZm5jcy9hY3Rpdml0aWVzL2RldGFpbHMueGh0bWw/YWN0aXZpdHlHdWlkPTAxMjNDNjc2Q0JBQjQ2MUU4QzZBMEExNDU2N0ExNkFDXCIgXCJNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXT1c2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzg5LjAuNDM4OS4xMjggU2FmYXJpLzUzNy4zNlwiIDEzMyBtcywgXCJUTFN2MS4yXCIgXCJFQ0RIRS1SU0EtQUVTMjU2LUdDTS1TSEEzODRcIiIsImV2ZW50Ijp7ImtpbmQiOiJldmVudCIsImNhdGVnb3J5Ijoid2ViIiwiZGF0YXNldCI6ImFwYWNoZS5hY2Nlc3MiLCJpbmdlc3RlZCI6IjIwMjEtMDUtMjZUMTg6NDc6NDAuMzE0LTA3OjAwIn19",
+        "sequenceNumber": "123",
+      },
+    },
+    Object {
+      "kinesis": Object {
+        "data": "eyJtZXNzYWdlIjoidjEuMCAyMDEyMDIxMSBcImh0dHBzOi8vdGVzdGFwcHMubnJzLmdvdi5iYy5jYTo0NDNcIiBcIjIwMDE6NTY5OmJlOTQ6NDcwMDo2MWI0OjkxN2U6ODA4OmUzYzZcIiBbMjAvQXByLzIwMjE6MTU6MTA6NDAgLTA3MDBdIFwiUE9TVCAvaW50L2ZuY3MvYWN0aXZpdGllcy9kZXRhaWxzLnhodG1sIEhUVFAvMS4xXCIgMjAwIDI2MDAgYnl0ZXMgMTExMiBieXRlcyBcImh0dHBzOi8vdGVzdGFwcHMubnJzLmdvdi5iYy5jYS9pbnQvZm5jcy9hY3Rpdml0aWVzL2RldGFpbHMueGh0bWw/YWN0aXZpdHlHdWlkPTAxMjNDNjc2Q0JBQjQ2MUU4QzZBMEExNDU2N0ExNkFDXCIgXCJNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXT1c2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzg5LjAuNDM4OS4xMjggU2FmYXJpLzUzNy4zNlwiIDEzMyBtcywgXCJUTFN2MS4yXCIgXCJFQ0RIRS1SU0EtQUVTMjU2LUdDTS1TSEEzODRcIiIsImV2ZW50Ijp7ImtpbmQiOiJldmVudCIsImNhdGVnb3J5Ijoid2ViIiwiZGF0YXNldCI6ImFwYWNoZS5hY2Nlc3MiLCJpbmdlc3RlZCI6IjIwMjEtMDUtMjZUMTg6NDc6NDAuMzE0LTA3OjAwIn19",
+        "sequenceNumber": "456",
+      },
+    },
+  ],
+}
+`;
+
+exports[`handler - success: 895ca8a6-0788-41ba-b921-9edbbd3212dc 1`] = `
+Object {
+  "Records": Array [
+    Object {
+      "kinesis": Object {
+        "data": "eyJtZXNzYWdlIjoidjEuMCAyMDEyMDIxMSBcImh0dHBzOi8vdGVzdGFwcHMubnJzLmdvdi5iYy5jYTo0NDNcIiBcIjIwMDE6NTY5OmJlOTQ6NDcwMDo2MWI0OjkxN2U6ODA4OmUzYzZcIiBbMjAvQXByLzIwMjE6MTU6MTA6NDAgLTA3MDBdIFwiUE9TVCAvaW50L2ZuY3MvYWN0aXZpdGllcy9kZXRhaWxzLnhodG1sIEhUVFAvMS4xXCIgMjAwIDI2MDAgYnl0ZXMgMTExMiBieXRlcyBcImh0dHBzOi8vdGVzdGFwcHMubnJzLmdvdi5iYy5jYS9pbnQvZm5jcy9hY3Rpdml0aWVzL2RldGFpbHMueGh0bWw/YWN0aXZpdHlHdWlkPTAxMjNDNjc2Q0JBQjQ2MUU4QzZBMEExNDU2N0ExNkFDXCIgXCJNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXT1c2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzg5LjAuNDM4OS4xMjggU2FmYXJpLzUzNy4zNlwiIDEzMyBtcywgXCJUTFN2MS4yXCIgXCJFQ0RIRS1SU0EtQUVTMjU2LUdDTS1TSEEzODRcIiIsImV2ZW50Ijp7ImtpbmQiOiJldmVudCIsImNhdGVnb3J5Ijoid2ViIiwiZGF0YXNldCI6ImFwYWNoZS5hY2Nlc3MiLCJpbmdlc3RlZCI6IjIwMjEtMDUtMjZUMTg6NDc6NDAuMzE0LTA3OjAwIn19",
+        "sequenceNumber": "123",
+      },
+    },
+  ],
+}
+`;

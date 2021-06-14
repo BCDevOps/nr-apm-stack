@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+      "module": "CommonJS",
+      "target": "ES2017",
+      "noImplicitAny": true,
+      "preserveConstEnums": true,
+      "outDir": "./lib",
+      "sourceMap": true,
+      "types": ["node","reflect-metadata", "jest"],
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "**/*.spec.ts"]
+}

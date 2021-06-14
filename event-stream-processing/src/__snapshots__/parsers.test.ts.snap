@@ -1,0 +1,244 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`apache - empty: eb6509a2-5862-41fc-86a0-8f8e692a9131 1`] = `
+Array [
+  Object {
+    "_id": "756e646566696e65642e363237353636363636353732",
+    "event": Object {
+      "category": "web",
+      "dataset": "apache.access",
+      "kind": "event",
+      "risk_score": 1,
+    },
+  },
+]
+`;
+
+exports[`apache - safe uri: 8cb108e0-c707-4faf-83fc-10bc756f6b1b 1`] = `
+Array [
+  Object {
+    "@timestamp": "2021-04-20T15:10:40.000-07:00",
+    "_id": "756e646566696e65642e363237353636363636353732",
+    "_index": "nrm-logs-access-2021.04.20",
+    "apache": Object {
+      "version": "20120211",
+    },
+    "client": Object {
+      "as": Object {
+        "number": 852,
+        "organization": Object {
+          "name": "ASN852",
+        },
+      },
+      "geo": Object {
+        "city_name": "Victoria",
+        "continent_code": "NA",
+        "continent_name": "North America",
+        "country_iso_code": "CA",
+        "country_name": "Canada",
+        "location": Object {
+          "lat": 48.4771,
+          "lon": -123.5313,
+        },
+        "postal_code": "V9B",
+        "region_iso_code": "BC",
+        "region_name": "British Columbia",
+        "timezone": "America/Vancouver",
+      },
+      "ip": "2001:569:be94:4700:61b4:917e:808:e3c6",
+    },
+    "event": Object {
+      "category": "web",
+      "dataset": "apache.access",
+      "duration": "133",
+      "kind": "event",
+      "outcome": "success",
+    },
+    "http": Object {
+      "request": Object {
+        "bytes": "2600",
+        "line": "POST /int/fncs/activities/details.xhtml HTTP/1.1",
+        "method": "POST",
+        "referrer": Object {
+          "domain": "testapps.nrs.gov.bc.ca",
+          "file": Object {
+            "directory": "/int/fncs/activities",
+            "ext": "xhtml",
+            "name": "details.xhtml",
+          },
+          "full": "https://testapps.nrs.gov.bc.ca/int/fncs/activities/details.xhtml?activityGuid=0123C676CBAB461E8C6A0A14567A16AC",
+          "original": "https://testapps.nrs.gov.bc.ca/int/fncs/activities/details.xhtml?activityGuid=0123C676CBAB461E8C6A0A14567A16AC",
+          "path": "/int/fncs/activities/details.xhtml",
+          "port": "443",
+          "query": "activityGuid=0123C676CBAB461E8C6A0A14567A16AC",
+          "query_k": Array [
+            "activityGuid",
+          ],
+          "query_kv": Array [
+            "activityGuid=0123C676CBAB461E8C6A0A14567A16AC",
+          ],
+          "query_v": Array [
+            "0123C676CBAB461E8C6A0A14567A16AC",
+          ],
+          "scheme": "https",
+          "uri": "//testapps.nrs.gov.bc.ca/int/fncs/activities/details.xhtml",
+        },
+      },
+      "response": Object {
+        "bytes": "1112",
+        "status_code": "200",
+      },
+      "version": "1.1",
+    },
+    "labels": Object {
+      "application": "fncs",
+      "context": "/int",
+      "format": "v1.0",
+    },
+    "message": "v1.0 20120211 \\"https://testapps.nrs.gov.bc.ca:443\\" \\"2001:569:be94:4700:61b4:917e:808:e3c6\\" [20/Apr/2021:15:10:40 -0700] \\"POST /int/fncs/activities/details.xhtml HTTP/1.1\\" 200 2600 bytes 1112 bytes \\"https://testapps.nrs.gov.bc.ca/int/fncs/activities/details.xhtml?activityGuid=0123C676CBAB461E8C6A0A14567A16AC\\" \\"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36\\" 133 ms, \\"TLSv1.2\\" \\"ECDHE-RSA-AES256-GCM-SHA384\\"",
+    "tls": Object {
+      "cypher": "ECDHE-RSA-AES256-GCM-SHA384",
+      "version_protocol": "TLSv1.2",
+    },
+    "url": Object {
+      "domain": "testapps.nrs.gov.bc.ca",
+      "file": Object {
+        "directory": "/int/fncs/activities",
+        "ext": "xhtml",
+        "name": "details.xhtml",
+      },
+      "full": "https://testapps.nrs.gov.bc.ca/int/fncs/activities/details.xhtml",
+      "original": "/int/fncs/activities/details.xhtml",
+      "path": "/int/fncs/activities/details.xhtml",
+      "port": "443",
+      "scheme": "https",
+      "uri": "//testapps.nrs.gov.bc.ca/int/fncs/activities/details.xhtml",
+    },
+    "user_agent": Object {
+      "name": "Chrome",
+      "original": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36",
+      "os": Object {
+        "name": "Windows",
+        "version": "10",
+      },
+      "version": "89.0.4389.128",
+    },
+  },
+]
+`;
+
+exports[`app labels - sitesandtrailsbc.ca: fe9ed426-57e5-4148-ab8e-0dce6b2c517e 1`] = `
+Object {
+  "event": Object {
+    "category": "web",
+    "dataset": "apache.access",
+    "kind": "event",
+  },
+  "labels": Object {
+    "application": "sitesandtrailsbc",
+  },
+  "url": Object {
+    "domain": "sitesandtrailsbc.ca",
+    "path": "/welcome",
+  },
+}
+`;
+
+exports[`ecs - referrer - no path: fe3a90a4-1319-44e0-af0f-312686d81ae7 1`] = `
+Object {
+  "http": Object {
+    "request": Object {
+      "referrer": Object {
+        "domain": "somewhere.com",
+        "file": Object {
+          "directory": "/",
+        },
+        "full": "http://somewhere.com/",
+        "original": "http://somewhere.com",
+        "path": "/",
+        "port": "80",
+        "scheme": "http",
+        "uri": "//somewhere.com/",
+      },
+    },
+  },
+}
+`;
+
+exports[`ecs - referrer - path with just /: 84023bc4-77fe-439f-9123-91c20362c04a 1`] = `
+Object {
+  "http": Object {
+    "request": Object {
+      "referrer": Object {
+        "domain": "somewhere.com",
+        "file": Object {
+          "directory": "/",
+        },
+        "full": "http://somewhere.com/",
+        "original": "http://somewhere.com/",
+        "path": "/",
+        "port": "80",
+        "scheme": "http",
+        "uri": "//somewhere.com/",
+      },
+    },
+  },
+}
+`;
+
+exports[`geoip - client.ip: eb9545ae-e9a8-41bb-8998-81fb0a1931b9 1`] = `
+Array [
+  Object {
+    "_id": "756e646566696e65642e363237353636363636353732",
+    "client": Object {
+      "as": Object {
+        "number": 852,
+        "organization": Object {
+          "name": "ASN852",
+        },
+      },
+      "geo": Object {
+        "city_name": "Victoria",
+        "continent_code": "NA",
+        "continent_name": "North America",
+        "country_iso_code": "CA",
+        "country_name": "Canada",
+        "location": Object {
+          "lat": 48.4771,
+          "lon": -123.5313,
+        },
+        "postal_code": "V9B",
+        "region_iso_code": "BC",
+        "region_name": "British Columbia",
+        "timezone": "America/Vancouver",
+      },
+      "ip": "2001:569:be94:4700:61b4:917e:808:e3c6",
+    },
+    "event": Object {
+      "category": "web",
+      "dataset": "apache.access",
+      "kind": "event",
+      "risk_score": 1,
+    },
+  },
+]
+`;
+
+exports[`http event.outcome: fe9ed426-57e5-4148-ab8e-0dce6b2c517e 1`] = `
+Object {
+  "event": Object {
+    "category": "web",
+    "dataset": "apache.access",
+    "ingested": "2021-05-26T18:47:40.314-07:00",
+    "kind": "event",
+  },
+  "labels": Object {
+    "application": "sitesandtrailsbc",
+  },
+  "url": Object {
+    "domain": "sitesandtrailsbc.ca",
+    "path": "/welcome",
+    "scheme": "http",
+  },
+}
+`;

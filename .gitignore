@@ -103,3 +103,13 @@ dist
 # TernJS port file
 .tern-port
 .DS_Store
+/**/.chromium
+/**/.terraform
+*.tfstate
+*.tfstate.backup
+event-stream-processing/lib
+*.local
+*.local.ps1
+.terragrunt-cache
+*.lock.hcl
+*.env

@@ -1,0 +1,7 @@
+{
+  "attributes": {
+    "title": "*-logs-access-*",
+    "timeFieldName": "@timestamp",
+    "fields": "[{\"name\":\"@timestamp\",\"type\":\"date\",\"esTypes\":[\"date\"],\"count\":0,\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true}]"
+  }
+}
