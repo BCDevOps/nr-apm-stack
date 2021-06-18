@@ -113,3 +113,4 @@ event-stream-processing/lib
 .terragrunt-cache
 *.lock.hcl
 *.env
+terraform/.terraform.lock.hcl
