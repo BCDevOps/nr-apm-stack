@@ -10,13 +10,18 @@ import * as path from 'path'
 
 
 function download(url:string, dest: string) {
-    const stream = fs.createWriteStream(dest)
-    console.log(`Downloading ${url}`)
+    // console.log(`Downloading ${url}`) // careful!!! download URL contains license key!!!
     http.get(url, function(response) {
-        response.pipe(stream)
-        stream.on('finish', function() {
-            stream.close()
-        })
+        if (response.statusCode === 200){
+            console.log(`Request succesfful! Saving to ${dest}`)
+            const stream = fs.createWriteStream(dest)
+            response.pipe(stream)
+            stream.on('finish', function() {
+                stream.close()
+            })
+        }else{
+            throw new Error(`Download URL returned ${response.statusCode}`)
+        }
     })
 }
 

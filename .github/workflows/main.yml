@@ -33,7 +33,7 @@ jobs:
         run: npm run ts-node ./src/download-maxmind-geoip-databases.ts
         working-directory: ./event-stream-processing
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          MAXMIND_LICENSE_KEY: ${{secrets.MAXMIND_LICENSE_KEY}}
       - run: npm run pack
         working-directory: ./event-stream-processing
       - run: npm run clean
