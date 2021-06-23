@@ -366,20 +366,22 @@ resource "aws_s3_bucket" "lambda_code" {
     Instance = "nress${ var.suffix }"
   }
 }
+*/
+
 resource "aws_s3_bucket_object" "lambda_stream_processing_code" {
-  bucket = aws_s3_bucket.lambda_code.bucket
+  bucket = "nress${ var.suffix }-lambda-code-${ data.aws_caller_identity.current.account_id }"
   key    = "nress${ var.suffix }/event-stream-processing.zip"
   source = "../event-stream-processing/dist/event-stream-processing.zip"
   etag = filemd5("../event-stream-processing/dist/event-stream-processing.zip")
-  depends_on = [null_resource.lambda_build]
 }
-*/
 
+/*
 data "aws_s3_bucket_object" "lambda_stream_processing_code" {
   bucket = "nress-lambda-code-${var.env}-148a62ab607aead4cf48e909528347df"
   key    = "nress-${var.env}-event-stream-processing.zip"
   version_id = var.iit_lambda_code_bucket_key_version
 }
+*/
 
 resource "aws_iam_role" "lambda_iit_agents" {
   name = "nress${ var.suffix }-lambda-iit-agents"
