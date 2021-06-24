@@ -1,5 +1,5 @@
-import {HttpResponse} from '@aws-sdk/protocol-http'
-import { Endpoint, HttpMessage} from "@aws-sdk/types";
+import {HttpResponse} from '@aws-sdk/protocol-http';
+import {Endpoint, HttpMessage} from '@aws-sdk/types';
 
 export type HttpRequestOptions = Partial<HttpMessage> & Partial<Endpoint> & {
     method: string;

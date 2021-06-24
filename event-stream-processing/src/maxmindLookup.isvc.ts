@@ -1,4 +1,4 @@
-import { AsnResponse, CityResponse } from "maxmind";
+import {AsnResponse, CityResponse} from 'maxmind';
 
 export interface MaxmindLookup<T> {
     lookup(ipAddress:string): T;
