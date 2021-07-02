@@ -470,9 +470,13 @@ const MyDeployer = class extends BasicDeployer {
     await this.init()
     const { SecretsManagerClient, GetSecretValueCommand } = require.main.require("@aws-sdk/client-secrets-manager")
     const awsSecretManagerclient = new SecretsManagerClient({region:'ca-central-1',})
-    const awsGetSecretValueCommand = new GetSecretValueCommand({SecretId:`${this.settings.phase}/nrdk/config/keycloak`})
+    const secretId = `${this.settings.phase}/nrdk/config/keycloak`
+    const awsGetSecretValueCommand = new GetSecretValueCommand({SecretId: secretId})
     const awsSecrets = await awsSecretManagerclient.send(awsGetSecretValueCommand).catch(() =>{ return {SecretString: '{}'}})
     const keycloakConfigOverrides = JSON.parse(awsSecrets.SecretString)
+    if (Object.keys(keycloakConfigOverrides).length === 0) {
+      throw new Error(`Missing AWS SecretId '${secretId}'`)
+    }
     Object.assign(this.settings.phases[this.settings.phase].keycloak, keycloakConfigOverrides)
     const domainConfig = await this.getElasticSearchDomain()
     await this.configureElasticSearch(domainConfig.DomainStatus.Endpoint)
