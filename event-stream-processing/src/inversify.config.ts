@@ -26,8 +26,10 @@ import {ThreatPhpImpl} from './threat.php';
 import {ParserUserAgent} from './parser.ua.svc';
 import {ParserGeoIp} from './parser.geo.svc';
 
-declare module globalThis {
-    let __inversify_singleton: Container;
+// eslint-disable-next-line @typescript-eslint/no-namespace
+declare namespace globalThis {
+  // eslint-disable-next-line camelcase
+  let __inversify_singleton: Container;
 }
 
 export function create() {

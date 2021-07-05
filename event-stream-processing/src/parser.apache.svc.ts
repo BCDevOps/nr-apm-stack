@@ -6,9 +6,11 @@ import {inject} from 'inversify';
 import {TYPES} from './inversify.types';
 import {Logger} from './logger.isvc';
 
+/* eslint-disable max-len,camelcase,@typescript-eslint/no-unsafe-call */
 const regex_v1 = /^(?<labels__format>v1\.0) (?<apache__version>[^ ]+) "(?<url__scheme>[^:]+):\/\/(?<url__domain>[^:]+):(?<url__port>\d+)" "(?<client__ip>[^"]+)" \[(?<apache__access__time>[^\]]+)\] "(?<http__request__line>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__request__bytes>(-?|\d+)) bytes (?<http__response__bytes>(-?|\d+)) bytes "(?<http__request__referrer__original>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)" (?<event__duration>\d+) ms, "(?<tls__version_protocol>[^"]+)" "(?<tls__cypher>[^"]+)"$/;
 const regex_apache_standard01 = /^(?<source__ip>[^ ]+) ([^ ]+) (?<user__name>[^ ]+) \[(?<apache__access__time>[^\]]+)\] "(?<http__request__line>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__response__bytes>(-?|\d+)) "(?<http__request__referrer__original>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)" (?<event__duration>(-?|\d+))$/;
 const regex_apache_standard02 = /^(?<source__ip>[^ ]+) ([^ ]+) (?<user__name>[^ ]+) \[(?<apache__access__time>[^\]]+)\] "(?<http__request__line>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__response__bytes>(-?|\d+)) "(?<http__request__referrer__original>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)"$/;
+/* eslint-enable max-len */
 
 export const APACHE_ACCESS_LOG_EVENT_SIGNATURE = {
   event: {
@@ -28,6 +30,7 @@ export const APACHE_ACCESS_LOG_EVENT_SIGNATURE = {
 export class ParserApacheImpl implements Parser {
     @inject(TYPES.Logger) private logger:Logger;
     matches(record: any): boolean {
+      // eslint-disable-next-line max-len
       return record.event?.kind === 'event' && record.event?.category === 'web' && record?.event.dataset === 'apache.access' && record.message;
     }
     apply(record: any): void {

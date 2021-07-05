@@ -1,4 +1,4 @@
-import {KinesisStreamEvent, Context, KinesisStreamRecord} from 'aws-lambda';
+import {KinesisStreamEvent, KinesisStreamRecord} from 'aws-lambda';
 import {injectable, inject, multiInject} from 'inversify';
 import {KinesisStreamHandler} from './kinesisStreamHandler.isvc';
 import {OpenSearch} from './opensearch.isvc';
@@ -18,7 +18,7 @@ export class KinesisStreamHandlerImpl implements KinesisStreamHandler {
 
     @inject(TYPES.Logger) private logger:Logger;
 
-    async convertRecordDataToJson(record: KinesisStreamRecord) {
+    convertRecordDataToJson(record: KinesisStreamRecord) {
       return JSON.parse(Buffer.from(record.kinesis.data, 'base64').toString('utf8'));
     }
 
@@ -43,9 +43,12 @@ export class KinesisStreamHandlerImpl implements KinesisStreamHandler {
         this.logger.log(`Received ${event.Records.length} records`);
         // Parallel
         await Promise.all(event.Records.map( (kinesisRecord) => {
-          const _id = Buffer.from(kinesisRecord.kinesis.sequenceNumber + '.' + this.randomizer.randomBytes(16).toString('hex')).toString('hex');
+          const _id = Buffer.from(
+            kinesisRecord.kinesis.sequenceNumber + '.' + this.randomizer.randomBytes(16).toString('hex'),
+          ).toString('hex');
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
           return this.convertRecordDataToJson(kinesisRecord)
-            .then((record)=>{
+            .then((record: any)=>{
               return Promise.race([
                 new Promise<any>((resolve)=>{
                   resolve(this.parseMessage(record));
@@ -64,7 +67,9 @@ export class KinesisStreamHandlerImpl implements KinesisStreamHandler {
         /*
             await event.Records.reduce((p, kinesisRecord) => {
                 return p.then(() =>{
-                    const _id = Buffer.from(kinesisRecord.kinesis.sequenceNumber + '.' + this.randomizer.randomBytes(16).toString("hex")).toString("hex")
+                    const _id = Buffer.from(
+                      kinesisRecord.kinesis.sequenceNumber + '.' + this.randomizer.randomBytes(16).toString("hex")
+                      ).toString("hex")
                     return this.convertRecordDataToJson(kinesisRecord)
                     .then(this.parseMessage.bind(this))
                     .then((record)=>{
@@ -80,7 +85,7 @@ export class KinesisStreamHandlerImpl implements KinesisStreamHandler {
       return result;
     }
 
-    async handle(event: KinesisStreamEvent, context: Context): Promise<any> {
+    async handle(event: KinesisStreamEvent): Promise<any> {
       this.logger.log(`Transforming kinesis records to ES documents`);
       const docs = await this.transformToElasticCommonSchema(event);
       this.logger.log(`Submitting ${docs.length} documents to ES`);

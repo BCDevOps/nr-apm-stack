@@ -4,8 +4,7 @@ import * as lodash from 'lodash';
 import * as path from 'path';
 import {format as formatUrl} from 'url';
 
-// const RFC3986_UNRESERVED_CHARACTERS = /^(?<path>[\/\d\w\-_~\.]+)(\?(?<query>.*))$/s; //aka safe characters
-// const RFC3986_UNRESERVED_CHARACTERS_EXT = /^(?<path>[\/\d\w\-_~\. ]+)(\?(?<query>.*))$/s; //same as above, but includes "space"
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 
 function explodeURL(url: URL): any {
   const record: any = {};
@@ -32,9 +31,9 @@ function explodeURL(url: URL): any {
   if (indexOfFirstSemicolonInPath > 0) {
     const pathname = url.pathname;
     url.pathname = pathname.substring(0, indexOfFirstSemicolonInPath);
-    const path_param = pathname.substring(indexOfFirstSemicolonInPath + 1 );
-    if (path_param.length > 0) {
-      lodash.set(record, 'path_param', path_param);
+    const pathParam = pathname.substring(indexOfFirstSemicolonInPath + 1 );
+    if (pathParam.length > 0) {
+      lodash.set(record, 'path_param', pathParam);
     }
   }
   lodash.set(record, 'domain', url.hostname);
@@ -76,7 +75,7 @@ function explodeURL(url: URL): any {
 
 @injectable()
 export class ParserEcs implements Parser {
-  matches(_record: any): boolean {
+  matches(): boolean {
     return true;
   }
   apply(record: any): void {
@@ -96,7 +95,9 @@ export class ParserEcs implements Parser {
         const uriOriginal:string = value.substring(firstSpace, lastSpace).trim();
         lodash.set(record, 'url.original', uriOriginal);
         if (uriOriginal.startsWith('/')) {
+          // eslint-disable-next-line max-len
           if (!lodash.isNil(lodash.get(record, 'url.scheme')) && !lodash.isNil(lodash.get(record, 'url.domain')) && !lodash.isNil(lodash.get(record, 'url.port'))) {
+            // eslint-disable-next-line max-len
             const url = new URL(`${lodash.get(record, 'url.scheme')}://${lodash.get(record, 'url.domain')}:${lodash.get(record, 'url.port')}${uriOriginal}`);
             lodash.merge(record.url, explodeURL(url));
           } else {

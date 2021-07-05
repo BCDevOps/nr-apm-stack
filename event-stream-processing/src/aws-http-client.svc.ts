@@ -19,14 +19,14 @@ async function createSignedHttpRequest(httpRequestParams: HttpRequestOptions): P
     sha256: Sha256,
   };
   const signer = new SignatureV4(sigV4Init);
-  return signer.sign(httpRequest) as unknown as HttpRequest;
+  return (await signer.sign(httpRequest)) as unknown as HttpRequest;
 }
 
 @injectable()
 export class AwsHttpClientImpl implements AwsHttpClient {
   @inject(TYPES.Logger) private logger:Logger;
   async executeSignedHttpRequest(httpRequestParams: HttpRequestOptions): Promise<{ response: HttpResponse; }> {
-    const signedHttpRequest = await createSignedHttpRequest(httpRequestParams) as HttpRequest;
+    const signedHttpRequest = await createSignedHttpRequest(httpRequestParams);
     const nodeHttpHandler = new NodeHttpHandler();
     return nodeHttpHandler.handle(signedHttpRequest)
       .catch((error) => {
@@ -34,20 +34,21 @@ export class AwsHttpClientImpl implements AwsHttpClient {
       });
   }
   waitAndReturnResponseBody(res: { response: HttpResponse; }): Promise<{ statusCode: number; body: string; }> {
-    const logger = this.logger;
+    /* eslint-disable @typescript-eslint/no-unsafe-call */
     return new Promise((resolve, reject) => {
-      logger.log(`Received ${res.response.statusCode} from ES`);
+      this.logger.log(`Received ${res.response.statusCode} from ES`);
       const incomingMessage = res.response.body;
       let body = '';
       incomingMessage.on('data', (chunk: any) => {
         body += chunk;
       });
-      incomingMessage.on('end', (a1:any, a2: any) => {
+      incomingMessage.on('end', () => {
         resolve({statusCode: res.response.statusCode, body: body});
       });
       incomingMessage.on('error', (err: any) => {
         reject(err);
       });
     });
+    /* eslint-enable @typescript-eslint/no-unsafe-call */
   }
 }

@@ -7,7 +7,7 @@ import * as lodash from 'lodash';
  */
 @injectable()
 export class ParserKeyAsPath implements Parser {
-  matches(_record: any): boolean {
+  matches(): boolean {
     return true;
   }
   apply(record: any): void {

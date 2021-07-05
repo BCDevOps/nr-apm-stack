@@ -7,12 +7,12 @@ export type HttpRequestOptions = Partial<HttpMessage> & Partial<Endpoint> & {
 
 export interface HttpResponseWrapper {
     response: HttpResponse
-};
+}
 
 export interface HttpBufferedResponse {
     statusCode: number,
     body: string
-};
+}
 
 export interface AwsHttpClient {
     executeSignedHttpRequest(httpRequestParams: HttpRequestOptions): Promise<HttpResponseWrapper>;

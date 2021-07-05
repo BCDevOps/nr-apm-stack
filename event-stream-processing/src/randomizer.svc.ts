@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import {injectable, inject} from 'inversify';
+import {injectable} from 'inversify';
 import {Randomizer} from './randomizer.isvc';
 import {randomBytes} from 'crypto';
 

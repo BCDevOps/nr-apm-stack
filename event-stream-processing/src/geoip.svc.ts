@@ -8,8 +8,6 @@ export class GeoIpImpl implements GeoIp {
     @inject(TYPES.MaxmindCityLookup) private _cityLookup:MaxmindCityLookup;
     @inject(TYPES.MaxmindAsnLookup) private _asnLookup:MaxmindAsnLookup;
 
-    public constructor() {
-    }
     public lookup(ipAddress:string): any {
       const cityLookupResponse = this._cityLookup.lookup(ipAddress);
       const asnLookupResponse = this._asnLookup.lookup(ipAddress);

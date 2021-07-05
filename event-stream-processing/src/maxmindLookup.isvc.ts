@@ -5,5 +5,5 @@ export interface MaxmindLookup<T> {
 }
 
 
-export interface MaxmindCityLookup extends MaxmindLookup<CityResponse>{}
-export interface MaxmindAsnLookup extends MaxmindLookup<AsnResponse>{}
+export type MaxmindCityLookup = MaxmindLookup<CityResponse>
+export type MaxmindAsnLookup = MaxmindLookup<AsnResponse>

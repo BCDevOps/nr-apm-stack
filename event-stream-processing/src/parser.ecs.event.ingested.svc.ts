@@ -6,7 +6,7 @@ import * as moment from 'moment';
 
 @injectable()
 export class ParserEcsEventIngested implements Parser {
-  matches(_record: any): boolean {
+  matches(): boolean {
     return true;
   }
   apply(record: any): void {

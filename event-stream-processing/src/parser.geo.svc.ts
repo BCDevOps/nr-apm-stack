@@ -9,7 +9,7 @@ import {GeoIp} from './geoip.isvc';
 export class ParserGeoIp implements Parser {
     @inject(TYPES.GeoIp) private geoIpSvc:GeoIp;
 
-    matches(record: any): boolean {
+    matches(): boolean {
       return true;
     }
     apply(record: any): void {

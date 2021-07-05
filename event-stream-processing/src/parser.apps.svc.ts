@@ -5,6 +5,7 @@ import * as lodash from 'lodash';
 import {knownDomains} from './known-domains';
 import * as querystring from 'querystring';
 
+// eslint-disable-next-line max-len
 const knownAppContextRegex = /^(?<labels__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata))(\/((geoserver)|(pls)))?)\/(?<labels__application>[^\/]*).*$/m;
 
 @injectable()

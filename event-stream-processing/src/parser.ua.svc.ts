@@ -23,7 +23,7 @@ function removeFalsy(obj: any): any {
 
 @injectable()
 export class ParserUserAgent implements Parser {
-  matches(record: any): boolean {
+  matches(): boolean {
     return true;
   }
   apply(record: any): void {
@@ -31,7 +31,7 @@ export class ParserUserAgent implements Parser {
       const userAgentString: string = record.user_agent.original;
       const parser = new UAParser(userAgentString);
       const ua = parser.getResult();
-      const ecs_ua = removeFalsy({
+      const ecsUa = removeFalsy({
         name: ua.browser?.name,
         version: ua.browser?.version,
         os: {
@@ -44,14 +44,14 @@ export class ParserUserAgent implements Parser {
           vendor: ua.device?.vendor,
         },
       });
-      if (!ecs_ua.name) {
-        if (userAgentString.match(/YandexBot\//i)) {
-          ecs_ua.name = 'YandexBot';
-        } else if (userAgentString.match(/Googlebot\//i)) {
-          ecs_ua.name = 'Googlebot';
+      if (!ecsUa.name) {
+        if (/YandexBot\//i.exec(userAgentString)) {
+          ecsUa.name = 'YandexBot';
+        } else if (/Googlebot\//i.exec(userAgentString)) {
+          ecsUa.name = 'Googlebot';
         }
       }
-      lodash.merge(record.user_agent, removeFalsy(ecs_ua));
+      lodash.merge(record.user_agent, removeFalsy(ecsUa));
       return record;
     }
     return record;

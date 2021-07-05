@@ -14,7 +14,7 @@ export class OpenSearchImpl implements OpenSearch {
     private url: URL = new URL(process.env.ES_URL || 'http://localhost')
     async bulk(documents: any[]): Promise<OpenSearchBulkResult> {
       const index:Map<string, any> = new Map();
-      const filter_path = 'took,errors,items.*.error,items.*._id';
+      const filterPath = 'took,errors,items.*.error,items.*._id';
       let body = '';
       const parsingErrors: any[] = [];
       for (const doc of documents) {
@@ -37,8 +37,8 @@ export class OpenSearchImpl implements OpenSearch {
         }
       }
       const query: any = {refresh: 'wait_for'};
-      if (filter_path.length > 0) {
-        query.filter_path = filter_path;
+      if (filterPath.length > 0) {
+        query.filter_path = filterPath;
       }
       this.logger.log(`Posting to ES`);
       return await this.awsHttpClient.executeSignedHttpRequest({

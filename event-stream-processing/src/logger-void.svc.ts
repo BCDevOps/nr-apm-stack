@@ -3,8 +3,10 @@ import {Logger} from './logger.isvc';
 
 @injectable()
 export class LoggerVoidImpl implements Logger {
-  debug(_message?: any, ..._optionalParams: any[]): void {
+  debug(): void {
+    // Intentionally blank
   }
-  log(message?: any, ...optionalParams: any[]): void {
+  log(): void {
+    // Intentionally blank
   }
 }

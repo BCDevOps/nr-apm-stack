@@ -4,7 +4,21 @@
         "node": true
     },
     "extends": [
-        "google"
+        "google",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+    ],
+    "overrides": [
+        {
+            "extends": ["plugin:jest/recommended"],
+            "files": ["*test.ts"],
+            "plugins": ["jest"],
+            "rules": {
+            "@typescript-eslint/unbound-method": "off",
+            "@typescript-eslint/no-empty-function": "off",
+            "jest/unbound-method": "error"
+            }
+        }
     ],
     "globals": {
         "Atomics": "readonly",
@@ -13,7 +27,8 @@
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaVersion": 2018,
-        "sourceType": "module"
+        "sourceType": "module",
+        "project": "./tsconfig.json"
     },
     "plugins": [
         "@typescript-eslint"
@@ -22,7 +37,10 @@
         "max-len": ["error", 120],
         "valid-jsdoc": 0,
         "indent": ["error", 2],
-        "no-unused-vars": "off",
-        "@typescript-eslint/no-unused-vars": "error"
+        "require-jsdoc": 0,
+        "@typescript-eslint/no-unsafe-assignment": 0,
+        "@typescript-eslint/no-unsafe-member-access": 0,
+        "@typescript-eslint/no-unsafe-return": 0,
+        "@typescript-eslint/restrict-template-expressions": 0
     }
 }

@@ -9,6 +9,7 @@ import {OpenSearchImpl} from './opensearch.svc';
 test('index', async () => {
   const awsHttpClientMock:AwsHttpClient = {
     executeSignedHttpRequest: (httpRequestParams: HttpRequestOptions): Promise<HttpResponseWrapper> => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const items = httpRequestParams.body.trim().split('\n');
       const response = {body: {errors: false, items: [] as any[]}};
       for (let index = 0; index < items.length; index+=2) {
