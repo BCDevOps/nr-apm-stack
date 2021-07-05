@@ -26,6 +26,9 @@ import { ThreatPhpImpl } from "./threat.php";
 import { ParserUserAgent } from "./parser.ua.svc";
 import { ParserGeoIp } from "./parser.geo.svc";
 import { FingerprintFilter } from "./fingerprint-filter";
+import { SystemCpuParser } from "./system-cpu-parser";
+import { SystemMemoryParser } from "./system-memory-parser";
+import { IndexNameAssigner } from "./index-name-assigner";
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace globalThis {
@@ -43,6 +46,8 @@ export function create() {
     myContainer.bind<Parser>(TYPES.Parser).to(ParserKeyAsPath);
     myContainer.bind<Parser>(TYPES.Parser).to(FingerprintFilter);
     myContainer.bind<Parser>(TYPES.Parser).to(ParserApacheImpl);
+    myContainer.bind<Parser>(TYPES.Parser).to(SystemCpuParser);
+    myContainer.bind<Parser>(TYPES.Parser).to(SystemMemoryParser);
     myContainer.bind<Parser>(TYPES.Parser).to(ParserEcs);
     myContainer.bind<Parser>(TYPES.Parser).to(ParserApplicationClasification);
     myContainer.bind<Parser>(TYPES.Parser).to(ParserHttpStatusCodeToEventOutCome);
@@ -50,6 +55,7 @@ export function create() {
     myContainer.bind<Parser>(TYPES.Parser).to(ParserUserAgent);
     myContainer.bind<Parser>(TYPES.Parser).to(ParserEcsEventIngested).whenTargetNamed(ParserEcsEventIngested.name)
     myContainer.bind<Parser>(TYPES.Parser).to(ThreatPhpImpl);
+    myContainer.bind<Parser>(TYPES.Parser).to(IndexNameAssigner);
     myContainer.bind<AwsHttpClient>(TYPES.AwsHttpClient).to(AwsHttpClientImpl);
     myContainer.bind<OpenSearch>(TYPES.OpenSearch).to(OpenSearchImpl);
     myContainer.bind<KinesisStreamHandler>(TYPES.KnesisStreamHandler).to(KinesisStreamHandlerImpl);
