@@ -15,13 +15,13 @@ export class FingerprintFilter implements Parser  {
     apply(record: any): void {
                 // Hash/fingerprinting event.
                 const hasher = crypto.createHash('sha256')
-                hasher.update(lodash.get(record, 'host.hostname'))
+                hasher.update(lodash.get(record, 'host.hostname', ''))
                 hasher.update(':')
-                hasher.update(path.basename(lodash.get(record, 'log.file.path')))
+                hasher.update(path.basename(lodash.get(record, 'log.file.path', '')))
                 hasher.update(':')
-                hasher.update(lodash.get(record, 'offset'))
+                hasher.update(`${lodash.get(record, 'offset', -1)}`)
                 hasher.update(':')
-                hasher.update(lodash.get(record, 'message'))
+                hasher.update(lodash.get(record, 'message', ''))
                 lodash.set(record, 'event.hash', hasher.digest('hex'))
     }
 }
