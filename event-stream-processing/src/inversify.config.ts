@@ -30,8 +30,8 @@ import {SystemCpuParser} from './system-cpu-parser';
 import {SystemMemoryParser} from './system-memory-parser';
 import {IndexNameAssigner} from './index-name-assigner';
 import {RemoveMetadataField} from './remove-metadata-field';
-import { DateAndTimeImpl } from './shared/date-and-time-impl';
-import { DateAndTime } from './shared/date-and-time';
+import {DateAndTimeImpl} from './shared/date-and-time-impl';
+import {DateAndTime} from './shared/date-and-time';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace globalThis {

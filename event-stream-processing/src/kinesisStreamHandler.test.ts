@@ -12,7 +12,7 @@ import {LoggerVoidImpl} from './logger-void.svc';
 import {APACHE_LOG_COMBINED_FORMAT_1, APACHE_LOG_COMBINED_KEEPALIVE, APACHE_LOG_V1_FORMAT_BAD_1} from './fixture-apache-log';
 import {MaxmindAsnLookup, MaxmindCityLookup} from './maxmindLookup.isvc';
 import {AsnResponse, CityResponse} from 'maxmind';
-import { DateAndTime } from './shared/date-and-time';
+import {DateAndTime} from './shared/date-and-time';
 import moment = require('moment');
 
 const myContainer = buildContainer();

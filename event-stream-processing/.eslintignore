@@ -1,4 +1,5 @@
 /lib/**
+/coverage/**
 /src/__snapshots__
 /src/ops
 /jest.config.js
