@@ -4,7 +4,10 @@ import * as lodash from 'lodash';
 
 test('access log with @timestamp', () => {
   const namer = new IndexNameAssigner();
-  const record = {...APACHE_ACCESS_LOG_EVENT_SIGNATURE, '@timestamp': '2021-05-01T18:47:40.314-07:00'};
+  const record = lodash.merge(
+    JSON.parse(JSON.stringify(APACHE_ACCESS_LOG_EVENT_SIGNATURE)),
+    {'@timestamp': '2021-05-01T18:47:40.314-07:00'},
+  );
   namer.apply(record);
   expect(record).toHaveProperty('_index', 'nrm-logs-access-2021.05.01');
 });
@@ -12,8 +15,7 @@ test('access log with @timestamp', () => {
 test('access log without @timestamp and with event.created', () => {
   const namer = new IndexNameAssigner();
   const record = lodash.merge(
-    {},
-    APACHE_ACCESS_LOG_EVENT_SIGNATURE,
+    JSON.parse(JSON.stringify(APACHE_ACCESS_LOG_EVENT_SIGNATURE)),
     {event: {created: '2021-05-02T18:47:40.314-07:00'}},
   );
   namer.apply(record);
@@ -22,7 +24,7 @@ test('access log without @timestamp and with event.created', () => {
 
 test('access log without any timestamp field', () => {
   const namer = new IndexNameAssigner();
-  const record = lodash.merge({}, APACHE_ACCESS_LOG_EVENT_SIGNATURE);
+  const record = lodash.merge({}, JSON.parse(JSON.stringify(APACHE_ACCESS_LOG_EVENT_SIGNATURE)));
   delete record.event.ingested;
   expect(() => {
     namer.apply(record);
