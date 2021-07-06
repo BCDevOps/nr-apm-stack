@@ -101,9 +101,14 @@ variable "data_node_volume_size" {
   default = 20
 }
 
+variable "kinesis_shards" {
+  type = number
+  default = 2
+}
+
 variable "ultrawarm_node_instance_count" {
   type = number
-  default = 0
+  default = null
 }
 
 variable "ultrawarm_node_instance_type" {
@@ -286,11 +291,11 @@ resource "aws_elasticsearch_domain" "es" {
     instance_type = var.data_node_instance_type
     zone_awareness_enabled = true
     zone_awareness_config {
-      availability_zone_count = var.master_node_instance_count > 0 ? 2 : 0
+      availability_zone_count = var.master_node_instance_count > 0 ? 2 : 2
     }
-    warm_enabled = var.ultrawarm_node_instance_count > 0 ? true : false
+    warm_enabled = var.ultrawarm_node_instance_count == null ? false : true
     warm_count = var.ultrawarm_node_instance_count
-    warm_type = var.ultrawarm_node_instance_type
+    warm_type = var.ultrawarm_node_instance_count == null ? null : var.ultrawarm_node_instance_type
   }
   ebs_options {
     ebs_enabled = true
@@ -316,13 +321,17 @@ resource "aws_elasticsearch_domain" "es" {
 resource "aws_kinesis_stream" "iit_logs" {
   name             = "nress${ var.suffix }-iit-logs"
   enforce_consumer_deletion = true
-  shard_count      = 4
+  shard_count      = var.kinesis_shards
   retention_period = 24
 
   shard_level_metrics = [
     "IncomingRecords",
     "IncomingBytes",
     "OutgoingBytes",
+    "IteratorAgeMilliseconds",
+    "OutgoingRecords",
+    "ReadProvisionedThroughputExceeded",
+    "WriteProvisionedThroughputExceeded"
   ]
 
   tags = {
@@ -366,20 +375,24 @@ resource "aws_s3_bucket" "lambda_code" {
     Instance = "nress${ var.suffix }"
   }
 }
+*/
+
+/*
 resource "aws_s3_bucket_object" "lambda_stream_processing_code" {
-  bucket = aws_s3_bucket.lambda_code.bucket
+  bucket = "nress${ var.suffix }-lambda-code-${ data.aws_caller_identity.current.account_id }"
   key    = "nress${ var.suffix }/event-stream-processing.zip"
   source = "../event-stream-processing/dist/event-stream-processing.zip"
   etag = filemd5("../event-stream-processing/dist/event-stream-processing.zip")
-  depends_on = [null_resource.lambda_build]
 }
 */
 
+/*
 data "aws_s3_bucket_object" "lambda_stream_processing_code" {
   bucket = "nress-lambda-code-${var.env}-148a62ab607aead4cf48e909528347df"
   key    = "nress-${var.env}-event-stream-processing.zip"
   version_id = var.iit_lambda_code_bucket_key_version
 }
+*/
 
 resource "aws_iam_role" "lambda_iit_agents" {
   name = "nress${ var.suffix }-lambda-iit-agents"
@@ -437,6 +450,10 @@ resource "aws_iam_role_policy_attachment" "lambda_iit_agents_basic_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+data "aws_lambda_layer_version" "maxmind_geoip_db" {
+  layer_name = "maxmind-geoip-db"
+}
+
 resource "aws_lambda_function" "lambda_iit_agents" {
   function_name = "nress${ var.suffix }-iit-agents"
   role          = aws_iam_role.lambda_iit_agents.arn
@@ -444,14 +461,17 @@ resource "aws_lambda_function" "lambda_iit_agents" {
   handler       = "index.kinesisStreamHandler"
   memory_size   = 1024
   timeout       = 60
-  s3_bucket     = data.aws_s3_bucket_object.lambda_stream_processing_code.bucket
-  s3_key        = data.aws_s3_bucket_object.lambda_stream_processing_code.key
-  s3_object_version = data.aws_s3_bucket_object.lambda_stream_processing_code.version_id
-  #source_code_hash = filebase64sha256("../event-stream-processing/event-stream-processing.zip")
+  #s3_bucket     = data.aws_s3_bucket_object.lambda_stream_processing_code.bucket
+  #s3_key        = data.aws_s3_bucket_object.lambda_stream_processing_code.key
+  #s3_object_version = data.aws_s3_bucket_object.lambda_stream_processing_code.version_id
+  filename = "dist/event-stream-processing.zip"
+  source_code_hash = filebase64sha256("dist/event-stream-processing.zip")
+  layers = [data.aws_lambda_layer_version.maxmind_geoip_db.arn]
   publish       = false
   environment   {
     variables   = {
       "ES_URL"  = "https://${aws_elasticsearch_domain.es.endpoint}"
+      "MAXMIND_DB_DIR"  = "/opt/nodejs/asset"
     }
   }
 }
@@ -474,7 +494,7 @@ resource "null_resource" "es_configure" {
     #working_dir = "../"
     #command = "echo %CD%"
     command = <<EOF
-curl -sSL -o /tmp/node-v12.22.1-linux-x64.tar.gz https://nodejs.org/dist/latest-v12.x/node-v12.22.1-linux-x64.tar.gz
+curl -sSL -o /tmp/node-v12.22.1-linux-x64.tar.gz https://nodejs.org/dist/v12.22.1/node-v12.22.1-linux-x64.tar.gz
 mkdir /home/terraform/node
 tar -xf /tmp/node-v12.22.1-linux-x64.tar.gz -C /home/terraform/node --strip-components=1
 export PATH=/home/terraform/node/bin:$PATH
@@ -486,6 +506,9 @@ EOF
   }
   depends_on = [aws_elasticsearch_domain.es]
 }
+
+/* The Elastic Search configuration may need to move to another module/workspace*/
+/* it fails on the first deployment because terraform can't initialize the provider as ES endpoint doesn't yet exist*/
 
 provider "elasticsearch" {
   url = "https://${aws_elasticsearch_domain.es.endpoint}"
@@ -545,5 +568,5 @@ resource "elasticsearch_opendistro_roles_mapping" "nrm_read_all_mapper" {
 resource "elasticsearch_opendistro_roles_mapping" "all_access" {
   role_name     = "all_access"
   description   = "Mapping KC role to ES role"
-  backend_roles = ["all_access"]
+  backend_roles = ["all_access", "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/BCGOV_WORKLOAD_admin_umafubc9"]
 }

@@ -8,8 +8,23 @@ import {ParserEcs} from './parser.ecs.svc';
 import {ParserApplicationClasification} from './parser.apps.svc';
 import {Logger} from './logger.isvc';
 import {LoggerVoidImpl} from './logger-void.svc';
+import {AsnResponse, CityResponse} from 'maxmind';
+import {MaxmindAsnLookup, MaxmindCityLookup} from './maxmindLookup.isvc';
 
 const myContainer = buildContainer();
+const geoIpCityLookupVictoria:CityResponse = {
+  continent: {code: 'NA', geoname_id: 0, names: {en: 'North America'}},
+  country: {iso_code: 'CA', geoname_id: 0, names: {en: 'Canada'}},
+  subdivisions: [{geoname_id: 0, iso_code: 'BC', names: {en: 'British Columbia'}}],
+  city: {geoname_id: 1, names: {en: 'Victoria'}},
+  location: {latitude: 0, longitude: 0, accuracy_radius: 0, time_zone: 'America/Vancouver'},
+  postal: {code: 'ABC-123'},
+};
+
+const geoIpAsnLookupBcGov:AsnResponse = {
+  autonomous_system_number: 123456,
+  autonomous_system_organization: 'TEST',
+};
 
 beforeEach(() => {
   myContainer.snapshot();
@@ -17,6 +32,16 @@ beforeEach(() => {
     return Buffer.from([0x62, 0x75, 0x66, 0x66, 0x65, 0x72]);
   }});
   myContainer.rebind<Logger>(TYPES.Logger).to(LoggerVoidImpl);
+  myContainer.rebind<MaxmindCityLookup>(TYPES.MaxmindCityLookup).toConstantValue({
+    lookup: ():CityResponse => {
+      return geoIpCityLookupVictoria;
+    },
+  });
+  myContainer.rebind<MaxmindAsnLookup>(TYPES.MaxmindAsnLookup).toConstantValue({
+    lookup: ():AsnResponse => {
+      return geoIpAsnLookupBcGov;
+    },
+  });
 });
 
 afterEach(() => {
@@ -127,7 +152,8 @@ test('geoip - client.ip', async () => {
           data: Buffer.from(
             JSON.stringify({
               ...APACHE_ACCESS_LOG_EVENT_SIGNATURE,
-              client: {ip: '2001:569:be94:4700:61b4:917e:808:e3c6'},
+              'client': {ip: '2001:569:be94:4700:61b4:917e:808:e3c6'},
+              '@timestamp': '2021-05-01T18:47:40.314-07:00',
             }), 'utf8').toString('base64'),
         },
       } as any as KinesisStreamRecord,
@@ -176,7 +202,9 @@ test('apache - empty', async () => {
     Records: [
             {
               kinesis: {
-                data: Buffer.from(JSON.stringify({...APACHE_ACCESS_LOG_EVENT_SIGNATURE}), 'utf8').toString('base64'),
+                data: Buffer.from(JSON.stringify(
+                  {...APACHE_ACCESS_LOG_EVENT_SIGNATURE,
+                    '@timestamp': '2021-05-01T18:47:40.314-07:00'}), 'utf8').toString('base64'),
               },
             } as any as KinesisStreamRecord,
     ],

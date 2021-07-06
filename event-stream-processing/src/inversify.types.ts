@@ -8,4 +8,5 @@ export const TYPES = {
   Randomizer: Symbol.for('Randomizer'),
   MaxmindCityLookup: Symbol.for('MaxmindCityLookup'),
   MaxmindAsnLookup: Symbol.for('MaxmindAsnLookup'),
+  DateAndTime: Symbol.for('DateAndTime'),
 };

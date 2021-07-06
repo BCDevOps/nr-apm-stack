@@ -1,5 +1,8 @@
+/lib/**
+/coverage/**
 /src/__snapshots__
 /src/ops
 /jest.config.js
 /index.js
+/listFiles.js
 /run.ts

@@ -135,12 +135,13 @@ const MyDeployer = class extends BasicDeployer {
     let domainConfig = await describeDomain(client, createCmdParams.DomainName)
     if (!domainConfig){
       // if a domain doesn't exist with the same name, create one
-      const createCmd = new CreateElasticsearchDomainCommand(createCmdParams);
-      domainConfig = (await client.send(createCmd))
+      //const createCmd = new CreateElasticsearchDomainCommand(createCmdParams);
+      //domainConfig = (await client.send(createCmd))
+      throw new Error(`An ElasticSearch domain must have been created: '${createCmdParams.DomainName}'`)
     }
     // wait for domain to be up and ready
     await waitForDomainStatusReady(client, domainName)
-    // update domain configuration
+    // update domain configuration. Only AdvancedSecurityOptions/SAMLOptions is updated!!!
     const updateCmdParams = {DomainName:domainName, AdvancedSecurityOptions:{SAMLOptions:samlOptions}}
     const updateCmd = new UpdateElasticsearchDomainConfigCommand(updateCmdParams)
     domainConfig = (await client.send(updateCmd))
@@ -470,9 +471,13 @@ const MyDeployer = class extends BasicDeployer {
     await this.init()
     const { SecretsManagerClient, GetSecretValueCommand } = require.main.require("@aws-sdk/client-secrets-manager")
     const awsSecretManagerclient = new SecretsManagerClient({region:'ca-central-1',})
-    const awsGetSecretValueCommand = new GetSecretValueCommand({SecretId:`${this.settings.phase}/nrdk/config/keycloak`})
+    const secretId = `${this.settings.phase}/nrdk/config/keycloak`
+    const awsGetSecretValueCommand = new GetSecretValueCommand({SecretId: secretId})
     const awsSecrets = await awsSecretManagerclient.send(awsGetSecretValueCommand).catch(() =>{ return {SecretString: '{}'}})
     const keycloakConfigOverrides = JSON.parse(awsSecrets.SecretString)
+    if (Object.keys(keycloakConfigOverrides).length === 0) {
+      throw new Error(`Missing AWS SecretId '${secretId}'`)
+    }
     Object.assign(this.settings.phases[this.settings.phase].keycloak, keycloakConfigOverrides)
     const domainConfig = await this.getElasticSearchDomain()
     await this.configureElasticSearch(domainConfig.DomainStatus.Endpoint)

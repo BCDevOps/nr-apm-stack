@@ -18,8 +18,8 @@ export class KinesisStreamHandlerImpl implements KinesisStreamHandler {
 
     @inject(TYPES.Logger) private logger:Logger;
 
-    convertRecordDataToJson(record: KinesisStreamRecord) {
-      return JSON.parse(Buffer.from(record.kinesis.data, 'base64').toString('utf8'));
+    convertRecordDataToJson(record: KinesisStreamRecord): Promise<any> {
+      return Promise.resolve(JSON.parse(Buffer.from(record.kinesis.data, 'base64').toString('utf8')));
     }
 
     parseMessage(record: any) {

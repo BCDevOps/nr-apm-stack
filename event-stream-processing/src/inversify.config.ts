@@ -25,6 +25,13 @@ import {LoggerImpl} from './logger.svc';
 import {ThreatPhpImpl} from './threat.php';
 import {ParserUserAgent} from './parser.ua.svc';
 import {ParserGeoIp} from './parser.geo.svc';
+import {FingerprintFilter} from './fingerprint-filter';
+import {SystemCpuParser} from './system-cpu-parser';
+import {SystemMemoryParser} from './system-memory-parser';
+import {IndexNameAssigner} from './index-name-assigner';
+import {RemoveMetadataField} from './remove-metadata-field';
+import {DateAndTimeImpl} from './shared/date-and-time-impl';
+import {DateAndTime} from './shared/date-and-time';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace globalThis {
@@ -40,18 +47,25 @@ export function create() {
   myContainer.bind<MaxmindAsnLookup>(TYPES.MaxmindAsnLookup).to(MaxmindAsnLookupImpl);
 
   myContainer.bind<Parser>(TYPES.Parser).to(ParserKeyAsPath);
+  myContainer.bind<Parser>(TYPES.Parser).to(FingerprintFilter);
   myContainer.bind<Parser>(TYPES.Parser).to(ParserApacheImpl);
+  myContainer.bind<Parser>(TYPES.Parser).to(SystemCpuParser);
+  myContainer.bind<Parser>(TYPES.Parser).to(SystemMemoryParser);
   myContainer.bind<Parser>(TYPES.Parser).to(ParserEcs);
   myContainer.bind<Parser>(TYPES.Parser).to(ParserApplicationClasification);
   myContainer.bind<Parser>(TYPES.Parser).to(ParserHttpStatusCodeToEventOutCome);
   myContainer.bind<Parser>(TYPES.Parser).to(ParserGeoIp);
   myContainer.bind<Parser>(TYPES.Parser).to(ParserUserAgent);
-  myContainer.bind<Parser>(TYPES.Parser).to(ParserEcsEventIngested).whenTargetNamed(ParserEcsEventIngested.name);
+  myContainer.bind<Parser>(TYPES.Parser).to(ParserEcsEventIngested);
   myContainer.bind<Parser>(TYPES.Parser).to(ThreatPhpImpl);
+  myContainer.bind<Parser>(TYPES.Parser).to(IndexNameAssigner);
+  myContainer.bind<Parser>(TYPES.Parser).to(RemoveMetadataField);
+
   myContainer.bind<AwsHttpClient>(TYPES.AwsHttpClient).to(AwsHttpClientImpl);
   myContainer.bind<OpenSearch>(TYPES.OpenSearch).to(OpenSearchImpl);
   myContainer.bind<KinesisStreamHandler>(TYPES.KnesisStreamHandler).to(KinesisStreamHandlerImpl);
   myContainer.bind<Randomizer>(TYPES.Randomizer).to(RandomImpl);
+  myContainer.bind<DateAndTime>(TYPES.DateAndTime).to(DateAndTimeImpl);
   return myContainer;
 }
 if (!globalThis.__inversify_singleton) {

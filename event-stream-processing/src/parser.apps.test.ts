@@ -8,8 +8,23 @@ import {ParserApplicationClasification} from './parser.apps.svc';
 import {Logger} from './logger.isvc';
 import {LoggerVoidImpl} from './logger-void.svc';
 import {APACHE_LOG_V1_APEX_1} from './fixture-apache-log';
+import {CityResponse, AsnResponse} from 'maxmind';
+import {MaxmindCityLookup, MaxmindAsnLookup} from './maxmindLookup.isvc';
 
 const myContainer = buildContainer();
+const geoIpCityLookupVictoria:CityResponse = {
+  continent: {code: 'NA', geoname_id: 0, names: {en: 'North America'}},
+  country: {iso_code: 'CA', geoname_id: 0, names: {en: 'Canada'}},
+  subdivisions: [{geoname_id: 0, iso_code: 'BC', names: {en: 'British Columbia'}}],
+  city: {geoname_id: 1, names: {en: 'Victoria'}},
+  location: {latitude: 0, longitude: 0, accuracy_radius: 0, time_zone: 'America/Vancouver'},
+  postal: {code: 'ABC-123'},
+};
+
+const geoIpAsnLookupBcGov:AsnResponse = {
+  autonomous_system_number: 123456,
+  autonomous_system_organization: 'TEST',
+};
 
 beforeEach(() => {
   myContainer.snapshot();
@@ -17,6 +32,16 @@ beforeEach(() => {
     return Buffer.from([0x62, 0x75, 0x66, 0x66, 0x65, 0x72]);
   }});
   myContainer.rebind<Logger>(TYPES.Logger).to(LoggerVoidImpl);
+  myContainer.rebind<MaxmindCityLookup>(TYPES.MaxmindCityLookup).toConstantValue({
+    lookup: ():CityResponse => {
+      return geoIpCityLookupVictoria;
+    },
+  });
+  myContainer.rebind<MaxmindAsnLookup>(TYPES.MaxmindAsnLookup).toConstantValue({
+    lookup: ():AsnResponse => {
+      return geoIpAsnLookupBcGov;
+    },
+  });
 });
 
 afterEach(() => {

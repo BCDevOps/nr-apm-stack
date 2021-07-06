@@ -40,7 +40,10 @@ export class OpenSearchImpl implements OpenSearch {
       if (filterPath.length > 0) {
         query.filter_path = filterPath;
       }
-      this.logger.log(`Posting to ES`);
+      this.logger.log(`${index.size} documents being posted to ES`);
+      this.logger.log(`${parsingErrors.length} documents with parsing error and not posted to ES`);
+      this.logger.debug('ES_REQUEST_BODY:', body);
+      this.logger.debug('ES_REQUEST_QUERY:', query);
       return await this.awsHttpClient.executeSignedHttpRequest({
         hostname: this.url.hostname,
         protocol: 'https',
@@ -54,10 +57,15 @@ export class OpenSearchImpl implements OpenSearch {
         path: '/_bulk',
       })
         .then(this.awsHttpClient.waitAndReturnResponseBody.bind(this.awsHttpClient))
-        .then((value: any)=>{
+        .then((value:any)=>{
+          if (value.statusCode !== 200) {
+            this.logger.log(`ES_RESPONSE_STATUS_CODE ${value.statusCode}`);
+            return {success: false, errors: documents};
+          }
           const body = JSON.parse(value.body);
           const bodyItems:any[] = body.items;
           const errors: any[] = [];
+          this.logger.debug('ES_RESPONSE_BODY:', value.body);
           if (parsingErrors.length > 0 ) {
             for (const doc of parsingErrors) {
               errors.push(doc);

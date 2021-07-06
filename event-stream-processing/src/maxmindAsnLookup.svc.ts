@@ -9,7 +9,8 @@ import {MaxmindAsnLookup} from './maxmindLookup.isvc';
 export class MaxmindAsnLookupImpl implements MaxmindAsnLookup {
     private _cityLookup: Reader<AsnResponse>;
     public constructor() {
-      this._cityLookup = new Reader<AsnResponse>(fs.readFileSync(path.join(__dirname, '../asset/GeoLite2-ASN.mmdb')));
+      const dbPath = process.env.MAXMIND_DB_DIR || path.join(__dirname, '../asset');
+      this._cityLookup = new Reader<AsnResponse>(fs.readFileSync(path.join(dbPath, 'GeoLite2-ASN.mmdb')));
     }
     public lookup(ipAddress:string): AsnResponse {
       return this._cityLookup.get(ipAddress);
