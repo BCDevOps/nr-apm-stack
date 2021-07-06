@@ -10,8 +10,8 @@ import {MaxmindCityLookup} from './maxmindLookup.isvc';
 export class MaxmindCityLookupmpl implements MaxmindCityLookup {
     private _cityLookup: Reader<CityResponse>;
     public constructor() {
-        const db_path = process.env.MAXMIND_DB_DIR || path.join(__dirname, '../asset')
-        this._cityLookup = new Reader<CityResponse>(fs.readFileSync(path.join(db_path, 'GeoLite2-City.mmdb')));
+      const dbPath = process.env.MAXMIND_DB_DIR || path.join(__dirname, '../asset');
+      this._cityLookup = new Reader<CityResponse>(fs.readFileSync(path.join(dbPath, 'GeoLite2-City.mmdb')));
     }
     public lookup(ipAddress:string): CityResponse {
       return this._cityLookup.get(ipAddress);
