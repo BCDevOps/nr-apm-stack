@@ -135,12 +135,13 @@ const MyDeployer = class extends BasicDeployer {
     let domainConfig = await describeDomain(client, createCmdParams.DomainName)
     if (!domainConfig){
       // if a domain doesn't exist with the same name, create one
-      const createCmd = new CreateElasticsearchDomainCommand(createCmdParams);
-      domainConfig = (await client.send(createCmd))
+      //const createCmd = new CreateElasticsearchDomainCommand(createCmdParams);
+      //domainConfig = (await client.send(createCmd))
+      throw new Error(`An ElasticSearch domain must have been created: '${createCmdParams.DomainName}'`)
     }
     // wait for domain to be up and ready
     await waitForDomainStatusReady(client, domainName)
-    // update domain configuration
+    // update domain configuration. Only AdvancedSecurityOptions/SAMLOptions is updated!!!
     const updateCmdParams = {DomainName:domainName, AdvancedSecurityOptions:{SAMLOptions:samlOptions}}
     const updateCmd = new UpdateElasticsearchDomainConfigCommand(updateCmdParams)
     domainConfig = (await client.send(updateCmd))

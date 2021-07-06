@@ -114,3 +114,5 @@ event-stream-processing/lib
 *.lock.hcl
 *.env
 terraform/.terraform.lock.hcl
+event-stream-processing/asset/GeoLite2-ASN.mmdb
+event-stream-processing/asset/GeoLite2-City.mmdb
