@@ -3,7 +3,9 @@
 exports[`apache - empty: eb6509a2-5862-41fc-86a0-8f8e692a9131 1`] = `
 Array [
   Object {
+    "@timestamp": "2021-05-01T18:47:40.314-07:00",
     "_id": "756e646566696e65642e363237353636363636353732",
+    "_index": "nrm-logs-access-2021.05.01",
     "event": Object {
       "category": "web",
       "dataset": "apache.access",
@@ -25,9 +27,9 @@ Array [
     },
     "client": Object {
       "as": Object {
-        "number": 852,
+        "number": 123456,
         "organization": Object {
-          "name": "ASN852",
+          "name": "TEST",
         },
       },
       "geo": Object {
@@ -37,10 +39,10 @@ Array [
         "country_iso_code": "CA",
         "country_name": "Canada",
         "location": Object {
-          "lat": 48.4771,
-          "lon": -123.5313,
+          "lat": 0,
+          "lon": 0,
         },
-        "postal_code": "V9B",
+        "postal_code": "ABC-123",
         "region_iso_code": "BC",
         "region_name": "British Columbia",
         "timezone": "America/Vancouver",
@@ -51,6 +53,7 @@ Array [
       "category": "web",
       "dataset": "apache.access",
       "duration": "133",
+      "hash": "40b7c458b3fa56f88df0af893aacc62aee764314d91551559158210c0787378f",
       "kind": "event",
       "outcome": "success",
     },
@@ -189,12 +192,14 @@ Object {
 exports[`geoip - client.ip: eb9545ae-e9a8-41bb-8998-81fb0a1931b9 1`] = `
 Array [
   Object {
+    "@timestamp": "2021-05-01T18:47:40.314-07:00",
     "_id": "756e646566696e65642e363237353636363636353732",
+    "_index": "nrm-logs-access-2021.05.01",
     "client": Object {
       "as": Object {
-        "number": 852,
+        "number": 123456,
         "organization": Object {
-          "name": "ASN852",
+          "name": "TEST",
         },
       },
       "geo": Object {
@@ -204,10 +209,10 @@ Array [
         "country_iso_code": "CA",
         "country_name": "Canada",
         "location": Object {
-          "lat": 48.4771,
-          "lon": -123.5313,
+          "lat": 0,
+          "lon": 0,
         },
-        "postal_code": "V9B",
+        "postal_code": "ABC-123",
         "region_iso_code": "BC",
         "region_name": "British Columbia",
         "timezone": "America/Vancouver",
