@@ -10,5 +10,5 @@ module.exports = {
       "^.+\\.(ts|tsx)$": "ts-jest"
     },
     "setupFiles": ["./src/jest-setup-file.ts"],
-    "testTimeout": 500000
+    "testTimeout": 500000,
 }

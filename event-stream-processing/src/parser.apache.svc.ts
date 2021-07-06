@@ -12,14 +12,14 @@ const regex_apache_standard01 = /^(?<source__ip>[^ ]+) ([^ ]+) (?<user__name>[^ 
 const regex_apache_standard02 = /^(?<source__ip>[^ ]+) ([^ ]+) (?<user__name>[^ ]+) \[(?<apache__access__time>[^\]]+)\] "(?<http__request__line>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__response__bytes>(-?|\d+)) "(?<http__request__referrer__original>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)"$/;
 /* eslint-enable max-len */
 
-export const APACHE_ACCESS_LOG_EVENT_SIGNATURE = {
+export const APACHE_ACCESS_LOG_EVENT_SIGNATURE = Object.freeze({
   event: {
     kind: 'event',
     category: 'web',
     dataset: 'apache.access',
     ingested: '2021-05-26T18:47:40.314-07:00',
   },
-};
+});
 
 /**
  * reference:

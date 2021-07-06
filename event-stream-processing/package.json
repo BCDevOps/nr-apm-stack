@@ -23,7 +23,7 @@
     "rm-lib": "rimraf lib",
     "rm-coverage": "rimraf coverage",
     "pack": "npm-run-all mkdirs rm-pack compile build-pack",
-    "test": "jest",
+    "test": "jest --coverage",
     "deploy": "ts-node src/ops/deploy.ts",
     "ts-node": "ts-node"
   },

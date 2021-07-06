@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import {injectable} from 'inversify';
 import {Logger} from './logger.isvc';
 import {isObjectLike} from 'lodash';
