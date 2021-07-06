@@ -34,6 +34,8 @@ jobs:
           MAXMIND_LICENSE_KEY: ${{secrets.MAXMIND_LICENSE_KEY}}
       - run: npm run test
         working-directory: ./event-stream-processing
+        env:
+          TZ: America/Vancouver
       - run: npm run check-lint
         working-directory: ./event-stream-processing
       - run: npm run pack
