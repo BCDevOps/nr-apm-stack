@@ -29,6 +29,7 @@ import { FingerprintFilter } from "./fingerprint-filter";
 import { SystemCpuParser } from "./system-cpu-parser";
 import { SystemMemoryParser } from "./system-memory-parser";
 import { IndexNameAssigner } from "./index-name-assigner";
+import { RemoveMetadataField } from "./remove-metadata-field";
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace globalThis {
@@ -56,6 +57,8 @@ export function create() {
     myContainer.bind<Parser>(TYPES.Parser).to(ParserEcsEventIngested).whenTargetNamed(ParserEcsEventIngested.name)
     myContainer.bind<Parser>(TYPES.Parser).to(ThreatPhpImpl);
     myContainer.bind<Parser>(TYPES.Parser).to(IndexNameAssigner);
+    myContainer.bind<Parser>(TYPES.Parser).to(RemoveMetadataField);
+    
     myContainer.bind<AwsHttpClient>(TYPES.AwsHttpClient).to(AwsHttpClientImpl);
     myContainer.bind<OpenSearch>(TYPES.OpenSearch).to(OpenSearchImpl);
     myContainer.bind<KinesisStreamHandler>(TYPES.KnesisStreamHandler).to(KinesisStreamHandlerImpl);
