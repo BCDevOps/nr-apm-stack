@@ -57,7 +57,11 @@ export class OpenSearchImpl implements OpenSearch {
         path: '/_bulk',
       })
         .then(this.awsHttpClient.waitAndReturnResponseBody.bind(this.awsHttpClient))
-        .then((value: any)=>{
+        .then((value:any)=>{
+          if (value.statusCode !== 200) {
+            this.logger.log(`ES_RESPONSE_STATUS_CODE ${value.statusCode}`);
+            return {success: false, errors: documents};
+          }
           const body = JSON.parse(value.body);
           const bodyItems:any[] = body.items;
           const errors: any[] = [];
