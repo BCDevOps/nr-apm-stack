@@ -32,6 +32,7 @@ export class KinesisStreamHandlerImpl implements KinesisStreamHandler {
         }
       } catch (error) {
         this.logger.log(`Error Parsing:${JSON.stringify(record)}`);
+        this.logger.log(error);
         throw error;
       }
       return record;
