@@ -3,7 +3,7 @@ import {Parser} from './parser.isvc';
 import * as lodash from 'lodash';
 import * as path from 'path';
 import {format as formatUrl} from 'url';
-
+import {expandFileAttributesFromPath} from './shared/expand-file-attributes-from-path';
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
 function explodeURL(url: URL): any {
@@ -81,6 +81,7 @@ export class ParserEcs implements Parser {
   apply(record: any): void {
     if (!lodash.isNil(lodash.get(record, 'log.file.path'))) {
       lodash.set(record, 'log.file.path', (lodash.get(record, 'log.file.path') as string).replace(/\\/g, '/'));
+      expandFileAttributesFromPath(lodash.get(record, 'log.file.path') as string, lodash.get(record, 'log.file'));
     }
     if (!lodash.isNil(lodash.get(record, 'http.request.line'))) {
       const value = lodash.get(record, 'http.request.line');
