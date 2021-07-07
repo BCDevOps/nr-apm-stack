@@ -14,7 +14,7 @@ test('index', async () => {
       const response = {body: {errors: false, items: [] as any[]}};
       for (let index = 0; index < items.length; index+=2) {
         const item = JSON.parse(items[index]);
-        const item2:any = {create: {_id: item.create._id}};
+        const item2:any = {index: {_id: item.index._id}};
         response.body.items.push(item2);
       }
       return Promise.resolve({response} as HttpResponseWrapper);
@@ -30,8 +30,12 @@ test('index', async () => {
   myContainer.bind<Logger>(TYPES.Logger).to(LoggerVoidImpl);
   const openSearchClient = myContainer.get<OpenSearch>(TYPES.OpenSearch);
   const docs = [
-    {'@timestamp': new Date(), 'message': 'Hello', '_index': 'my-index1', '_id': '1'},
-    {'@timestamp': new Date(), 'message': 'Hello', '_index': 'my-index2', '_id': '2'},
+    {'@timestamp': new Date(), 'message': 'Hello', '_index': 'my-index1', '_id': '1',
+      'kinesis': {eventID: 'shardId-000000000000:100001'},
+    },
+    {'@timestamp': new Date(), 'message': 'Hello', '_index': 'my-index2', '_id': '2',
+      'kinesis': {eventID: 'shardId-000000000000:100002'},
+    },
   ];
   const output = await openSearchClient.bulk(docs);
   expect(output).toEqual({'success': true, 'errors': []});

@@ -18,6 +18,8 @@ export class OpenSearchImpl implements OpenSearch {
       let body = '';
       const parsingErrors: any[] = [];
       for (const doc of documents) {
+        // assign document id
+        doc._id = `${doc.kinesis.eventID}:${doc.event?.hash || ''}`;
         index.set(doc._id, doc);
         if (!doc._error) {
           const _index = doc._index;
@@ -26,7 +28,7 @@ export class OpenSearchImpl implements OpenSearch {
           delete doc._index;
           delete doc._type;
           delete doc._id;
-          body += `{"create":{"_index": "${_index}", "_type": "${_type}"`;
+          body += `{"index":{"_index": "${_index}", "_type": "${_type}"`;
           if (_id) {
             body += `, "_id":"${_id}"`;
           }
@@ -72,14 +74,12 @@ export class OpenSearchImpl implements OpenSearch {
             }
           }
           for (const item of bodyItems) {
-            if (item.create.error) {
-              const doc = index.get(item.create._id);
+            const meta = item.create || item.index;
+            if (meta.error) {
+              const doc = index.get(meta._id);
               if (doc) {
-                doc._error = item.create.error;
+                doc._error = meta.error;
                 this.logger.log('ES_ERROR '+JSON.stringify(doc));
-                // const _idAsString = Buffer.from(item.create._id, 'hex').toString('utf8')
-                // const sequenceNumber = _idAsString.substring(0, _idAsString.lastIndexOf('.'))
-                // batchItemFailures.push({itemIdentifier: sequenceNumber})
                 errors.push(doc);
               } else {
                 this.logger.log('ES_ERROR_DOC_NOT_FOUND '+JSON.stringify(item));

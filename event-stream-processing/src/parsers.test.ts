@@ -55,7 +55,9 @@ test('apache - safe uri', async () => {
   const event:KinesisStreamEvent = {
     Records: [
       {
+        eventID: 'shardId-000000000000:100001',
         kinesis: {
+          sequenceNumber: '123',
           data: Buffer.from(
             JSON.stringify({...APACHE_ACCESS_LOG_EVENT_SIGNATURE, message: message1}), 'utf8',
           ).toString('base64'),
@@ -87,7 +89,9 @@ test('apache - safe-ish uri', async () => {
   const event:KinesisStreamEvent = {
     Records: [
       {
+        eventID: 'shardId-000000000000:100001',
         kinesis: {
+          sequenceNumber: '123',
           data: Buffer.from(
             JSON.stringify({
               ...APACHE_ACCESS_LOG_EVENT_SIGNATURE,
@@ -96,7 +100,9 @@ test('apache - safe-ish uri', async () => {
         },
       } as any as KinesisStreamRecord,
       {
+        eventID: 'shardId-000000000000:100001',
         kinesis: {
+          sequenceNumber: '456',
           data: Buffer.from(
             JSON.stringify({
               ...APACHE_ACCESS_LOG_EVENT_SIGNATURE,
@@ -123,7 +129,9 @@ test('apache - unsafe uri', async () => {
   const event:KinesisStreamEvent = {
     Records: [
       {
+        eventID: 'shardId-000000000000:100001',
         kinesis: {
+          sequenceNumber: '123',
           data: Buffer.from(
             JSON.stringify({
               ...APACHE_ACCESS_LOG_EVENT_SIGNATURE,
@@ -148,7 +156,9 @@ test('geoip - client.ip', async () => {
   const event:KinesisStreamEvent = {
     Records: [
       {
+        eventID: 'shardId-000000000000:100001',
         kinesis: {
+          sequenceNumber: '123',
           data: Buffer.from(
             JSON.stringify({
               ...APACHE_ACCESS_LOG_EVENT_SIGNATURE,
@@ -176,7 +186,9 @@ test('geoip - source.address', async () => {
   const event:KinesisStreamEvent = {
     Records: [
       {
+        eventID: 'shardId-000000000000:100001',
         kinesis: {
+          sequenceNumber: '123',
           data: Buffer.from(
             JSON.stringify({
               ...APACHE_ACCESS_LOG_EVENT_SIGNATURE,
@@ -201,7 +213,9 @@ test('apache - empty', async () => {
   const event:KinesisStreamEvent = {
     Records: [
             {
+              eventID: 'shardId-000000000000:100001',
               kinesis: {
+                sequenceNumber: '123',
                 data: Buffer.from(JSON.stringify(
                   {...APACHE_ACCESS_LOG_EVENT_SIGNATURE,
                     '@timestamp': '2021-05-01T18:47:40.314-07:00'}), 'utf8').toString('base64'),
