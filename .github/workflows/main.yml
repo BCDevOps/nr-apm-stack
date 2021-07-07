@@ -17,6 +17,10 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
+    # Development GitHub repo environment
+    environment:
+      name: dev
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -40,6 +44,20 @@ jobs:
         working-directory: ./event-stream-processing
       - run: npm run clean
         working-directory: ./event-stream-processing
+
+  deploy_prod:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Production GitHub repo environment
+    environment:
+      name: prod
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
       # Install/Setup terraform CLI
       - uses: hashicorp/setup-terraform@v1
         with:
