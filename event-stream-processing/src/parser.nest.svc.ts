@@ -13,8 +13,9 @@ export class ParserKeyAsPath implements Parser {
   apply(record: any): void {
     for (const key of Object.keys(record)) {
       if (key.indexOf('.')>0) {
-        lodash.set(record, key, record[key]);
+        const value = record[key];
         delete record[key];
+        lodash.set(record, key, value);
       }
     }
   }
