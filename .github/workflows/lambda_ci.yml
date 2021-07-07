@@ -3,7 +3,7 @@
 name: lambda_ci
 
 # Controls when the action will run. 
-on: [push, pull_request]
+on: [push]
 
 env:
   TF_VERSION: 0.15.3
@@ -27,11 +27,6 @@ jobs:
           node-version: 12.x
       - run: npm ci
         working-directory: ./event-stream-processing
-      - name: Download/Install Maxmind databases
-        run: npm run ts-node ./src/download-maxmind-geoip-databases.ts
-        working-directory: ./event-stream-processing
-        env:
-          MAXMIND_LICENSE_KEY: ${{secrets.MAXMIND_LICENSE_KEY}}
       - run: npm run test
         working-directory: ./event-stream-processing
         env:
