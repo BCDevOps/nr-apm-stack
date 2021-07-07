@@ -4,13 +4,18 @@ exports[`apache - empty: eb6509a2-5862-41fc-86a0-8f8e692a9131 1`] = `
 Array [
   Object {
     "@timestamp": "2021-05-01T18:47:40.314-07:00",
-    "_id": "756e646566696e65642e363237353636363636353732",
     "_index": "nrm-logs-access-2021.05.01",
     "event": Object {
       "category": "web",
       "dataset": "apache.access",
       "kind": "event",
       "risk_score": 1,
+    },
+    "kinesis": Object {
+      "approximateArrivalTimestamp": undefined,
+      "eventID": "shardId-000000000000:100001",
+      "partitionKey": undefined,
+      "sequenceNumber": "123",
     },
   },
 ]
@@ -20,7 +25,6 @@ exports[`apache - safe uri: 8cb108e0-c707-4faf-83fc-10bc756f6b1b 1`] = `
 Array [
   Object {
     "@timestamp": "2021-04-20T15:10:40.000-07:00",
-    "_id": "756e646566696e65642e363237353636363636353732",
     "_index": "nrm-logs-access-2021.04.20",
     "apache": Object {
       "version": "20120211",
@@ -92,6 +96,12 @@ Array [
         "status_code": "200",
       },
       "version": "1.1",
+    },
+    "kinesis": Object {
+      "approximateArrivalTimestamp": undefined,
+      "eventID": "shardId-000000000000:100001",
+      "partitionKey": undefined,
+      "sequenceNumber": "123",
     },
     "labels": Object {
       "application": "fncs",
@@ -193,7 +203,6 @@ exports[`geoip - client.ip: eb9545ae-e9a8-41bb-8998-81fb0a1931b9 1`] = `
 Array [
   Object {
     "@timestamp": "2021-05-01T18:47:40.314-07:00",
-    "_id": "756e646566696e65642e363237353636363636353732",
     "_index": "nrm-logs-access-2021.05.01",
     "client": Object {
       "as": Object {
@@ -224,6 +233,12 @@ Array [
       "dataset": "apache.access",
       "kind": "event",
       "risk_score": 1,
+    },
+    "kinesis": Object {
+      "approximateArrivalTimestamp": undefined,
+      "eventID": "shardId-000000000000:100001",
+      "partitionKey": undefined,
+      "sequenceNumber": "123",
     },
   },
 ]

@@ -141,10 +141,10 @@ test('handler - partial error', async () => {
       const response = {body: {errors: false, items: [] as any[]}};
       for (let index = 0; index < items.length; index+=2) {
         const item = JSON.parse(items[index]);
-        const item2:any = {create: {_id: item.create._id}};
+        const item2:any = {index: {_id: item.index._id}};
         if (response.body.items.length % 2 === 0) {
           response.body.errors = true;
-          item2.create.error = {};
+          item2.index.error = {};
         }
         response.body.items.push(item2);
       }
