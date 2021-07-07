@@ -24,12 +24,14 @@ const message1_1 = 'v1.0 20120211 "https://testapps.nrs.gov.bc.ca:443" "2001:569
 const apacheAccesLogEvent = APACHE_ACCESS_LOG_EVENT_SIGNATURE;
 const event1 = Object.assign({message: message1}, apacheAccesLogEvent);
 const record1 = {
+  eventID: 'shardId-000000000000:100001',
   kinesis: {
     sequenceNumber: '123',
     data: Buffer.from(JSON.stringify(event1), 'utf8').toString('base64'),
   },
 } as any as KinesisStreamRecord;
 const record2 = {
+  eventID: 'shardId-000000000000:100002',
   kinesis: {
     sequenceNumber: '456',
     data: Buffer.from(JSON.stringify(event1), 'utf8').toString('base64'),
@@ -37,6 +39,7 @@ const record2 = {
 } as any as KinesisStreamRecord;
 const record3 = {
   kinesis: {
+    eventID: 'shardId-000000000000:100003',
     sequenceNumber: '456',
     // eslint-disable-next-line max-len
     data: Buffer.from(JSON.stringify(Object.assign({message: message1_1}, apacheAccesLogEvent)), 'utf8').toString('base64'),
@@ -138,10 +141,10 @@ test('handler - partial error', async () => {
       const response = {body: {errors: false, items: [] as any[]}};
       for (let index = 0; index < items.length; index+=2) {
         const item = JSON.parse(items[index]);
-        const item2:any = {create: {_id: item.create._id}};
+        const item2:any = {index: {_id: item.index._id}};
         if (response.body.items.length % 2 === 0) {
           response.body.errors = true;
-          item2.create.error = {};
+          item2.index.error = {};
         }
         response.body.items.push(item2);
       }
@@ -177,6 +180,7 @@ for (let index = 1; index <= 2; index++) {
 test('e2e - Apache combined format', async () => {
   const logEvent = Object.assign({message: APACHE_LOG_COMBINED_FORMAT_1}, APACHE_ACCESS_LOG_EVENT_SIGNATURE);
   const record = {
+    eventID: 'shardId-000000000000:100001',
     kinesis: {
       sequenceNumber: '123',
       data: Buffer.from(JSON.stringify(logEvent), 'utf8').toString('base64'),

@@ -19,7 +19,15 @@ export class KinesisStreamHandlerImpl implements KinesisStreamHandler {
     @inject(TYPES.Logger) private logger:Logger;
 
     convertRecordDataToJson(record: KinesisStreamRecord): Promise<any> {
-      return Promise.resolve(JSON.parse(Buffer.from(record.kinesis.data, 'base64').toString('utf8')));
+      return Promise.resolve({
+        ...JSON.parse(Buffer.from(record.kinesis.data, 'base64').toString('utf8')),
+        ...{kinesis: {
+          partitionKey: record.kinesis.partitionKey,
+          sequenceNumber: record.kinesis.sequenceNumber,
+          eventID: record.eventID,
+          approximateArrivalTimestamp: record.kinesis.approximateArrivalTimestamp,
+        }},
+      });
     }
 
     parseMessage(record: any) {
@@ -44,9 +52,6 @@ export class KinesisStreamHandlerImpl implements KinesisStreamHandler {
         this.logger.log(`Received ${event.Records.length} records`);
         // Parallel
         await Promise.all(event.Records.map( (kinesisRecord) => {
-          const _id = Buffer.from(
-            kinesisRecord.kinesis.sequenceNumber + '.' + this.randomizer.randomBytes(16).toString('hex'),
-          ).toString('hex');
           // eslint-disable-next-line @typescript-eslint/no-unsafe-call
           return this.convertRecordDataToJson(kinesisRecord)
             .then((record: any)=>{
@@ -57,10 +62,10 @@ export class KinesisStreamHandlerImpl implements KinesisStreamHandler {
                 new Promise((resolve, reject) => setTimeout(() => reject(new Error(`Timeout parsinge message`)), 1000)),
               ])
                 .then((record)=>{
-                  record._id = _id;
                   result.push(record);
                 }).catch((error)=>{
-                  result.push({_id, _error: error, ...record});
+                  Object.assign(record, {_error: error});
+                  result.push(record);
                 });
             });
         }));
