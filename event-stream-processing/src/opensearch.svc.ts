@@ -20,6 +20,14 @@ export class OpenSearchImpl implements OpenSearch {
       for (const doc of documents) {
         // assign document id
         doc._id = `${doc.kinesis.eventID}:${doc.event?.hash || ''}`;
+        if (
+          doc.event?.kind === 'event' &&
+          doc.event?.category === 'web' &&
+          doc?.event.dataset === 'apache.access' &&
+          doc.event?.hash
+        ) {
+          doc._id = `${doc.log?.file?.name}:${doc.offset}:${doc.event?.hash}`;
+        }
         index.set(doc._id, doc);
         if (!doc._error) {
           const _index = doc._index;
