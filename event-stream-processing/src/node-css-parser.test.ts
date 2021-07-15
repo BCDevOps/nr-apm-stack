@@ -141,9 +141,9 @@ test('basic', () => {
   // fields already in ECS format:
   // message
 
-  // extra fields added on top of ECS:
+  // additional fields:
   // azp, level, product
 
-  // use snapshot
+  // use snapshot for test
   expect(record).toMatchSnapshot('2f015294-45f8-4235-949b-667236bea641');
 });

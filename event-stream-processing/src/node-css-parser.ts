@@ -32,8 +32,12 @@ export class NodeCssParser implements Parser {
       renameField(record, 'userAgent', 'user_agent.original');
     }
   }
-  // reove user from incoming ip
-  // eg: '::ffff:10.97.6.1' >>> '10.97.6.1'
+
+  /**
+ * Remove user from incoming ip
+ * eg: '::ffff:10.97.6.1' >>> '10.97.6.1'
+ * @param {string} value - the original record.ip field
+ */
   formatSourceIp(value: string) {
     return value.replace(/ /g, '').split(':').slice(-1).pop();
   }
