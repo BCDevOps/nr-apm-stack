@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`basic: 2f015294-45f8-4235-949b-667236bea641 1`] = `
+Object {
+  "@timestamp": "2021-07-14T23:17:05.036Z",
+  "agent": Object {
+    "type": "fluentbit",
+  },
+  "azp": "chefs-frontend",
+  "event": Object {
+    "dataset": "node.css.http",
+    "kind": "event",
+    "module": "node.css",
+    "original": Object {
+      "azp": "chefs-frontend",
+      "contentLength": "323",
+      "httpVersion": "1.1",
+      "ip": ": :ffff: 10.97.8.1",
+      "level": "http",
+      "message": "GET /api/v1/forms 200 624ms",
+      "method": "GET",
+      "path": "/api/v1/forms",
+      "responseTime": 624,
+      "statusCode": 200,
+      "timestamp": "2021-07-14T23: 17: 05.036Z",
+      "userAgent": "Mozilla/5.0",
+    },
+    "type": "http",
+  },
+  "host": Object {
+    "hostname": "chefs-app-123",
+    "namespace": "123-dev",
+  },
+  "http": Object {
+    "request": Object {
+      "method": "GET",
+    },
+    "response": Object {
+      "body": Object {
+        "bytes": "323",
+      },
+      "status_code": 200,
+      "time": 624,
+    },
+    "version": "1.1",
+  },
+  "level": "http",
+  "log": Object {
+    "file": Object {
+      "offset": 759,
+      "path": "/var/log/app.log",
+    },
+  },
+  "message": "GET /api/v1/forms 200 624ms",
+  "product": "chefs",
+  "source": Object {
+    "address": "10.97.8.1",
+  },
+  "url": Object {
+    "original": "/api/v1/forms",
+  },
+  "user_agent": Object {
+    "original": "Mozilla/5.0",
+  },
+}
+`;
