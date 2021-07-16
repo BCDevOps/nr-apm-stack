@@ -20,25 +20,12 @@ test('basic - GET request', () => {
     'hostname': 'chefs-app-123',
     'httpVersion': '1.1',
     'hostIp': '10.97.8.1',
-    'level': 'http',
-    'log': {
-      'responseTime': 624,
-      'azp': 'chefs-frontend',
-      'clientIp': '2001:db8:3333:4444:5555:6666:7777:8888',
-      'contentLength': '323',
-      'httpVersion': '1.1',
-      'hostIp': '::ffff: 10.97.8.1',
-      'method': 'GET',
-      'path': '/api/v1/forms',
-      'query': {
-        'active': 'true',
-        'deleted': 'false',
-      },
-      'statusCode': 200,
-      'userAgent': 'Mozilla/5.0',
-      'level': 'http',
-      'message': 'GET /api/v1/forms?active=true 200 624ms', 'timestamp': '2021-07-14T23: 17: 05.036Z',
+    'labels': {
+      'env': 'development',
     },
+    'level': 'http',
+    // eslint-disable-next-line max-len
+    'log': '{"responseTime":624,"azp":"chefs-frontend","clientIp":"2001:db8:3333:4444:5555:6666:7777:8888","contentLength":"323","httpVersion":"1.1","hostIp":"::ffff: 10.97.8.1","method":"GET","path":"/api/v1/forms","query":{"active":"true","deleted":"false"},"statusCode":200,"userAgent":"Mozilla/5.0","level":"http","message":"GET /api/v1/forms?active=true 200 624ms","timestamp":"2021-07-14T23: 17: 05.036Z"}',
     'logFilePath': '/var/log/app.log',
     'logFileOffset': 759,
     'logStreamDate': '2021-07-15T20:08:48.845207Z',
@@ -72,30 +59,41 @@ test('basic - GET request', () => {
   expect(record).toHaveProperty('http.response.body.bytes', '323');
   // hostname
   expect(record).not.toHaveProperty('hostname');
-  expect(record).toHaveProperty('host.hostname', 'chefs-app-123');
+  expect(record).toHaveProperty('host.pod_name', 'chefs-app-123');
   // httpVersion
   expect(record).not.toHaveProperty('httpVersion');
   expect(record).toHaveProperty('http.version', '1.1');
   // hostIp
   expect(record).not.toHaveProperty('hostIp');
   expect(record).toHaveProperty('host.ip', '10.97.8.1');
+  // labels
+  expect(record).toHaveProperty('labels.env', 'development');
+  // level
+  expect(record).toHaveProperty('log.level', 'http');
   // log
-  expect(record).toHaveProperty('event.original.responseTime', 624);
+  expect(record).toHaveProperty('event.original');
+  expect(record).toHaveProperty('event.hash');
   // logFileOffset
   expect(record).not.toHaveProperty('logFileOffset');
   expect(record).toHaveProperty('log.file.offset', 759);
   // logFilePath
   expect(record).not.toHaveProperty('logFilePath');
   expect(record).toHaveProperty('log.file.path', '/var/log/app.log');
+  // logStreamDate
+  expect(record).not.toHaveProperty('logStreamDate');
+  expect(record).toHaveProperty('event.created', '2021-07-15T20:08:48.845207Z');
   // method
   expect(record).not.toHaveProperty('method');
   expect(record).toHaveProperty('http.request.method', 'GET');
   // namespace
   expect(record).not.toHaveProperty('namespace');
-  expect(record).toHaveProperty('host.namespace', '123-dev');
+  expect(record).toHaveProperty('host.namespace_name', '123-dev');
   // path
   expect(record).not.toHaveProperty('path');
   expect(record).toHaveProperty('url.path', '/api/v1/forms');
+  // product
+  expect(record).not.toHaveProperty('product');
+  expect(record).toHaveProperty('labels.application', 'chefs');
   // query
   expect(record).not.toHaveProperty('query');
   expect(record).toHaveProperty('url.query', 'active=true&deleted=false');
@@ -112,11 +110,6 @@ test('basic - GET request', () => {
   expect(record).not.toHaveProperty('userAgent');
   expect(record).toHaveProperty('user_agent.original', 'Mozilla/5.0');
 
-  // fields already in ECS format:
-  // message
-  // additional fields:
-  // azp, level, logStreamDate, product
-
   // use snapshot for test
-  expect(record).toMatchSnapshot('2f015294-45f8-4235-949b-667236bea641');
+  expect(record).toMatchSnapshot('444159a6-69e1-4515-a9d7-a826ea8aa11b');
 });
