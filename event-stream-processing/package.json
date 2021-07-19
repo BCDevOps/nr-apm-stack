@@ -25,7 +25,8 @@
     "pack": "npm-run-all mkdirs rm-pack compile build-pack",
     "test": "jest --coverage",
     "deploy": "ts-node src/ops/deploy.ts",
-    "ts-node": "ts-node"
+    "ts-node": "ts-node",
+    "typedoc": "typedoc"
   },
   "author": "Clécio Varjão",
   "license": "Apache-2.0",
@@ -44,6 +45,7 @@
     "rimraf": "^3.0.2",
     "ts-jest": "^27.0.3",
     "ts-node": "^9.1.1",
+    "typedoc": "^0.21.4",
     "typescript": "^4.2.4"
   },
   "dependencies": {
@@ -61,6 +63,7 @@
     "maxmind": "^4.3.1",
     "moment": "^2.29.1",
     "reflect-metadata": "^0.1.13",
+    "typed-path": "^2.2.2",
     "ua-parser-js": "^0.7.28"
   },
   "bundledDependencies": true

@@ -3,28 +3,35 @@ import {Parser} from './parser.isvc';
 import * as lodash from 'lodash';
 import * as crypto from 'crypto';
 import * as path from 'path';
+import {typedPath} from 'typed-path';
 
 /**
- * If field names contains "." (dot), consider it a path
+ * Record path. Provided as a reusable shorthand for readability
+ */
+const p = typedPath<ecs.Record>();
+
+/**
+ * @summary Sets the event hash based on a defined pattern.
+ *
+ * <host.hostname>:<log.file.path>:<log.file.offset>:<message>
  */
 @injectable()
 export class FingerprintFilter implements Parser {
-  matches(record: any): boolean {
-    return record.event?.kind === 'event' &&
-      record.event?.category === 'web' &&
-      record?.event.dataset === 'apache.access' &&
-      record.message;
+  matches(record: ecs.Record): boolean {
+    return record.event.kind === 'event' &&
+      record.event.category === 'web' &&
+      record.event.dataset === 'apache.access';
   }
-  apply(record: any): void {
+  apply(record: ecs.Record): void {
     // Hash/fingerprinting event.
     const hasher = crypto.createHash('sha256');
-    hasher.update(lodash.get(record, 'host.hostname', ''));
+    hasher.update(record.host?.hostname ?? '');
     hasher.update(':');
-    hasher.update(path.basename(lodash.get(record, 'log.file.path', '')));
+    hasher.update(path.basename(record.log.file?.path ?? ''));
     hasher.update(':');
-    hasher.update(`${lodash.get(record, 'offset', -1)}`);
+    hasher.update(`${record.offset ?? (record.log?.file?.offset ?? -1)}`);
     hasher.update(':');
-    hasher.update(lodash.get(record, 'message', ''));
-    lodash.set(record, 'event.hash', hasher.digest('hex'));
+    hasher.update(record.message ?? '');
+    lodash.set(record, p.event.hash.$path, hasher.digest('hex'));
   }
 }
