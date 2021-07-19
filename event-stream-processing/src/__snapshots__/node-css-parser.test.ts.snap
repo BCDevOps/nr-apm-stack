@@ -6,14 +6,15 @@ Object {
   "agent": Object {
     "type": "fluentbit",
   },
-  "azp": "chefs-frontend",
   "client": Object {
     "ip": "2001:db8:3333:4444:5555:6666:7777:8888",
+    "user": Object {
+      "id": "chefs-frontend",
+    },
   },
   "event": Object {
     "created": "2021-07-15T20:08:48.845207Z",
     "dataset": "node.css.http",
-    "hash": "kr6yi9rg",
     "kind": "event",
     "module": "node.css",
     "original": "{\\"responseTime\\":624,\\"azp\\":\\"chefs-frontend\\",\\"clientIp\\":\\"2001:db8:3333:4444:5555:6666:7777:8888\\",\\"contentLength\\":\\"323\\",\\"httpVersion\\":\\"1.1\\",\\"hostIp\\":\\"::ffff: 10.97.8.1\\",\\"method\\":\\"GET\\",\\"path\\":\\"/api/v1/forms\\",\\"query\\":{\\"active\\":\\"true\\",\\"deleted\\":\\"false\\"},\\"statusCode\\":200,\\"userAgent\\":\\"Mozilla/5.0\\",\\"level\\":\\"http\\",\\"message\\":\\"GET /api/v1/forms?active=true 200 624ms\\",\\"timestamp\\":\\"2021-07-14T23: 17: 05.036Z\\"}",
@@ -21,8 +22,6 @@ Object {
   },
   "host": Object {
     "ip": "10.97.8.1",
-    "namespace_name": "123-dev",
-    "pod_name": "chefs-app-123",
   },
   "http": Object {
     "request": Object {
@@ -36,6 +35,10 @@ Object {
       "time": 624,
     },
     "version": "1.1",
+  },
+  "kubernetes": Object {
+    "namespace_name": "123-dev",
+    "pod_name": "chefs-app-123",
   },
   "labels": Object {
     "application": "chefs",

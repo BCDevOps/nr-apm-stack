@@ -37,20 +37,20 @@ export class NodeCssParser implements Parser {
     // parse logs from Fluent-bit
     if (lodash.get(record, 'agent.type', '') === 'fluentbit') {
       record.clientIp = this.chooseIpvFormat(record.clientIp);
+      renameField(record, 'azp', 'client.user.id');
       renameField(record, 'clientIp', 'client.ip');
       renameField(record, 'contentLength', 'http.response.body.bytes');
-      renameField(record, 'hostname', 'host.pod_name');
+      renameField(record, 'hostname', 'kubernetes.pod_name');
       renameField(record, 'httpVersion', 'http.version');
       record.hostIp = this.chooseIpvFormat(record.hostIp);
       renameField(record, 'hostIp', 'host.ip');
       renameField(record, 'log', 'event.original');
       renameField(record, 'level', 'log.level');
-      record.event.hash = (+new Date).toString(36);
       renameField(record, 'logFileOffset', 'log.file.offset');
       renameField(record, 'logFilePath', 'log.file.path');
       renameField(record, 'logStreamDate', 'event.created');
       renameField(record, 'method', 'http.request.method');
-      renameField(record, 'namespace', 'host.namespace_name');
+      renameField(record, 'namespace', 'kubernetes.namespace_name');
       renameField(record, 'path', 'url.path');
       renameField(record, 'product', 'labels.application');
       record.query = this.showQueryParamsAsString(record.query);

@@ -51,6 +51,9 @@ test('basic - GET request', () => {
   filter.apply(record);
 
   // --- test the result:
+  // azp
+  expect(record).not.toHaveProperty('azp');
+  expect(record).toHaveProperty('client.user.id', 'chefs-frontend');
   // clientIp
   expect(record).not.toHaveProperty('clientIp');
   expect(record).toHaveProperty('client.ip', '2001:db8:3333:4444:5555:6666:7777:8888');
@@ -59,7 +62,7 @@ test('basic - GET request', () => {
   expect(record).toHaveProperty('http.response.body.bytes', '323');
   // hostname
   expect(record).not.toHaveProperty('hostname');
-  expect(record).toHaveProperty('host.pod_name', 'chefs-app-123');
+  expect(record).toHaveProperty('kubernetes.pod_name', 'chefs-app-123');
   // httpVersion
   expect(record).not.toHaveProperty('httpVersion');
   expect(record).toHaveProperty('http.version', '1.1');
@@ -72,7 +75,6 @@ test('basic - GET request', () => {
   expect(record).toHaveProperty('log.level', 'http');
   // log
   expect(record).toHaveProperty('event.original');
-  expect(record).toHaveProperty('event.hash');
   // logFileOffset
   expect(record).not.toHaveProperty('logFileOffset');
   expect(record).toHaveProperty('log.file.offset', 759);
@@ -87,7 +89,7 @@ test('basic - GET request', () => {
   expect(record).toHaveProperty('http.request.method', 'GET');
   // namespace
   expect(record).not.toHaveProperty('namespace');
-  expect(record).toHaveProperty('host.namespace_name', '123-dev');
+  expect(record).toHaveProperty('kubernetes.namespace_name', '123-dev');
   // path
   expect(record).not.toHaveProperty('path');
   expect(record).toHaveProperty('url.path', '/api/v1/forms');
