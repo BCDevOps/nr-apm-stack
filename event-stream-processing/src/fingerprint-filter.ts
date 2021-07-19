@@ -20,14 +20,15 @@ export class FingerprintFilter implements Parser {
   matches(record: ecs.Record): boolean {
     return record.event.kind === 'event' &&
       record.event.category === 'web' &&
-      record.event.dataset === 'apache.access';
+      record.event.dataset === 'apache.access' &&
+      !lodash.isNil(record.message);
   }
   apply(record: ecs.Record): void {
     // Hash/fingerprinting event.
     const hasher = crypto.createHash('sha256');
     hasher.update(record.host?.hostname ?? '');
     hasher.update(':');
-    hasher.update(path.basename(record.log.file?.path ?? ''));
+    hasher.update(path.basename(record.log?.file?.path ?? ''));
     hasher.update(':');
     hasher.update(`${record.offset ?? (record.log?.file?.offset ?? -1)}`);
     hasher.update(':');
