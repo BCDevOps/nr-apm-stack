@@ -43,7 +43,7 @@ export class NodeCssParser implements Parser {
       renameField(record, 'hostname', 'kubernetes.pod_name');
       renameField(record, 'httpVersion', 'http.version');
       record.hostIp = this.chooseIpvFormat(record.hostIp);
-      renameField(record, 'hostIp', 'host.ip');
+      renameField(record, 'hostIp', 'kubernetes.pod_ip');
       renameField(record, 'log', 'event.original');
       renameField(record, 'level', 'log.level');
       renameField(record, 'logFileOffset', 'log.file.offset');

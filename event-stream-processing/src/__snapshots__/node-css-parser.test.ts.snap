@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`basic - GET request: 444159a6-69e1-4515-a9d7-a826ea8aa11b 1`] = `
+exports[`basic - GET request: fea87208-b0d6-49f4-be90-4742487c223a 1`] = `
 Object {
   "@timestamp": "2021-07-14T23:17:05.036Z",
   "agent": Object {
@@ -20,9 +20,6 @@ Object {
     "original": "{\\"responseTime\\":624,\\"azp\\":\\"chefs-frontend\\",\\"clientIp\\":\\"2001:db8:3333:4444:5555:6666:7777:8888\\",\\"contentLength\\":\\"323\\",\\"httpVersion\\":\\"1.1\\",\\"hostIp\\":\\"::ffff: 10.97.8.1\\",\\"method\\":\\"GET\\",\\"path\\":\\"/api/v1/forms\\",\\"query\\":{\\"active\\":\\"true\\",\\"deleted\\":\\"false\\"},\\"statusCode\\":200,\\"userAgent\\":\\"Mozilla/5.0\\",\\"level\\":\\"http\\",\\"message\\":\\"GET /api/v1/forms?active=true 200 624ms\\",\\"timestamp\\":\\"2021-07-14T23: 17: 05.036Z\\"}",
     "type": "http",
   },
-  "host": Object {
-    "ip": "10.97.8.1",
-  },
   "http": Object {
     "request": Object {
       "method": "GET",
@@ -38,6 +35,7 @@ Object {
   },
   "kubernetes": Object {
     "namespace_name": "123-dev",
+    "pod_ip": "10.97.8.1",
     "pod_name": "chefs-app-123",
   },
   "labels": Object {

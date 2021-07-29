@@ -68,7 +68,7 @@ test('basic - GET request', () => {
   expect(record).toHaveProperty('http.version', '1.1');
   // hostIp
   expect(record).not.toHaveProperty('hostIp');
-  expect(record).toHaveProperty('host.ip', '10.97.8.1');
+  expect(record).toHaveProperty('kubernetes.pod_ip', '10.97.8.1');
   // labels
   expect(record).toHaveProperty('labels.env', 'development');
   // level
@@ -113,5 +113,5 @@ test('basic - GET request', () => {
   expect(record).toHaveProperty('user_agent.original', 'Mozilla/5.0');
 
   // use snapshot for test
-  expect(record).toMatchSnapshot('444159a6-69e1-4515-a9d7-a826ea8aa11b');
+  expect(record).toMatchSnapshot('fea87208-b0d6-49f4-be90-4742487c223a');
 });
