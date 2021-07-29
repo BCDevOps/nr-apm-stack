@@ -6,6 +6,7 @@ name: deploy_prod
 on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    branches: [main]
 
 env:
   TF_VERSION: 0.15.3
