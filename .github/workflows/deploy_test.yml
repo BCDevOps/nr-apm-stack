@@ -56,7 +56,7 @@ jobs:
           terragrunt_version: ${{ env.TG_VERSION }}
       # Apply changes
       - name: Terragrunt Apply
-        working-directory: terragrunt/${{ env.name }}
+        working-directory: terragrunt/test
         env:
           app_image: ${{ env.IMAGE_ID }}:${{ github.event.workflow_run.head_branch}}
         run: terragrunt apply-all --terragrunt-non-interactive

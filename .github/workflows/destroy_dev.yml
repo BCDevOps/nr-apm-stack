@@ -27,7 +27,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
         with:
-          ref: deploy-${{ env.name }}
+          ref: ${{ github.event.workflow_run.head_branch }}
       # Install/Setup terraform CLI
       - uses: hashicorp/setup-terraform@v1
         with:
@@ -39,7 +39,7 @@ jobs:
           terragrunt_version: ${{ env.TG_VERSION }}
       # Apply changes
       - name: Terragrunt Apply
-        working-directory: terragrunt/${{ env.name }}
+        working-directory: terragrunt/test
         env:
-          app_image: ${{ env.IMAGE_ID }}:${{ env.name }}
+          app_image: ${{ env.IMAGE_ID }}:${{ github.event.workflow_run.head_branch}}
         run: terragrunt run-all destroy --terragrunt-non-interactive
