@@ -20,7 +20,7 @@ jobs:
 
     # Production GitHub repo environment
     environment:
-      name: test
+      name: dev
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -39,7 +39,7 @@ jobs:
           terragrunt_version: ${{ env.TG_VERSION }}
       # Apply changes
       - name: Terragrunt Apply
-        working-directory: terragrunt/test
+        working-directory: terragrunt/dev-0
         env:
           app_image: ${{ env.IMAGE_ID }}:${{ github.event.workflow_run.head_branch}}
         run: terragrunt run-all destroy --terragrunt-non-interactive
