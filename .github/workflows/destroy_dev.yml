@@ -1,0 +1,45 @@
+# This workflow destroys code tagged with 'deploy-dev'
+
+name: destroy_test
+
+# Controls when the action will run. 
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    tags: [deploy-dev*]
+
+env:
+  TF_VERSION: 0.15.3
+  TG_VERSION: 0.29.2
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "destroy"
+  destroy:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Production GitHub repo environment
+    environment:
+      name: test
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        with:
+          ref: deploy-${{ env.name }}
+      # Install/Setup terraform CLI
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          cli_config_credentials_token: ${{ secrets.TFC_TEAM_TOKEN }}
+      # Install/Setup terragrunt CLI
+      - uses: peter-murray/terragrunt-github-action@v1.0.0
+        with:
+          terragrunt_version: ${{ env.TG_VERSION }}
+      # Apply changes
+      - name: Terragrunt Apply
+        working-directory: terragrunt/${{ env.name }}
+        env:
+          app_image: ${{ env.IMAGE_ID }}:${{ env.name }}
+        run: terragrunt run-all destroy --terragrunt-non-interactive
