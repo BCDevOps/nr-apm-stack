@@ -5,16 +5,33 @@ terraform {
     source = "../..//terraform"
 }
 
-remote_state {
-    backend = "local"
-    config = {
-        path = "${get_terragrunt_dir()}/terraform.tfstate"
+generate "backend" {
+  path = "backend.tf"
+  if_exists = "overwrite_terragrunt"
+  contents = <<EOF
+terraform {
+  backend "remote" {
+    organization = "bcgov"
+    workspaces {
+        name = "tygsv5-test"
     }
+  }
+}
+EOF
 }
 
-inputs = {
+remote_state {
+    backend = "remote"
+    config = { }
+}
+
+generate "inputs" {
+  path = "inputs.auto.tfvars"
+  if_exists = "overwrite_terragrunt"
+  contents = <<EOF
   env = "test"
   pr = "0"
   suffix = "-test"
   custom_endpoint = "test-apm-io.nrs.gov.bc.ca"
+EOF
 }
