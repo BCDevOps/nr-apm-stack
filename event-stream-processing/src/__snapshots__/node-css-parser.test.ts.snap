@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`basic - GET request: fea87208-b0d6-49f4-be90-4742487c223a 1`] = `
+Object {
+  "@timestamp": "2021-07-14T23:17:05.036Z",
+  "agent": Object {
+    "type": "fluentbit",
+  },
+  "client": Object {
+    "ip": "2001:db8:3333:4444:5555:6666:7777:8888",
+    "user": Object {
+      "id": "chefs-frontend",
+    },
+  },
+  "event": Object {
+    "created": "2021-07-15T20:08:48.845207Z",
+    "dataset": "node.css.http",
+    "kind": "event",
+    "module": "node.css",
+    "original": "{\\"responseTime\\":624,\\"azp\\":\\"chefs-frontend\\",\\"clientIp\\":\\"2001:db8:3333:4444:5555:6666:7777:8888\\",\\"contentLength\\":\\"323\\",\\"httpVersion\\":\\"1.1\\",\\"hostIp\\":\\"::ffff: 10.97.8.1\\",\\"method\\":\\"GET\\",\\"path\\":\\"/api/v1/forms\\",\\"query\\":{\\"active\\":\\"true\\",\\"deleted\\":\\"false\\"},\\"statusCode\\":200,\\"userAgent\\":\\"Mozilla/5.0\\",\\"level\\":\\"http\\",\\"message\\":\\"GET /api/v1/forms?active=true 200 624ms\\",\\"timestamp\\":\\"2021-07-14T23: 17: 05.036Z\\"}",
+    "type": "http",
+  },
+  "http": Object {
+    "request": Object {
+      "method": "GET",
+    },
+    "response": Object {
+      "body": Object {
+        "bytes": "323",
+      },
+      "status_code": 200,
+      "time": 624,
+    },
+    "version": "1.1",
+  },
+  "kubernetes": Object {
+    "namespace_name": "123-dev",
+    "pod_ip": "10.97.8.1",
+    "pod_name": "chefs-app-123",
+  },
+  "labels": Object {
+    "application": "chefs",
+    "env": "development",
+  },
+  "log": Object {
+    "file": Object {
+      "offset": 759,
+      "path": "/var/log/app.log",
+    },
+    "level": "http",
+  },
+  "message": "GET /api/v1/forms 200 624ms",
+  "url": Object {
+    "path": "/api/v1/forms",
+    "query": "active=true&deleted=false",
+  },
+  "user_agent": Object {
+    "original": "Mozilla/5.0",
+  },
+}
+`;
