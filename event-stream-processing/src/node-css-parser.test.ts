@@ -9,7 +9,7 @@ import {KinesisStreamHandler} from './kinesisStreamHandler.isvc';
 import {KinesisStreamEvent, KinesisStreamRecord} from 'aws-lambda';
 import lodash = require('lodash');
 import {APACHE_ACCESS_LOG_EVENT_SIGNATURE} from './parser.apache.svc';
-import { DateAndTime } from './shared/date-and-time';
+import {DateAndTime} from './shared/date-and-time';
 import moment = require('moment');
 
 const myContainer = buildContainer();
