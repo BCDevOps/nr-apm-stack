@@ -9,6 +9,8 @@ import {KinesisStreamHandler} from './kinesisStreamHandler.isvc';
 import {KinesisStreamEvent, KinesisStreamRecord} from 'aws-lambda';
 import lodash = require('lodash');
 import {APACHE_ACCESS_LOG_EVENT_SIGNATURE} from './parser.apache.svc';
+import { DateAndTime } from './shared/date-and-time';
+import moment = require('moment');
 
 const myContainer = buildContainer();
 
@@ -40,6 +42,11 @@ beforeEach(() => {
   myContainer.rebind<MaxmindAsnLookup>(TYPES.MaxmindAsnLookup).toConstantValue({
     lookup: ():AsnResponse => {
       return geoIpAsnLookupBcGov;
+    },
+  });
+  myContainer.rebind<DateAndTime>(TYPES.DateAndTime).toConstantValue({
+    now: (): moment.Moment => {
+      return moment('2021-05-26T18:47:40.314-07:00');
     },
   });
 });
