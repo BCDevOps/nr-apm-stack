@@ -6,6 +6,7 @@ import {Parser} from './parser.isvc';
 import {TYPES} from './inversify.types';
 import {Randomizer} from './randomizer.isvc';
 import {Logger} from './logger.isvc';
+import {GenericError} from './GenericError';
 
 
 @injectable()
@@ -33,15 +34,19 @@ export class KinesisStreamHandlerImpl implements KinesisStreamHandler {
     parseMessage(record: any) {
       try {
         for (const parser of this.parsers) {
-          this.logger.debug(`Processing parse:${parser.constructor.name}`);
-          if (parser.matches(record)) {
-            parser.apply(record);
+          try {
+            this.logger.debug(`Processing parse:${parser.constructor.name}`);
+            if (parser.matches(record)) {
+              parser.apply(record);
+            }
+          } catch (error) {
+            throw new GenericError(`Error applying parser ${parser.constructor.name}`, error);
           }
         }
       } catch (error) {
         this.logger.log(`Error Parsing:${JSON.stringify(record)}`);
         this.logger.log(error);
-        throw error;
+        throw new GenericError(`Error processing event`, error);
       }
       return record;
     }
