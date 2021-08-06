@@ -12,6 +12,12 @@ function defaultIndexNamePrefixAndFormat(record: any): {prefix?:string, suffix?:
     record?.event.dataset === 'apache.access'
   ) {
     return {prefix: 'nrm-logs-access', suffix: '%{+YYYY.MM.DD}', format: '%{prefix}-%{suffix}'};
+  } else if (
+    record.event?.kind === 'event' &&
+    record.event?.category === 'web' &&
+    record?.event.dataset === 'vault.audit'
+  ) {
+    return {prefix: 'nrm-audit', suffix: '%{+YYYY.MM.DD}', format: '%{prefix}-%{suffix}'};
   } else if (record.event?.kind === 'metric') {
     return {prefix: 'nrm-metrics', suffix: '%{+YYYY.MM.DD}', format: '%{prefix}-%{suffix}'};
   }
