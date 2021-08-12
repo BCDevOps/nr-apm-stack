@@ -36,7 +36,7 @@ generate "inputs" {
   master_node_instance_count = 3
   master_node_instance_type = "c5.large.elasticsearch"
   data_node_instance_count = 6
-  data_node_instance_type = "r6g.large.elasticsearch"
+  data_node_instance_type = "r5.large.elasticsearch"
   data_node_volume_size = 300
   ultrawarm_node_instance_count = 2
   ultrawarm_node_instance_type = "ultrawarm1.large.elasticsearch"
