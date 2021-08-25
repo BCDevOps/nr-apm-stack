@@ -32,6 +32,7 @@ import {IndexNameAssigner} from './index-name-assigner';
 import {RemoveMetadataField} from './remove-metadata-field';
 import {DateAndTimeImpl} from './shared/date-and-time-impl';
 import {DateAndTime} from './shared/date-and-time';
+import {NodeCssParser} from './node-css-parser';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace globalThis {
@@ -47,6 +48,7 @@ export function create() {
   myContainer.bind<MaxmindAsnLookup>(TYPES.MaxmindAsnLookup).to(MaxmindAsnLookupImpl);
 
   myContainer.bind<Parser>(TYPES.Parser).to(ParserKeyAsPath);
+  myContainer.bind<Parser>(TYPES.Parser).to(NodeCssParser);
   myContainer.bind<Parser>(TYPES.Parser).to(FingerprintFilter);
   myContainer.bind<Parser>(TYPES.Parser).to(ParserApacheImpl);
   myContainer.bind<Parser>(TYPES.Parser).to(SystemCpuParser);

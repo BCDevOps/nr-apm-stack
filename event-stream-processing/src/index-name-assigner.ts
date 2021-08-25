@@ -9,7 +9,7 @@ function defaultIndexNamePrefixAndFormat(record: any): {prefix?:string, suffix?:
   } else if (
     record.event?.kind === 'event' &&
     record.event?.category === 'web' &&
-    record?.event.dataset === 'apache.access'
+    (record?.event.dataset === 'apache.access' || record?.event.dataset === 'node.css.http')
   ) {
     return {prefix: 'nrm-logs-access', suffix: '%{+YYYY.MM.DD}', format: '%{prefix}-%{suffix}'};
   } else if (
