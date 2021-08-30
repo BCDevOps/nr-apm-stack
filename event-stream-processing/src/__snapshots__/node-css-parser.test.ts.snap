@@ -2,7 +2,6 @@
 
 exports[`basic - GET request: fea87208-b0d6-49f4-be90-4742487c223a 1`] = `
 Object {
-  "@timestamp": "2021-07-14T23:17:05.036Z",
   "agent": Object {
     "type": "fluentbit",
   },
@@ -18,7 +17,7 @@ Object {
     "dataset": "node.css.http",
     "kind": "event",
     "module": "node.css",
-    "original": "{\\"responseTime\\":624,\\"azp\\":\\"chefs-frontend\\",\\"clientIp\\":\\"2001:db8:3333:4444:5555:6666:7777:8888\\",\\"contentLength\\":\\"323\\",\\"httpVersion\\":\\"1.1\\",\\"hostIp\\":\\"::ffff: 10.97.8.1\\",\\"method\\":\\"GET\\",\\"path\\":\\"/api/v1/forms\\",\\"query\\":{\\"active\\":\\"true\\",\\"deleted\\":\\"false\\"},\\"statusCode\\":200,\\"userAgent\\":\\"Mozilla/5.0\\",\\"level\\":\\"http\\",\\"message\\":\\"GET /api/v1/forms?active=true 200 624ms\\",\\"timestamp\\":\\"2021-07-14T23: 17: 05.036Z\\"}",
+    "original": "{\\"responseTime\\":624,\\"azp\\":\\"chefs-frontend\\",\\"clientIp\\":\\"2001:db8:3333:4444:5555:6666:7777:8888\\",\\"contentLength\\":\\"323\\",\\"httpVersion\\":\\"1.1\\",\\"hostIp\\":\\"::ffff:10.97.6.1\\",\\"ip\\": \\"::ffff:10.97.6.2\\",\\"method\\":\\"GET\\",\\"path\\":\\"/api/v1/forms\\",\\"query\\":{\\"active\\":\\"true\\",\\"deleted\\":\\"false\\"},\\"statusCode\\":200,\\"userAgent\\":\\"Mozilla/5.0\\",\\"level\\":\\"http\\",\\"message\\":\\"GET /api/v1/forms?active=true 200 624ms\\",\\"timestamp\\":\\"2021-07-14T23: 17: 05.036Z\\"}",
     "type": "http",
   },
   "http": Object {
@@ -34,9 +33,10 @@ Object {
     },
     "version": "1.1",
   },
+  "ip": "::ffff:10.97.6.2",
   "kubernetes": Object {
     "namespace_name": "123-dev",
-    "pod_ip": "10.97.8.1",
+    "pod_ip": "10.97.6.1",
     "pod_name": "chefs-app-123",
   },
   "labels": Object {
@@ -51,6 +51,7 @@ Object {
     "level": "http",
   },
   "message": "GET /api/v1/forms 200 624ms",
+  "timestamp": "2021-07-14T23:17:05.036Z",
   "url": Object {
     "path": "/api/v1/forms",
     "query": "active=true&deleted=false",
@@ -64,8 +65,7 @@ Object {
 exports[`integration test of the full chain: 777d8f22-b2da-4fc5-9cf7-752e681aa5b7 1`] = `
 Array [
   Object {
-    "@timestamp": "2021-07-14T23:17:05.036Z",
-    "_index": "nrm-logs-access-2021.07.14",
+    "_index": "nrm-logs-access-2021.07.15",
     "agent": Object {
       "type": "fluentbit",
     },
@@ -103,7 +103,7 @@ Array [
       "ingested": "2021-05-26T18:47:40.314-07:00",
       "kind": "event",
       "module": "node.css",
-      "original": "{\\"responseTime\\":624,\\"azp\\":\\"chefs-frontend\\",\\"clientIp\\":\\"2001:db8:3333:4444:5555:6666:7777:8888\\",\\"contentLength\\":\\"323\\",\\"httpVersion\\":\\"1.1\\",\\"hostIp\\":\\"::ffff: 10.97.8.1\\",\\"method\\":\\"GET\\",\\"path\\":\\"/api/v1/forms\\",\\"query\\":{\\"active\\":\\"true\\",\\"deleted\\":\\"false\\"},\\"statusCode\\":200,\\"userAgent\\":\\"Mozilla/5.0\\",\\"level\\":\\"http\\",\\"message\\":\\"GET /api/v1/forms?active=true 200 624ms\\",\\"timestamp\\":\\"2021-07-14T23: 17: 05.036Z\\"}",
+      "original": "{\\"responseTime\\":624,\\"azp\\":\\"chefs-frontend\\",\\"clientIp\\":\\"2001:db8:3333:4444:5555:6666:7777:8888\\",\\"contentLength\\":\\"323\\",\\"httpVersion\\":\\"1.1\\",\\"hostIp\\":\\"::ffff:10.97.6.1\\",\\"ip\\": \\"::ffff:10.97.6.2\\",\\"method\\":\\"GET\\",\\"path\\":\\"/api/v1/forms\\",\\"query\\":{\\"active\\":\\"true\\",\\"deleted\\":\\"false\\"},\\"statusCode\\":200,\\"userAgent\\":\\"Mozilla/5.0\\",\\"level\\":\\"http\\",\\"message\\":\\"GET /api/v1/forms?active=true 200 624ms\\",\\"timestamp\\":\\"2021-07-14T23: 17: 05.036Z\\"}",
       "outcome": "success",
       "type": "http",
     },
@@ -120,6 +120,7 @@ Array [
       },
       "version": "1.1",
     },
+    "ip": "::ffff:10.97.6.2",
     "kinesis": Object {
       "approximateArrivalTimestamp": undefined,
       "eventID": undefined,
@@ -128,7 +129,7 @@ Array [
     },
     "kubernetes": Object {
       "namespace_name": "123-dev",
-      "pod_ip": "10.97.8.1",
+      "pod_ip": "10.97.6.1",
       "pod_name": "chefs-app-123",
     },
     "labels": Object {
@@ -146,6 +147,7 @@ Array [
       "level": "http",
     },
     "message": "GET /api/v1/forms 200 624ms",
+    "timestamp": "2021-07-14T23:17:05.036Z",
     "url": Object {
       "path": "/api/v1/forms",
       "query": "active=true&deleted=false",

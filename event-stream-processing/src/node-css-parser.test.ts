@@ -72,13 +72,14 @@ const record1 = {
   },
   'hostname': 'chefs-app-123',
   'httpVersion': '1.1',
-  'hostIp': '10.97.8.1',
+  'hostIp': '::ffff:10.97.6.1',
+  'ip': '::ffff:10.97.6.2',
   'labels': {
     'env': 'development',
   },
   'level': 'http',
   // eslint-disable-next-line max-len
-  'log': '{"responseTime":624,"azp":"chefs-frontend","clientIp":"2001:db8:3333:4444:5555:6666:7777:8888","contentLength":"323","httpVersion":"1.1","hostIp":"::ffff: 10.97.8.1","method":"GET","path":"/api/v1/forms","query":{"active":"true","deleted":"false"},"statusCode":200,"userAgent":"Mozilla/5.0","level":"http","message":"GET /api/v1/forms?active=true 200 624ms","timestamp":"2021-07-14T23: 17: 05.036Z"}',
+  'log': '{"responseTime":624,"azp":"chefs-frontend","clientIp":"2001:db8:3333:4444:5555:6666:7777:8888","contentLength":"323","httpVersion":"1.1","hostIp":"::ffff:10.97.6.1","ip": "::ffff:10.97.6.2","method":"GET","path":"/api/v1/forms","query":{"active":"true","deleted":"false"},"statusCode":200,"userAgent":"Mozilla/5.0","level":"http","message":"GET /api/v1/forms?active=true 200 624ms","timestamp":"2021-07-14T23: 17: 05.036Z"}',
   'logFilePath': '/var/log/app.log',
   'logFileOffset': 759,
   'logStreamDate': '2021-07-15T20:08:48.845207Z',
@@ -125,7 +126,7 @@ test('basic - GET request', () => {
   expect(record).toHaveProperty('http.version', '1.1');
   // hostIp
   expect(record).not.toHaveProperty('hostIp');
-  expect(record).toHaveProperty('kubernetes.pod_ip', '10.97.8.1');
+  expect(record).toHaveProperty('kubernetes.pod_ip', '10.97.6.1');
   // labels
   expect(record).toHaveProperty('labels.env', 'development');
   // level
@@ -163,8 +164,7 @@ test('basic - GET request', () => {
   expect(record).not.toHaveProperty('statusCode');
   expect(record).toHaveProperty('http.response.status_code', 200);
   // timestamp
-  expect(record).not.toHaveProperty('timestamp');
-  expect(record).toHaveProperty('@timestamp', '2021-07-14T23:17:05.036Z');
+  expect(record).toHaveProperty('timestamp', '2021-07-14T23:17:05.036Z');
   // userAgent
   expect(record).not.toHaveProperty('userAgent');
   expect(record).toHaveProperty('user_agent.original', 'Mozilla/5.0');
