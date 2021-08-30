@@ -36,14 +36,18 @@ export class NodeCssParser implements Parser {
   apply(record: any): void {
     // parse logs from Fluent-bit
     if (lodash.get(record, 'agent.type', '') === 'fluentbit') {
-      record.clientIp = this.chooseIpvFormat(record.clientIp);
+      if (record.clientIp) {
+        record.clientIp = this.chooseIpvFormat(record.clientIp);
+        renameField(record, 'clientIp', 'client.ip');
+      }
       renameField(record, 'azp', 'client.user.id');
-      renameField(record, 'clientIp', 'client.ip');
       renameField(record, 'contentLength', 'http.response.body.bytes');
       renameField(record, 'hostname', 'kubernetes.pod_name');
       renameField(record, 'httpVersion', 'http.version');
-      record.hostIp = this.chooseIpvFormat(record.hostIp);
-      renameField(record, 'hostIp', 'kubernetes.pod_ip');
+      if (record.hostIp) {
+        record.hostIp = this.chooseIpvFormat(record.hostIp);
+        renameField(record, 'hostIp', 'kubernetes.pod_ip');
+      }
       renameField(record, 'log', 'event.original');
       renameField(record, 'level', 'log.level');
       renameField(record, 'logFileOffset', 'log.file.offset');
@@ -57,7 +61,6 @@ export class NodeCssParser implements Parser {
       renameField(record, 'query', 'url.query');
       renameField(record, 'responseTime', 'http.response.time');
       renameField(record, 'statusCode', 'http.response.status_code');
-      renameField(record, 'timestamp', '@timestamp');
       renameField(record, 'userAgent', 'user_agent.original');
     }
   }
