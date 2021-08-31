@@ -57,7 +57,9 @@ export class NodeCssParser implements Parser {
       renameField(record, 'namespace', 'kubernetes.namespace_name');
       renameField(record, 'path', 'url.path');
       renameField(record, 'product', 'labels.application');
-      record.query = this.showQueryParamsAsString(record.query);
+      if (record.query) {
+        record.query = this.showQueryParamsAsString(record.query);
+      }
       renameField(record, 'query', 'url.query');
       renameField(record, 'responseTime', 'http.response.time');
       renameField(record, 'statusCode', 'http.response.status_code');
