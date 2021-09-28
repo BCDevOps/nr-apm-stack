@@ -1,38 +1,43 @@
 import {Container, BindingScopeEnum} from 'inversify';
 import {TYPES} from './inversify.types';
-import {GeoIp} from './geoip.isvc';
-import {Parser} from './parser.isvc';
-import {GeoIpImpl} from './geoip.svc';
-import {ParserApacheImpl} from './parser.apache.svc';
-import {OpenSearch} from './opensearch.isvc';
-import {OpenSearchImpl} from './opensearch.svc';
-import {KinesisStreamHandlerImpl} from './kinesisStreamHandler.svc';
-import {KinesisStreamHandler} from './kinesisStreamHandler.isvc';
-import {AwsHttpClientImpl} from './aws-http-client.svc';
-import {AwsHttpClient} from './aws-http-client.isvc';
-import {Randomizer} from './randomizer.isvc';
-import {RandomImpl} from './randomizer.svc';
-import {MaxmindAsnLookup, MaxmindCityLookup} from './maxmindLookup.isvc';
-import {MaxmindCityLookupmpl} from './maxmindCityLookup.svc';
-import {MaxmindAsnLookupImpl} from './maxmindAsnLookup.svc';
-import {ParserApplicationClasification} from './parser.apps.svc';
-import {ParserHttpStatusCodeToEventOutCome} from './parser.http.outcome';
-import {ParserEcs} from './parser.ecs.svc';
-import {ParserEcsEventIngested} from './parser.ecs.event.ingested.svc';
-import {ParserKeyAsPath} from './parser.nest.svc';
-import {Logger} from './logger.isvc';
-import {LoggerImpl} from './logger.svc';
-import {ThreatPhpImpl} from './threat.php';
-import {ParserUserAgent} from './parser.ua.svc';
-import {ParserGeoIp} from './parser.geo.svc';
-import {FingerprintFilter} from './fingerprint-filter';
-import {SystemCpuParser} from './system-cpu-parser';
-import {SystemMemoryParser} from './system-memory-parser';
-import {IndexNameAssigner} from './index-name-assigner';
-import {RemoveMetadataField} from './remove-metadata-field';
-import {DateAndTimeImpl} from './shared/date-and-time-impl';
-import {DateAndTime} from './shared/date-and-time';
-import {NodeCssParser} from './node-css-parser';
+
+// Services
+import {AwsHttpClientService} from './util/aws-http-client.service';
+import {DateAndTimeService} from './shared/date-and-time.service';
+import {GeoIpService} from './util/geoip.service';
+import {GeoIpMaxmindService} from './util/geoip-maxmind.service';
+import {OpenSearchService} from './open-search.service';
+import {KinesisStreamRecordMapperService} from './shared/kinesis-stream-record-mapper.service';
+import {KinesisStreamService} from './kinesis-stream.service';
+import {RandomizerService} from './util/randomizer.service';
+import {MaxmindCityLookupService} from './util/maxmindCityLookup.service';
+import {MaxmindAsnLookupService} from './util/maxmindAsnLookup.service';
+import {SubsetService} from './shared/subset.service';
+
+// Parsers
+import {Parser} from './types/parser';
+import {ApacheParser} from './parsers/apache.parser';
+import {ApplicationClassificationParser} from './parsers/application-classification.parser';
+import {EcsParser} from './parsers/ecs.parser';
+import {EcsEventIngestedParser} from './parsers/ecs-event-ingested.parser';
+import {FingerprintFilterParser} from './parsers/fingerprint-filter.parser';
+import {GeoIpParser} from './parsers/geo-ip.parser';
+import {HttpStatusEventOutcomeParser} from './parsers/http-status-event-outcome.parser';
+import {IndexNameParser} from './parsers/index-name.parser';
+import {KeyAsPathParser} from './parsers/key-as-path.parser';
+import {LoggerService} from './util/logger.service';
+import {LoggerConsoleService} from './util/logger-console.service';
+import {RemoveMetadataParser} from './parsers/remove-metadata.parser';
+import {SystemCpuParser} from './parsers/system-cpu.parser';
+import {SystemMemoryParser} from './parsers/system-memory.parser';
+import {ThreatPhpParser} from './parsers/threat-php.parser';
+import {UserAgentParser} from './parsers/user-agent.parser';
+import {TimestampFieldParser} from './parsers/timestamp-field.parser';
+
+export const TAG_STAGE = 'stage';
+export const STAGE_FINGERPRINT = 'fingerprint';
+export const STAGE_PARSE = 'parse';
+export const STAGE_FINALIZE = 'finalize';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace globalThis {
@@ -40,34 +45,46 @@ declare namespace globalThis {
   let __inversify_singleton: Container;
 }
 
-export function create() {
+/**
+ * Create the container
+ * @returns The container
+ */
+export function create(): Container {
   const myContainer = new Container({defaultScope: BindingScopeEnum.Singleton});
-  myContainer.bind<Logger>(TYPES.Logger).to(LoggerImpl);
-  myContainer.bind<GeoIp>(TYPES.GeoIp).to(GeoIpImpl);
-  myContainer.bind<MaxmindCityLookup>(TYPES.MaxmindCityLookup).to(MaxmindCityLookupmpl);
-  myContainer.bind<MaxmindAsnLookup>(TYPES.MaxmindAsnLookup).to(MaxmindAsnLookupImpl);
+  myContainer.bind<LoggerService>(TYPES.LoggerService).to(LoggerConsoleService);
+  myContainer.bind<GeoIpService>(TYPES.GeoIpService).to(GeoIpMaxmindService);
+  myContainer.bind<MaxmindCityLookupService>(TYPES.MaxmindCityLookupService).to(MaxmindCityLookupService);
+  myContainer.bind<MaxmindAsnLookupService>(TYPES.MaxmindAsnLookupService).to(MaxmindAsnLookupService);
+  myContainer.bind<AwsHttpClientService>(TYPES.AwsHttpClientService).to(AwsHttpClientService);
+  myContainer.bind<OpenSearchService>(TYPES.OpenSearchService).to(OpenSearchService);
+  myContainer.bind<KinesisStreamRecordMapperService>(TYPES.KinesisStreamRecordMapperService)
+    .to(KinesisStreamRecordMapperService);
+  myContainer.bind<KinesisStreamService>(TYPES.KinesisStreamService).to(KinesisStreamService);
+  myContainer.bind<RandomizerService>(TYPES.RandomizerService).to(RandomizerService);
+  myContainer.bind<DateAndTimeService>(TYPES.DateAndTimeService).to(DateAndTimeService);
+  myContainer.bind<SubsetService>(TYPES.SubsetService).to(SubsetService);
 
-  myContainer.bind<Parser>(TYPES.Parser).to(ParserKeyAsPath);
-  myContainer.bind<Parser>(TYPES.Parser).to(NodeCssParser);
-  myContainer.bind<Parser>(TYPES.Parser).to(FingerprintFilter);
-  myContainer.bind<Parser>(TYPES.Parser).to(ParserApacheImpl);
-  myContainer.bind<Parser>(TYPES.Parser).to(SystemCpuParser);
-  myContainer.bind<Parser>(TYPES.Parser).to(SystemMemoryParser);
-  myContainer.bind<Parser>(TYPES.Parser).to(ParserEcs);
-  myContainer.bind<Parser>(TYPES.Parser).to(ParserApplicationClasification);
-  myContainer.bind<Parser>(TYPES.Parser).to(ParserHttpStatusCodeToEventOutCome);
-  myContainer.bind<Parser>(TYPES.Parser).to(ParserGeoIp);
-  myContainer.bind<Parser>(TYPES.Parser).to(ParserUserAgent);
-  myContainer.bind<Parser>(TYPES.Parser).to(ParserEcsEventIngested);
-  myContainer.bind<Parser>(TYPES.Parser).to(ThreatPhpImpl);
-  myContainer.bind<Parser>(TYPES.Parser).to(IndexNameAssigner);
-  myContainer.bind<Parser>(TYPES.Parser).to(RemoveMetadataField);
+  // Stage: FINGERPRINT
+  myContainer.bind<Parser>(TYPES.Parser).to(KeyAsPathParser).whenTargetTagged(TAG_STAGE, STAGE_FINGERPRINT);
+  myContainer.bind<Parser>(TYPES.Parser).to(EcsEventIngestedParser).whenTargetTagged(TAG_STAGE, STAGE_FINGERPRINT);
 
-  myContainer.bind<AwsHttpClient>(TYPES.AwsHttpClient).to(AwsHttpClientImpl);
-  myContainer.bind<OpenSearch>(TYPES.OpenSearch).to(OpenSearchImpl);
-  myContainer.bind<KinesisStreamHandler>(TYPES.KnesisStreamHandler).to(KinesisStreamHandlerImpl);
-  myContainer.bind<Randomizer>(TYPES.Randomizer).to(RandomImpl);
-  myContainer.bind<DateAndTime>(TYPES.DateAndTime).to(DateAndTimeImpl);
+  // Stage: Parse
+  // myContainer.bind<Parser>(TYPES.Parser).to(FingerprintFilterParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  // myContainer.bind<Parser>(TYPES.Parser).to(ApacheParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  // myContainer.bind<Parser>(TYPES.Parser).to(SystemCpuParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  // myContainer.bind<Parser>(TYPES.Parser).to(SystemMemoryParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  // myContainer.bind<Parser>(TYPES.Parser).to(EcsParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  myContainer.bind<Parser>(TYPES.Parser).to(ApplicationClassificationParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  myContainer.bind<Parser>(TYPES.Parser).to(HttpStatusEventOutcomeParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  // myContainer.bind<Parser>(TYPES.Parser).to(GeoIpParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  myContainer.bind<Parser>(TYPES.Parser).to(UserAgentParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  // myContainer.bind<Parser>(TYPES.Parser).to(ThreatPhpParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+
+  // Stage: FINALIZE
+  myContainer.bind<Parser>(TYPES.Parser).to(TimestampFieldParser).whenTargetTagged(TAG_STAGE, STAGE_FINALIZE);
+  myContainer.bind<Parser>(TYPES.Parser).to(IndexNameParser).whenTargetTagged(TAG_STAGE, STAGE_FINALIZE);
+  myContainer.bind<Parser>(TYPES.Parser).to(RemoveMetadataParser).whenTargetTagged(TAG_STAGE, STAGE_FINALIZE);
+
   return myContainer;
 }
 if (!globalThis.__inversify_singleton) {

@@ -3,6 +3,7 @@
 /src/__snapshots__
 /src/ops
 /jest.config.js
+/jest.setup.ts
 /index.js
 /listFiles.js
 /run.ts

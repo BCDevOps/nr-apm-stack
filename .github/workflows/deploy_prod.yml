@@ -2,7 +2,7 @@
 
 name: deploy_prod
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -35,7 +35,7 @@ jobs:
       - run: npm ci
         working-directory: ./event-stream-processing
       - name: Download/Install Maxmind databases
-        run: npm run ts-node ./src/download-maxmind-geoip-databases.ts
+        run: npm run ts-node ./src/operations/download-maxmind-geoip-databases.ts
         working-directory: ./event-stream-processing
         env:
           MAXMIND_LICENSE_KEY: ${{secrets.MAXMIND_LICENSE_KEY}}

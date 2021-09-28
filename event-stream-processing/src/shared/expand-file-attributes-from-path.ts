@@ -1,4 +1,4 @@
-import * as lodash from 'lodash';
+import lodash from 'lodash';
 import * as path from 'path';
 
 export function expandFileAttributesFromPath(filePath:string, targetFileObject: any): any {
