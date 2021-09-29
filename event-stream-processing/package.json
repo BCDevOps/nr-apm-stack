@@ -64,7 +64,6 @@
     "maxmind": "^4.3.1",
     "moment": "^2.29.1",
     "reflect-metadata": "^0.1.13",
-    "typed-path": "^2.2.2",
     "ua-parser-js": "^0.7.28"
   },
   "bundledDependencies": true

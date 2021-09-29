@@ -1,12 +1,12 @@
 import {DateAndTimeService} from '../shared/date-and-time.service';
 import {OsDocument} from '../types/os-document';
-import {EcsEventIngestedParser} from './ecs-event-ingested.parser';
+import {KinesisParser} from './kinesis.parser';
 
 jest.mock('../shared/date-and-time.service');
 
-describe('EcsEventIngestedParser', () => {
+describe('KinesisParser', () => {
   it('matches anything', () => {
-    const parser = new EcsEventIngestedParser({} as unknown as DateAndTimeService);
+    const parser = new KinesisParser({} as unknown as DateAndTimeService);
 
     expect(parser.matches()).toBe(true);
   });
@@ -20,7 +20,7 @@ describe('EcsEventIngestedParser', () => {
         return 'date';
       }),
     } as unknown as DateAndTimeService;
-    const parser = new EcsEventIngestedParser(dateTimeService);
+    const parser = new KinesisParser(dateTimeService);
     const document = {
       record: {
         eventID: 'endofdino',

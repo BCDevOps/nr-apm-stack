@@ -9,7 +9,7 @@ import {OsDocument} from '../types/os-document';
 /**
  * Set kinesis related fields
  */
-export class EcsEventIngestedParser implements Parser {
+export class KinesisParser implements Parser {
   constructor(
     @inject(TYPES.DateAndTimeService) private dateAndTime: DateAndTimeService,
   ) {}

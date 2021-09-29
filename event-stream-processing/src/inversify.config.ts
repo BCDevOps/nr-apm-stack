@@ -9,7 +9,6 @@ import {GeoIpMaxmindService} from './util/geoip-maxmind.service';
 import {OpenSearchService} from './open-search.service';
 import {KinesisStreamRecordMapperService} from './shared/kinesis-stream-record-mapper.service';
 import {KinesisStreamService} from './kinesis-stream.service';
-import {RandomizerService} from './util/randomizer.service';
 import {MaxmindCityLookupService} from './util/maxmindCityLookup.service';
 import {MaxmindAsnLookupService} from './util/maxmindAsnLookup.service';
 import {SubsetService} from './shared/subset.service';
@@ -18,21 +17,26 @@ import {SubsetService} from './shared/subset.service';
 import {Parser} from './types/parser';
 import {ApacheParser} from './parsers/apache.parser';
 import {ApplicationClassificationParser} from './parsers/application-classification.parser';
-import {EcsParser} from './parsers/ecs.parser';
-import {EcsEventIngestedParser} from './parsers/ecs-event-ingested.parser';
-import {FingerprintFilterParser} from './parsers/fingerprint-filter.parser';
+import {HttpUrlParser} from './parsers/http-url.parser';
+import {KinesisParser} from './parsers/kinesis.parser';
+import {HashParser} from './parsers/hash.parser';
 import {GeoIpParser} from './parsers/geo-ip.parser';
 import {HttpStatusEventOutcomeParser} from './parsers/http-status-event-outcome.parser';
-import {IndexNameParser} from './parsers/index-name.parser';
+import {DocumentIndexParser} from './parsers/document-index.parser';
 import {KeyAsPathParser} from './parsers/key-as-path.parser';
 import {LoggerService} from './util/logger.service';
 import {LoggerConsoleService} from './util/logger-console.service';
 import {RemoveMetadataParser} from './parsers/remove-metadata.parser';
-import {SystemCpuParser} from './parsers/system-cpu.parser';
-import {SystemMemoryParser} from './parsers/system-memory.parser';
 import {ThreatPhpParser} from './parsers/threat-php.parser';
 import {UserAgentParser} from './parsers/user-agent.parser';
 import {TimestampFieldParser} from './parsers/timestamp-field.parser';
+import {DeslashParser} from './parsers/deslash.parser';
+import {RenameParser} from './parsers/rename.parser';
+import {PercentageParser} from './parsers/percentage.parser';
+import {DocumentIdParser} from './parsers/document-id.parser';
+import {FileAttributeParser} from './parsers/file-attribute.parser';
+import {IpvParser} from './parsers/ipv.parser';
+import {JoinKvParser} from './parsers/join-kv.parser';
 
 export const TAG_STAGE = 'stage';
 export const STAGE_FINGERPRINT = 'fingerprint';
@@ -60,29 +64,33 @@ export function create(): Container {
   myContainer.bind<KinesisStreamRecordMapperService>(TYPES.KinesisStreamRecordMapperService)
     .to(KinesisStreamRecordMapperService);
   myContainer.bind<KinesisStreamService>(TYPES.KinesisStreamService).to(KinesisStreamService);
-  myContainer.bind<RandomizerService>(TYPES.RandomizerService).to(RandomizerService);
   myContainer.bind<DateAndTimeService>(TYPES.DateAndTimeService).to(DateAndTimeService);
   myContainer.bind<SubsetService>(TYPES.SubsetService).to(SubsetService);
 
   // Stage: FINGERPRINT
   myContainer.bind<Parser>(TYPES.Parser).to(KeyAsPathParser).whenTargetTagged(TAG_STAGE, STAGE_FINGERPRINT);
-  myContainer.bind<Parser>(TYPES.Parser).to(EcsEventIngestedParser).whenTargetTagged(TAG_STAGE, STAGE_FINGERPRINT);
+  myContainer.bind<Parser>(TYPES.Parser).to(KinesisParser).whenTargetTagged(TAG_STAGE, STAGE_FINGERPRINT);
 
   // Stage: Parse
-  // myContainer.bind<Parser>(TYPES.Parser).to(FingerprintFilterParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
-  // myContainer.bind<Parser>(TYPES.Parser).to(ApacheParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
-  // myContainer.bind<Parser>(TYPES.Parser).to(SystemCpuParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
-  // myContainer.bind<Parser>(TYPES.Parser).to(SystemMemoryParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
-  // myContainer.bind<Parser>(TYPES.Parser).to(EcsParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  myContainer.bind<Parser>(TYPES.Parser).to(ApacheParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  myContainer.bind<Parser>(TYPES.Parser).to(PercentageParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
   myContainer.bind<Parser>(TYPES.Parser).to(ApplicationClassificationParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  myContainer.bind<Parser>(TYPES.Parser).to(DeslashParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  myContainer.bind<Parser>(TYPES.Parser).to(HttpUrlParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
   myContainer.bind<Parser>(TYPES.Parser).to(HttpStatusEventOutcomeParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  myContainer.bind<Parser>(TYPES.Parser).to(IpvParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  myContainer.bind<Parser>(TYPES.Parser).to(JoinKvParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
   // myContainer.bind<Parser>(TYPES.Parser).to(GeoIpParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
   myContainer.bind<Parser>(TYPES.Parser).to(UserAgentParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
-  // myContainer.bind<Parser>(TYPES.Parser).to(ThreatPhpParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  myContainer.bind<Parser>(TYPES.Parser).to(FileAttributeParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  myContainer.bind<Parser>(TYPES.Parser).to(ThreatPhpParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  myContainer.bind<Parser>(TYPES.Parser).to(HashParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
 
   // Stage: FINALIZE
+  myContainer.bind<Parser>(TYPES.Parser).to(RenameParser).whenTargetTagged(TAG_STAGE, STAGE_FINALIZE);
   myContainer.bind<Parser>(TYPES.Parser).to(TimestampFieldParser).whenTargetTagged(TAG_STAGE, STAGE_FINALIZE);
-  myContainer.bind<Parser>(TYPES.Parser).to(IndexNameParser).whenTargetTagged(TAG_STAGE, STAGE_FINALIZE);
+  myContainer.bind<Parser>(TYPES.Parser).to(DocumentIndexParser).whenTargetTagged(TAG_STAGE, STAGE_FINALIZE);
+  myContainer.bind<Parser>(TYPES.Parser).to(DocumentIdParser).whenTargetTagged(TAG_STAGE, STAGE_FINALIZE);
   myContainer.bind<Parser>(TYPES.Parser).to(RemoveMetadataParser).whenTargetTagged(TAG_STAGE, STAGE_FINALIZE);
 
   return myContainer;
@@ -94,3 +102,7 @@ if (!globalThis.__inversify_singleton) {
 const myContainer = globalThis.__inversify_singleton;
 
 export {myContainer, TYPES};
+function FileAttributesParser(FileAttributesParser: any) {
+  throw new Error('Function not implemented.');
+}
+

@@ -1,8 +1,3 @@
-import {AsnResponse, CityResponse} from 'maxmind';
-
 export interface MaxmindLookupService<T> {
-    lookup(ipAddress:string): T;
+  lookup(ipAddress:string): T | null;
 }
-
-export type MaxmindCityLookupService = MaxmindLookupService<CityResponse>
-export type MaxmindAsnLookupService = MaxmindLookupService<AsnResponse>

@@ -3,7 +3,7 @@ import {inject} from 'inversify';
 import lodash from 'lodash';
 import {FINGERPRINTS} from '../constants/fingerprints';
 import {TYPES} from '../inversify.types';
-import {OsDocument, OsDocumentFingerprint} from '../types/os-document';
+import {OsDocument, OsDocumentData, OsDocumentFingerprint} from '../types/os-document';
 import {SubsetService} from './subset.service';
 
 export class KinesisStreamRecordMapperService {
@@ -25,13 +25,16 @@ export class KinesisStreamRecordMapperService {
     lodash.defaultsDeep(data, fingerprint.dataDefaults);
     return {
       fingerprint,
+      id: null,
+      index: null,
+      type: '_doc',
       data,
       record,
       error: null,
     };
   }
 
-  public fingerprintData(data: any): OsDocumentFingerprint {
+  public fingerprintData(data: OsDocumentData): OsDocumentFingerprint {
     return FINGERPRINTS.find((fp) => {
       if (fp.fingerprint === null) {
         return fp;

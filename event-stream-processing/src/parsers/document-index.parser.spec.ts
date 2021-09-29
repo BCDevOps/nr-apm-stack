@@ -1,16 +1,16 @@
-import {IndexNameParser} from './index-name.parser';
+import {DocumentIndexParser} from './document-index.parser';
 import {OsDocument} from '../types/os-document';
 
 describe('IndexNameParser', () => {
-  it('matches documents without an index', () => {
-    const parser = new IndexNameParser();
+  it('matches document with metadata field', () => {
+    const parser = new DocumentIndexParser();
 
-    expect(parser.matches({data: {}} as unknown as OsDocument)).toBe(true);
-    expect(parser.matches({data: {_index: 'wee'}} as unknown as OsDocument)).toBe(false);
+    expect(parser.matches({data: {'@metadata': {index: 'bob'}}} as unknown as OsDocument)).toBe(true);
+    expect(parser.matches({data: {}} as unknown as OsDocument)).toBe(false);
   });
 
   it('adds index with no subsitution', () => {
-    const parser = new IndexNameParser();
+    const parser = new DocumentIndexParser();
     const document = {
       data: {
         '@timestamp': '2021-05-01T18:47:40.314-07:00',
@@ -20,11 +20,11 @@ describe('IndexNameParser', () => {
       },
     } as unknown as OsDocument;
     parser.apply(document);
-    expect(document.data).toHaveProperty('_index', 'nrm-logs-access');
+    expect(document).toHaveProperty('index', 'nrm-logs-access');
   });
 
   it('adds index with @timestamp', () => {
-    const parser = new IndexNameParser();
+    const parser = new DocumentIndexParser();
     const document = {
       data: {
         '@timestamp': '2021-05-01T18:47:40.314-07:00',
@@ -34,11 +34,11 @@ describe('IndexNameParser', () => {
       },
     } as unknown as OsDocument;
     parser.apply(document);
-    expect(document.data).toHaveProperty('_index', 'nrm-logs-access-2021.05.01');
+    expect(document).toHaveProperty('index', 'nrm-logs-access-2021.05.01');
   });
 
   it('adds index with multiple subsitutions', () => {
-    const parser = new IndexNameParser();
+    const parser = new DocumentIndexParser();
     const document = {
       data: {
         '@timestamp': '2021-05-01T18:47:40.314-07:00',
@@ -48,11 +48,11 @@ describe('IndexNameParser', () => {
       },
     } as unknown as OsDocument;
     parser.apply(document);
-    expect(document.data).toHaveProperty('_index', 'nrm-logs-access-2021.05.01-2021');
+    expect(document).toHaveProperty('index', 'nrm-logs-access-2021.05.01-2021');
   });
 
   it('throws error with no index metadata', () => {
-    const parser = new IndexNameParser();
+    const parser = new DocumentIndexParser();
     const document = {
       data: {
         '@timestamp': '2021-05-01T18:47:40.314-07:00',
@@ -65,7 +65,7 @@ describe('IndexNameParser', () => {
   });
 
   it('throws error with no @timestamp', () => {
-    const parser = new IndexNameParser();
+    const parser = new DocumentIndexParser();
     const document = {
       data: {
         '@metadata': {

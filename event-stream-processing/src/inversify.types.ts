@@ -10,6 +10,5 @@ export const TYPES = {
   MaxmindCityLookupService: Symbol.for('MaxmindCityLookupService'),
   OpenSearchService: Symbol.for('OpenSearchService'),
   Parser: Symbol.for('Parser'),
-  RandomizerService: Symbol.for('RandomizerService'),
   SubsetService: Symbol.for('SubsetService'),
 };

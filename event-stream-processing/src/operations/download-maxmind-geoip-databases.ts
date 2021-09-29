@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /**
  * Example:
 Powershell:
@@ -9,7 +10,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 
-function download(url:string, dest: string) {
+function download(url: string, dest: string) {
   // console.log(`Downloading ${url}`) // careful!!! download URL contains license key!!!
   http.get(url, function(response) {
     if (response.statusCode === 200) {

@@ -7,19 +7,25 @@ export enum FingerprintName {
   UNKNOWN = 'UNKNOWN',
 }
 
+export interface OsDocumentData {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}
+
 export interface OsDocumentFingerprint {
   name: FingerprintName;
-  fingerprint: any;
+  fingerprint: OsDocumentData | null;
   dataDefaults: {
-    '@metadata': any;
+    '@metadata': OsDocumentData;
   }
 }
 
 export interface OsDocument {
   fingerprint: OsDocumentFingerprint;
   record: KinesisStreamRecord;
-  data: {
-    [key: string]: any;
-  };
+  id: string | null;
+  index: string | null;
+  type: string;
+  data: OsDocumentData;
   error: any;
 }

@@ -1,7 +1,8 @@
 import {injectable, inject} from 'inversify';
 import {TYPES} from '../inversify.types';
 import {GeoIpService} from './geoip.service';
-import {MaxmindAsnLookupService, MaxmindCityLookupService} from './maxmindLookup.service';
+import {MaxmindAsnLookupService} from './maxmindAsnLookup.service';
+import {MaxmindCityLookupService} from './maxmindCityLookup.service';
 
 @injectable()
 export class GeoIpMaxmindService implements GeoIpService {

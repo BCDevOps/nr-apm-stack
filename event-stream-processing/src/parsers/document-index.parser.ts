@@ -8,14 +8,14 @@ import {OsDocument} from '../types/os-document';
 /**
  * Apply index to document
  */
-export class IndexNameParser implements Parser {
+export class DocumentIndexParser implements Parser {
   /**
-   * Match documents without an index
+   * Returns true if metadata has a index field.
    * @param document The document to match against
    * @returns
    */
   matches(document: OsDocument): boolean {
-    return !document.data._index;
+    return !!(document.data['@metadata'] && document.data['@metadata'].index);
   }
 
   /**
@@ -39,6 +39,6 @@ export class IndexNameParser implements Parser {
       }
       throw new Error(`Unexpected formatting: ${match}`);
     });
-    document.data._index = indexFormat;
+    document.index = indexFormat;
   }
 }

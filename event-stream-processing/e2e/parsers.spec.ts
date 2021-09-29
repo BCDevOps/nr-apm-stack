@@ -4,7 +4,7 @@ import {KinesisStreamService} from '../src/kinesis-stream.service';
 import {APACHE_ACCESS_LOG_EVENT_SIGNATURE} from '../src/parsers/apache.parser';
 import {Randomizer} from '../util/randomizer.isvc';
 import * as lodash from 'lodash';
-import {EcsParser} from '../src/parsers/ecs.parser';
+import {EcsParser} from '../src/parsers/http-url.parser';
 import {ApplicationClassificationParser} from '../src/parsers/application-classification.parser';
 import {Logger} from '../src/util/logger.service';
 import {LoggerVoidImpl} from '../src/util/logger-void.service';

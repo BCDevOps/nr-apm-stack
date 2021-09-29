@@ -8,6 +8,7 @@ import {
 import * as fs from 'fs';
 import * as path from 'path';
 
+// eslint-disable-next-line @typescript-eslint/no-floating-promises
 (async function() {
   const client = new LambdaClient({});
   const argv = process.argv.slice(2);

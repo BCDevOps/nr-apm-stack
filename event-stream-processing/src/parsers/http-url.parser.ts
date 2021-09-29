@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import {injectable} from 'inversify';
 import {Parser} from '../types/parser';
 import lodash from 'lodash';
 import * as path from 'path';
 import {format as formatUrl, URL} from 'url';
-import {expandFileAttributesFromPath} from '../shared/expand-file-attributes-from-path';
 import {OsDocument, FingerprintName} from '../types/os-document';
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
@@ -22,10 +22,10 @@ function explodeURL(url: URL): any {
       lodash.set(record, 'port', '21');
     }
   }
-  if (url.username.length>0) {
+  if (url.username.length > 0) {
     lodash.set(record, 'username', url.username);
   }
-  if (url.password.length>0) {
+  if (url.password.length > 0) {
     lodash.set(record, 'password', '-');
   }
   const indexOfFirstSemicolonInPath: number = url.pathname.indexOf(';');
@@ -75,53 +75,49 @@ function explodeURL(url: URL): any {
 }
 
 @injectable()
-export class EcsParser implements Parser {
-  matches(record: OsDocument): boolean {
-    return record.fingerprint.name === FingerprintName.APACHE_ACCESS_LOGS;
+export class HttpUrlParser implements Parser {
+  matches(document: OsDocument): boolean {
+    return document.fingerprint.name === FingerprintName.APACHE_ACCESS_LOGS;
   }
-  apply({data: record}: OsDocument): void {
-    if (!lodash.isNil(lodash.get(record, 'log.file.path'))) {
-      lodash.set(record, 'log.file.path', (lodash.get(record, 'log.file.path') as string).replace(/\\/g, '/'));
-      expandFileAttributesFromPath(lodash.get(record, 'log.file.path') as string, lodash.get(record, 'log.file'));
-    }
-    if (!lodash.isNil(lodash.get(record, 'http.request.line'))) {
-      const value = lodash.get(record, 'http.request.line');
+  apply(document: OsDocument): void {
+    if (!lodash.isNil(lodash.get(document.data, 'http.request.line'))) {
+      const value = lodash.get(document.data, 'http.request.line');
       const firstSpace = value.indexOf(' ');
       const lastSpace = value.lastIndexOf(' ');
       if (firstSpace > 0 && lastSpace > firstSpace ) {
         const httpVersion = value.substring(lastSpace).trim();
-        lodash.set(record, 'http.request.method', value.substring(0, firstSpace));
+        lodash.set(document.data, 'http.request.method', value.substring(0, firstSpace));
         if (httpVersion.toUpperCase().startsWith('HTTP/')) {
-          lodash.set(record, 'http.version', httpVersion.substring('HTTP/'.length));
+          lodash.set(document.data, 'http.version', httpVersion.substring('HTTP/'.length));
         }
         const uriOriginal:string = value.substring(firstSpace, lastSpace).trim();
-        lodash.set(record, 'url.original', uriOriginal);
+        lodash.set(document.data, 'url.original', uriOriginal);
         if (uriOriginal.startsWith('/')) {
           // eslint-disable-next-line max-len
-          if (!lodash.isNil(lodash.get(record, 'url.scheme')) && !lodash.isNil(lodash.get(record, 'url.domain')) && !lodash.isNil(lodash.get(record, 'url.port'))) {
+          if (!lodash.isNil(lodash.get(document.data, 'url.scheme')) && !lodash.isNil(lodash.get(document.data, 'url.domain')) && !lodash.isNil(lodash.get(document.data, 'url.port'))) {
             // eslint-disable-next-line max-len
-            const url = new URL(`${lodash.get(record, 'url.scheme')}://${lodash.get(record, 'url.domain')}:${lodash.get(record, 'url.port')}${uriOriginal}`);
-            lodash.merge(record.url, explodeURL(url));
+            const url = new URL(`${lodash.get(document.data, 'url.scheme')}://${lodash.get(document.data, 'url.domain')}:${lodash.get(document.data, 'url.port')}${uriOriginal}`);
+            lodash.merge(document.data.url, explodeURL(url));
           } else {
             const url = new URL(`http://localhost:80${uriOriginal}`);
-            lodash.merge(record.url, explodeURL(url));
-            lodash.unset(record.url, 'scheme');
-            lodash.unset(record.url, 'port');
-            lodash.unset(record.url, 'domain');
-            lodash.unset(record.url, 'full');
+            lodash.merge(document.data.url, explodeURL(url));
+            lodash.unset(document.data.url, 'scheme');
+            lodash.unset(document.data.url, 'port');
+            lodash.unset(document.data.url, 'domain');
+            lodash.unset(document.data.url, 'full');
           }
         }
       }
     }
-    if (lodash.get(record, 'http.request.referrer.original') === '-') {
-      delete record.http.request.referrer.original;
+    if (lodash.get(document.data, 'http.request.referrer.original') === '-') {
+      delete document.data.http.request.referrer.original;
     }
-    if (!lodash.isNil(lodash.get(record, 'http.request.referrer.original'))) {
+    if (!lodash.isNil(lodash.get(document.data, 'http.request.referrer.original'))) {
       try {
-        const url = new URL(lodash.get(record, 'http.request.referrer.original'));
-        lodash.merge(record.http.request.referrer, explodeURL(url));
+        const url = new URL(lodash.get(document.data, 'http.request.referrer.original'));
+        lodash.merge(document.data.http.request.referrer, explodeURL(url));
       } catch (error) {
-        lodash.set(record, 'http.request.referrer.error', error.toString());
+        lodash.set(document.data, 'http.request.referrer.error', error.toString());
       }
     }
   }

@@ -4,7 +4,6 @@ import lodash from 'lodash';
 import moment from 'moment';
 import {OsDocument} from '../types/os-document';
 
-
 @injectable()
 /**
  * Parse timestamp from field

@@ -33,7 +33,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       '@metadata': {
         hash: 'host.hostname,log.file.path,log.file.offset,record.message',
         docid: 'log.file.name,offset,event.hash',
-        index: 'nrm-audit-vault-',
+        index: 'nrm-audit-vault-<%=YYYY.MM.DD=%>',
       },
     },
   },
@@ -48,7 +48,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       '@metadata': {
         hash: 'host.hostname,log.file.path,log.file.offset,record.message',
         docid: 'log.file.name,offset,event.hash',
-        index: 'nrm-metrics-',
+        index: 'nrm-metrics-<%=YYYY.MM.DD=%>',
         keyAsPath: true,
       },
     },

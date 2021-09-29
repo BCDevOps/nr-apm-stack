@@ -1,6 +1,8 @@
 import {injectable, inject} from 'inversify';
+import lodash from 'lodash';
 import {URL} from 'url';
 import {TYPES} from './inversify.types';
+import {OsDocument} from './types/os-document';
 import {AwsHttpClientService} from './util/aws-http-client.service';
 import {LoggerService} from './util/logger.service';
 
@@ -26,41 +28,37 @@ export class OpenSearchService {
   ) {}
 
     private url: URL = new URL(process.env.ES_URL || 'http://localhost')
-    async bulk(documents: any[]): Promise<OpenSearchBulkResult> {
-      const index:Map<string, any> = new Map();
+    async bulk(documents: OsDocument[]): Promise<OpenSearchBulkResult> {
+      const index = new Map<string, OsDocument>();
       const filterPath = 'took,errors,items.*.error,items.*._id';
       let body = '';
-      const parsingErrors: any[] = [];
-      for (const doc of documents) {
-        // assign document id
-        doc._id = `${doc.kinesis.eventID}:${doc.event?.hash || ''}`;
-        if (
-          doc.event?.kind === 'event' &&
-          doc.event?.category === 'web' &&
-          doc?.event.dataset === 'apache.access' &&
-          doc.event?.hash
-        ) {
-          doc._id = `${doc.log?.file?.name}:${doc.offset}:${doc.event?.hash}`;
+      const parsingErrors: OsDocument[] = [];
+      for (const document of documents) {
+        if (document.id === null) {
+          this.logger.log('ES_ERROR Document with no id');
+          break;
         }
-        index.set(doc._id, doc);
-        if (!doc._error) {
-          const _index = doc._index;
-          const _type = doc._type || '_doc';
-          const _id = doc._id;
-          delete doc._index;
-          delete doc._type;
-          delete doc._id;
-          body += `{"index":{"_index": "${_index}", "_type": "${_type}"`;
-          if (_id) {
-            body += `, "_id":"${_id}"`;
+        if (document.index === null) {
+          this.logger.log('ES_ERROR Document with no index');
+          break;
+        }
+        index.set(document.id, document);
+        if (!document.error) {
+          body += `{"index":{"_index": "${document.index}", "_type": "${document.type}"`;
+          if (document.id) {
+            body += `, "_id":"${document.id}"`;
           }
           body += `}}\n`;
-          body += JSON.stringify(doc)+'\n';
+          body += JSON.stringify(document.data)+'\n';
         } else {
-          parsingErrors.push(doc);
+          parsingErrors.push(document);
         }
       }
-      const query: any = {refresh: 'wait_for'};
+      const query: {
+        refresh: string;
+        // eslint-disable-next-line camelcase
+        filter_path?: string;
+      } = {refresh: 'wait_for'};
       if (filterPath.length > 0) {
         query.filter_path = filterPath;
       }
@@ -83,7 +81,8 @@ export class OpenSearchService {
         .then(this.awsHttpClient.waitAndReturnResponseBody.bind(this.awsHttpClient))
         .then((value: any) => {
           if (value.statusCode !== 200) {
-            this.logger.log(`ES_RESPONSE_STATUS_CODE ${value.statusCode}`);
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            this.logger.log(`ES_RESPONSE_STATUS_CODE ${value.statusCode }`);
             return {success: false, errors: documents};
           }
           const body = JSON.parse(value.body);
@@ -98,13 +97,13 @@ export class OpenSearchService {
           for (const item of bodyItems) {
             const meta = item.create || item.index;
             if (meta.error) {
-              const doc = index.get(meta._id);
-              if (doc) {
-                doc._error = meta.error;
-                this.logger.log('ES_ERROR '+JSON.stringify(doc));
-                errors.push(doc);
+              const document = index.get(meta._id);
+              if (document) {
+                document.error = meta.error;
+                this.logger.log('ES_ERROR ' + JSON.stringify(document.data));
+                errors.push(document);
               } else {
-                this.logger.log('ES_ERROR_DOC_NOT_FOUND '+JSON.stringify(item));
+                this.logger.log('ES_ERROR_DOC_NOT_FOUND ' + JSON.stringify(item));
               }
             }
           }
