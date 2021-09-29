@@ -15,7 +15,7 @@ const knownAppContextRegex = /^(?<labels__context>\/((int)|(ext)|(pub)|(gov)|(da
  */
 export class ApplicationClassificationParser implements Parser {
   /**
-   * Returns true if the document has .
+   * Returns true if the document has a url.path and url.domain.
    * @param document The document to match against
    * @returns
    */
@@ -28,8 +28,8 @@ export class ApplicationClassificationParser implements Parser {
    * @param document The document to modify
    */
   apply(document: OsDocument): void {
-    const urlDomain:string = lodash.get(document.data, 'url.domain');
-    const urlPath:string = lodash.get(document.data, 'url.path');
+    const urlDomain: string = lodash.get(document.data, 'url.domain');
+    const urlPath: string = lodash.get(document.data, 'url.path');
 
     for (const knownDomain of knownDomains) {
       if ((knownDomain.regex).test(urlDomain.toLowerCase())) {

@@ -14,7 +14,7 @@ export class JoinKvParser implements Parser {
    * @returns
    */
   matches(document: OsDocument): boolean {
-    return !!(document.data['@metadata'] && document.data['@metadata'].joinkv);
+    return !!(document.data['@metadata'] && document.data['@metadata'].joinKv);
   }
 
   /**
@@ -22,7 +22,7 @@ export class JoinKvParser implements Parser {
    * @param document The document to modify
    */
   apply(document: OsDocument): void {
-    const joinkvArr = (document.data['@metadata'].joinkv as string).split(',');
+    const joinkvArr = (document.data['@metadata'].joinKv as string).split(',');
 
     for (const joinKvPath of joinkvArr) {
       const query = lodash.get(document.data, joinKvPath);

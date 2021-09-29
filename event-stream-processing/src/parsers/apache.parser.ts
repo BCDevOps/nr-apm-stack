@@ -40,7 +40,7 @@ export class ApacheParser implements Parser {
   ) {}
 
   /**
-   * Returns true if ???
+   * Returns true if FingerprintName.APACHE_ACCESS_LOGS
    * @returns
    */
   matches(document: OsDocument): boolean {

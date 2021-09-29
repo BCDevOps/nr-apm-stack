@@ -74,15 +74,15 @@ export function create(): Container {
   // Stage: Parse
   myContainer.bind<Parser>(TYPES.Parser).to(ApacheParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
   myContainer.bind<Parser>(TYPES.Parser).to(PercentageParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
-  myContainer.bind<Parser>(TYPES.Parser).to(ApplicationClassificationParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
   myContainer.bind<Parser>(TYPES.Parser).to(DeslashParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
   myContainer.bind<Parser>(TYPES.Parser).to(HttpUrlParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
   myContainer.bind<Parser>(TYPES.Parser).to(HttpStatusEventOutcomeParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
   myContainer.bind<Parser>(TYPES.Parser).to(IpvParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
   myContainer.bind<Parser>(TYPES.Parser).to(JoinKvParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
-  // myContainer.bind<Parser>(TYPES.Parser).to(GeoIpParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  myContainer.bind<Parser>(TYPES.Parser).to(GeoIpParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
   myContainer.bind<Parser>(TYPES.Parser).to(UserAgentParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
   myContainer.bind<Parser>(TYPES.Parser).to(FileAttributeParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  myContainer.bind<Parser>(TYPES.Parser).to(ApplicationClassificationParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
   myContainer.bind<Parser>(TYPES.Parser).to(ThreatPhpParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
   myContainer.bind<Parser>(TYPES.Parser).to(HashParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
 

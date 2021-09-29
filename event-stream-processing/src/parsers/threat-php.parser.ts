@@ -14,7 +14,7 @@ export class ThreatPhpParser implements Parser {
    * @returns
    */
   matches(document: OsDocument): boolean {
-    return !!(document.data['@metadata'] && document.data['@metadata'].threatphp === true);
+    return !!(document.data['@metadata'] && document.data['@metadata'].threatPhp === true);
   }
 
   /**

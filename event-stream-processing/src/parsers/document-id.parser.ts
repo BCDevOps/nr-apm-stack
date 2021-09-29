@@ -14,7 +14,7 @@ export class DocumentIdParser implements Parser {
    * @returns
    */
   matches(document: OsDocument): boolean {
-    return !!(document.data['@metadata'] && document.data['@metadata'].docid);
+    return !!(document.data['@metadata'] && document.data['@metadata'].docId);
   }
 
   /**
@@ -22,7 +22,7 @@ export class DocumentIdParser implements Parser {
    * @param document The document to modify
    */
   apply(document: OsDocument): void {
-    const docIdPattern: string = lodash.get(document.data, '@metadata.docid');
+    const docIdPattern: string = lodash.get(document.data, '@metadata.docId');
 
     // assign document id
     const id = docIdPattern.split(',')
