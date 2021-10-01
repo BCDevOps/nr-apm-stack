@@ -43,17 +43,11 @@ export const STAGE_FINGERPRINT = 'fingerprint';
 export const STAGE_PARSE = 'parse';
 export const STAGE_FINALIZE = 'finalize';
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
-declare namespace globalThis {
-  // eslint-disable-next-line camelcase
-  let __inversify_singleton: Container;
-}
-
 /**
  * Create the container
  * @returns The container
  */
-export function create(): Container {
+function create(): Container {
   const myContainer = new Container({defaultScope: BindingScopeEnum.Singleton});
   myContainer.bind<LoggerService>(TYPES.LoggerService).to(LoggerConsoleService);
   myContainer.bind<GeoIpService>(TYPES.GeoIpService).to(GeoIpMaxmindService);
@@ -95,14 +89,6 @@ export function create(): Container {
 
   return myContainer;
 }
-if (!globalThis.__inversify_singleton) {
-  // console.log('creating __inversify_singleton')
-  globalThis.__inversify_singleton = create();
-}
-const myContainer = globalThis.__inversify_singleton;
+const myContainer = create();
 
 export {myContainer, TYPES};
-function FileAttributesParser(FileAttributesParser: any) {
-  throw new Error('Function not implemented.');
-}
-

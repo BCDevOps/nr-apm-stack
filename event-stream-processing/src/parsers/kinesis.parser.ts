@@ -8,6 +8,8 @@ import {OsDocument} from '../types/os-document';
 @injectable()
 /**
  * Set kinesis related fields
+ *
+ * Tag: Meta
  */
 export class KinesisParser implements Parser {
   constructor(

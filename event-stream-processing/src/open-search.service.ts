@@ -1,5 +1,4 @@
 import {injectable, inject} from 'inversify';
-import lodash from 'lodash';
 import {URL} from 'url';
 import {TYPES} from './inversify.types';
 import {OsDocument} from './types/os-document';

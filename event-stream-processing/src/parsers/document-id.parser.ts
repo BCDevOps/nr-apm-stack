@@ -6,6 +6,8 @@ import {OsDocument} from '../types/os-document';
 @injectable()
 /**
  * Apply id to document
+ *
+ * Tag: Meta
  */
 export class DocumentIdParser implements Parser {
   /**

@@ -6,6 +6,7 @@ import lodash from 'lodash';
 @injectable()
 /**
  * Computes the event.outcome for the document
+ * Tag: Support
  * TODO: CONVERT_RUNS_ALWAYS_TO_METADATA
  */
 export class HttpStatusEventOutcomeParser implements Parser {

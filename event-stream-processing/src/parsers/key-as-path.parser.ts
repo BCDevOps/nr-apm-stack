@@ -6,6 +6,7 @@ import {OsDocument} from '../types/os-document';
 @injectable()
 /**
  * Parse keys as paths
+ * Tag: Support
  */
 export class KeyAsPathParser implements Parser {
   /**

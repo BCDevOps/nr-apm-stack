@@ -6,7 +6,8 @@ import {OsDocument} from '../types/os-document';
 
 @injectable()
 /**
- * TODO: CONVERT_RUNS_ALWAYS_TO_METADATA
+ * Do geo ip lookup on fields in document
+ * Tag: Support
  */
 export class GeoIpParser implements Parser {
   /**
@@ -22,13 +23,13 @@ export class GeoIpParser implements Parser {
    * @param document The document to match against
    * @returns
    */
-  matches(): boolean {
-    return true;
+  matches(document: OsDocument): boolean {
+    return !!(document.data?.client?.ip || document.data?.source?.ip || document.data?.source?.address);
   }
 
   /**
-   *
-   * @param record
+   * Do geo ip lookup on fields in document
+   * @param document The document to modify
    */
   apply(document: OsDocument): void {
     if (document.data?.client?.ip) {

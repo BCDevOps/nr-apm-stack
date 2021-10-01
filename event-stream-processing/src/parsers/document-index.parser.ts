@@ -7,6 +7,8 @@ import {OsDocument} from '../types/os-document';
 @injectable()
 /**
  * Apply index to document
+ *
+ * Tag: Meta
  */
 export class DocumentIndexParser implements Parser {
   /**

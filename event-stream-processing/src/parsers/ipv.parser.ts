@@ -9,6 +9,8 @@ import {Parser} from '../types/parser';
  * with IPV4 addresses.
  * eg: '::ffff:10.97.6.1'.
  *     '::ffff:' is designated as the IPv4 to IPv6 subnet prefix
+ *
+ * @deprecated
  */
 export class IpvParser implements Parser {
   /**

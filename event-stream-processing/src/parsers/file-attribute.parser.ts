@@ -7,6 +7,8 @@ import {Parser} from '../types/parser';
 @injectable()
 /**
  * Parse attributes from fields
+ *
+ * Tag: support
  */
 export class FileAttributeParser implements Parser {
   /**

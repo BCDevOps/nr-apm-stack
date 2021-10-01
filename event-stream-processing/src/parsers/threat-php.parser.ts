@@ -6,6 +6,7 @@ import {OsDocument} from '../types/os-document';
 @injectable()
 /**
  * Parse threat level based on numbers chosen at random.
+ * @deprecated
  */
 export class ThreatPhpParser implements Parser {
   /**

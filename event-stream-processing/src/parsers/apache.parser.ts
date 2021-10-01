@@ -25,6 +25,8 @@ export const APACHE_ACCESS_LOG_EVENT_SIGNATURE = Object.freeze({
  * reference:
  * - https://github.com/elastic/beats/tree/master/filebeat/module/apache/access
  * - https://www.josephkirwin.com/2016/03/12/nodejs_redos_mitigation/
+ *
+ * Tag: Standard format
  */
 @injectable()
 /**

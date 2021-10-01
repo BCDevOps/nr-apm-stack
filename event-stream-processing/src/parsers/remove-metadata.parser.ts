@@ -6,6 +6,7 @@ import {OsDocument} from '../types/os-document';
 @injectable()
 /**
  * Remove metadata field from data.
+ * Tag: Meta
  */
 export class RemoveMetadataParser implements Parser {
   /**

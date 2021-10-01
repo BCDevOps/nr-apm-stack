@@ -6,6 +6,9 @@ import {Parser} from '../types/parser';
 @injectable()
 /**
  * Parse backslashes from fields
+ *
+ * Tag: Support
+ * @deprecated
  */
 export class DeslashParser implements Parser {
   /**

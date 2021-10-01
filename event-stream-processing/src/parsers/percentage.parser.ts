@@ -6,6 +6,7 @@ import {Parser} from '../types/parser';
 @injectable()
 /**
  * Parse percentage of fields
+ * @deprecated
  */
 export class PercentageParser implements Parser {
   /**

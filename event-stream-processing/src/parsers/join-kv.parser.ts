@@ -6,6 +6,7 @@ import {Parser} from '../types/parser';
 @injectable()
 /**
  * Parse key value pairs in source objects into a string.
+ * @deprecated
  */
 export class JoinKvParser implements Parser {
   /**

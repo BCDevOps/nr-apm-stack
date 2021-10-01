@@ -7,6 +7,7 @@ import {OsDocument} from '../types/os-document';
 @injectable()
 /**
  * Parse timestamp from field
+ * Tag: Support
  */
 export class TimestampFieldParser implements Parser {
   /**

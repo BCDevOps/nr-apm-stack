@@ -7,6 +7,8 @@ import {OsDocument} from '../types/os-document';
 /**
  * @summary Sets the event hash based on a defined pattern.
  *
+ * Tag: Meta
+ *
  * <host.hostname>:<log.file.path>:<log.file.offset>:<message>
  */
 @injectable()

@@ -26,7 +26,7 @@ async function describeDomain(client, domainName){
     if (error.name === 'ResourceNotFoundException') return null
     if (error.errno === 'ENOTFOUND' && error.syscall === 'getaddrinfo') return describeDomain(client, domainName)
     console.dir(error, {depth:5})
-  }  
+  }
 }
 
 async function waitForDomainStatusReady(client, domainName){
@@ -263,12 +263,12 @@ const MyDeployer = class extends BasicDeployer {
             .then(waitAndReturnResponseBody)
             .then((response)=>{
               // console.log(`Index Pattern Loaded - ${tenantName}/${indexPatternName}`)
-              if (response.statusCode === 200 ){
+              if (response.statusCode === 200 ) {
                 const body = JSON.parse(response.body)
                 if (body.fields.length > indexPattern.attributes.fields.length) {
-                indexPattern.attributes.fields = JSON.stringify(body.fields)
+                  indexPattern.attributes.fields = JSON.stringify(body.fields)
                 }
-              }else{
+              } else {
                 throw new Error(JSON.stringify(body.errors))
               }
             })
@@ -357,7 +357,7 @@ const MyDeployer = class extends BasicDeployer {
                 const body = JSON.parse(response.body)
                 if (body.success !== true ) {
                   throw new Error(JSON.stringify(body.errors))
-                }                
+                }
               }
             })
             .then(()=>console.log(`Dashboard File Loaded - ${tenantName}/${dashboardFileName}`))

@@ -7,13 +7,32 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       event: {
         kind: 'event',
         category: 'web',
-        dataset: 'apache.access', // node.css.http
+        dataset: 'apache.access',
       },
     },
     dataDefaults: {
       '@metadata': {
         hash: 'host.hostname,log.file.path,log.file.offset,record.message',
-        docid: 'log.file.name,offset,event.hash',
+        docId: 'log.file.name,offset,event.hash',
+        index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
+        timestampField: 'apache.access.time',
+        timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
+      },
+    },
+  },
+  {
+    name: FingerprintName.APACHE_ACCESS_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
+        dataset: 'node.css.http',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: 'host.hostname,log.file.path,log.file.offset,record.message',
+        docId: 'log.file.name,offset,event.hash',
         index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
         timestampField: 'apache.access.time',
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
@@ -31,8 +50,8 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,log.file.path,log.file.offset,record.message',
-        docid: 'log.file.name,offset,event.hash',
+        hash: 'host.hostname,response.data_json',
+        docId: 'kinesis.eventID,event.hash',
         index: 'nrm-audit-vault-<%=YYYY.MM.DD=%>',
       },
     },
@@ -42,14 +61,34 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     fingerprint: {
       event: {
         kind: 'metric',
+        dataset: 'system.cpu',
       },
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,log.file.path,log.file.offset,record.message',
-        docid: 'log.file.name,offset,event.hash',
+        hash: '',
+        docId: 'kinesis.eventID,',
         index: 'nrm-metrics-<%=YYYY.MM.DD=%>',
         keyAsPath: true,
+        rename: 'user_p,system.cpu.user.pct:system_p,system.cpu.system.pct:cpu_p,system.cpu.total.pct',
+      },
+    },
+  },
+  {
+    name: FingerprintName.METRICS,
+    fingerprint: {
+      event: {
+        kind: 'metric',
+        dataset: 'system.memory',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: '',
+        docId: 'kinesis.eventID,',
+        index: 'nrm-metrics-<%=YYYY.MM.DD=%>',
+        keyAsPath: true,
+        rename: 'user_p,system.cpu.user.pct:system_p,system.cpu.system.pct:cpu_p,system.cpu.total.pct',
       },
     },
   },
@@ -60,7 +99,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     dataDefaults: {
       '@metadata': {
         hash: 'kinesis.eventID,kinesis.sequenceNumber',
-        docid: 'kinesis.eventID,event.hash',
+        docId: 'kinesis.eventID,event.hash',
       },
     },
   },

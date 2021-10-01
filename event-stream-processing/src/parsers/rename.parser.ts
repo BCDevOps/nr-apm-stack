@@ -6,6 +6,7 @@ import {Parser} from '../types/parser';
 @injectable()
 /**
  * Parse rename of fields
+ * @deprecated
  */
 export class RenameParser implements Parser {
   /**

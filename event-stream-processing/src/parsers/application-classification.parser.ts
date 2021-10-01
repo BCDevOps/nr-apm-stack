@@ -11,7 +11,9 @@ const knownAppContextRegex = /^(?<labels__context>\/((int)|(ext)|(pub)|(gov)|(da
 
 @injectable()
 /**
- * Classify which app data came from
+ * Classify which app data came from.
+ *
+ * Tag: Annotation
  */
 export class ApplicationClassificationParser implements Parser {
   /**

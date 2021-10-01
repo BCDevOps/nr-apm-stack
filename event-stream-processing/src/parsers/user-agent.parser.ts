@@ -7,6 +7,7 @@ import cleanDeep from 'clean-deep';
 @injectable()
 /**
  * Parses the user_agent string into user readable fields
+ * Tag: Support
  * TODO: CONVERT_RUNS_ALWAYS_TO_METADATA
  */
 export class UserAgentParser implements Parser {
