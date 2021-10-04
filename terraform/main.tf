@@ -567,6 +567,31 @@ resource "elasticsearch_opendistro_roles_mapping" "nrm_read_all_mapper" {
   backend_roles = ["nrm-read-all"]
 }
 
+resource "elasticsearch_opendistro_role" "nrm_security" {
+  role_name   = "nrm-security"
+  description = "NRM security role"
+  cluster_permissions = ["cluster_composite_ops", "cluster:admin/opendistro/reports/menu/download"]
+  index_permissions {
+    index_patterns  = ["iitd-*", "iit-*", "nrm-*"]
+    allowed_actions = ["read", "indices:admin/resolve/index"]
+  }
+  index_permissions {
+    index_patterns  = [".kibana_*"]
+    allowed_actions = ["kibana_all_read"]
+  }
+  tenant_permissions {
+    tenant_patterns = ["infraops"]
+    allowed_actions = ["kibana_all_read"]
+  }
+  depends_on = [aws_elasticsearch_domain.es]
+}
+
+resource "elasticsearch_opendistro_roles_mapping" "nrm_security_mapper" {
+  role_name     = elasticsearch_opendistro_role.nrm_security.id
+  description   = "Mapping KC role to ES role"
+  backend_roles = ["nrm-security"]
+}
+
 resource "elasticsearch_opendistro_roles_mapping" "all_access" {
   role_name     = "all_access"
   description   = "Mapping KC role to ES role"

@@ -30,7 +30,7 @@ module.exports.process = function (p) {
         baseUrl: `${baseUrl}/_plugin/kibana/`,
         redirectUris: [`${baseUrl}/*`],
         defaultClientScopes: [ 'web-origins', 'profile', 'email' ],
-        roles: [{name:'kibana_user'}, {name: 'all_access'}, {name: 'irs-developer'}, {name: 'nrm-read-all'}],
+        roles: [{name:'kibana_user'}, {name: 'all_access'}, {name: 'irs-developer'}, {name: 'nrm-read-all'}, {name: 'nrm-security'}],
         protocolMappers: [
             {name: 'roles', protocol: 'saml', protocolMapper: 'saml-role-list-mapper', consentRequired: false, config: {single:'true', 'attribute.nameformat': 'Basic', 'attribute.name': 'roles', 'friendly.name': 'roles'}},
         ]
