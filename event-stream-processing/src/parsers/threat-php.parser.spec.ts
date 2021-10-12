@@ -2,7 +2,7 @@ import {OsDocument} from '../types/os-document';
 import {ThreatPhpParser} from './threat-php.parser';
 
 describe('ThreatPhpParser', () => {
-  it('matches anything', () => {
+  it('matches using metadata', () => {
     const parser = new ThreatPhpParser();
 
     expect(parser.matches({data: {'@metadata': {threatPhp: true}}} as unknown as OsDocument)).toBe(true);

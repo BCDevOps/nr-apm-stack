@@ -2,7 +2,7 @@ import {OsDocument} from '../types/os-document';
 import {RenameParser} from './rename.parser';
 
 describe('RenameParser', () => {
-  it('matches anything', () => {
+  it('matches using metadata', () => {
     const parser = new RenameParser();
 
     expect(parser.matches({data: {'@metadata': {rename: true}}} as unknown as OsDocument)).toBe(true);

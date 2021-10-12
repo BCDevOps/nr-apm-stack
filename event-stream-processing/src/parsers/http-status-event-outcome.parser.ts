@@ -7,16 +7,17 @@ import lodash from 'lodash';
 /**
  * Computes the event.outcome for the document
  * Tag: Support
- * TODO: CONVERT_RUNS_ALWAYS_TO_METADATA
  */
 export class HttpStatusEventOutcomeParser implements Parser {
   /**
-   * Returns true if the document has a http.response.status_code field and no event.outcome field.
+   * Returns true if the document has a metadata field httpStatusOutcome and
+   * http.response.status_code field and no event.outcome field.
    * @param document The document to match against
    * @returns
    */
   matches(document: OsDocument): boolean {
-    return !lodash.isNil(lodash.get(document.data, 'http.response.status_code')) &&
+    return !!(document.data['@metadata'] && document.data['@metadata'].httpStatusOutcome === true) &&
+      !lodash.isNil(lodash.get(document.data, 'http.response.status_code')) &&
       lodash.isNil(lodash.get(document.data, 'event.outcome'));
   }
 

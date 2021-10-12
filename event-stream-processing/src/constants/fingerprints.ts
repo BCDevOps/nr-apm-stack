@@ -1,8 +1,8 @@
-import {OsDocumentFingerprint, FingerprintName} from '../types/os-document';
+import {OsDocumentFingerprint, FingerprintCategory} from '../types/os-document';
 
 export const FINGERPRINTS: OsDocumentFingerprint[] = [
   {
-    name: FingerprintName.APACHE_ACCESS_LOGS,
+    name: FingerprintCategory.APACHE_ACCESS_LOGS,
     fingerprint: {
       event: {
         kind: 'event',
@@ -12,8 +12,10 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
+        apacheAccessLog: true,
         hash: 'host.hostname,log.file.path,log.file.offset,record.message',
         docId: 'log.file.name,offset,event.hash',
+        explodeHttpUrl: true,
         index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
         timestampField: 'apache.access.time',
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
@@ -21,7 +23,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
   },
   {
-    name: FingerprintName.APACHE_ACCESS_LOGS,
+    name: FingerprintCategory.APACHE_ACCESS_LOGS,
     fingerprint: {
       event: {
         kind: 'event',
@@ -33,6 +35,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       '@metadata': {
         hash: 'host.hostname,log.file.path,log.file.offset,record.message',
         docId: 'log.file.name,offset,event.hash',
+        explodeHttpUrl: true,
         index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
         timestampField: 'apache.access.time',
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
@@ -40,7 +43,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
   },
   {
-    name: FingerprintName.VAULT_AUDIT_LOGS,
+    name: FingerprintCategory.VAULT_AUDIT_LOGS,
     fingerprint: {
       event: {
         kind: 'event',
@@ -57,7 +60,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
   },
   {
-    name: FingerprintName.METRICS,
+    name: FingerprintCategory.METRICS,
     fingerprint: {
       event: {
         kind: 'metric',
@@ -66,16 +69,13 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: '',
-        docId: 'kinesis.eventID,',
+        docId: 'kinesis.eventID,kinesis.sequenceNumber',
         index: 'nrm-metrics-<%=YYYY.MM.DD=%>',
-        keyAsPath: true,
-        rename: 'user_p,system.cpu.user.pct:system_p,system.cpu.system.pct:cpu_p,system.cpu.total.pct',
       },
     },
   },
   {
-    name: FingerprintName.METRICS,
+    name: FingerprintCategory.METRICS,
     fingerprint: {
       event: {
         kind: 'metric',
@@ -84,21 +84,17 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: '',
-        docId: 'kinesis.eventID,',
+        docId: 'kinesis.eventID,kinesis.sequenceNumber',
         index: 'nrm-metrics-<%=YYYY.MM.DD=%>',
-        keyAsPath: true,
-        rename: 'user_p,system.cpu.user.pct:system_p,system.cpu.system.pct:cpu_p,system.cpu.total.pct',
       },
     },
   },
   // Unknown should be last
   {
-    name: FingerprintName.UNKNOWN,
+    name: FingerprintCategory.UNKNOWN,
     fingerprint: null,
     dataDefaults: {
       '@metadata': {
-        hash: 'kinesis.eventID,kinesis.sequenceNumber',
         docId: 'kinesis.eventID,event.hash',
       },
     },

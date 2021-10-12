@@ -2,9 +2,7 @@ import {Context, KinesisStreamEvent} from 'aws-lambda';
 import {EcsTransformService} from './ecs-transform.service';
 import {KinesisStreamService} from './kinesis-stream.service';
 import {OpenSearchService} from './open-search.service';
-import {LoggerVoidService} from './util/logger-void.service';
-
-jest.mock('./util/logger-void.service');
+import {LoggerService} from './util/logger.service';
 
 describe('KinesisStreamService', () => {
   it('transforms and then sends data', async () => {
@@ -21,7 +19,10 @@ describe('KinesisStreamService', () => {
         }),
       }),
     } as unknown as OpenSearchService;
-    const logger = new LoggerVoidService();
+    const logger = {
+      log: jest.fn(),
+      debug: jest.fn(),
+    } as LoggerService;
 
     const ks = new KinesisStreamService(
       etService,

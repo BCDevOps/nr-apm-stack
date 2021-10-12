@@ -21,8 +21,8 @@ export class ApplicationClassificationParser implements Parser {
    * @param document The document to match against
    * @returns
    */
-  matches(record: OsDocument): boolean {
-    return !lodash.isNil(lodash.get(record, 'url.domain')) && !lodash.isNil(lodash.get(record, 'url.path'));
+  matches(document: OsDocument): boolean {
+    return !!(document.data['@metadata'] && document.data['@metadata'].appClassification);
   }
 
   /**
@@ -32,6 +32,9 @@ export class ApplicationClassificationParser implements Parser {
   apply(document: OsDocument): void {
     const urlDomain: string = lodash.get(document.data, 'url.domain');
     const urlPath: string = lodash.get(document.data, 'url.path');
+    if (lodash.isNil(urlDomain) || lodash.isNil(urlPath)) {
+      return;
+    }
 
     for (const knownDomain of knownDomains) {
       if ((knownDomain.regex).test(urlDomain.toLowerCase())) {
@@ -43,7 +46,7 @@ export class ApplicationClassificationParser implements Parser {
       const m = knownAppContextRegex.exec(urlPath);
       if (m !== null && m.groups) {
         for (const gropName of Object.keys(m.groups)) {
-          const fieldName = gropName.split('__').join('.');
+          const fieldName = gropName.replace('__', '.');
           const groupValue = m.groups[gropName].toLowerCase();
           lodash.set(document.data, fieldName, groupValue);
         }

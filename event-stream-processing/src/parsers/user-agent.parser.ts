@@ -8,17 +8,15 @@ import cleanDeep from 'clean-deep';
 /**
  * Parses the user_agent string into user readable fields
  * Tag: Support
- * TODO: CONVERT_RUNS_ALWAYS_TO_METADATA
  */
 export class UserAgentParser implements Parser {
   /**
-   * Returns true if the document has a user_agent.original field.
+   * Returns true if metadata field userAgent is true.
    * @param document The document to match against
    * @returns
    */
   matches(document: OsDocument): boolean {
-    return typeof document.data.user_agent?.original === 'string' &&
-      document.data.user_agent.original.length > 1;
+    return !!(document.data['@metadata'] && document.data['@metadata'].userAgent);
   }
 
   /**
@@ -26,7 +24,8 @@ export class UserAgentParser implements Parser {
    * @param document The document to modify
    */
   apply(document: OsDocument): void {
-    if (!this.matches(document)) {
+    if (typeof document.data.user_agent?.original !== 'string' ||
+    document.data.user_agent.original.length <= 1) {
       return;
     }
     const userAgentString: string = document.data.user_agent.original;

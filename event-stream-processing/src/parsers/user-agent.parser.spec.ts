@@ -11,11 +11,10 @@ describe('UserAgentParser', () => {
     jest.clearAllMocks();
   });
 
-  it('matches', () => {
+  it('matches using metadata', () => {
     const parser = new UserAgentParser();
     expect(parser.matches({data: {}} as unknown as OsDocument)).toBe(false);
-    expect(parser.matches({data: {user_agent: {original: ''}}} as unknown as OsDocument)).toBe(false);
-    expect(parser.matches({data: {user_agent: {original: 'bob'}}} as unknown as OsDocument)).toBe(true);
+    expect(parser.matches({data: {'@metadata': {'userAgent': true}}} as unknown as OsDocument)).toBe(true);
   });
 
   it('undefined', () => {

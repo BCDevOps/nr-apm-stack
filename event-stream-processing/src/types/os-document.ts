@@ -1,6 +1,6 @@
 import {KinesisStreamRecord} from 'aws-lambda';
 
-export enum FingerprintName {
+export enum FingerprintCategory {
   APACHE_ACCESS_LOGS = 'APACHE_ACCESS_LOGS',
   VAULT_AUDIT_LOGS = 'VAULT_AUDIT_LOGS',
   METRICS = 'METRICS',
@@ -13,7 +13,7 @@ export interface OsDocumentData {
 }
 
 export interface OsDocumentFingerprint {
-  name: FingerprintName;
+  name: FingerprintCategory;
   fingerprint: OsDocumentData | null;
   dataDefaults: {
     '@metadata': OsDocumentData;

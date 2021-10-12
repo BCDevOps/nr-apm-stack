@@ -8,8 +8,8 @@ export function expandFileAttributesFromPath(filePath: string, targetFileObject:
   const indexOfLastDotInFileName = fileName.lastIndexOf('.');
   if (indexOfLastDotInFileName > 0) {
     const fileExt = fileName.substring(indexOfLastDotInFileName + 1).trim();
-    if (fileExt.length>0) {
-      lodash.set(targetFileObject, 'extension', fileName.substring(indexOfLastDotInFileName+1));
+    if (fileExt.length > 0) {
+      lodash.set(targetFileObject, 'extension', fileName.substring(indexOfLastDotInFileName + 1));
     }
   }
 }

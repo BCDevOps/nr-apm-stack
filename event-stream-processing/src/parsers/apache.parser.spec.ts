@@ -1,6 +1,18 @@
-import {ApacheParser, APACHE_ACCESS_LOG_EVENT_SIGNATURE} from './apache.parser';
+import {ApacheParser} from './apache.parser';
 import {LoggerService} from '../util/logger.service';
 import {OsDocument} from '../types/os-document';
+
+const APACHE_ACCESS_LOG_EVENT_SIGNATURE = Object.freeze({
+  event: Object.freeze({
+    'kind': 'event',
+    'category': 'web',
+    'dataset': 'apache.access',
+    'ingested': '2021-05-26T18:47:40.314-07:00',
+    '@metadata': {
+      apacheAccessLog: true,
+    },
+  }),
+});
 
 describe('ApacheParser', () => {
   const logger = {

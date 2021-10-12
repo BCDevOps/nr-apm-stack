@@ -4,7 +4,7 @@ import {Parser} from '../types/parser';
 import lodash from 'lodash';
 import * as path from 'path';
 import {format as formatUrl, URL} from 'url';
-import {OsDocument, FingerprintName} from '../types/os-document';
+import {OsDocument} from '../types/os-document';
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
 @injectable()
@@ -13,12 +13,12 @@ import {OsDocument, FingerprintName} from '../types/os-document';
  */
 export class HttpUrlParser implements Parser {
   /**
-   * Returns true if the document has APACHE_ACCESS_LOGS fingerprint.
+   * Returns true if metadata field explodeHttpUrl is true.
    * @param document The document to match against
    * @returns
    */
   matches(document: OsDocument): boolean {
-    return document.fingerprint.name === FingerprintName.APACHE_ACCESS_LOGS;
+    return !!(document.data['@metadata'] && document.data['@metadata'].explodeHttpUrl);
   }
 
   /**
@@ -107,11 +107,11 @@ export class HttpUrlParser implements Parser {
     const indexOfLastDotInFileName = fileName.lastIndexOf('.');
     if (indexOfLastDotInFileName > 0) {
       const fileExt = fileName.substring(indexOfLastDotInFileName+1).trim();
-      if (fileExt.length>0) {
+      if (fileExt.length > 0) {
         lodash.set(record, 'file.ext', fileName.substring(indexOfLastDotInFileName+1));
       }
     }
-    if (url.search.length > 1 ) {
+    if (url.search.length > 1) {
       const query: string[] = [];
       const keys = new Set<string>();
       const values = new Set<string>();
@@ -125,7 +125,7 @@ export class HttpUrlParser implements Parser {
       lodash.set(record, 'query_v', [...values]);
       lodash.set(record, 'query', url.search.substring(1));
     }
-    if (url.hash.length > 1 ) {
+    if (url.hash.length > 1) {
       lodash.set(record, 'fragment', url.hash.substring(1));
     }
     const uri = `//${lodash.get(record, 'domain')}${lodash.get(record, 'path')}`;
