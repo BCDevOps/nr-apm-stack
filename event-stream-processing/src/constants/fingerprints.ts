@@ -12,13 +12,22 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        apacheAccessLog: true,
         hash: 'host.hostname,log.file.path,log.file.offset,record.message',
         docId: 'log.file.name,offset,event.hash',
-        explodeHttpUrl: true,
         index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
         timestampField: 'apache.access.time',
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
+        // Remove?
+        apacheAccessLog: true,
+        appClassification: true,
+        deslash: true,
+        fileAttributes: true,
+        explodeHttpUrl: true,
+        geoIp: true,
+        httpStatusOutcome: true,
+        threatPhp: true,
+        userAgent: true,
+        keyAsPath: true,
       },
     },
   },
@@ -35,10 +44,37 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       '@metadata': {
         hash: 'host.hostname,log.file.path,log.file.offset,record.message',
         docId: 'log.file.name,offset,event.hash',
-        explodeHttpUrl: true,
         index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
         timestampField: 'apache.access.time',
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
+        // Remove?
+        deslash: true,
+        fileAttributes: true,
+        explodeHttpUrl: true,
+        geoIp: true,
+        httpStatusOutcome: true,
+        ipv: 'clientIp,hostIp',
+        joinKv: 'query',
+        keyAsPath: true,
+        rename: 'azp:client.user.id' +
+          'contentLength:http.response.body.bytes' +
+          'hostname:kubernetes.pod_name' +
+          'httpVersion:http.version' +
+          'hostIp:kubernetes.pod_ip' +
+          'log:event.original' +
+          'level:log.level' +
+          'logFileOffset:log.file.offset' +
+          'logFilePath:log.file.path' +
+          'logStreamDate:event.created' +
+          'method:http.request.method' +
+          'namespace:kubernetes.namespace_name' +
+          'path:url.path' +
+          'product:labels.application' +
+          'query:url.query' +
+          'responseTime:http.response.time' +
+          'statusCode:http.response.status_code' +
+          'userAgent:user_agent.original',
+        userAgent: true,
       },
     },
   },

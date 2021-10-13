@@ -68,6 +68,7 @@ function create(): Container {
 
   // Stage: Pre Parse
   myContainer.bind<Parser>(TYPES.Parser).to(ApacheParser).whenTargetTagged(TAG_STAGE, STAGE_PRE_PARSE);
+  myContainer.bind<Parser>(TYPES.Parser).to(RenameParser).whenTargetTagged(TAG_STAGE, STAGE_PRE_PARSE);
 
   // Stage: Parse
   myContainer.bind<Parser>(TYPES.Parser).to(DeslashParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
@@ -82,7 +83,6 @@ function create(): Container {
   myContainer.bind<Parser>(TYPES.Parser).to(ThreatPhpParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
 
   // Stage: Post Parse
-  myContainer.bind<Parser>(TYPES.Parser).to(RenameParser).whenTargetTagged(TAG_STAGE, STAGE_POST_PARSE);
   myContainer.bind<Parser>(TYPES.Parser).to(HashParser).whenTargetTagged(TAG_STAGE, STAGE_POST_PARSE);
 
   // Stage: FINALIZE

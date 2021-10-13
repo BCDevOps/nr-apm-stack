@@ -19,12 +19,13 @@ export class GeoIpParser implements Parser {
   ) {}
 
   /**
-   * Returns true if ???
+   * Returns true if metadata has a geoIp field.
    * @param document The document to match against
    * @returns
    */
   matches(document: OsDocument): boolean {
-    return !!(document.data?.client?.ip || document.data?.source?.ip || document.data?.source?.address);
+    return !!(document.data['@metadata'] && document.data['@metadata'].geoIp) &&
+      !!(document.data?.client?.ip || document.data?.source?.ip || document.data?.source?.address);
   }
 
   /**
