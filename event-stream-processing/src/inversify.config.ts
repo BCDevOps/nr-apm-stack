@@ -39,6 +39,7 @@ import {UserAgentParser} from './parsers/user-agent.parser';
 
 export const TAG_STAGE = 'stage';
 export const STAGE_INIT = 'init';
+export const STAGE_PRE_PARSE = 'pre_parse';
 export const STAGE_PARSE = 'parse';
 export const STAGE_POST_PARSE = 'post_parse';
 export const STAGE_FINALIZE = 'finalize';
@@ -65,8 +66,10 @@ function create(): Container {
   myContainer.bind<Parser>(TYPES.Parser).to(KeyAsPathParser).whenTargetTagged(TAG_STAGE, STAGE_INIT);
   myContainer.bind<Parser>(TYPES.Parser).to(KinesisParser).whenTargetTagged(TAG_STAGE, STAGE_INIT);
 
+  // Stage: Pre Parse
+  myContainer.bind<Parser>(TYPES.Parser).to(ApacheParser).whenTargetTagged(TAG_STAGE, STAGE_PRE_PARSE);
+
   // Stage: Parse
-  myContainer.bind<Parser>(TYPES.Parser).to(ApacheParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
   myContainer.bind<Parser>(TYPES.Parser).to(DeslashParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
   myContainer.bind<Parser>(TYPES.Parser).to(HttpUrlParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
   myContainer.bind<Parser>(TYPES.Parser).to(HttpStatusEventOutcomeParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
@@ -79,7 +82,7 @@ function create(): Container {
   myContainer.bind<Parser>(TYPES.Parser).to(ThreatPhpParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
 
   // Stage: Post Parse
-  // myContainer.bind<Parser>(TYPES.Parser).to(RenameParser).whenTargetTagged(TAG_STAGE, STAGE_POST_PARSE);
+  myContainer.bind<Parser>(TYPES.Parser).to(RenameParser).whenTargetTagged(TAG_STAGE, STAGE_POST_PARSE);
   myContainer.bind<Parser>(TYPES.Parser).to(HashParser).whenTargetTagged(TAG_STAGE, STAGE_POST_PARSE);
 
   // Stage: FINALIZE

@@ -5,7 +5,9 @@ import {Parser} from './types/parser';
 import {TYPES} from './inversify.types';
 import {LoggerService} from './util/logger.service';
 import {GenericError} from './util/generic.error';
-import {STAGE_FINALIZE, STAGE_INIT, STAGE_PARSE, STAGE_POST_PARSE, TAG_STAGE} from './inversify.config';
+import {
+  STAGE_FINALIZE, STAGE_INIT, STAGE_PARSE, STAGE_POST_PARSE, STAGE_PRE_PARSE, TAG_STAGE,
+} from './inversify.config';
 import {OsDocument} from './types/os-document';
 import {KinesisStreamRecordMapperService} from './shared/kinesis-stream-record-mapper.service';
 
@@ -21,6 +23,7 @@ export class EcsTransformService {
    */
   constructor(
     @multiInject(TYPES.Parser) @tagged(TAG_STAGE, STAGE_INIT) private initParsers: Parser[],
+    @multiInject(TYPES.Parser) @tagged(TAG_STAGE, STAGE_PRE_PARSE) private preParsers: Parser[],
     @multiInject(TYPES.Parser) @tagged(TAG_STAGE, STAGE_PARSE) private parsers: Parser[],
     @multiInject(TYPES.Parser) @tagged(TAG_STAGE, STAGE_POST_PARSE) private postParsers: Parser[],
     @multiInject(TYPES.Parser) @tagged(TAG_STAGE, STAGE_FINALIZE) private finalizeParsers: Parser[],
@@ -52,51 +55,29 @@ export class EcsTransformService {
    */
   private parseDocumentData(document: OsDocument): OsDocument {
     try {
-      for (const parser of this.initParsers) {
-        try {
-          this.logger.debug(`Processing parse:${parser.constructor.name}`);
-          if (parser.matches(document)) {
-            parser.apply(document);
-          }
-        } catch (error: any) {
-          throw new GenericError(`Error applying parser ${parser.constructor.name}`, error);
-        }
-      }
-      for (const parser of this.parsers) {
-        try {
-          this.logger.debug(`Processing parse:${parser.constructor.name}`);
-          if (parser.matches(document)) {
-            parser.apply(document);
-          }
-        } catch (error: any) {
-          throw new GenericError(`Error applying parser ${parser.constructor.name}`, error);
-        }
-      }
-      for (const parser of this.postParsers) {
-        try {
-          this.logger.debug(`Processing parse:${parser.constructor.name}`);
-          if (parser.matches(document)) {
-            parser.apply(document);
-          }
-        } catch (error: any) {
-          throw new GenericError(`Error applying parser ${parser.constructor.name}`, error);
-        }
-      }
-      for (const parser of this.finalizeParsers) {
-        try {
-          this.logger.debug(`Processing parse:${parser.constructor.name}`);
-          if (parser.matches(document)) {
-            parser.apply(document);
-          }
-        } catch (error: any) {
-          throw new GenericError(`Error applying parser ${parser.constructor.name}`, error);
-        }
-      }
+      this.runParsers(document, this.initParsers);
+      this.runParsers(document, this.preParsers);
+      this.runParsers(document, this.parsers);
+      this.runParsers(document, this.postParsers);
+      this.runParsers(document, this.finalizeParsers);
     } catch (error: any) {
       this.logger.log(`Error Parsing:${JSON.stringify(document)}`);
       this.logger.log(error);
       throw new GenericError(`Error processing event`, error);
     }
     return document;
+  }
+
+  private runParsers(document: OsDocument, parsers: Parser[]) {
+    for (const parser of parsers) {
+      try {
+        this.logger.debug(`Processing parse:${parser.constructor.name}`);
+        if (parser.matches(document)) {
+          parser.apply(document);
+        }
+      } catch (error: any) {
+        throw new GenericError(`Error applying parser ${parser.constructor.name}`, error);
+      }
+    }
   }
 }
