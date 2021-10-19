@@ -74,6 +74,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
           'responseTime:http.response.time' +
           'statusCode:http.response.status_code' +
           'userAgent:user_agent.original',
+        threatPhp: true,
         userAgent: true,
       },
     },
