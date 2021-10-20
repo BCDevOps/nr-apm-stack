@@ -500,7 +500,7 @@ curl -sSL -o /tmp/node-v12.22.1-linux-x64.tar.gz https://nodejs.org/dist/v12.22.
 mkdir /home/terraform/node
 tar -xf /tmp/node-v12.22.1-linux-x64.tar.gz -C /home/terraform/node --strip-components=1
 export PATH=/home/terraform/node/bin:$PATH
-npx -p @aws-sdk/client-secrets-manager -p @bcgov/nrdk nrdk deploy --config-script=./_pipeline/lib/config.js --deploy-script=./_pipeline/lib/operations/deploy.js --pr=${var.pr} --env=${var.env}
+npx -p @aws-sdk/client-secrets-manager -p @bcgov/nrdk nrdk deploy --config-script=./_pipeline/lib/config.js --deploy-script=./_pipeline/lib/deploy.js --pr=${var.pr} --env=${var.env}
 EOF
   environment = {
     AWS_ASSUME_ROLE = local.iam_role_arm
