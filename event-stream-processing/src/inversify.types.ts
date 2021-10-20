@@ -9,6 +9,10 @@ export const TYPES = {
   MaxmindAsnLookupService: Symbol.for('MaxmindAsnLookupService'),
   MaxmindCityLookupService: Symbol.for('MaxmindCityLookupService'),
   OpenSearchService: Symbol.for('OpenSearchService'),
+  InitParser: Symbol.for('InitParser'),
+  PreParser: Symbol.for('PreParser'),
   Parser: Symbol.for('Parser'),
+  PostParser: Symbol.for('PostParser'),
+  FinalizeParser: Symbol.for('FinalizeParser'),
   SubsetService: Symbol.for('SubsetService'),
 };

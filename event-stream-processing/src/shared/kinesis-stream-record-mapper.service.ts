@@ -1,11 +1,12 @@
 import {KinesisStreamRecord} from 'aws-lambda';
-import {inject} from 'inversify';
+import {inject, injectable} from 'inversify';
 import lodash from 'lodash';
 import {FINGERPRINTS} from '../constants/fingerprints';
 import {TYPES} from '../inversify.types';
 import {OsDocument, OsDocumentData, OsDocumentFingerprint} from '../types/os-document';
 import {SubsetService} from './subset.service';
 
+@injectable()
 export class KinesisStreamRecordMapperService {
   /**
    * Constructor

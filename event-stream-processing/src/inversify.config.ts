@@ -38,13 +38,6 @@ import {ThreatPhpParser} from './parsers/threat-php.parser';
 import {TimestampFieldParser} from './parsers/timestamp-field.parser';
 import {UserAgentParser} from './parsers/user-agent.parser';
 
-export const TAG_STAGE = 'stage';
-export const STAGE_INIT = 'init';
-export const STAGE_PRE_PARSE = 'pre_parse';
-export const STAGE_PARSE = 'parse';
-export const STAGE_POST_PARSE = 'post_parse';
-export const STAGE_FINALIZE = 'finalize';
-
 /**
  * Create the container
  * @returns The container
@@ -65,33 +58,33 @@ function create(): Container {
   myContainer.bind<SubsetService>(TYPES.SubsetService).to(SubsetService);
 
   // Stage: INIT
-  myContainer.bind<Parser>(TYPES.Parser).to(KeyAsPathParser).whenTargetTagged(TAG_STAGE, STAGE_INIT);
-  myContainer.bind<Parser>(TYPES.Parser).to(KinesisParser).whenTargetTagged(TAG_STAGE, STAGE_INIT);
+  myContainer.bind<Parser>(TYPES.InitParser).to(KeyAsPathParser);
+  myContainer.bind<Parser>(TYPES.InitParser).to(KinesisParser);
 
   // Stage: Pre Parse
-  myContainer.bind<Parser>(TYPES.Parser).to(ApacheParser).whenTargetTagged(TAG_STAGE, STAGE_PRE_PARSE);
-  myContainer.bind<Parser>(TYPES.Parser).to(RenameParser).whenTargetTagged(TAG_STAGE, STAGE_PRE_PARSE);
+  myContainer.bind<Parser>(TYPES.PreParser).to(ApacheParser);
+  myContainer.bind<Parser>(TYPES.PreParser).to(RenameParser);
 
   // Stage: Parse
-  myContainer.bind<Parser>(TYPES.Parser).to(DeslashParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
-  myContainer.bind<Parser>(TYPES.Parser).to(HttpUrlParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
-  myContainer.bind<Parser>(TYPES.Parser).to(HttpStatusEventOutcomeParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
-  myContainer.bind<Parser>(TYPES.Parser).to(IpvParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
-  myContainer.bind<Parser>(TYPES.Parser).to(JoinKvParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
-  myContainer.bind<Parser>(TYPES.Parser).to(GeoIpParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
-  myContainer.bind<Parser>(TYPES.Parser).to(UserAgentParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
-  myContainer.bind<Parser>(TYPES.Parser).to(FileAttributeParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
-  myContainer.bind<Parser>(TYPES.Parser).to(ApplicationClassificationParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
-  myContainer.bind<Parser>(TYPES.Parser).to(ThreatPhpParser).whenTargetTagged(TAG_STAGE, STAGE_PARSE);
+  myContainer.bind<Parser>(TYPES.Parser).to(DeslashParser);
+  myContainer.bind<Parser>(TYPES.Parser).to(HttpUrlParser);
+  myContainer.bind<Parser>(TYPES.Parser).to(HttpStatusEventOutcomeParser);
+  myContainer.bind<Parser>(TYPES.Parser).to(IpvParser);
+  myContainer.bind<Parser>(TYPES.Parser).to(JoinKvParser);
+  myContainer.bind<Parser>(TYPES.Parser).to(GeoIpParser);
+  myContainer.bind<Parser>(TYPES.Parser).to(UserAgentParser);
+  myContainer.bind<Parser>(TYPES.Parser).to(FileAttributeParser);
+  myContainer.bind<Parser>(TYPES.Parser).to(ApplicationClassificationParser);
+  myContainer.bind<Parser>(TYPES.Parser).to(ThreatPhpParser);
 
   // Stage: Post Parse
-  myContainer.bind<Parser>(TYPES.Parser).to(HashParser).whenTargetTagged(TAG_STAGE, STAGE_POST_PARSE);
+  myContainer.bind<Parser>(TYPES.PostParser).to(HashParser);
 
   // Stage: FINALIZE
-  myContainer.bind<Parser>(TYPES.Parser).to(TimestampFieldParser).whenTargetTagged(TAG_STAGE, STAGE_FINALIZE);
-  myContainer.bind<Parser>(TYPES.Parser).to(DocumentIndexParser).whenTargetTagged(TAG_STAGE, STAGE_FINALIZE);
-  myContainer.bind<Parser>(TYPES.Parser).to(DocumentIdParser).whenTargetTagged(TAG_STAGE, STAGE_FINALIZE);
-  myContainer.bind<Parser>(TYPES.Parser).to(RemoveMetadataParser).whenTargetTagged(TAG_STAGE, STAGE_FINALIZE);
+  myContainer.bind<Parser>(TYPES.FinalizeParser).to(TimestampFieldParser);
+  myContainer.bind<Parser>(TYPES.FinalizeParser).to(DocumentIndexParser);
+  myContainer.bind<Parser>(TYPES.FinalizeParser).to(DocumentIdParser);
+  myContainer.bind<Parser>(TYPES.FinalizeParser).to(RemoveMetadataParser);
 
   return myContainer;
 }

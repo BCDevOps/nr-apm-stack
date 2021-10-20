@@ -1,13 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import {KinesisStreamEvent} from 'aws-lambda';
-import {injectable, inject, multiInject, tagged} from 'inversify';
+import {injectable, inject, multiInject} from 'inversify';
 import {Parser} from './types/parser';
 import {TYPES} from './inversify.types';
 import {LoggerService} from './util/logger.service';
 import {GenericError} from './util/generic.error';
-import {
-  STAGE_FINALIZE, STAGE_INIT, STAGE_PARSE, STAGE_POST_PARSE, STAGE_PRE_PARSE, TAG_STAGE,
-} from './inversify.config';
 import {OsDocument} from './types/os-document';
 import {KinesisStreamRecordMapperService} from './shared/kinesis-stream-record-mapper.service';
 
@@ -22,11 +19,11 @@ export class EcsTransformService {
    * @param logger
    */
   constructor(
-    @multiInject(TYPES.Parser) @tagged(TAG_STAGE, STAGE_INIT) private initParsers: Parser[],
-    @multiInject(TYPES.Parser) @tagged(TAG_STAGE, STAGE_PRE_PARSE) private preParsers: Parser[],
-    @multiInject(TYPES.Parser) @tagged(TAG_STAGE, STAGE_PARSE) private parsers: Parser[],
-    @multiInject(TYPES.Parser) @tagged(TAG_STAGE, STAGE_POST_PARSE) private postParsers: Parser[],
-    @multiInject(TYPES.Parser) @tagged(TAG_STAGE, STAGE_FINALIZE) private finalizeParsers: Parser[],
+    @multiInject(TYPES.InitParser) private initParsers: Parser[],
+    @multiInject(TYPES.PreParser) private preParsers: Parser[],
+    @multiInject(TYPES.Parser) private parsers: Parser[],
+    @multiInject(TYPES.PostParser) private postParsers: Parser[],
+    @multiInject(TYPES.FinalizeParser) private finalizeParsers: Parser[],
     @inject(TYPES.KinesisStreamRecordMapperService) private ksrMapper: KinesisStreamRecordMapperService,
     @inject(TYPES.LoggerService) private logger: LoggerService,
   ) {}
