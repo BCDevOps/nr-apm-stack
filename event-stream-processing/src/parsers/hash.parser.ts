@@ -31,10 +31,20 @@ export class HashParser implements Parser {
     const hasher = crypto.createHash('sha256');
     const hashValArr = hashPattern.split(',')
       .map((path) => lodash.get(document.data, path, ''));
+    const lastIndex = hashValArr.length - 1;
+    for (let i = 0; i < hashValArr.length; i++) {
+      const hashVal = hashValArr[i];
+      if (typeof hashVal === 'string') {
+        hasher.update(hashVal);
+      } else if (typeof hashVal === 'number') {
+        hasher.update(`${hashVal}`);
+      } else {
+        hasher.update('');
+      }
 
-    for (const hashVal of hashValArr) {
-      hasher.update(hashVal ?? '');
-      hasher.update(':');
+      if (i !== lastIndex) {
+        hasher.update(':');
+      }
     }
     lodash.set(document.data, 'event.hash', hasher.digest('hex'));
   }

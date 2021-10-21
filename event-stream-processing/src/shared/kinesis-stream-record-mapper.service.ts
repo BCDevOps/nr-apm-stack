@@ -40,7 +40,7 @@ export class KinesisStreamRecordMapperService {
       if (fp.fingerprint === null) {
         return fp;
       }
-      if (this.subset.isSubset(data, fp)) {
+      if (this.subset.isSubset(data, fp.fingerprint)) {
         return fp;
       }
     }) as OsDocumentFingerprint; // Will always match last "unknown" fingerprint

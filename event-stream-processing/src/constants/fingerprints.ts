@@ -12,7 +12,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,log.file.path,log.file.offset,record.message',
+        hash: 'host.hostname,log.file.name,offset,message',
         docId: 'log.file.name,offset,event.hash',
         index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
         timestampField: 'apache.access.time',
@@ -42,10 +42,10 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,log.file.path,log.file.offset,record.message',
-        docId: 'log.file.name,offset,event.hash',
+        hash: 'kinesis.eventID,log.file.path,log.file.offset,event.original',
+        docId: 'kubernetes.pod_name,log.file.offset,event.hash',
         index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
-        timestampField: 'apache.access.time',
+        timestampField: 'timestamp',
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
         // Remove?
         deslash: true,
@@ -90,7 +90,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,response.data_json',
+        hash: 'service.name,response.data_json',
         docId: 'kinesis.eventID,event.hash',
         index: 'nrm-audit-vault-<%=YYYY.MM.DD=%>',
       },
@@ -106,7 +106,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        docId: 'kinesis.eventID,kinesis.sequenceNumber',
+        docId: 'kinesis.eventID',
         index: 'nrm-metrics-<%=YYYY.MM.DD=%>',
       },
     },
@@ -121,7 +121,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        docId: 'kinesis.eventID,kinesis.sequenceNumber',
+        docId: 'kinesis.eventID',
         index: 'nrm-metrics-<%=YYYY.MM.DD=%>',
       },
     },

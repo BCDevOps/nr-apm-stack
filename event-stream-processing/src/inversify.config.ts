@@ -61,7 +61,7 @@ function create(): Container {
   myContainer.bind<Parser>(TYPES.InitParser).to(KeyAsPathParser);
   myContainer.bind<Parser>(TYPES.InitParser).to(KinesisParser);
 
-  // Stage: Pre Parse
+  // Stage: PreParse
   myContainer.bind<Parser>(TYPES.PreParser).to(ApacheParser);
   myContainer.bind<Parser>(TYPES.PreParser).to(RenameParser);
 
