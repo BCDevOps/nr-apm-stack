@@ -34,10 +34,12 @@ export class OpenSearchService {
       const parsingErrors: OsDocument[] = [];
       for (const document of documents) {
         if (document.id === null) {
+          this.logger.debug('document:', document);
           this.logger.log('ES_ERROR Document with no id');
           break;
         }
         if (document.index === null) {
+          this.logger.debug('document:', document);
           this.logger.log('ES_ERROR Document with no index');
           break;
         }
