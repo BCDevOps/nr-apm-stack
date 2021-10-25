@@ -474,6 +474,7 @@ resource "aws_lambda_function" "lambda_iit_agents" {
     variables   = {
       "ES_URL"  = "https://${aws_elasticsearch_domain.es.endpoint}"
       "MAXMIND_DB_DIR"  = "/opt/nodejs/asset"
+      "LOG_LEVEL" = "debug"
     }
   }
 }
