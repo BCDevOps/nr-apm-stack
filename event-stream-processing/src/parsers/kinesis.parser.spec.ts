@@ -36,12 +36,12 @@ describe('KinesisParser', () => {
     expect(document.data).toEqual({
       event: {
         ingested: 'date',
-        kinesis: {
-          eventID: 'endofdino',
-          partitionKey: 'best',
-          sequenceNumber: '1234',
-          approximateArrivalTimestamp: 'cretaous',
-        },
+      },
+      kinesis: {
+        eventID: 'endofdino',
+        partitionKey: 'best',
+        sequenceNumber: '1234',
+        approximateArrivalTimestamp: 'cretaous',
       },
     });
   });

@@ -30,10 +30,10 @@ export class KinesisParser implements Parser {
    */
   apply(document: OsDocument): void {
     lodash.set(document.data, 'event.ingested', this.dateAndTime.now().toISOString(true));
-    lodash.set(document.data, 'event.kinesis.partitionKey', document.record.kinesis.partitionKey);
-    lodash.set(document.data, 'event.kinesis.sequenceNumber', document.record.kinesis.sequenceNumber);
-    lodash.set(document.data, 'event.kinesis.eventID', document.record.eventID);
-    lodash.set(document.data, 'event.kinesis.approximateArrivalTimestamp',
+    lodash.set(document.data, 'kinesis.partitionKey', document.record.kinesis.partitionKey);
+    lodash.set(document.data, 'kinesis.sequenceNumber', document.record.kinesis.sequenceNumber);
+    lodash.set(document.data, 'kinesis.eventID', document.record.eventID);
+    lodash.set(document.data, 'kinesis.approximateArrivalTimestamp',
       document.record.kinesis.approximateArrivalTimestamp);
   }
 }
