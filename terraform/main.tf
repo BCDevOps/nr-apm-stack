@@ -83,7 +83,7 @@ variable "master_node_instance_count" {
 
 variable "master_node_instance_type" {
   type = string
-  default = "r5.large.elasticsearch"
+  default = "c6g.large.search"
 }
 
 variable "data_node_instance_count" {
@@ -93,7 +93,7 @@ variable "data_node_instance_count" {
 
 variable "data_node_instance_type" {
   type = string
-  default = "r5.large.elasticsearch"
+  default = "r6g.large.search"
 }
 
 variable "data_node_volume_size" {
