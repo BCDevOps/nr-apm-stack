@@ -3,7 +3,7 @@ module.exports.process = function (p) {
     "DomainName": p.DomainName,
     "ElasticsearchVersion": "7.9",
     "ElasticsearchClusterConfig": {
-        "InstanceType": "r5.large.elasticsearch",
+        "InstanceType": "r6g.large.elasticsearch",
         "InstanceCount": 2,
         "DedicatedMasterEnabled": false,
         "ZoneAwarenessEnabled": true,
@@ -17,7 +17,7 @@ module.exports.process = function (p) {
         "VolumeType": "gp2",
         "VolumeSize": 10
     },
-    
+
     "AccessPolicies": JSON.stringify({
         "Version": "2012-10-17",
         "Statement": [
