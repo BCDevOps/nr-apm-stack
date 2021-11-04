@@ -9,7 +9,7 @@ terraform {
   required_providers {
     aws = {
       source = "hashicorp/aws"
-      version = "3.42.0"
+      version = "3.63.0"
     }
     keycloak = {
       source = "mrparkers/keycloak"
@@ -17,7 +17,7 @@ terraform {
     }
     elasticsearch = {
       source = "phillbaker/elasticsearch"
-      version = "1.5.6"
+      version = "1.6.3"
     }
   }
 }
@@ -549,7 +549,7 @@ resource "elasticsearch_opendistro_role" "nrm_read_all" {
     index_patterns  = ["iitd-*", "iit-*", "nrm-*"]
     allowed_actions = ["read", "indices:admin/resolve/index"]
     masked_fields = ["source.ip", "client.ip"]
-    fls = ["~message", "~http.request.line"]
+    field_level_security = ["~message", "~http.request.line"]
   }
   index_permissions {
     index_patterns  = [".kibana_*"]
