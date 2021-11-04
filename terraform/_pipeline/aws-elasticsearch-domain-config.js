@@ -3,7 +3,7 @@ module.exports.process = function (p) {
     "DomainName": p.DomainName,
     "ElasticsearchVersion": "7.9",
     "ElasticsearchClusterConfig": {
-        "InstanceType": "r6g.large.search",
+        "InstanceType": "r6g.large.elasticsearch",
         "InstanceCount": 2,
         "DedicatedMasterEnabled": false,
         "ZoneAwarenessEnabled": true,

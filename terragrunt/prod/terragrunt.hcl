@@ -34,9 +34,9 @@ generate "inputs" {
   suffix = "-prod"
   iit_lambda_code_bucket_key_version = "m2WQ7ixHMkV7WZ8HDH0JeJNDFuiOGvzV"
   master_node_instance_count = 3
-  master_node_instance_type = "c6g.large.search"
+  master_node_instance_type = "c6g.large.elasticsearch"
   data_node_instance_count = 12
-  data_node_instance_type = "r6g.large.search"
+  data_node_instance_type = "r6g.large.elasticsearch"
   data_node_volume_size = 300
   custom_endpoint = "apm.io.nrs.gov.bc.ca"
   custom_endpoint_certificate_arn = "arn:aws:acm:ca-central-1:578527843179:certificate/a03a0a1b-120b-43ab-ab9d-e1bc84c693c4"
