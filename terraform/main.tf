@@ -593,6 +593,24 @@ resource "elasticsearch_opendistro_roles_mapping" "nrm_security_mapper" {
   backend_roles = ["nrm-security"]
 }
 
+resource "elasticsearch_opendistro_roles_mapping" "alerting_read_access" {
+  role_name     = "alerting_read_access"
+  description   = "Mapping KC role to ES role"
+  backend_roles = ["alerting_read_access"]
+}
+
+resource "elasticsearch_opendistro_roles_mapping" "alerting_ack_alerts" {
+  role_name     = "alerting_ack_alerts"
+  description   = "Mapping KC role to ES role"
+  backend_roles = ["alerting_ack_alerts"]
+}
+
+resource "elasticsearch_opendistro_roles_mapping" "alerting_full_access" {
+  role_name     = "alerting_full_access"
+  description   = "Mapping KC role to ES role"
+  backend_roles = ["alerting_full_access"]
+}
+
 resource "elasticsearch_opendistro_roles_mapping" "all_access" {
   role_name     = "all_access"
   description   = "Mapping KC role to ES role"
