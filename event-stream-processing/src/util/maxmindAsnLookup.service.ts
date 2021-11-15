@@ -7,12 +7,15 @@ import {MaxmindLookupService} from './maxmindLookup.service';
 
 @injectable()
 export class MaxmindAsnLookupService implements MaxmindLookupService<AsnResponse> {
-    private cityLookup: Reader<AsnResponse>;
+    private cityLookup: Reader<AsnResponse> | null = null;
     public constructor() {
       const dbPath = process.env.MAXMIND_DB_DIR || path.join(__dirname, '../asset');
-      this.cityLookup = new Reader<AsnResponse>(fs.readFileSync(path.join(dbPath, 'GeoLite2-ASN.mmdb')));
+      const filePath = path.join(dbPath, 'GeoLite2-ASN.mmdb');
+      if (fs.existsSync(filePath)) {
+        this.cityLookup = new Reader<AsnResponse>(fs.readFileSync(filePath));
+      }
     }
-    public lookup(ipAddress:string): AsnResponse | null {
-      return this.cityLookup.get(ipAddress);
+    public lookup(ipAddress: string): AsnResponse | null {
+      return this.cityLookup ? this.cityLookup.get(ipAddress) : null;
     }
 }

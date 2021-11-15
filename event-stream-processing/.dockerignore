@@ -1,0 +1,6 @@
+/coverage
+/doc
+/lib
+/node_modules
+/samples
+Dockerfile

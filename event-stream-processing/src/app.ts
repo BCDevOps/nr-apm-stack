@@ -6,5 +6,9 @@ export const kinesisStreamHandler = async (event: KinesisStreamEvent, context: C
   return myContainer.get<KinesisStreamService>(TYPES.KinesisStreamService).handle(event, context)
     .catch((error) => {
       console.error(error);
+    })
+    .then(() => {
+      // Return void promise
+      return Promise.resolve();
     });
 };
