@@ -23,14 +23,14 @@ describe('AppController', () => {
 
   describe('root', () => {
     it('should handleKinesisEvent when print false"', async () => {
-      expect(await appController.handleKinesisEvent({}, '')).toBe(handledVal);
+      expect(await appController.handleData({}, '')).toBe(handledVal);
 
       expect(appService.handleKinesisEvent).toHaveBeenCalledTimes(1);
       expect(appService.handleKinesisEvent).toHaveBeenCalledWith({}, false);
     });
 
     it('should handleKinesisEvent when print true"', async () => {
-      expect(await appController.handleKinesisEvent({}, 'true')).toBe(handledVal);
+      expect(await appController.handleData({}, 'true')).toBe(handledVal);
 
       expect(appService.handleKinesisEvent).toHaveBeenCalledTimes(1);
       expect(appService.handleKinesisEvent).toHaveBeenCalledWith({}, true);

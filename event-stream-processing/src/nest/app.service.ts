@@ -9,9 +9,10 @@ import {OsDocumentData} from '../types/os-document';
 @Injectable()
 export class AppService {
   /**
-   *
-   * @param data
-   * @returns
+   * Handles the data received as a mock Kinesis event
+   * @param data The data to pass into the parser
+   * @param print If true, print the data to the console
+   * @returns Promise with the result
    */
   handleKinesisEvent(@Body() data: OsDocumentData, print: boolean): Promise<OpenSearchBulkResult> {
     return myContainer.get<KinesisStreamWrapperService>(TYPES.KinesisStreamWrapperService)

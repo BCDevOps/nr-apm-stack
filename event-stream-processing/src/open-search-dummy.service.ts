@@ -1,22 +1,19 @@
-import {inject, injectable} from 'inversify';
-import {TYPES} from './inversify.types';
+import {injectable} from 'inversify';
 import {OpenSearchService, OpenSearchBulkResult} from './open-search.service';
 import {OsDocument} from './types/os-document';
-import {LoggerService} from './util/logger.service';
 
 @injectable()
+/**
+ * Dummy service that echos back the data sent to it
+ */
 export class OpenSearchDummyService implements OpenSearchService {
-  constructor(
-    @inject(TYPES.LoggerService) private logger: LoggerService,
-  ) {}
-
   /**
    * Echo back the documents for localhost testing
    * @param documents The documents that would have been uploaded
    * @returns The result containing info about the documents that would have been uploaded
    */
   bulk(documents: OsDocument[]): Promise<OpenSearchBulkResult> {
-    // Remove extraneous fields
+    // Refactor OsDocument to return fewer fields in result
     const compactDocs = documents.map((document) => ({
       fingerprint: document.fingerprint.name,
       id: document.id,

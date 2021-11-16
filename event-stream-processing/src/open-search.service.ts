@@ -12,6 +12,14 @@ export interface OpenSearchBulkResult {
   errors: any[],
   result?: any,
 }
+
+/**
+ * Service to post bulk data to OpenSearch
+ */
 export interface OpenSearchService {
+  /**
+   * Upload a bulk set of documents
+   * @param documents The documents to upload
+   */
   bulk(documents: OsDocument[]): Promise<OpenSearchBulkResult>;
 }

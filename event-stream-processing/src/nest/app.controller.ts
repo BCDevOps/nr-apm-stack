@@ -5,11 +5,17 @@ import {OsDocumentData} from '../types/os-document';
 import {OpenSearchBulkResult} from '../open-search.service';
 
 @Controller()
+/**
+ * Generic NestJS app controller.
+ */
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Post()
-  handleKinesisEvent(@Body() data: OsDocumentData, @Query('print') print: string): Promise<OpenSearchBulkResult> {
+  /**
+   * Handle data received as a mock Kinesis event.
+   */
+  handleData(@Body() data: OsDocumentData, @Query('print') print: string): Promise<OpenSearchBulkResult> {
     return this.appService.handleKinesisEvent(data, print === 'true');
   }
 }

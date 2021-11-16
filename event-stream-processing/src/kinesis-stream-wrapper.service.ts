@@ -12,7 +12,7 @@ import {LoggerService} from './util/logger.service';
  */
 export class KinesisStreamWrapperService {
   /**
-   * Construct the wrapper service
+   * Construct the wrapper service. The tagging of KinesisStreamService with localhost alters the binding behaviour.
    * @param kinesisStreamService
    */
   constructor(
@@ -23,7 +23,7 @@ export class KinesisStreamWrapperService {
   /**
    * Handle received data by wrapping in a mock KinesisStreamRecord and forwarding on
    * @param data The data to wrap
-   * @returns
+   * @returns Promise with the result
    */
   async handleData(data: OsDocumentData, print: boolean): Promise<OpenSearchBulkResult> {
     const event: KinesisStreamEvent = {
@@ -38,6 +38,11 @@ export class KinesisStreamWrapperService {
     return kss;
   }
 
+  /**
+   * Wraps data into a KinesisStreamRecord
+   * @param data The data to wrap
+   * @returns The mocked KinesisStreamRecord
+   */
   private wrapDataIntoRecord(data: OsDocumentData): KinesisStreamRecord {
     return {
       awsRegion: 'ca-central-1',
