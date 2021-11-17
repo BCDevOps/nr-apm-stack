@@ -100,6 +100,22 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     name: FingerprintCategory.METRICS,
     fingerprint: {
       event: {
+        kind: 'event',
+        category: ['configuration'],
+        type: ['installation'],
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        docId: 'kinesis.eventID',
+        index: 'nrm-deploy-<%=YYYY.MM=%>',
+      },
+    },
+  },
+  {
+    name: FingerprintCategory.METRICS,
+    fingerprint: {
+      event: {
         kind: 'metric',
         dataset: 'system.cpu',
       },

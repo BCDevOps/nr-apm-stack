@@ -1,0 +1,35 @@
+{
+  "ecs": {
+    "version": "1.12.0"
+  },
+
+  "event": {
+    "kind": "event",
+    "category": ["configuration"],
+    "type": ["installation"],
+    "outcome": "success",
+    "dataset": "ansible",
+    "duration": 123456,
+    "end": "2019-07-23T08:55:02.166Z",
+    "start": "2019-07-23T08:55:02.166Z",
+    "url": "https://jenkins-url/jobs/4"
+  },
+
+  "labels": {
+    "project": "my-project"
+  },
+
+  "scm": {
+    "commitHash": "1234567c3f12345645a8e3a2dd5c86fcd123456",
+    "commitTime": "2019-07-23 09:00:24 +0100",
+    "commitMessage": "PLEASE WORK THIS TIME!!",
+    "timeSinceCommit": 3585
+  },
+
+  "service": {
+    "environment": "production",
+    "name": "my-application",
+    "version": "1.2.3"
+  },
+  "@timestamp": "2019-07-23T09:00:09.895Z"
+}
