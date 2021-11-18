@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import {Context, KinesisStreamEvent} from 'aws-lambda';
 import {injectable, inject} from 'inversify';
-import {OpenSearchService} from './open-search.service';
+import {OpenSearchBulkResult, OpenSearchService} from './open-search.service';
 import {TYPES} from './inversify.types';
 import {LoggerService} from './util/logger.service';
 import {EcsTransformService} from './ecs-transform.service';
@@ -30,14 +30,14 @@ export class KinesisStreamService {
    * @param context The lambda context
    * @returns A promise to wait on
    */
-  public async handle(event: KinesisStreamEvent, context: Context): Promise<void> {
+  public async handle(event: KinesisStreamEvent, context: Context): Promise<OpenSearchBulkResult> {
     this.logger.log(`Transforming kinesis records to ES documents`);
     const docs = this.ecsTransformService.transform(event);
     this.logger.log(`Submitting ${docs.length} documents to ES`);
     return this.openSearch.bulk(docs).then((value) => {
       this.logger.log(`${docs.length - value.errors.length} documents added`);
       this.logger.log(`${value.errors.length} documents failed`);
-      return Promise.resolve();
+      return value;
     });
   }
   /* eslint-enable @typescript-eslint/no-unused-vars */

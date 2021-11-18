@@ -8,8 +8,11 @@ import {EcsTransformService} from './ecs-transform.service';
 import {GeoIpService} from './util/geoip.service';
 import {GeoIpMaxmindService} from './util/geoip-maxmind.service';
 import {OpenSearchService} from './open-search.service';
+import {OpenSearchDummyService} from './open-search-dummy.service';
+import {OpenSearchPostService} from './open-search-post.service';
 import {KinesisStreamRecordMapperService} from './shared/kinesis-stream-record-mapper.service';
 import {KinesisStreamService} from './kinesis-stream.service';
+import {KinesisStreamWrapperService} from './kinesis-stream-wrapper.service';
 import {LoggerConsoleService} from './util/logger-console.service';
 import {LoggerService} from './util/logger.service';
 import {MaxmindCityLookupService} from './util/maxmindCityLookup.service';
@@ -50,10 +53,15 @@ function create(): Container {
   myContainer.bind<MaxmindCityLookupService>(TYPES.MaxmindCityLookupService).to(MaxmindCityLookupService);
   myContainer.bind<MaxmindAsnLookupService>(TYPES.MaxmindAsnLookupService).to(MaxmindAsnLookupService);
   myContainer.bind<AwsHttpClientService>(TYPES.AwsHttpClientService).to(AwsHttpClientService);
-  myContainer.bind<OpenSearchService>(TYPES.OpenSearchService).to(OpenSearchService);
+  myContainer.bind<OpenSearchService>(TYPES.OpenSearchService)
+    .to(OpenSearchPostService).whenNoAncestorTagged('localhost', true);
+  myContainer.bind<OpenSearchService>(TYPES.OpenSearchService)
+    .to(OpenSearchDummyService).whenAnyAncestorTagged('localhost', true);
   myContainer.bind<KinesisStreamRecordMapperService>(TYPES.KinesisStreamRecordMapperService)
     .to(KinesisStreamRecordMapperService);
   myContainer.bind<KinesisStreamService>(TYPES.KinesisStreamService).to(KinesisStreamService);
+  myContainer.bind<KinesisStreamWrapperService>(TYPES.KinesisStreamWrapperService).to(KinesisStreamWrapperService);
+
   myContainer.bind<DateAndTimeService>(TYPES.DateAndTimeService).to(DateAndTimeService);
   myContainer.bind<SubsetService>(TYPES.SubsetService).to(SubsetService);
 

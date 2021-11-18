@@ -4,6 +4,7 @@ export const TYPES = {
   EcsTransformService: Symbol.for('EcsTransformService'),
   GeoIpService: Symbol.for('GeoIpService'),
   KinesisStreamService: Symbol.for('KinesisStreamService'),
+  KinesisStreamWrapperService: Symbol.for('KinesisStreamWrapperService'),
   KinesisStreamRecordMapperService: Symbol.for('KinesisStreamRecordMapperService'),
   LoggerService: Symbol.for('LoggerService'),
   MaxmindAsnLookupService: Symbol.for('MaxmindAsnLookupService'),

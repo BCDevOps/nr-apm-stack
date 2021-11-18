@@ -1,0 +1,33 @@
+{
+  "event": {
+    "kind": "metric",
+    "category": "system",
+    "dataset": "system.cpu"
+  },
+  "system_p": 0,
+  "cpu_p": 0.0625,
+  "user_p": 0.0625,
+  "host": {
+    "name": [
+      "nrcpod01"
+    ],
+    "hostname": "nrcpod01",
+    "domain": [
+      "nrcpod01"
+    ],
+    "architecture": "x86_64",
+    "os": {
+      "type": "Linux",
+      "kernel": "4.18.0-305.12.1.el8_4.x86_64"
+    }
+  },
+  "labels": {
+    "env": "undefined"
+  },
+  "cpu0": {
+    "p_system": 0,
+    "p_user": 0,
+    "p_cpu": 0
+  },
+  "@timestamp": "2021-11-15T11:13:18.463-08:00"
+}
