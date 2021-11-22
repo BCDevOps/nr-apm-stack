@@ -26,6 +26,7 @@ export class DocumentIndexParser implements Parser {
    */
   apply(document: OsDocument): void {
     const timestamp = lodash.get(document.data, '@timestamp');
+    const app: string = lodash.get(document.data, 'labels.application');
     const index: string = lodash.get(document.data, '@metadata.index');
     if (!index) {
       throw new Error('Could not map event to an index');
@@ -34,13 +35,24 @@ export class DocumentIndexParser implements Parser {
       throw new Error('@timestamp field value has not been defined');
     }
     const tsMomement = moment(timestamp);
-
-    const indexFormat: string = index.replace(/\<\%\=[^\=]+=\%\>/gm, (match: string) => {
-      if (match.startsWith('<%=')) {
-        return tsMomement.format(match.substring(3, match.length - 3));
-      }
-      throw new Error(`Unexpected formatting: ${match}`);
-    });
-    document.index = indexFormat;
+    if (!app) {
+      const indexFormat: string = index.replace(/\<\%\=[^\=]+=\%\>/gm, (match: string) => {
+        if (match.startsWith('<%=')) {
+          return tsMomement.format(match.substring(3, match.length - 3));
+        }
+        throw new Error(`Unexpected formatting: ${match}`);
+      });
+      document.index = indexFormat;
+    }
+    if (app) {
+      const indexFormatWithApp = index.replace(/\<!\=[^\=]+=!\>/gm, app);
+      const indexFormat: string = indexFormatWithApp.replace(/\<\%\=[^\=]+=\%\>/gm, (match: string) => {
+        if (match.startsWith('<%=')) {
+          return tsMomement.format(match.substring(3, match.length - 3));
+        }
+        throw new Error(`Unexpected formatting: ${match}`);
+      });
+      document.index = indexFormat;
+    }
   }
 }
