@@ -80,6 +80,96 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
   },
   {
+    name: FingerprintCategory.TOMCAT_ACCESS_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
+        dataset: 'tomcat.access',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: 'host.hostname,log.file.name,offset,message',
+        docId: 'log.file.name,offset,event.hash',
+        index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
+        timestampField: 'tomcat.access.time',
+        timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
+        // Remove?
+        apacheAccessLog: true,
+        appClassification: true,
+        deslash: true,
+        fileAttributes: true,
+        explodeHttpUrl: true,
+        geoIp: true,
+        httpStatusOutcome: true,
+        threatPhp: true,
+        userAgent: true,
+        keyAsPath: true,
+      },
+    },
+  },
+  {
+    name: FingerprintCategory.TOMCAT_LOCALHOST_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
+        dataset: 'tomcat.localhost',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: 'host.hostname,log.file.name,offset,message',
+        docId: 'log.file.name,offset,event.hash',
+        index: 'nrm-logs-<!=labels.application=!>-<%=YYYY.MM.DD=%>',
+        timestampField: 'tomcat.time',
+        timestampFormat: 'DD-MMM-YYYY HH:mm:ss:ffff',
+        // Remove?
+        apacheAccessLog: true,
+        appClassification: true,
+        deslash: true,
+        fileAttributes: true,
+        explodeHttpUrl: true,
+        geoIp: true,
+        httpStatusOutcome: true,
+        threatPhp: true,
+        userAgent: true,
+        keyAsPath: true,
+      },
+    },
+  },
+  {
+    name: FingerprintCategory.TOMCAT_CATALINA_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
+        dataset: 'tomcat.catalina',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: 'host.hostname,log.file.name,offset,message',
+        docId: 'log.file.name,offset,event.hash',
+        index: 'nrm-logs-<!=labels.application=!>-<%=YYYY.MM.DD=%>',
+        timestampField: 'tomcat.time',
+        timestampFormat: 'DD-MMM-YYYY HH:mm:ss:ffff',
+        // Remove?
+        apacheAccessLog: true,
+        appClassification: true,
+        deslash: true,
+        fileAttributes: true,
+        explodeHttpUrl: true,
+        geoIp: true,
+        httpStatusOutcome: true,
+        threatPhp: true,
+        userAgent: true,
+        keyAsPath: true,
+      },
+    },
+  },
+  {
     name: FingerprintCategory.VAULT_AUDIT_LOGS,
     fingerprint: {
       event: {
