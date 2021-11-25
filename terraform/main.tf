@@ -268,6 +268,9 @@ resource "aws_elasticsearch_domain" "es" {
   #  subnet_ids         = data.aws_subnet_ids.web.ids
   #  security_group_ids = data.aws_security_groups.web.ids
   #}
+  lifecycle {
+    ignore_changes = [ elasticsearch_version, advanced_options ]
+  }
   domain_endpoint_options {
     enforce_https       = true
     tls_security_policy = "Policy-Min-TLS-1-2-2019-07"

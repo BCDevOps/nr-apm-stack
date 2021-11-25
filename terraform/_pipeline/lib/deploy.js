@@ -7,7 +7,7 @@
  */
 
 
-const { ElasticsearchServiceClient, CreateElasticsearchDomainCommand, DescribeElasticsearchDomainCommand, UpdateElasticsearchDomainConfigCommand} = require.main.require("@aws-sdk/client-elasticsearch-service")
+const { ElasticsearchServiceClient, DescribeElasticsearchDomainCommand, UpdateElasticsearchDomainConfigCommand} = require.main.require("@aws-sdk/client-elasticsearch-service")
 const KcAdminClient = require.main.require('keycloak-admin').default
 const FormData = require.main.require("form-data");
 
@@ -113,30 +113,10 @@ const MyDeployer = class extends BasicDeployer {
     const phase = phases[settings.phase]
     const client = new ElasticsearchServiceClient({ region: "ca-central-1" });
     const domainName = `${phase.name}${phase.suffix}`
-    const keycloakBaseUrl = new URL(phase.keycloak.baseURL)
-    const keycloakRealmUrl = new URL(path.posix.join(keycloakBaseUrl.pathname, 'auth', 'realms', phase.keycloak.realmName), phase.keycloak.baseURL)
-    // console.dir(`Connecting to ${keycloakRealmUrl}`)
-    let samlMetadataContent = (await executeHttpRequest({
-      method: 'GET',
-      hostname: keycloakRealmUrl.hostname,
-      port:443,
-      // body: '',
-      path: path.posix.join(keycloakRealmUrl.pathname, 'protocol/saml/descriptor'),
-      headers:{host: keycloakRealmUrl.hostname,}
-    })
-    .then(waitAndReturnResponseBody)).body
-    samlMetadataContent=samlMetadataContent.substring(samlMetadataContent.indexOf('<EntitiesDescriptor'))
-    const samlOptionsDef = {EntityId:keycloakRealmUrl.toString(), MetadataContent:samlMetadataContent}
-    const createCmdParams = require('../aws-elasticsearch-domain-config').process({DomainName:domainName, stsCallerIdentity: this.#stsCallerIdentity, samlOptions: samlOptionsDef})
-    // SAML options CANNOT be defined when creating a domain, so we remove it to be used by the creation call
-    const samlOptions = createCmdParams.AdvancedSecurityOptions.SAMLOptions
-    delete createCmdParams.AdvancedSecurityOptions.SAMLOptions
-    // check if domain already exists if the provided name
-    let domainConfig = await describeDomain(client, createCmdParams.DomainName)
+
+    // check if domain already exists with the provided name
+    let domainConfig = await describeDomain(client, domainName)
     if (!domainConfig){
-      // if a domain doesn't exist with the same name, create one
-      //const createCmd = new CreateElasticsearchDomainCommand(createCmdParams);
-      //domainConfig = (await client.send(createCmd))
       throw new Error(`An ElasticSearch domain must have been created: '${createCmdParams.DomainName}'`)
     }
     // wait for domain to be up and ready
@@ -220,7 +200,7 @@ const MyDeployer = class extends BasicDeployer {
     } catch (error) {
       throw new GenericError(`${error.message}: ${error.config.method} ${error.config.url}`, error)
     }
-  } //end deployKeycloakClientUsingAdmin
+  }
 
   async loadElasticSearchTenants(hostname, tenantsDirPath) {
     const tenantsDirItems = fs.readdirSync(tenantsDirPath, {withFileTypes: true})
@@ -362,9 +342,9 @@ const MyDeployer = class extends BasicDeployer {
             })
             .then(()=>console.log(`Dashboard File Loaded - ${tenantName}/${dashboardFileName}`))
           }
-        }// end for
+        }
       }
-    } // end tenants for
+    }
   }
   async configureElasticSearch(hostname){
     /*
@@ -399,23 +379,6 @@ const MyDeployer = class extends BasicDeployer {
     })
     .then(waitAndReturnResponseBody)
     .then(()=>console.log(`Index Template Loaded - ${indexTemplateName}`))
-    //.then(output=>console.dir(output))
-
-    const ingestPipelineFile = path.resolve(__dirname, '../../configurations/ingest-pipeline/filebeat-7.7.0-apache-access-pipeline.json')
-    const ingestPipelineName = path.basename(ingestPipelineFile, '.json')
-    // console.dir({ingestPipelineFile,ingestPipelineName})
-    await executeSignedHttpRequest({
-      method: "PUT",
-      body: fs.readFileSync(ingestPipelineFile, {encoding:'utf8'}),
-      headers: {
-        "Content-Type": "application/json",
-        host: hostname,
-      },
-      hostname,
-      path: `/_ingest/pipeline/${ingestPipelineName}`,
-    })
-    .then(waitAndReturnResponseBody)
-    .then(()=>console.log(`Ingest Pipeline Loaded - ${ingestPipelineName}`))
     //.then(output=>console.dir(output))
 
     // loadElasticSearchTenants(hostname, path.resolve(__dirname, '../../configurations/tenants'))

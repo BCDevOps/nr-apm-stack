@@ -1,13 +1,13 @@
-# About NR AWS ElasticSearch Stack
+# About NR AWS OpenSearch Stack
 
-OpenSearch is a community-driven, open source search and analytics suite derived from Apache 2.0 licensed Elasticsearch 7.10.2 & Kibana 7.10.2.
+OpenSearch is a community-driven, open source search and analytics suite derived from Apache 2.0 licensed ElasticSearch 7.10.2 & Kibana 7.10.2.
 
 Confluence: [AWS OpenSearch](https://apps.nrs.gov.bc.ca/int/confluence/x/GaRvBQ)
-Url: [Production](https://apm.io.nrs.gov.bc.ca/_plugin/kibana/)
+Url: [Production](https://apm.io.nrs.gov.bc.ca/_plugin/_dashboards)
 
 ### Built With
 
-* [Amazon Elasticsearch Service](https://aws.amazon.com/elasticsearch-service)
+* [Amazon OpenSearch Service](https://aws.amazon.com/opensearch-service)
 * [Amazon Lambda](https://aws.amazon.com/lambda/)
 * [Terraform](https://www.terraform.io)
 * [Terragrunt](https://terragrunt.gruntwork.io)
