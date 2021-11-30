@@ -51,13 +51,9 @@ export class ApacheParser implements Parser {
    */
   apply(document: OsDocument): void {
     this.logger.debug(`Parsing ${document.data.message as string}`);
-<<<<<<< HEAD
-    for (const regex of [regex_v1, regex_apache_standard01, regex_apache_standard02, regex_apache_standard03]) {
-=======
     for (
       const regex of [regex_v1, regex_apache_standard01, regex_apache_standard02, regex_apache_standard03,
         regex_apache_standard04]) {
->>>>>>> 0c56851 (feat: Add tomcat logs)
       const m = document.data.message.match(regex);
       if (m !== null) {
         for (const gropName of Object.keys(m.groups)) {
