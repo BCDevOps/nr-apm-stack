@@ -27,12 +27,31 @@ module.exports.process = function (p) {
             'saml_signature_canonicalization_method': 'http://www.w3.org/2001/10/xml-exc-c14n#',
             'saml.onetimeuse.condition': 'false'
         },
-        baseUrl: `${baseUrl}/_plugin/kibana/`,
+        baseUrl: `${baseUrl}/_plugin/dashboards/`,
         redirectUris: [`${baseUrl}/*`],
         defaultClientScopes: [ 'web-origins', 'profile', 'email' ],
-        roles: [{name:'kibana_user'}, {name: 'all_access'}, {name: 'irs-developer'}, {name: 'nrm-read-all'}, {name: 'nrm-security'}],
+        roles: [
+            {name:'kibana_user'},
+            {name: 'all_access'},
+            {name: 'nrm-read-all'},
+            {name: 'nrm-security'},
+            {name: 'alerting_read_access'},
+            {name: 'alerting_ack_alerts'},
+            {name: 'alerting_full_access'}
+        ],
         protocolMappers: [
-            {name: 'roles', protocol: 'saml', protocolMapper: 'saml-role-list-mapper', consentRequired: false, config: {single:'true', 'attribute.nameformat': 'Basic', 'attribute.name': 'roles', 'friendly.name': 'roles'}},
+            {
+                name: 'roles',
+                protocol: 'saml',
+                protocolMapper: 'saml-role-list-mapper',
+                consentRequired: false,
+                config: {
+                    single: 'true',
+                    'attribute.nameformat': 'Basic',
+                    'attribute.name': 'roles',
+                    'friendly.name': 'roles'
+                }
+            },
         ]
     }
 }
