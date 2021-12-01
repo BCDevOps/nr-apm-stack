@@ -31,13 +31,14 @@ module.exports.process = function (p) {
         redirectUris: [`${baseUrl}/*`],
         defaultClientScopes: [ 'web-origins', 'profile', 'email' ],
         roles: [
-            {name:'kibana_user'},
             {name: 'all_access'},
             {name: 'nrm-read-all'},
             {name: 'nrm-security'},
             {name: 'alerting_read_access'},
             {name: 'alerting_ack_alerts'},
-            {name: 'alerting_full_access'}
+            {name: 'alerting_full_access'},
+            {name: 'wf-write-all'},
+            {name: 'ppm-write-all'}
         ],
         protocolMappers: [
             {

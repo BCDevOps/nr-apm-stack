@@ -559,7 +559,7 @@ resource "elasticsearch_opendistro_role" "nrm_read_all" {
     allowed_actions = ["kibana_all_read"]
   }
   tenant_permissions {
-    tenant_patterns = ["infraops"]
+    tenant_patterns = ["*"]
     allowed_actions = ["kibana_all_read"]
   }
   depends_on = [aws_elasticsearch_domain.es]
@@ -569,6 +569,37 @@ resource "elasticsearch_opendistro_roles_mapping" "nrm_read_all_mapper" {
   role_name     = elasticsearch_opendistro_role.nrm_read_all.id
   description   = "Mapping KC role to ES role"
   backend_roles = ["nrm-read-all"]
+}
+
+resource "elasticsearch_opendistro_role" "wf_write_all" {
+  role_name   = "wf-write-all"
+  description = "WF write role"
+  tenant_permissions {
+    tenant_patterns = ["wildfire"]
+    allowed_actions = ["kibana_all_write"]
+  }
+  depends_on = [aws_elasticsearch_domain.es]
+}
+
+resource "elasticsearch_opendistro_roles_mapping" "wf_write_all_mapper" {
+  role_name     = elasticsearch_opendistro_role.wf_write_all.id
+  description   = "Mapping KC role to ES role"
+  backend_roles = ["wf-write-all"]
+}
+resource "elasticsearch_opendistro_role" "ppm_write_all" {
+  role_name   = "ppm-write-all"
+  description = "PPM write role"
+  tenant_permissions {
+    tenant_patterns = ["ppm"]
+    allowed_actions = ["kibana_all_write"]
+  }
+  depends_on = [aws_elasticsearch_domain.es]
+}
+
+resource "elasticsearch_opendistro_roles_mapping" "ppm_write_all_mapper" {
+  role_name     = elasticsearch_opendistro_role.ppm_write_all.id
+  description   = "Mapping KC role to ES role"
+  backend_roles = ["ppm-write-all"]
 }
 
 resource "elasticsearch_opendistro_role" "nrm_security" {
