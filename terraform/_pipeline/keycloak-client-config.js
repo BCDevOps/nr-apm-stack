@@ -3,7 +3,7 @@ module.exports.process = function (p) {
     const clientId = baseUrl
     return {
         clientId: clientId,
-        name: 'AWS ElasticSearch',
+        name: 'AWS OpenSearch',
         protocol: 'saml',
         frontchannelLogout: true,
         fullScopeAllowed: false,
@@ -27,7 +27,7 @@ module.exports.process = function (p) {
             'saml_signature_canonicalization_method': 'http://www.w3.org/2001/10/xml-exc-c14n#',
             'saml.onetimeuse.condition': 'false'
         },
-        baseUrl: `${baseUrl}/_plugin/dashboards/`,
+        baseUrl: `${baseUrl}/_dashboards/`,
         redirectUris: [`${baseUrl}/*`],
         defaultClientScopes: [ 'web-origins', 'profile', 'email' ],
         roles: [
