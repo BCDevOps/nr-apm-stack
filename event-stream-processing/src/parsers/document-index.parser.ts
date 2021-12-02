@@ -27,11 +27,11 @@ export class DocumentIndexParser implements Parser {
     if (!indexName) {
       throw new Error('Could not map event to an index');
     }
-    indexName = this.applyTimestampSubsitution(document, indexName);
-    indexName = this.applyDataFieldSubsitution(document, indexName);
+    indexName = this.applyTimestampSubstitution(document, indexName);
+    indexName = this.applyDataFieldSubstitution(document, indexName);
     document.index = indexName;
   }
-  private applyTimestampSubsitution(document: OsDocument, index: string): string {
+  private applyTimestampSubstitution(document: OsDocument, index: string): string {
     const timestamp = lodash.get(document.data, '@timestamp');
     if (lodash.isNil(timestamp)) {
       throw new Error('@timestamp field value has not been defined');
@@ -44,7 +44,7 @@ export class DocumentIndexParser implements Parser {
       throw new Error(`Unexpected formatting: ${match}`);
     });
   }
-  private applyDataFieldSubsitution(document: OsDocument, index: string): string {
+  private applyDataFieldSubstitution(document: OsDocument, index: string): string {
     const indexDataFieldSubstitute: string = lodash.get(document.data, '@metadata.indexDataFieldSubstitute');
     if (indexDataFieldSubstitute) {
       const documentDataField: string = lodash.get(document.data, indexDataFieldSubstitute);
