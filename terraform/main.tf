@@ -575,7 +575,7 @@ resource "elasticsearch_opendistro_role" "wf_write_all" {
   role_name   = "wf-write-all"
   description = "WF write role"
   tenant_permissions {
-    tenant_patterns = ["wildfire"]
+    tenant_patterns = ["Wildfire"]
     allowed_actions = ["kibana_all_write"]
   }
   depends_on = [aws_elasticsearch_domain.es]
@@ -590,7 +590,7 @@ resource "elasticsearch_opendistro_role" "ppm_write_all" {
   role_name   = "ppm-write-all"
   description = "PPM write role"
   tenant_permissions {
-    tenant_patterns = ["ppm"]
+    tenant_patterns = ["PPM"]
     allowed_actions = ["kibana_all_write"]
   }
   depends_on = [aws_elasticsearch_domain.es]
