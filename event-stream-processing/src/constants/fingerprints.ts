@@ -93,10 +93,10 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         hash: 'host.hostname,log.file.name,offset,message',
         docId: 'log.file.name,offset,event.hash',
         index: 'nrm-logs-<!=data-field=!>-access-<%=YYYY.MM.DD=%>',
+        indexDataFieldSubstitute: 'labels.application',
         timestampField: 'tomcat.access.time',
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
         // Remove?
-        apacheAccessLog: true,
         appClassification: true,
         deslash: true,
         fileAttributes: true,
