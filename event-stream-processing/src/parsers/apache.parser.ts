@@ -10,7 +10,7 @@ import {OsDocument, FingerprintCategory} from '../types/os-document';
 const regex_v1 = /^(?<labels__format>v1\.0) (?<apache__version>[^ ]+) "(?<url__scheme>[^:]+):\/\/(?<url__domain>[^:]+):(?<url__port>\d+)" "(?<client__ip>[^"]+)" \[(?<apache__access__time>[^\]]+)\] "(?<http__request__line>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__request__bytes>(-?|\d+)) bytes (?<http__response__bytes>(-?|\d+)) bytes "(?<http__request__referrer__original>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)" (?<event__duration>\d+) ms, "(?<tls__version_protocol>[^"]+)" "(?<tls__cypher>[^"]+)"$/;
 const regex_apache_standard01 = /^(?<source__ip>[^ ]+) ([^ ]+) (?<user__name>[^ ]+) \[(?<apache__access__time>[^\]]+)\] "(?<http__request__line>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__response__bytes>(-?|\d+)) "(?<http__request__referrer__original>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)" (?<event__duration>(-?|\d+))$/;
 const regex_apache_standard02 = /^(?<source__ip>[^ ]+) ([^ ]+) (?<user__name>[^ ]+) \[(?<apache__access__time>[^\]]+)\] "(?<http__request__line>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__response__bytes>(-?|\d+)) "(?<http__request__referrer__original>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)"$/;
-const regex_tomcat_standard01 = /^(?<tomcat__time>^\d{2}-\w{3}-\d{4}\s\d{2}:\d{2}:\d{2}.\d{3})\s+(?<level>\S+)\s+\[(?<subsystem>\S+)\]\s+(?<class>[\S]+).*$/;
+const regex_tomcat_localhost_access = /^(?<source__ip>[^ ]+) - - \[(?<tomcat__access__time>[^\]]+)\] "(?<http__request__line>([^"]|(?<=\\)")*)" (?<http__response__status__code>(-?|\d+)) (?<http__response__bytes>(-?|\d+))$/;
 /* eslint-enable max-len */
 
 const underscoreReplaceRegex = /__/g;
@@ -41,7 +41,7 @@ export class ApacheParser implements Parser {
    * @returns
    */
   matches(document: OsDocument): boolean {
-    return !!(document.data['@metadata'] && document.data['@metadata'].apacheAccessLog);
+    return !!(document.data['@metadata'] && document.data['@metadata'].apacheAccessLog || document.data['@metadata'].tomcatLog);
   }
 
   /**
@@ -51,7 +51,7 @@ export class ApacheParser implements Parser {
   apply(document: OsDocument): void {
     this.logger.debug(`Parsing ${document.data.message as string}`);
     for (
-      const regex of [regex_v1, regex_apache_standard01, regex_apache_standard02, regex_tomcat_standard01]) {
+      const regex of [regex_v1, regex_apache_standard01, regex_apache_standard02, regex_tomcat_localhost_access]) {
       const m = document.data.message.match(regex);
       if (m !== null) {
         for (const gropName of Object.keys(m.groups)) {

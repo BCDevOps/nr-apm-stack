@@ -15,11 +15,14 @@ export HOST_DOMAIN="$(echo ${HOST_HOSTNAME#[[:alpha:]]*.})"
 
 # Run in foreground, passing vars
 #
+# Example mounts for logs:
+# -v "/mnt/c/tmp/logs/apache:/tmp/logs/apache"
+# -v "/mnt/c/tmp/logs/dispatch/dispatch-api-war:/tmp/logs/dispatch/dispatch-api-war"
 docker run --rm \
-	-v "${PWD}/app-conf:/config" \
+    -v "${PWD}/app-conf:/config" \
     -v "/mnt/c/tmp/logs/dispatch/dispatch-api-war:/tmp/logs/dispatch/dispatch-api-war" \
-	-v "/proc/stat:/proc/stat:ro" \
+    -v "/proc/stat:/proc/stat:ro" \
     -e FLUENT_VERSION=1.8.10 \
-	-e HOST_* \
-	--network=host \
-	fluent/fluent-bit /fluent-bit/bin/fluent-bit -c /config/fluent-bit.conf
+    -e HOST_* \
+    --network=host \
+    fluent/fluent-bit /fluent-bit/bin/fluent-bit -c /config/fluent-bit.conf
