@@ -1,19 +1,22 @@
 import lodash from 'lodash';
 import {LoggerService} from '../util/logger.service';
 import {OsDocument} from '../types/os-document';
+import {injectable, inject} from 'inversify';
+import {TYPES} from '../inversify.types';
 
 const underscoreReplaceRegex = /__/g;
 
 /**
  * Service for parsing a message field into fields using regex
  */
+@injectable()
 export class RegexService {
   /**
    * Constructor
    * @param logger
    */
   constructor(
-    private logger: LoggerService,
+    @inject(TYPES.LoggerService) private logger: LoggerService,
   ) {}
 
   /**
