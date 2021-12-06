@@ -1,12 +1,12 @@
 import {RegexService} from '../shared/regex.service';
 import {OsDocument} from '../types/os-document';
-import {ApacheParser} from './apache.parser';
+import {TomcatParser} from './tomcat.parser';
 
-describe('ApacheParser', () => {
+describe('TomcatParser', () => {
   it('matches using metadata', () => {
-    const parser = new ApacheParser({} as unknown as RegexService);
+    const parser = new TomcatParser({} as unknown as RegexService);
 
-    expect(parser.matches({data: {'@metadata': {apacheAccessLog: true}}} as unknown as OsDocument)).toBe(true);
+    expect(parser.matches({data: {'@metadata': {tomcatLog: true}}} as unknown as OsDocument)).toBe(true);
     expect(parser.matches({data: {'@metadata': {}}} as unknown as OsDocument)).toBe(false);
   });
 
@@ -14,7 +14,7 @@ describe('ApacheParser', () => {
     const service = {
       applyRegex: jest.fn(),
     } as unknown as RegexService;
-    const parser = new ApacheParser(service);
+    const parser = new TomcatParser(service);
     const testDoc = {} as unknown as OsDocument;
 
     parser.apply(testDoc);
