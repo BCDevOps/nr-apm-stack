@@ -70,6 +70,7 @@ describe('RegexService', () => {
     // eslint-disable-next-line max-len
     const document = {data: JSON.parse(JSON.stringify({...APACHE_ACCESS_LOG_EVENT_SIGNATURE, message: '66.183.191.120 - - [05/Jun/2020:07:23:23 -0700] "GET /ext/raad3/map?execution=e1s1&_eventId=agreed HTTP/1.1" 302 - "https://apps.nrs.gov.bc.ca/ext/raad3/map?execution=e1s1" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0" 24'}))} as unknown as OsDocument;
     parser.applyRegex(document, 'message', regexArr);
+    expect(document.data).not.toHaveProperty('user.name');
     expect(document.data).toHaveProperty('source.ip', '66.183.191.120');
     expect(document.data).toHaveProperty(
       'http.request.line', 'GET /ext/raad3/map?execution=e1s1&_eventId=agreed HTTP/1.1');
@@ -80,5 +81,13 @@ describe('RegexService', () => {
     // eslint-disable-next-line max-len
     expect(document.data).toHaveProperty('user_agent.original', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0');
     expect(document.data).toHaveProperty('event.duration');
+  });
+
+  it('keeps dash - 3', () => {
+    const parser = new RegexService(logger);
+    // eslint-disable-next-line max-len
+    const document = {data: JSON.parse(JSON.stringify({...APACHE_ACCESS_LOG_EVENT_SIGNATURE, message: '66.183.191.120 - - [05/Jun/2020:07:23:23 -0700] "GET /ext/raad3/map?execution=e1s1&_eventId=agreed HTTP/1.1" 302 - "https://apps.nrs.gov.bc.ca/ext/raad3/map?execution=e1s1" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0" 24'}))} as unknown as OsDocument;
+    parser.applyRegex(document, 'message', regexArr, false);
+    expect(document.data).toHaveProperty('user.name', '-');
   });
 });
