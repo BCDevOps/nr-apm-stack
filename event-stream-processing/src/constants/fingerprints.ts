@@ -127,7 +127,6 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         timestampField: 'tomcat.time',
         timestampFormat: 'DD-MMM-YYYY HH:mm:ss:ffff',
         // Remove?
-        apacheAccessLog: true,
         appClassification: true,
         deslash: true,
         fileAttributes: true,
