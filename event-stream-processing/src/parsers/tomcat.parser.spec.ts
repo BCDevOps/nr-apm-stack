@@ -19,7 +19,7 @@ describe('TomcatParser', () => {
 
     parser.apply(testDoc);
 
-    expect(service.applyRegex).toBeCalledWith(testDoc, 'message', expect.any(Array));
+    expect(service.applyRegex).toBeCalledWith(testDoc, 'event.original', expect.any(Array));
     expect(service.applyRegex).toBeCalledTimes(1);
   });
 });

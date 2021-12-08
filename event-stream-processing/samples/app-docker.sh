@@ -22,7 +22,7 @@ docker run --rm \
     -v "${PWD}/app-conf:/config" \
     -v "/mnt/c/tmp/logs/dispatch/dispatch-api-war:/tmp/logs/dispatch/dispatch-api-war" \
     -v "/proc/stat:/proc/stat:ro" \
-    -e FLUENT_VERSION=1.8.10 \
+    -e FLUENT_VERSION=1.8.7 \
     -e HOST_* \
     --network=host \
-    fluent/fluent-bit /fluent-bit/bin/fluent-bit -c /config/fluent-bit.conf
+    fluent/fluent-bit:1.8.7 /fluent-bit/bin/fluent-bit -c /config/fluent-bit.conf

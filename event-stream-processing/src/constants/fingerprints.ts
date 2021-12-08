@@ -12,7 +12,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,log.file.name,offset,message',
+        hash: 'host.hostname,log.file.name,offset,event.original',
         docId: 'log.file.name,offset,event.hash',
         index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
         timestampField: 'apache.access.time',
@@ -90,7 +90,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,log.file.name,offset,message',
+        hash: 'host.hostname,log.file.name,offset,event.original',
         docId: 'log.file.name,offset,event.hash',
         index: 'nrm-logs-<!=data-field=!>-access-<%=YYYY.MM.DD=%>',
         indexDataFieldSubstitute: 'labels.application',
@@ -120,7 +120,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,log.file.name,offset,message',
+        hash: 'host.hostname,log.file.name,offset,event.original',
         docId: 'log.file.name,offset,event.hash',
         index: 'nrm-logs-<!=data-field=!>-<%=YYYY.MM.DD=%>',
         indexDataFieldSubstitute: 'labels.application',
@@ -150,7 +150,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,log.file.name,offset,message',
+        hash: 'host.hostname,log.file.name,offset,event.original',
         docId: 'log.file.name,offset,event.hash',
         index: 'nrm-logs-<!=data-field=!>-<%=YYYY.MM.DD=%>',
         indexDataFieldSubstitute: 'labels.application',

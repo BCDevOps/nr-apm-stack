@@ -43,6 +43,6 @@ export class TomcatParser implements Parser {
    * @param document The document to modify
    */
   apply(document: OsDocument): void {
-    this.regexService.applyRegex(document, 'message', [regex_tomcat_localhost_access]);
+    this.regexService.applyRegex(document, 'event.original', [regex_tomcat_localhost_access]);
   }
 }
