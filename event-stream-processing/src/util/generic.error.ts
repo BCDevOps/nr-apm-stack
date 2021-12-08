@@ -1,25 +1,12 @@
 /* istanbul ignore file */
 
-class ExtendedError extends Error {
-  constructor(message:string) {
-    super(message);
-    this.name = this.constructor.name;
-    // Cleaner stack trace for v8
-    if (typeof Error.captureStackTrace === 'function') {
-      Error.captureStackTrace(this, this.constructor);
-    } else {
-      this.stack = (new Error(message)).stack;
-    }
-  }
-}
+import {ExtendedError} from './extended.error';
 
 export class GenericError extends ExtendedError {
-  source: Error | undefined = undefined;
-  constructor(message: string, source?: Error) {
+  constructor(message: string, public source?: Error | undefined) {
     super(message);
-    Object.setPrototypeOf(this, GenericError.prototype);
+    Object.setPrototypeOf(this, new.target.prototype);
     if (source) {
-      this.source = source;
       // this.stack_before_rethrow = this.stack
       const messageLines = (this.message.match(/\n/g)||[]).length + 1;
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands

@@ -7,6 +7,7 @@ import {LoggerService} from './util/logger.service';
 import {GenericError} from './util/generic.error';
 import {OsDocument} from './types/os-document';
 import {KinesisStreamRecordMapperService} from './shared/kinesis-stream-record-mapper.service';
+import {ParserError} from './util/parser.error';
 
 @injectable()
 /**
@@ -35,12 +36,37 @@ export class EcsTransformService {
    */
   public transform(event: KinesisStreamEvent): OsDocument[] {
     if (event.Records) {
+      let badDocs = 0;
       this.logger.log(`Received ${event.Records.length} records`);
-      // TODO: https://www.npmjs.com/package/workerpool
 
-      return event.Records
-        .map((record) => this.ksrMapper.toOpensearchDocument(record))
-        .map((document) => this.parseDocumentData(document));
+      const docs = event.Records
+        .map((record) => {
+          try {
+            return this.ksrMapper.toOpensearchDocument(record);
+          } catch (e: unknown) {
+            badDocs++;
+          }
+        })
+        .filter((document): document is OsDocument => document !== undefined)
+        .map((document) => {
+          try {
+            return this.parseDocumentData(document);
+          } catch (error: unknown) {
+            const team: string = document.data['@metadata'].team ? document.data['@metadata'].team : 'unknown';
+            const parser: string = error instanceof ParserError ? error.parser : 'unknown';
+            const hostName: string = document.data.host?.hostname ? document.data.host?.hostname as string : '';
+            const fileName: string = document.data.log?.file?.name ? document.data.log?.file?.name as string : '';
+            const offset: string = document.data.offset ? document.data.offset as string : '';
+            this.logger.log(
+              `PARSE_ERROR [${parser}] ${team} ${hostName} ${fileName} ${offset} ${document.fingerprint.name}`);
+            throw error;
+          }
+        });
+
+      if (badDocs > 0) {
+        this.logger.log(`${badDocs} documents rejected`);
+      }
+      return docs;
     }
     return [];
   }
@@ -58,9 +84,13 @@ export class EcsTransformService {
       this.runParsers(document, this.postParsers);
       this.runParsers(document, this.finalizeParsers);
     } catch (error: any) {
-      this.logger.log(`Error Parsing:${JSON.stringify(document)}`);
-      this.logger.log(error);
-      throw new GenericError(`Error processing event`, error);
+      // this.logger.log(`Error Parsing: ${JSON.stringify(document)}`);
+      // this.logger.log(error);
+      if (error instanceof ParserError) {
+        throw error;
+      } else {
+        throw new GenericError(`Error processing event`, error);
+      }
     }
     return document;
   }
@@ -68,12 +98,12 @@ export class EcsTransformService {
   private runParsers(document: OsDocument, parsers: Parser[]) {
     for (const parser of parsers) {
       try {
-        this.logger.debug(`Processing parse:${parser.constructor.name}`);
         if (parser.matches(document)) {
+          this.logger.debug(`Processing using: ${parser.constructor.name}`);
           parser.apply(document);
         }
       } catch (error: any) {
-        throw new GenericError(`Error applying parser ${parser.constructor.name}`, error);
+        throw new ParserError(`Error applying parser ${parser.constructor.name}`, parser.constructor.name, error);
       }
     }
   }
