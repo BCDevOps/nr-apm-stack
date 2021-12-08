@@ -45,14 +45,16 @@ export class DocumentIndexParser implements Parser {
     });
   }
   private applyDataFieldSubstitution(document: OsDocument, index: string): string {
-    const indexDataFieldSubstitute: string = lodash.get(document.data, '@metadata.indexDataFieldSubstitute');
-    if (indexDataFieldSubstitute) {
-      const documentDataField: string = lodash.get(document.data, indexDataFieldSubstitute);
-      if (lodash.isNil(documentDataField)) {
-        throw new Error(`${indexDataFieldSubstitute} field value not in document`);
+    return index.replace(/\<\!\=[^\=]+=\!\>/gm, (match: string) => {
+      if (match.startsWith('<!=')) {
+        const fieldName = match.substring(3, match.length - 3);
+        const substitution = lodash.get(document.data, fieldName);
+        if (lodash.isNil(substitution)) {
+          throw new Error(`${fieldName} field value not in document`);
+        }
+        return substitution;
       }
-      return index.replace(/\<!\=[^\=]+=!\>/gm, documentDataField);
-    }
-    return index;
+      throw new Error(`Unexpected formatting: ${match}`);
+    });
   }
 }

@@ -92,8 +92,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       '@metadata': {
         hash: 'host.hostname,log.file.name,offset,event.original',
         docId: 'log.file.name,offset,event.hash',
-        index: 'nrm-logs-<!=data-field=!>-access-<%=YYYY.MM.DD=%>',
-        indexDataFieldSubstitute: 'labels.application',
+        index: 'nrm-logs-<!=labels.application=!>-access-<%=YYYY.MM.DD=%>',
         timestampField: 'tomcat.access.time',
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
         // Remove?
@@ -122,8 +121,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       '@metadata': {
         hash: 'host.hostname,log.file.name,offset,event.original',
         docId: 'log.file.name,offset,event.hash',
-        index: 'nrm-logs-<!=data-field=!>-<%=YYYY.MM.DD=%>',
-        indexDataFieldSubstitute: 'labels.application',
+        index: 'nrm-logs-<!=labels.application=!>-<%=YYYY.MM.DD=%>',
         timestampField: 'tomcat.time',
         timestampFormat: 'DD-MMM-YYYY HH:mm:ss:ffff',
         // Remove?
@@ -152,8 +150,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       '@metadata': {
         hash: 'host.hostname,log.file.name,offset,event.original',
         docId: 'log.file.name,offset,event.hash',
-        index: 'nrm-logs-<!=data-field=!>-<%=YYYY.MM.DD=%>',
-        indexDataFieldSubstitute: 'labels.application',
+        index: 'nrm-logs-<!=labels.application=!>-<%=YYYY.MM.DD=%>',
         timestampField: 'tomcat.time',
         timestampFormat: 'DD-MMM-YYYY HH:mm:ss:ffff',
         // Remove?

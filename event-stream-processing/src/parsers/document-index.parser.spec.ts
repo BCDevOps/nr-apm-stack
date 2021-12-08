@@ -60,8 +60,7 @@ describe('IndexNameParser', () => {
         },
         '@timestamp': '2021-05-01T18:47:40.314-07:00',
         '@metadata': {
-          index: 'nrm-logs-<!=data-field=!>-access-<%=YYYY.MM.DD=%>',
-          indexDataFieldSubstitute: 'labels.cool',
+          index: 'nrm-logs-<!=labels.cool=!>-access-<%=YYYY.MM.DD=%>',
         },
       },
     } as unknown as OsDocument;
@@ -75,7 +74,6 @@ describe('IndexNameParser', () => {
         '@timestamp': '2021-05-01T18:47:40.314-07:00',
         '@metadata': {
           index: 'nrm-logs-<!=labels.cool=!>-access-<%=YYYY.MM.DD=%>',
-          indexDataFieldSubstitute: 'labels.cool',
         },
       },
     } as unknown as OsDocument;
