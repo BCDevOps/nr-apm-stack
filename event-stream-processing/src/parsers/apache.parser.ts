@@ -45,6 +45,7 @@ export class ApacheParser implements Parser {
    * @param document The document to modify
    */
   apply(document: OsDocument): void {
-    this.regexService.applyRegex(document, 'event.original', [regex_v1, regex_apache_standard01, regex_apache_standard02]);
+    this.regexService.applyRegex(document, 'event.original', [regex_v1, regex_apache_standard01,
+      regex_apache_standard02]);
   }
 }
