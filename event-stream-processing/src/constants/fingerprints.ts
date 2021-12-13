@@ -15,7 +15,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         hash: 'host.hostname,log.file.name,offset,event.original',
         docId: 'log.file.name,offset,event.hash',
         index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
-        timestampField: 'apache.access.time',
+        timestampField: 'event.original_timestamp',
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
         // Remove?
         apacheAccessLog: true,
@@ -93,7 +93,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         hash: 'host.hostname,log.file.name,offset,event.original',
         docId: 'log.file.name,offset,event.hash',
         index: 'nrm-logs-<!=labels.application=!>-access-<%=YYYY.MM.DD=%>',
-        timestampField: 'tomcat.access.time',
+        timestampField: 'event.original_timestamp',
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
         // Remove?
         appClassification: true,
@@ -122,8 +122,8 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         hash: 'host.hostname,log.file.name,offset,event.original',
         docId: 'log.file.name,offset,event.hash',
         index: 'nrm-logs-<!=labels.application=!>-<%=YYYY.MM.DD=%>',
-        timestampField: 'tomcat.time',
-        timestampFormat: 'DD-MMM-YYYY HH:mm:ss:ffff',
+        timestampField: 'event.original_timestamp',
+        timestampFormat: 'DD-MMM-YYYY HH:mm:ss.SSS',
         // Remove?
         appClassification: true,
         deslash: true,
@@ -151,8 +151,8 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         hash: 'host.hostname,log.file.name,offset,event.original',
         docId: 'log.file.name,offset,event.hash',
         index: 'nrm-logs-<!=labels.application=!>-<%=YYYY.MM.DD=%>',
-        timestampField: 'tomcat.time',
-        timestampFormat: 'DD-MMM-YYYY HH:mm:ss:ffff',
+        timestampField: 'event.original_timestamp',
+        timestampFormat: 'DD-MMM-YYYY HH:mm:ss.SSS',
         // Remove?
         appClassification: true,
         deslash: true,
