@@ -37,7 +37,7 @@ generate "inputs" {
   master_node_instance_type = "c6g.large.elasticsearch"
   data_node_instance_count = 12
   data_node_instance_type = "r6g.large.elasticsearch"
-  data_node_volume_size = 300
+  data_node_volume_size = 350
   custom_endpoint = "apm.io.nrs.gov.bc.ca"
   custom_endpoint_certificate_arn = "arn:aws:acm:ca-central-1:578527843179:certificate/a03a0a1b-120b-43ab-ab9d-e1bc84c693c4"
   kinesis_shards = 6
