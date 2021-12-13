@@ -3,7 +3,6 @@ import {Parser} from '../types/parser';
 import lodash from 'lodash';
 import moment from 'moment';
 import {OsDocument} from '../types/os-document';
-
 @injectable()
 /**
  * Apply index to document
@@ -19,28 +18,43 @@ export class DocumentIndexParser implements Parser {
   matches(document: OsDocument): boolean {
     return !!(document.data['@metadata'] && document.data['@metadata'].index);
   }
-
   /**
    * Apply index to document
    * @param document The document to modify
    */
   apply(document: OsDocument): void {
-    const timestamp = lodash.get(document.data, '@timestamp');
-    const index: string = lodash.get(document.data, '@metadata.index');
-    if (!index) {
+    let indexName: string = lodash.get(document.data, '@metadata.index');
+    if (!indexName) {
       throw new Error('Could not map event to an index');
     }
+    indexName = this.applyTimestampSubstitution(document, indexName);
+    indexName = this.applyDataFieldSubstitution(document, indexName);
+    document.index = indexName;
+  }
+  private applyTimestampSubstitution(document: OsDocument, index: string): string {
+    const timestamp = lodash.get(document.data, '@timestamp');
     if (lodash.isNil(timestamp)) {
       throw new Error('@timestamp field value has not been defined');
     }
     const tsMomement = moment(timestamp);
-
-    const indexFormat: string = index.replace(/\<\%\=[^\=]+=\%\>/gm, (match: string) => {
+    return index.replace(/\<\%\=[^\=]+=\%\>/gm, (match: string) => {
       if (match.startsWith('<%=')) {
         return tsMomement.format(match.substring(3, match.length - 3));
       }
       throw new Error(`Unexpected formatting: ${match}`);
     });
-    document.index = indexFormat;
+  }
+  private applyDataFieldSubstitution(document: OsDocument, index: string): string {
+    return index.replace(/\<\!\=[^\=]+=\!\>/gm, (match: string) => {
+      if (match.startsWith('<!=')) {
+        const fieldName = match.substring(3, match.length - 3);
+        const substitution = lodash.get(document.data, fieldName);
+        if (lodash.isNil(substitution)) {
+          throw new Error(`${fieldName} field value not in document`);
+        }
+        return substitution;
+      }
+      throw new Error(`Unexpected formatting: ${match}`);
+    });
   }
 }

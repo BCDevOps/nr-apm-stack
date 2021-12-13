@@ -9,7 +9,7 @@ describe('IndexNameParser', () => {
     expect(parser.matches({data: {}} as unknown as OsDocument)).toBe(false);
   });
 
-  it('adds index with no subsitution', () => {
+  it('adds index with no substitution', () => {
     const parser = new DocumentIndexParser();
     const document = {
       data: {
@@ -37,7 +37,7 @@ describe('IndexNameParser', () => {
     expect(document).toHaveProperty('index', 'nrm-logs-access-2021.05.01');
   });
 
-  it('adds index with multiple subsitutions', () => {
+  it('adds index with multiple substitutions', () => {
     const parser = new DocumentIndexParser();
     const document = {
       data: {
@@ -49,6 +49,37 @@ describe('IndexNameParser', () => {
     } as unknown as OsDocument;
     parser.apply(document);
     expect(document).toHaveProperty('index', 'nrm-logs-access-2021.05.01-2021');
+  });
+
+  it('adds index with field substitutions', () => {
+    const parser = new DocumentIndexParser();
+    const document = {
+      data: {
+        'labels': {
+          cool: 'dude',
+        },
+        '@timestamp': '2021-05-01T18:47:40.314-07:00',
+        '@metadata': {
+          index: 'nrm-logs-<!=labels.cool=!>-access-<%=YYYY.MM.DD=%>',
+        },
+      },
+    } as unknown as OsDocument;
+    parser.apply(document);
+    expect(document).toHaveProperty('index', 'nrm-logs-dude-access-2021.05.01');
+  });
+  it('throws error with undefined field substitution', () => {
+    const parser = new DocumentIndexParser();
+    const document = {
+      data: {
+        '@timestamp': '2021-05-01T18:47:40.314-07:00',
+        '@metadata': {
+          index: 'nrm-logs-<!=labels.cool=!>-access-<%=YYYY.MM.DD=%>',
+        },
+      },
+    } as unknown as OsDocument;
+    expect(() => {
+      parser.apply(document);
+    }).toThrow('labels.cool field value not in document');
   });
 
   it('throws error with no index metadata', () => {

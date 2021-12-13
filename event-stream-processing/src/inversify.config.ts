@@ -17,6 +17,7 @@ import {LoggerConsoleService} from './util/logger-console.service';
 import {LoggerService} from './util/logger.service';
 import {MaxmindCityLookupService} from './util/maxmindCityLookup.service';
 import {MaxmindAsnLookupService} from './util/maxmindAsnLookup.service';
+import {RegexService} from './shared/regex.service';
 import {SubsetService} from './shared/subset.service';
 
 // Parsers
@@ -39,6 +40,7 @@ import {RemoveMetadataParser} from './parsers/remove-metadata.parser';
 import {RenameParser} from './parsers/rename.parser';
 import {ThreatPhpParser} from './parsers/threat-php.parser';
 import {TimestampFieldParser} from './parsers/timestamp-field.parser';
+import {TomcatParser} from './parsers/tomcat.parser';
 import {UserAgentParser} from './parsers/user-agent.parser';
 
 /**
@@ -63,6 +65,7 @@ function create(): Container {
   myContainer.bind<KinesisStreamWrapperService>(TYPES.KinesisStreamWrapperService).to(KinesisStreamWrapperService);
 
   myContainer.bind<DateAndTimeService>(TYPES.DateAndTimeService).to(DateAndTimeService);
+  myContainer.bind<RegexService>(TYPES.RegexService).to(RegexService);
   myContainer.bind<SubsetService>(TYPES.SubsetService).to(SubsetService);
 
   // Stage: INIT
@@ -71,6 +74,7 @@ function create(): Container {
 
   // Stage: PreParse
   myContainer.bind<Parser>(TYPES.PreParser).to(ApacheParser);
+  myContainer.bind<Parser>(TYPES.PreParser).to(TomcatParser);
   myContainer.bind<Parser>(TYPES.PreParser).to(RenameParser);
 
   // Stage: Parse

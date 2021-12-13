@@ -16,4 +16,5 @@ export const TYPES = {
   PostParser: Symbol.for('PostParser'),
   FinalizeParser: Symbol.for('FinalizeParser'),
   SubsetService: Symbol.for('SubsetService'),
+  RegexService: Symbol.for('RegexService'),
 };

@@ -12,7 +12,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,log.file.name,offset,message',
+        hash: 'host.hostname,log.file.name,offset,event.original',
         docId: 'log.file.name,offset,event.hash',
         index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
         timestampField: 'apache.access.time',
@@ -76,6 +76,93 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
           'userAgent:user_agent.original',
         threatPhp: true,
         userAgent: true,
+      },
+    },
+  },
+  {
+    name: FingerprintCategory.TOMCAT_ACCESS_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
+        dataset: 'tomcat.access',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: 'host.hostname,log.file.name,offset,event.original',
+        docId: 'log.file.name,offset,event.hash',
+        index: 'nrm-logs-<!=labels.application=!>-access-<%=YYYY.MM.DD=%>',
+        timestampField: 'tomcat.access.time',
+        timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
+        // Remove?
+        appClassification: true,
+        deslash: true,
+        fileAttributes: true,
+        explodeHttpUrl: true,
+        geoIp: true,
+        httpStatusOutcome: true,
+        threatPhp: true,
+        userAgent: true,
+        keyAsPath: true,
+      },
+    },
+  },
+  {
+    name: FingerprintCategory.TOMCAT_LOCALHOST_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
+        dataset: 'tomcat.localhost',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: 'host.hostname,log.file.name,offset,event.original',
+        docId: 'log.file.name,offset,event.hash',
+        index: 'nrm-logs-<!=labels.application=!>-<%=YYYY.MM.DD=%>',
+        timestampField: 'tomcat.time',
+        timestampFormat: 'DD-MMM-YYYY HH:mm:ss:ffff',
+        // Remove?
+        appClassification: true,
+        deslash: true,
+        fileAttributes: true,
+        explodeHttpUrl: true,
+        geoIp: true,
+        httpStatusOutcome: true,
+        threatPhp: true,
+        userAgent: true,
+        keyAsPath: true,
+      },
+    },
+  },
+  {
+    name: FingerprintCategory.TOMCAT_CATALINA_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
+        dataset: 'tomcat.catalina',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: 'host.hostname,log.file.name,offset,event.original',
+        docId: 'log.file.name,offset,event.hash',
+        index: 'nrm-logs-<!=labels.application=!>-<%=YYYY.MM.DD=%>',
+        timestampField: 'tomcat.time',
+        timestampFormat: 'DD-MMM-YYYY HH:mm:ss:ffff',
+        // Remove?
+        appClassification: true,
+        deslash: true,
+        fileAttributes: true,
+        explodeHttpUrl: true,
+        geoIp: true,
+        httpStatusOutcome: true,
+        threatPhp: true,
+        userAgent: true,
+        keyAsPath: true,
       },
     },
   },
