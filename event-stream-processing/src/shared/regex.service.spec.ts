@@ -15,9 +15,9 @@ const APACHE_ACCESS_LOG_EVENT_SIGNATURE = Object.freeze({
 });
 
 /* eslint-disable max-len,camelcase,@typescript-eslint/no-unsafe-call */
-const regex_v1 = /^(?<labels__format>v1\.0) (?<apache__version>[^ ]+) "(?<url__scheme>[^:]+):\/\/(?<url__domain>[^:]+):(?<url__port>\d+)" "(?<client__ip>[^"]+)" \[(?<apache__access__time>[^\]]+)\] "(?<http__request__line>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__request__bytes>(-?|\d+)) bytes (?<http__response__bytes>(-?|\d+)) bytes "(?<http__request__referrer__original>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)" (?<event__duration>\d+) ms, "(?<tls__version_protocol>[^"]+)" "(?<tls__cypher>[^"]+)"$/;
-const regex_apache_standard01 = /^(?<source__ip>[^ ]+) ([^ ]+) (?<user__name>[^ ]+) \[(?<apache__access__time>[^\]]+)\] "(?<http__request__line>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__response__bytes>(-?|\d+)) "(?<http__request__referrer__original>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)" (?<event__duration>(-?|\d+))$/;
-const regex_apache_standard02 = /^(?<source__ip>[^ ]+) ([^ ]+) (?<user__name>[^ ]+) \[(?<apache__access__time>[^\]]+)\] "(?<http__request__line>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__response__bytes>(-?|\d+)) "(?<http__request__referrer__original>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)"$/;
+const regex_v1 = /^(?<labels__format>v1\.0) (?<service__version>[^ ]+) "(?<url__scheme>[^:]+):\/\/(?<url__domain>[^:]+):(?<url__port>\d+)" "(?<client__ip>[^"]+)" \[(?<event__original_timestamp>[^\]]+)\] "(?<http__request__line>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__request__bytes>(-?|\d+)) bytes (?<http__response__bytes>(-?|\d+)) bytes "(?<http__request__referrer__original>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)" (?<event__duration>\d+) ms, "(?<tls__version_protocol>[^"]+)" "(?<tls__cypher>[^"]+)"$/;
+const regex_apache_standard01 = /^(?<source__ip>[^ ]+) ([^ ]+) (?<user__name>[^ ]+) \[(?<event__original_timestamp>[^\]]+)\] "(?<http__request__line>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__response__bytes>(-?|\d+)) "(?<http__request__referrer__original>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)" (?<event__duration>(-?|\d+))$/;
+const regex_apache_standard02 = /^(?<source__ip>[^ ]+) ([^ ]+) (?<user__name>[^ ]+) \[(?<event__original_timestamp>[^\]]+)\] "(?<http__request__line>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__response__bytes>(-?|\d+)) "(?<http__request__referrer__original>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)"$/;
 /* eslint-enable max-len */
 
 const regexArr = [regex_v1, regex_apache_standard01, regex_apache_standard02];
@@ -36,6 +36,8 @@ describe('RegexService', () => {
     // eslint-disable-next-line max-len
     expect(document.data).toHaveProperty('http.request.line', 'GET /WebID/IISWebAgentIF.dll?postdata=\\"><script>foo</script> HTTP/1.1');
     expect(document.data).toHaveProperty('event.duration', '1');
+    expect(document.data).toHaveProperty('event.original_timestamp', '25/May/2021:15:53:10 -0700');
+    expect(document.data).toHaveProperty('service.version', '20120211');
   });
 
   it('parses suspicious entry - 002', () => {
@@ -48,6 +50,7 @@ describe('RegexService', () => {
     // eslint-disable-next-line max-len
     expect(document.data).toHaveProperty('user_agent.original', '() { _; } >_[$($())] { echo Content-Type: text/plain ; echo ; echo \\"bash_cve_2014_6278 Output : $((10+12))\\"; }');
     expect(document.data).toHaveProperty('event.duration', '1');
+    expect(document.data).toHaveProperty('event.original_timestamp', '25/May/2021:15:51:47 -0700');
   });
 
   it('parses Apache standard format', () => {
@@ -63,6 +66,7 @@ describe('RegexService', () => {
     expect(document.data).not.toHaveProperty('http.request.referrer.original');
     expect(document.data).toHaveProperty('user_agent.original', 'AHC/2.1');
     expect(document.data).toHaveProperty('event.duration');
+    expect(document.data).toHaveProperty('event.original_timestamp', '05/Jun/2020:00:06:57 -0700');
   });
 
   it('parses Apache standard format - 2', () => {
@@ -81,6 +85,7 @@ describe('RegexService', () => {
     // eslint-disable-next-line max-len
     expect(document.data).toHaveProperty('user_agent.original', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0');
     expect(document.data).toHaveProperty('event.duration');
+    expect(document.data).toHaveProperty('event.original_timestamp', '05/Jun/2020:07:23:23 -0700');
   });
 
   it('keeps dash - 3', () => {
