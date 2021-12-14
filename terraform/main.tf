@@ -462,7 +462,7 @@ data "aws_lambda_layer_version" "maxmind_geoip_db" {
 resource "aws_lambda_function" "lambda_iit_agents" {
   function_name = "nress${ var.suffix }-iit-agents"
   role          = aws_iam_role.lambda_iit_agents.arn
-  runtime       = "nodejs12.x"
+  runtime       = "nodejs14.x"
   handler       = "index.kinesisStreamHandler"
   memory_size   = 1024
   timeout       = 60
@@ -485,10 +485,10 @@ resource "aws_lambda_function" "lambda_iit_agents" {
 resource "aws_lambda_event_source_mapping" "iit_logs_from_kinesis" {
   event_source_arn  = aws_kinesis_stream.iit_logs.arn
   function_name     = aws_lambda_function.lambda_iit_agents.arn
-  parallelization_factor = 2 # equals to number of kinesis shards
+  parallelization_factor = 2
   starting_position = "LATEST"
   batch_size = 10000
-  maximum_batching_window_in_seconds = 60
+  maximum_batching_window_in_seconds = 10
 }
 
 resource "null_resource" "es_configure" {
