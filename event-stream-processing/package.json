@@ -15,7 +15,7 @@
   "scripts": {
     "clean": "npm-run-all rm-lib rm-coverage",
     "mkdirs": "mkdirp ../terraform/dist",
-    "compile": "tsc",
+    "compile": "tsc -p tsconfig.build.json",
     "lint": "eslint \"**/*.{js,ts}\" --quiet --fix --config .eslintrc.json",
     "check-lint": "eslint \"**/*.{js,ts}\" --quiet --config .eslintrc.json",
     "build-pack": "npm-pack-zip --dst ../terraform/dist",
