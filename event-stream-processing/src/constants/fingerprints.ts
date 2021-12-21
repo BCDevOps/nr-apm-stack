@@ -194,7 +194,8 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        docId: 'kinesis.eventID',
+        hash: 'host.hostname,log.file.name,offset,@timestamp',
+        docId: 'log.file.name,offset,event.hash',
         index: 'nrm-deploy-<%=YYYY.MM=%>',
       },
     },
