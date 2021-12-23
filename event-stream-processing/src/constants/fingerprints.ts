@@ -188,7 +188,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     fingerprint: {
       event: {
         kind: 'metric',
-        dataset: 'system.cpu',
+        dataset: 'host.cpu',
       },
     },
     dataDefaults: {
@@ -203,7 +203,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     fingerprint: {
       event: {
         kind: 'metric',
-        dataset: 'system.memory',
+        dataset: 'host.memory',
       },
     },
     dataDefaults: {

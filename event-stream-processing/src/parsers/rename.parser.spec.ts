@@ -20,4 +20,14 @@ describe('RenameParser', () => {
     });
     expect(document.data.log).toBe(undefined);
   });
+
+  it('renames fields with childern', () => {
+    const parser = new RenameParser();
+    const document = {
+      data: {'Mem': {free: 20, swap: 5}, '@metadata': {rename: 'Mem:mem'}},
+    } as unknown as OsDocument;
+    parser.apply(document);
+    expect(document.data.mem).toEqual({free: 20, swap: 5});
+    expect(document.data.Mem).toBe(undefined);
+  });
 });
