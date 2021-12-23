@@ -218,7 +218,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     fingerprint: {
       event: {
         kind: 'metric',
-        dataset: 'system.disk_usage',
+        dataset: 'host.disk_usage',
       },
     },
     dataDefaults: {
