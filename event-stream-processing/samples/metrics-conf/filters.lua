@@ -181,9 +181,15 @@ function modify_cpu_stats(tag, timestamp, record)
     core_max = nil
     core_average = nil
     core_stddev = nil
+    core_json = "["
     while(not(isempty(new_record[string.format("cpu%d.p_cpu", core)])) and not(isempty(new_record[string.format("cpu%d.p_user", core)])) and not(isempty(new_record[string.format("cpu%d.p_system", core)])) )
     do
         core_cpu[core] = new_record[string.format("cpu%d.p_cpu", core)]
+
+        core_json = core_json .. string.format('{"usage":%f,"user":%f,"system":%f},',
+            new_record[string.format("cpu%d.p_cpu", core)],
+            new_record[string.format("cpu%d.p_user", core)],
+            new_record[string.format("cpu%d.p_system", core)])
 
         new_record[string.format("cpu%d.p_cpu", core)] = nil
         new_record[string.format("cpu%d.p_user", core)] = nil
@@ -191,7 +197,9 @@ function modify_cpu_stats(tag, timestamp, record)
         core = core + 1
     end
     if core > 0 then
+        core_json = core_json:sub(1, -2) .. "]"
         new_record["host.cpu.cores"] = core
+        new_record["host.cpu.core_json"] = core_json
         new_record["host.cpu.core_mean"] = stats.mean(core_cpu)
         new_record["host.cpu.core_median"] = stats.median(core_cpu)
         new_record["host.cpu.core_min"], new_record["host.cpu.core_max"] = stats.maxmin(core_cpu)
