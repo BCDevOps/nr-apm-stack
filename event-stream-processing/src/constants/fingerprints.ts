@@ -213,6 +213,21 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       },
     },
   },
+  {
+    name: FingerprintCategory.METRICS,
+    fingerprint: {
+      event: {
+        kind: 'metric',
+        dataset: 'host.disk_usage',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        docId: 'kinesis.eventID',
+        index: 'nrm-metrics-<%=YYYY.MM.DD=%>',
+      },
+    },
+  },
   // Unknown should be last
   {
     name: FingerprintCategory.UNKNOWN,
