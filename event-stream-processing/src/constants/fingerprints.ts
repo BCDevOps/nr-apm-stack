@@ -187,6 +187,23 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     name: FingerprintCategory.METRICS,
     fingerprint: {
       event: {
+        kind: 'event',
+        category: ['configuration'],
+        type: ['installation'],
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: 'host.hostname,log.file.name,offset,@timestamp',
+        docId: 'log.file.name,offset,event.hash',
+        index: 'nrm-deploy-<%=YYYY.MM=%>',
+      },
+    },
+  },
+  {
+    name: FingerprintCategory.METRICS,
+    fingerprint: {
+      event: {
         kind: 'metric',
         dataset: 'host.cpu',
       },
