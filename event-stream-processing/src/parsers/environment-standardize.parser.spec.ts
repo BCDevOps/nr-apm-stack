@@ -16,10 +16,10 @@ describe('EnvironmentStandardizeParser', () => {
     } as unknown as OsDocument;
     parser.apply(document);
     expect(document.data.service).toEqual({
-      environment: 'integration',
+      environment: 'development',
     });
     expect(document.data.labels).toEqual({
-      env: 'integration',
+      env: 'development',
       env_alias: 'wfint',
     });
   });
