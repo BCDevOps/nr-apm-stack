@@ -12,7 +12,7 @@ describe('EnvironmentStandardizeParser', () => {
   it('standardizes environment', () => {
     const parser = new EnvironmentStandardizeParser();
     const document = {
-      data: {'service': {environment: 'wfint'}, '@metadata': {environmentStandardize: true}},
+      data: {'service': {environment: 'WFINT'}, '@metadata': {environmentStandardize: true}},
     } as unknown as OsDocument;
     parser.apply(document);
     expect(document.data.service).toEqual({

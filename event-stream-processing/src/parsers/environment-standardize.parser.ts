@@ -38,11 +38,12 @@ export class EnvironmentStandardizeParser implements Parser {
   apply(document: OsDocument): void {
     const value = lodash.get(document.data, 'service.environment');
     if (value) {
-      const standardEnv = envAlias[value] ? envAlias[value] : 'unknown';
+      const lcValue = (value as string).toLowerCase();
+      const standardEnv = envAlias[lcValue] ? envAlias[lcValue] : 'unknown';
       lodash.set(document.data, 'labels.env', standardEnv);
       lodash.set(document.data, 'service.environment', standardEnv);
-      if (value !== standardEnv) {
-        lodash.set(document.data, 'labels.env_alias', value);
+      if (lcValue !== standardEnv) {
+        lodash.set(document.data, 'labels.env_alias', lcValue);
       }
     }
   }
