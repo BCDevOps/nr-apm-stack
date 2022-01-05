@@ -43,7 +43,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     dataDefaults: {
       '@metadata': {
         hash: 'kinesis.eventID,log.file.path,log.file.offset,event.original',
-        docId: 'kubernetes.pod_name,log.file.offset,event.hash',
+        docId: 'host.hostname,log.file.offset,event.hash',
         index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
         timestampField: 'timestamp',
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
@@ -58,18 +58,18 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         keyAsPath: true,
         rename: 'azp:client.user.id' +
           'contentLength:http.response.body.bytes' +
-          'hostname:kubernetes.pod_name' +
+          'hostname:host.hostname' +
           'httpVersion:http.version' +
-          'hostIp:kubernetes.pod_ip' +
+          'hostIp:host.ip' +
           'log:event.original' +
           'level:log.level' +
           'logFileOffset:log.file.offset' +
           'logFilePath:log.file.path' +
           'logStreamDate:event.created' +
           'method:http.request.method' +
-          'namespace:kubernetes.namespace_name' +
+          'namespace:orchestrator.namespace' +
           'path:url.path' +
-          'product:labels.application' +
+          'product:service.name' +
           'query:url.query' +
           'responseTime:http.response.time' +
           'statusCode:http.response.status_code' +
