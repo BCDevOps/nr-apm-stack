@@ -561,7 +561,7 @@ resource "elasticsearch_opendistro_role" "nrm_read_all" {
   ]
   index_permissions {
     index_patterns  = ["iitd-*", "iit-*", "nrm-*"]
-    allowed_actions = ["read", "indices:admin/resolve/index"]
+    allowed_actions = ["read", "indices:admin/resolve/index", "indices:data/read/get", "indices:monitor/settings/get"]
     masked_fields = ["source.ip", "client.ip"]
     field_level_security = ["~message", "~event.original", "~http.request.line"]
   }
@@ -630,7 +630,7 @@ resource "elasticsearch_opendistro_role" "nrm_security" {
   ]
   index_permissions {
     index_patterns  = ["iitd-*", "iit-*", "nrm-*"]
-    allowed_actions = ["read", "indices:admin/resolve/index"]
+    allowed_actions = ["read", "indices:admin/resolve/index", "indices:data/read/get", "indices:monitor/settings/get"]
   }
   index_permissions {
     index_patterns  = [".kibana_*"]
