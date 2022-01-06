@@ -6,20 +6,22 @@ import lodash from 'lodash';
 const envAlias: {[key: string]: string} = {
   production: 'production',
   test: 'test',
-  integration: 'development',
-  staging1: 'production',
-  staging2: 'production',
-  staging3: 'production',
+  integration: 'integration',
+  development: 'development',
+  delivery: 'delivery',
+  staging: 'staging',
+  staging1: 'staging',
+  staging2: 'staging',
+  staging3: 'staging',
   wfprd: 'production',
   wftst: 'test',
-  wfint: 'development',
-  wfdlv: 'development',
+  wfint: 'integration',
+  wfdlv: 'delivery',
 };
 
 @injectable()
 /**
  * Standardize service environment field
- * @deprecated
  */
 export class EnvironmentStandardizeParser implements Parser {
   /**
