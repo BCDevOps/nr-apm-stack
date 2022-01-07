@@ -27,6 +27,7 @@ import {ApplicationClassificationParser} from './parsers/application-classificat
 import {DeslashParser} from './parsers/deslash.parser';
 import {DocumentIdParser} from './parsers/document-id.parser';
 import {DocumentIndexParser} from './parsers/document-index.parser';
+import {EnvironmentStandardizeParser} from './parsers/environment-standardize.parser';
 import {FileAttributeParser} from './parsers/file-attribute.parser';
 import {KinesisParser} from './parsers/kinesis.parser';
 import {GeoIpParser} from './parsers/geo-ip.parser';
@@ -79,6 +80,7 @@ function create(): Container {
 
   // Stage: Parse
   myContainer.bind<Parser>(TYPES.Parser).to(DeslashParser);
+  myContainer.bind<Parser>(TYPES.Parser).to(EnvironmentStandardizeParser);
   myContainer.bind<Parser>(TYPES.Parser).to(HttpUrlParser);
   myContainer.bind<Parser>(TYPES.Parser).to(HttpStatusEventOutcomeParser);
   myContainer.bind<Parser>(TYPES.Parser).to(IpvParser);
