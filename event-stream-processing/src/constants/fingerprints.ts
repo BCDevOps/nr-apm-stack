@@ -6,7 +6,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     fingerprint: {
       event: {
         kind: 'event',
-        category: 'web',
+        category: ['web'],
         dataset: 'apache.access',
       },
     },
@@ -36,7 +36,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     fingerprint: {
       event: {
         kind: 'event',
-        category: 'web',
+        category: ['web'],
         dataset: 'node.css.http',
       },
     },
@@ -84,7 +84,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     fingerprint: {
       event: {
         kind: 'event',
-        category: 'web',
+        category: ['web'],
         dataset: 'tomcat.access',
       },
     },
@@ -113,7 +113,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     fingerprint: {
       event: {
         kind: 'event',
-        category: 'web',
+        category: ['web'],
         dataset: 'tomcat.localhost',
       },
     },
@@ -142,7 +142,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     fingerprint: {
       event: {
         kind: 'event',
-        category: 'web',
+        category: ['web'],
         dataset: 'tomcat.catalina',
       },
     },
@@ -171,7 +171,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     fingerprint: {
       event: {
         kind: 'event',
-        category: 'web',
+        category: ['web'],
         dataset: 'tomcat.webapp',
       },
     },
@@ -200,7 +200,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     fingerprint: {
       event: {
         kind: 'event',
-        category: 'web',
+        category: ['web'],
         dataset: 'vault.audit',
       },
     },
