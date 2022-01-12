@@ -167,6 +167,35 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
   },
   {
+    name: FingerprintCategory.TOMCAT_LOG4J_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
+        dataset: 'tomcat.webapp',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: 'host.hostname,log.file.name,offset,event.original',
+        docId: 'log.file.name,offset,event.hash',
+        index: 'nrm-logs-<!=labels.application=!>-<%=YYYY.MM.DD=%>',
+        timestampField: 'event.original_timestamp',
+        timestampFormat: 'DD-MMM-YYYY HH:mm:ss.SSS',
+        // Remove?
+        appClassification: true,
+        deslash: true,
+        fileAttributes: true,
+        explodeHttpUrl: true,
+        geoIp: true,
+        httpStatusOutcome: true,
+        threatPhp: true,
+        userAgent: true,
+        keyAsPath: true,
+      },
+    },
+  },
+  {
     name: FingerprintCategory.VAULT_AUDIT_LOGS,
     fingerprint: {
       event: {
