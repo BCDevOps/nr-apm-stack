@@ -1,0 +1,18 @@
+[
+  {
+    "role_name": "wf-write-all",
+    "description": "WF tenant",
+    "tenant_permissions": {
+      "tenant_patterns": ["Wildfire"],
+      "allowed_actions": ["kibana_all_write"]
+    }
+  },
+  {
+    "role_name": "ppm-write-all",
+    "description": "PPM tenant",
+    "tenant_permissions": {
+      "tenant_patterns": ["PPM"],
+      "allowed_actions": ["kibana_all_write"]
+    }
+  }
+]

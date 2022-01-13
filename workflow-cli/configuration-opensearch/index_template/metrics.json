@@ -1,0 +1,339 @@
+{
+  "index_patterns" : [
+    "nrm-metrics-*"
+  ],
+  "template": {
+    "aliases": {
+      "nrm-metrics": {}
+    },
+    "settings" : {
+      "number_of_shards": 1,
+      "number_of_replicas": 1
+    },
+    "mappings" : {
+      "properties" : {
+        "agent" : {
+          "properties" : {
+            "type" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "version" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            }
+          }
+        },
+        "ecs" : {
+          "properties" : {
+            "version" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            }
+          }
+        },
+        "event" : {
+          "properties" : {
+            "category" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "dataset" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "ingested" : {
+              "type" : "date"
+            },
+            "kind" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            }
+          }
+        },
+        "host" : {
+          "properties" : {
+            "architecture" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "cpu" : {
+              "properties" : {
+                "core_json" : {
+                  "type" : "text",
+                  "fields" : {
+                    "keyword" : {
+                      "type" : "keyword",
+                      "ignore_above" : 256
+                    }
+                  }
+                },
+                "cores" : {
+                  "type" : "long"
+                },
+                "system" : {
+                  "type" : "float"
+                },
+                "usage" : {
+                  "type" : "float"
+                },
+                "usage_core_max" : {
+                  "type" : "float"
+                },
+                "usage_core_median" : {
+                  "type" : "float"
+                },
+                "usage_core_min" : {
+                  "type" : "float"
+                },
+                "usage_core_stddev" : {
+                  "type" : "float"
+                },
+                "user" : {
+                  "type" : "float"
+                }
+              }
+            },
+            "disk" : {
+              "properties" : {
+                "free" : {
+                  "type" : "long"
+                },
+                "mount" : {
+                  "type" : "text",
+                  "fields" : {
+                    "keyword" : {
+                      "type" : "keyword",
+                      "ignore_above" : 256
+                    }
+                  }
+                },
+                "total" : {
+                  "type" : "long"
+                },
+                "used" : {
+                  "type" : "long"
+                },
+                "used_percentage" : {
+                  "type" : "float"
+                }
+              }
+            },
+            "domain" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "hostname" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "ip" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "mac" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "memory" : {
+              "properties" : {
+                "free" : {
+                  "type" : "long"
+                },
+                "total" : {
+                  "type" : "long"
+                },
+                "used" : {
+                  "type" : "long"
+                },
+                "used_percentage" : {
+                  "type" : "float"
+                }
+              }
+            },
+            "name" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "os" : {
+              "properties" : {
+                "family" : {
+                  "type" : "text",
+                  "fields" : {
+                    "keyword" : {
+                      "type" : "keyword",
+                      "ignore_above" : 256
+                    }
+                  }
+                },
+                "full" : {
+                  "type" : "text",
+                  "fields" : {
+                    "keyword" : {
+                      "type" : "keyword",
+                      "ignore_above" : 256
+                    }
+                  }
+                },
+                "kernel" : {
+                  "type" : "text",
+                  "fields" : {
+                    "keyword" : {
+                      "type" : "keyword",
+                      "ignore_above" : 256
+                    }
+                  }
+                },
+                "name" : {
+                  "type" : "text",
+                  "fields" : {
+                    "keyword" : {
+                      "type" : "keyword",
+                      "ignore_above" : 256
+                    }
+                  }
+                },
+                "type" : {
+                  "type" : "text",
+                  "fields" : {
+                    "keyword" : {
+                      "type" : "keyword",
+                      "ignore_above" : 256
+                    }
+                  }
+                },
+                "version" : {
+                  "type" : "text",
+                  "fields" : {
+                    "keyword" : {
+                      "type" : "keyword",
+                      "ignore_above" : 256
+                    }
+                  }
+                }
+              }
+            },
+            "swap" : {
+              "properties" : {
+                "free" : {
+                  "type" : "long"
+                },
+                "total" : {
+                  "type" : "long"
+                },
+                "used" : {
+                  "type" : "long"
+                },
+                "used_percentage" : {
+                  "type" : "float"
+                }
+              }
+            }
+          }
+        },
+        "kinesis" : {
+          "properties" : {
+            "approximateArrivalTimestamp" : {
+              "type" : "float"
+            },
+            "eventID" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "partitionKey" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "sequenceNumber" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "priority": 200,
+  "composed_of": [
+    "component_nrm_ecs"
+  ],
+  "version": 1,
+  "_meta": {
+    "description": "Generic metric indices"
+  }
+}

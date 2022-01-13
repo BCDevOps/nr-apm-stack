@@ -1,0 +1,25 @@
+[
+  {
+    "name": "all_access"
+  },
+  {
+    "name": "nrm-read-all"
+  },
+  {
+    "name": "nrm-security"
+  },
+  <% tenants.forEach(function(tenant){ %>
+  {
+    "name": "<%= tenant.role_name %>"
+  },
+  <% }); %>
+  {
+    "name": "alerting_read_access"
+  },
+  {
+    "name": "alerting_ack_alerts"
+  },
+  {
+    "name": "alerting_full_access"
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "template": {
+    "mappings": {
+      "properties": {
+        "@timestamp": {
+          "type": "date"
+        },
+        "agent" : {
+          "properties": {
+            "type": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "version" : {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 10
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -115,12 +115,18 @@ variable "ultrawarm_node_instance_type" {
   type = string
   default = "ultrawarm1.medium.elasticsearch"
 }
-/*
-variable "ultrawarm_node_volume_size" {
-  type = number
-  default = null
+
+variable "tenants" {
+  type = list(object({
+    role_name = string
+    description = string
+    tenant_permissions = object ({
+      tenant_patterns = list(string)
+      allowed_actions = list(string)
+    })
+  }))
+  default = jsondecode(file("./tenants.json"))
 }
-*/
 
 provider "aws" {
   region = var.region
@@ -500,11 +506,11 @@ resource "null_resource" "es_configure" {
     #working_dir = "../"
     #command = "echo %CD%"
     command = <<EOF
-curl -sSL -o /tmp/node-v12.22.1-linux-x64.tar.gz https://nodejs.org/dist/v12.22.1/node-v12.22.1-linux-x64.tar.gz
+curl -sSL -o /tmp/node-v16.13.2-linux-x64.tar.gz https://nodejs.org/dist/v16.13.2/node-v16.13.2-linux-x64.tar.gz
 mkdir /home/terraform/node
-tar -xf /tmp/node-v12.22.1-linux-x64.tar.gz -C /home/terraform/node --strip-components=1
+tar -xf /tmp/node-v16.13.2-linux-x64.tar.gz -C /home/terraform/node --strip-components=1
 export PATH=/home/terraform/node/bin:$PATH
-npx -p @aws-sdk/client-secrets-manager -p @bcgov/nrdk nrdk deploy --config-script=./_pipeline/lib/config.js --deploy-script=./_pipeline/lib/deploy.js --pr=${var.pr} --env=${var.env}
+../workflow-cli/bin/dev opensearch-sync
 EOF
   environment = {
     AWS_ASSUME_ROLE = local.iam_role_arm
@@ -582,35 +588,10 @@ resource "elasticsearch_opendistro_roles_mapping" "nrm_read_all_mapper" {
   backend_roles = ["nrm-read-all"]
 }
 
-resource "elasticsearch_opendistro_role" "wf_write_all" {
-  role_name   = "wf-write-all"
-  description = "WF write role"
-  tenant_permissions {
-    tenant_patterns = ["Wildfire"]
-    allowed_actions = ["kibana_all_write"]
-  }
-  depends_on = [aws_elasticsearch_domain.es]
-}
-
-resource "elasticsearch_opendistro_roles_mapping" "wf_write_all_mapper" {
-  role_name     = elasticsearch_opendistro_role.wf_write_all.id
-  description   = "Mapping KC role to ES role"
-  backend_roles = ["wf-write-all"]
-}
-resource "elasticsearch_opendistro_role" "ppm_write_all" {
-  role_name   = "ppm-write-all"
-  description = "PPM write role"
-  tenant_permissions {
-    tenant_patterns = ["PPM"]
-    allowed_actions = ["kibana_all_write"]
-  }
-  depends_on = [aws_elasticsearch_domain.es]
-}
-
-resource "elasticsearch_opendistro_roles_mapping" "ppm_write_all_mapper" {
-  role_name     = elasticsearch_opendistro_role.ppm_write_all.id
-  description   = "Mapping KC role to ES role"
-  backend_roles = ["ppm-write-all"]
+module "tenant" {
+  source = "./tenant-module"
+  for_each = var.tenants
+  tenant = each.value
 }
 
 resource "elasticsearch_opendistro_role" "nrm_security" {

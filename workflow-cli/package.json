@@ -1,0 +1,77 @@
+{
+  "name": "workflow-cli",
+  "description": "OpenSearch Workflow CLI",
+  "version": "1.0.0",
+  "author": "Matthew Bystedt",
+  "bin": {
+    "workflow-cli": "./bin/run"
+  },
+  "dependencies": {
+    "@aws-crypto/sha256-js": "^2.0.1",
+    "@aws-sdk/client-elasticsearch-service": "^3.46.0",
+    "@aws-sdk/credential-provider-node": "^3.46.0",
+    "@aws-sdk/node-http-handler": "^3.46.0",
+    "@aws-sdk/protocol-http": "^3.46.0",
+    "@aws-sdk/signature-v4": "^3.46.0",
+    "@keycloak/keycloak-admin-client": "^16.1.0",
+    "@oclif/core": "^1",
+    "@oclif/plugin-help": "^5",
+    "@oclif/plugin-plugins": "^2.0.1",
+    "@types/ejs": "^3.1.0",
+    "ejs": "^3.1.6"
+  },
+  "devDependencies": {
+    "@oclif/test": "^2",
+    "@types/chai": "^4",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.9.4",
+    "chai": "^4",
+    "eslint": "^7.32.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-jest": "^25.3.4",
+    "globby": "^11",
+    "mocha": "^9",
+    "oclif": "^2.1.6",
+    "shx": "^0.3.4",
+    "ts-node": "^10.2.1",
+    "tslib": "^2.3.1",
+    "typescript": "^4.4.3"
+  },
+  "dirname": "oex",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "/bin",
+    "/dist",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
+  "license": "MIT",
+  "main": "dist/index.js",
+  "oclif": {
+    "bin": "workflow-cli",
+    "commands": "./dist/commands",
+    "plugins": [
+      "@oclif/plugin-help",
+      "@oclif/plugin-plugins"
+    ],
+    "topicSeparator": " ",
+    "topics": {
+      "hello": {
+        "description": "Say hello to the world and others"
+      }
+    }
+  },
+  "scripts": {
+    "build": "shx rm -rf dist && tsc -b",
+    "lint": "eslint . --ext .ts --config .eslintrc.json",
+    "postpack": "shx rm -f oclif.manifest.json",
+    "posttest": "npm lint",
+    "prepack": "npm run build && oclif manifest && oclif readme",
+    "manifest": "oclif manifest && oclif readme",
+    "test": "mocha --forbid-only \"test/**/*.test.ts\"",
+    "version": "oclif readme && git add README.md"
+  },
+  "types": "dist/index.d.ts"
+}

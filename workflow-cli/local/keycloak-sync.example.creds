@@ -1,0 +1,7 @@
+export KEYCLOAK_URL=https://oidc.gov.bc.ca
+export KEYCLOAK_REALM=ichqx89w
+export KEYCLOAK_ADMIN_CLIENT_ID=
+export KEYCLOAK_ADMIN_CLIENT_SECRET=
+
+export KEYCLOAK_TARGET_CLIENT_ID=https://apm.io.nrs.gov.bc.ca
+export KEYCLOAK_TARGET_CLIENT_URL=https://apm.io.nrs.gov.bc.ca
