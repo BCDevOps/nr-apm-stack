@@ -8,7 +8,7 @@ import {defaultProvider} from '@aws-sdk/credential-provider-node';
 import {SignatureV4} from '@aws-sdk/signature-v4';
 import {NodeHttpHandler} from '@aws-sdk/node-http-handler';
 import {STSClient, AssumeRoleCommand} from '@aws-sdk/client-sts';
-import {ElasticsearchServiceClient, DescribeElasticsearchDomainCommand, UpdateElasticsearchDomainConfigCommand}
+import {ElasticsearchServiceClient, DescribeElasticsearchDomainCommand}
   from '@aws-sdk/client-elasticsearch-service';
 
 export interface settings {
@@ -52,24 +52,29 @@ export default class OpenSearchSyncService {
   }
 
   public async syncComponentTemplates(settings: settings): Promise<any> {
+    await Promise.all([
+      this.syncEcsComponentTemplates(settings),
+      this.syncNrmEcsComponentTemplates(settings),
+    ]);
+
+    await this.syncIndexTemplates(settings);
+  }
+
+  public async syncEcsComponentTemplates(settings: settings): Promise<any> {
     const componentDir = path.resolve(__dirname, '../../configuration-opensearch/ecs_1.12');
     for (const filePath of fs.readdirSync(componentDir)) {
       if (!filePath.endsWith('.json')) {
         continue;
       }
       const basename = path.basename(filePath, '.json');
-      await this.executeSignedHttpRequest({
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'host': settings.hostname,
-        },
-        hostname: settings.hostname,
-        path: `/_component_template/ecs_${basename}.json_1.12`,
-      });
+      // Read ECS file
+      // Replaces match_only_text with text as OpenSearch does not support it.
+      const text = fs.readFileSync(path.resolve(componentDir, filePath), {encoding: 'utf8'})
+        .replace(/match\_only\_text/g, 'text');
+
       await this.executeSignedHttpRequest({
         method: 'PUT',
-        body: fs.readFileSync(path.resolve(componentDir, filePath), {encoding: 'utf8'}),
+        body: text,
         headers: {
           'Content-Type': 'application/json',
           'host': settings.hostname,
@@ -78,26 +83,52 @@ export default class OpenSearchSyncService {
         path: `/_component_template/ecs_${basename}_1.12`,
       })
         .then((res) => this.waitAndReturnResponseBody(res))
-        .then(() => console.log(`Component Template Loaded - ${basename}`));
+        .then(() => console.log(`Component Template Loaded - ecs_${basename}_1.12`));
     }
   }
 
-  public async syncIndexTemplates(hostname: string): Promise<void> {
-    const indexTemplateFile = path.resolve(__dirname, '../../configurations/index-template/logs-access.json');
-    const indexTemplateName = path.basename(indexTemplateFile, '.json');
+  public async syncNrmEcsComponentTemplates(settings: settings): Promise<any> {
+    const componentDir = path.resolve(__dirname, '../../configuration-opensearch/ecs_nrm_1.0');
+    for (const filePath of fs.readdirSync(componentDir)) {
+      if (!filePath.endsWith('.json')) {
+        continue;
+      }
+      const basename = path.basename(filePath, '.json');
+      await this.executeSignedHttpRequest({
+        method: 'PUT',
+        body: fs.readFileSync(path.resolve(componentDir, filePath), {encoding: 'utf8'}),
+        headers: {
+          'Content-Type': 'application/json',
+          'host': settings.hostname,
+        },
+        hostname: settings.hostname,
+        path: `/_component_template/ecs_nrm_${basename}_1.0`,
+      })
+        .then((res) => this.waitAndReturnResponseBody(res))
+        .then(() => console.log(`Component Template Loaded - ecs_nrm_${basename}_1.0`));
+    }
+  }
 
-    await this.executeSignedHttpRequest({
-      method: 'POST',
-      body: fs.readFileSync(indexTemplateFile, {encoding: 'utf8'}),
-      headers: {
-        'Content-Type': 'application/json',
-        'host': hostname,
-      },
-      hostname,
-      path: `/_template/${indexTemplateName}`,
-    })
-      .then((res) => this.waitAndReturnResponseBody(res))
-      .then(() => console.log(`Index Template Loaded - ${indexTemplateName}`));
+  public async syncIndexTemplates(settings: settings): Promise<any> {
+    const templateDir = path.resolve(__dirname, '../../configuration-opensearch/index_template');
+    for (const filePath of fs.readdirSync(templateDir)) {
+      if (!filePath.endsWith('.json')) {
+        continue;
+      }
+      const basename = path.basename(filePath, '.json');
+      await this.executeSignedHttpRequest({
+        method: 'PUT',
+        body: fs.readFileSync(path.resolve(templateDir, filePath), {encoding: 'utf8'}),
+        headers: {
+          'Content-Type': 'application/json',
+          'host': settings.hostname,
+        },
+        hostname: settings.hostname,
+        path: `/_index_template/nrm_${basename}`,
+      })
+        .then((res) => this.waitAndReturnResponseBody(res))
+        .then(() => console.log(`Index Template Loaded - nrm_${basename}`));
+    }
   }
 
   private async createSignedHttpRequest(httpRequestParams: any) {

@@ -26,7 +26,7 @@ export default class OpenSearchSync extends Command {
     // console.log(domainConfig);
 
     const domainConfig = await service.getDomain(flags);
-    console.log(domainConfig);
+    // console.log(domainConfig);
     await service.syncComponentTemplates(flags);
     // await this.configureElasticSearch(domainConfig.DomainStatus.Endpoint)
 

@@ -1,0 +1,35 @@
+{
+  "_meta": {
+    "documentation": "https://apps.nrs.gov.bc.ca/int/confluence/x/PqJvBQ",
+    "ecs_version": "1.0"
+  },
+  "template": {
+    "mappings": {
+      "properties": {
+        "log": {
+          "properties": {
+            "file": {
+              "properties": {
+                "directory": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "extension": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "name": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "offset": {
+                  "type": "long"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
