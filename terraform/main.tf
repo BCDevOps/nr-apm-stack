@@ -125,7 +125,7 @@ variable "tenants" {
       allowed_actions = list(string)
     })
   }))
-  default = jsondecode(file("./tenants.json"))
+  default = []
 }
 
 provider "aws" {
