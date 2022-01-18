@@ -19,7 +19,6 @@ resource "elasticsearch_opendistro_role" "tenant_role" {
     tenant_patterns = var.tenant["tenant_patterns"]
     allowed_actions = var.tenant["allowed_actions"]
   }
-  depends_on = [aws_elasticsearch_domain.es]
 }
 
 resource "elasticsearch_opendistro_roles_mapping" "tenant_write_all_mapper" {

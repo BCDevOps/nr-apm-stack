@@ -580,6 +580,7 @@ module "tenant" {
   source = "./tenant-module"
   for_each = { for t in jsondecode(file("./tenants.json")): t.role_name => t }
   tenant = each.value
+  depends_on = [aws_elasticsearch_domain.es]
 }
 
 resource "elasticsearch_opendistro_role" "nrm_security" {
