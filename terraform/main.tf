@@ -116,18 +116,6 @@ variable "ultrawarm_node_instance_type" {
   default = "ultrawarm1.medium.elasticsearch"
 }
 
-variable "tenants" {
-  type = list(object({
-    role_name = string
-    description = string
-    tenant_permissions = object ({
-      tenant_patterns = list(string)
-      allowed_actions = list(string)
-    })
-  }))
-  default = []
-}
-
 provider "aws" {
   region = var.region
   assume_role {
@@ -590,7 +578,7 @@ resource "elasticsearch_opendistro_roles_mapping" "nrm_read_all_mapper" {
 
 module "tenant" {
   source = "./tenant-module"
-  for_each = var.tenants
+  for_each = jsondecode(file("./tenants.json"))
   tenant = each.value
 }
 
