@@ -578,7 +578,7 @@ resource "elasticsearch_opendistro_roles_mapping" "nrm_read_all_mapper" {
 
 module "tenant" {
   source = "./tenant-module"
-  for_each = toset(jsondecode(file("./tenants.json")))
+  for_each = { for t in jsondecode(file("./tenants.json")): t.role_name => t }
   tenant = each.value
 }
 
