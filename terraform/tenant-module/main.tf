@@ -1,3 +1,16 @@
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = "3.63.0"
+    }
+    elasticsearch = {
+      source = "phillbaker/elasticsearch"
+      version = "1.6.3"
+    }
+  }
+}
+
 
 resource "elasticsearch_opendistro_role" "tenant_role" {
   role_name   = var.tenant.role_name
