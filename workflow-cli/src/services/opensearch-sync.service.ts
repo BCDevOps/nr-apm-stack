@@ -70,7 +70,10 @@ export default class OpenSearchSyncService {
       // Read ECS file
       // Replaces match_only_text with text as OpenSearch does not support it.
       const text = fs.readFileSync(path.resolve(componentDir, filePath), {encoding: 'utf8'})
-        .replace(/match\_only\_text/g, 'text');
+        .replace(/match\_only\_text/g, 'text')
+        .replace(/wildcard/g, 'keyword')
+        .replace(/flattened/g, 'object');
+
 
       await this.executeSignedHttpRequest({
         method: 'PUT',
