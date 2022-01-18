@@ -16,8 +16,8 @@ resource "elasticsearch_opendistro_role" "tenant_role" {
   role_name   = var.tenant["role_name"]
   description = var.tenant["description"]
   tenant_permissions {
-    tenant_patterns = var.tenant["tenant_permissions.tenant_patterns"]
-    allowed_actions = var.tenant["tenant_permissions.allowed_actions"]
+    tenant_patterns = var.tenant["tenant_permissions"]["tenant_patterns"]
+    allowed_actions = var.tenant["tenant_permissions"]["allowed_actions"]
   }
 }
 
