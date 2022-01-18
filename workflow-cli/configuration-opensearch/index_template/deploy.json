@@ -40,8 +40,7 @@
     "ecs_service_1.12",
     "ecs_user_1.12",
     "ecs_nrm_base_1.0",
-    "ecs_nrm_kinesis_1.0",
-    "ecs_nrm_log_1.0"
+    "ecs_nrm_kinesis_1.0"
   ],
   "version": 3,
   "_meta": {

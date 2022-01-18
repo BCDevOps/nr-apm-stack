@@ -11,6 +11,10 @@
             "project": {
               "ignore_above": 1024,
               "type": "keyword"
+            },
+            "environment_alias": {
+              "ignore_above": 1024,
+              "type": "keyword"
             }
           }
         }

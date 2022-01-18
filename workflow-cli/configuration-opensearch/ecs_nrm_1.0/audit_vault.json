@@ -1,0 +1,222 @@
+{
+  "_meta": {
+    "documentation": "https://apps.nrs.gov.bc.ca/int/confluence/x/PqJvBQ",
+    "version": "1.0"
+  },
+  "template": {
+    "mappings": {
+      "properties": {
+        "error": {
+          "type": "text"
+        },
+        "type": {
+          "ignore_above": 1024,
+          "type": "keyword"
+        },
+        "auth": {
+          "properties": {
+            "token_issue_time": {
+              "type": "date"
+            },
+            "remaining_uses": {
+              "type": "long"
+            },
+            "client_token": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "display_name": {
+              "fields": {
+                "text": {
+                  "type": "text"
+                }
+              },
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "policies": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "token_policies": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "identity_policies": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "metadata": {
+              "properties": {
+                "role": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "role_name": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                }
+              }
+            },
+            "entity_id": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "accessor": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "token_type": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "token_ttl": {
+              "type": "long"
+            }
+          }
+        },
+        "request": {
+          "properties": {
+            "id": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "operation": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "mount_type": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "namespace": {
+              "properties": {
+                "id": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                }
+              }
+            },
+            "remote_address": {
+              "type": "ip"
+            },
+            "client_id": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "path": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "client_token_accessor": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "client_token": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "data_json": {
+              "doc_values": false,
+              "index": false,
+              "type": "keyword"
+            },
+            "wrap_ttl": {
+              "type": "long"
+            }
+          }
+        },
+        "response": {
+          "properties": {
+            "mount_type": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "data_json": {
+              "doc_values": false,
+              "index": false,
+              "type": "keyword"
+            },
+
+            "wrap_info": {
+              "properties": {
+                "ttl": {
+                  "type": "long"
+                },
+                "token": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "accessor": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "creation_time": {
+                  "type": "date"
+                },
+                "creation_path": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                }
+              }
+            },
+            "auth": {
+              "properties": {
+                "client_token": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "token_issue_time": {
+                  "type": "date"
+                },
+                "accessor": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "display_name": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "identity_policies": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "policies": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "token_policies": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "metadata": {
+                  "properties": {
+                    "role": {
+                      "ignore_above": 1024,
+                      "type": "keyword"
+                    },
+                    "role_name": {
+                      "ignore_above": 1024,
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "entity_id": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "token_ttl": {
+                  "type": "long"
+                },
+                "token_type": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
