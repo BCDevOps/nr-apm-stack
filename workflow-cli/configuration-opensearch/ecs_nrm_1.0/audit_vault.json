@@ -157,6 +157,10 @@
                 "creation_path": {
                   "ignore_above": 1024,
                   "type": "keyword"
+                },
+                "wrapped_accessor": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
                 }
               }
             },
