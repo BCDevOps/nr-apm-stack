@@ -86,7 +86,10 @@ export default class OpenSearchSyncService {
         path: `/_component_template/ecs_${basename}_1.12`,
       })
         .then((res) => this.waitAndReturnResponseBody(res))
-        .then(() => console.log(`Component Template Loaded - ecs_${basename}_1.12`));
+        .then((res) => {
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          console.log(`[${res.statusCode}] Component Template Loaded - ecs_${basename}_1.12`);
+        });
     }
   }
 
@@ -108,7 +111,8 @@ export default class OpenSearchSyncService {
         path: `/_component_template/ecs_nrm_${basename}_1.0`,
       })
         .then((res) => this.waitAndReturnResponseBody(res))
-        .then(() => console.log(`Component Template Loaded - ecs_nrm_${basename}_1.0`));
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        .then((res) => console.log(`[${res.statusCode}] Component Template Loaded - ecs_nrm_${basename}_1.0`));
     }
   }
 
@@ -130,7 +134,8 @@ export default class OpenSearchSyncService {
         path: `/_index_template/nrm_${basename}`,
       })
         .then((res) => this.waitAndReturnResponseBody(res))
-        .then(() => console.log(`Index Template Loaded - nrm_${basename}`));
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        .then((res) => console.log(`[${res.statusCode}] Index Template Loaded - nrm_${basename}`));
     }
   }
 
@@ -154,7 +159,7 @@ export default class OpenSearchSyncService {
   }
 
   private async waitAndReturnResponseBody(res: any) {
-    return new Promise((resolve, reject) => {
+    return new Promise<{statusCode: any, body: any}>((resolve, reject) => {
       const incomingMessage = res.response.body;
       let body = '';
       incomingMessage.on('data', (chunk: any) => {

@@ -12,8 +12,6 @@
     },
     "mappings": {
       "dynamic": "strict"
-    },
-    "properties" : {
     }
   },
   "priority": 200,
