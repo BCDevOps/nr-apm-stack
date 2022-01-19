@@ -32,14 +32,16 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 14.x
-      - run: npm ci - workflow cli
+      - run: npm ci
         working-directory: ./workflow-cli
+      - run: cp -R workflow-cli terraform/workflow-cli
+        working-directory: ./
       - name: Download/Install Maxmind databases
         run: ./bin/dev lambda-asset-download
         working-directory: ./workflow-cli
         env:
           MAXMIND_LICENSE_KEY: ${{secrets.MAXMIND_LICENSE_KEY}}
-      - run: npm ci - esp lambda
+      - run: npm ci
         working-directory: ./event-stream-processing
       - run: mkdir dist
         working-directory: ./event-stream-processing

@@ -498,9 +498,7 @@ curl -sSL -o /tmp/node-v16.13.2-linux-x64.tar.gz https://nodejs.org/dist/v16.13.
 mkdir /home/terraform/node
 tar -xf /tmp/node-v16.13.2-linux-x64.tar.gz -C /home/terraform/node --strip-components=1
 export PATH=/home/terraform/node/bin:$PATH
-pwd
-ls ..
-../workflow-cli/bin/dev opensearch-sync
+./workflow-cli/bin/dev opensearch-sync
 EOF
   environment = {
     AWS_ASSUME_ROLE = local.iam_role_arm
