@@ -145,7 +145,7 @@ locals {
 }
 
 locals {
-  iam_role_arm = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.caller_assumed_role}"
+  iam_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.caller_assumed_role}"
 }
 
 resource "time_static" "log_group_suffix" {}
@@ -166,7 +166,7 @@ data "aws_iam_policy_document" "access_policies" {
     ]
   }
 
-  # Allows the current account (admin) assumed role to interact with elastic search
+  # Allows the current account (admin) assumed role to interact with Opensearch
   statement {
     effect = "Allow"
     actions = [
@@ -174,7 +174,7 @@ data "aws_iam_policy_document" "access_policies" {
     ]
     principals {
       type        = "AWS"
-      identifiers = [local.iam_role_arm]
+      identifiers = [local.iam_role_arn]
     }
     resources = [
       "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/${local.es_domain_name}/*",
@@ -279,7 +279,7 @@ resource "aws_elasticsearch_domain" "es" {
     enabled = true
     internal_user_database_enabled = false
     master_user_options {
-      master_user_arn = local.iam_role_arm
+      master_user_arn = local.iam_role_arn
     }
   }
   cluster_config {
@@ -504,7 +504,7 @@ export OS_DOMAIN=nress-prod
 ./workflow-cli/bin/dev opensearch-sync
 EOF
   environment = {
-    AWS_ASSUME_ROLE = local.iam_role_arm
+    AWS_ASSUME_ROLE = local.iam_role_arn
   }
   }
   depends_on = [aws_elasticsearch_domain.es]
@@ -517,7 +517,7 @@ provider "elasticsearch" {
   url = "https://${aws_elasticsearch_domain.es.endpoint}"
   healthcheck = false
   elasticsearch_version = aws_elasticsearch_domain.es.elasticsearch_version
-  aws_assume_role_arn = local.iam_role_arm
+  aws_assume_role_arn = local.iam_role_arn
 }
 
 resource "elasticsearch_opendistro_role" "iit_logs_writer" {
@@ -643,5 +643,9 @@ resource "elasticsearch_opendistro_roles_mapping" "alerting_full_access" {
 resource "elasticsearch_opendistro_roles_mapping" "all_access" {
   role_name     = "all_access"
   description   = "Mapping KC role to ES role"
-  backend_roles = ["all_access", "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/BCGOV_WORKLOAD_admin_umafubc9"]
+  backend_roles = [
+    "all_access",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/BCGOV_WORKLOAD_admin_umafubc9",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/BCGOV_WORKLOAD_developer_umafubc9"
+  ]
 }

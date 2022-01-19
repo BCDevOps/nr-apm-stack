@@ -22,14 +22,8 @@ export default class OpenSearchSync extends Command {
 
     const service = new OpenSearchSyncService();
     await service.assumeIdentity(flags);
-    // const domainConfig = await service.testAccess('apm.io.nrs.gov.bc.ca');
-    // console.log(domainConfig);
 
-    const domainConfig = await service.getDomain(flags);
-    // console.log(domainConfig);
+    await service.getDomain(flags);
     await service.syncComponentTemplates(flags);
-    // await this.configureElasticSearch(domainConfig.DomainStatus.Endpoint)
-
-    // await service.sync(flags.hostname);
   }
 }

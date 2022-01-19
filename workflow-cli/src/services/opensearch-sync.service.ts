@@ -72,8 +72,8 @@ export default class OpenSearchSyncService {
       const text = fs.readFileSync(path.resolve(componentDir, filePath), {encoding: 'utf8'})
         .replace(/match\_only\_text/g, 'text')
         .replace(/wildcard/g, 'keyword')
+        .replace(/constant_keyword/g, 'keyword')
         .replace(/flattened/g, 'object');
-
 
       await this.executeSignedHttpRequest({
         method: 'PUT',
@@ -166,6 +166,9 @@ export default class OpenSearchSyncService {
         body += chunk;
       });
       incomingMessage.on('end', () => {
+        if (res.response.statusCode >= 400 && res.response.statusCode < 500) {
+          console.error(body);
+        }
         resolve({statusCode: res.response.statusCode, body});
       });
       incomingMessage.on('error', (err: any) => {
