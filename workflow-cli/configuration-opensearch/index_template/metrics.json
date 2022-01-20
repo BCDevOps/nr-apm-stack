@@ -1,6 +1,6 @@
 {
   "index_patterns": [
-    "nrm-metrics-test-*"
+    "nrm-metrics-*"
   ],
   "template": {
     "aliases": {

@@ -24,16 +24,20 @@
                   "type": "scaled_float"
                 },
                 "usage_core_max": {
-                  "type": "float"
+                  "scaling_factor": 1000,
+                  "type": "scaled_float"
                 },
                 "usage_core_median": {
-                  "type": "float"
+                  "scaling_factor": 1000,
+                  "type": "scaled_float"
                 },
                 "usage_core_min": {
-                  "type": "float"
+                  "scaling_factor": 1000,
+                  "type": "scaled_float"
                 },
                 "usage_core_stddev": {
-                  "type": "float"
+                  "scaling_factor": 1000,
+                  "type": "scaled_float"
                 },
                 "cores": {
                   "type": "integer"
@@ -43,16 +47,16 @@
             "memory": {
               "properties": {
                 "free": {
-                  "type": "float"
+                  "type": "long"
                 },
                 "total": {
-                  "type": "float"
+                  "type": "long"
                 },
                 "used": {
-                  "type": "float"
+                  "type": "long"
                 },
                 "used_percentage": {
-                  "scaling_factor": 100,
+                  "scaling_factor": 1000,
                   "type": "scaled_float"
                 }
               }
@@ -60,16 +64,16 @@
             "swap": {
               "properties": {
                 "free": {
-                  "type": "float"
+                  "type": "long"
                 },
                 "total": {
-                  "type": "float"
+                  "type": "long"
                 },
                 "used": {
-                  "type": "float"
+                  "type": "long"
                 },
                 "used_percentage": {
-                  "scaling_factor": 100,
+                  "scaling_factor": 1000,
                   "type": "scaled_float"
                 }
               }
@@ -90,7 +94,7 @@
                   "type": "long"
                 },
                 "used_percentage": {
-                  "scaling_factor": 100,
+                  "scaling_factor": 1000,
                   "type": "scaled_float"
                 }
               }

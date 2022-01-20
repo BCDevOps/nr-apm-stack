@@ -645,6 +645,7 @@ resource "elasticsearch_opendistro_roles_mapping" "all_access" {
   description   = "Mapping KC role to ES role"
   backend_roles = [
     "all_access",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/BCGOV_prod_Automation_Admin_Role",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/BCGOV_WORKLOAD_admin_umafubc9",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/BCGOV_WORKLOAD_developer_umafubc9"
   ]
