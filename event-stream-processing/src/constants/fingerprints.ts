@@ -36,6 +36,26 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       event: {
         kind: 'event',
         category: 'web',
+        dataset: 'express.access',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: '@timestamp,host.hostname,event.squence,event.original',
+        docId: 'labels.project,service.name,event.squence,event.hash',
+        index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
+        geoIp: true,
+        httpStatusOutcome: true,
+        userAgent: true,
+      },
+    },
+  },
+  {
+    name: FingerprintCategory.APACHE_ACCESS_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
         dataset: 'node.css.http',
       },
     },
