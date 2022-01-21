@@ -1,0 +1,59 @@
+{
+  "policy": {
+    "policy_id": "nrm-type-metrics-policy",
+    "description": "NRM metrics retention policy",
+    "schema_version": 1,
+    "last_updated_time": 1628803063474,
+    "error_notification": null,
+    "default_state": "hot",
+    "states": [
+      {
+        "name": "hot",
+        "actions": [],
+        "transitions": [
+          {
+            "state_name": "force_merge",
+            "conditions": {
+              "min_index_age": "48h"
+            }
+          }
+        ]
+      },
+      {
+        "name": "force_merge",
+        "actions": [
+          {
+            "force_merge": {
+              "max_num_segments": 1
+            }
+          }
+        ],
+        "transitions": [
+          {
+            "state_name": "rm_at_2weeks",
+            "conditions": {
+              "min_index_age": "14d"
+            }
+          }
+        ]
+      },
+      {
+        "name": "rm_at_2weeks",
+        "actions": [
+          {
+            "delete": {}
+          }
+        ],
+        "transitions": []
+      }
+    ],
+    "ism_template": [
+      {
+        "index_patterns": [
+          "nrm-metrics-*"
+        ],
+        "priority": 0
+      }
+    ]
+  }
+}

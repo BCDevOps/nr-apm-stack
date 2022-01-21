@@ -1,10 +1,11 @@
 {
   "index_patterns": [
-    "nrm-audit-vault-*"
+    "nrm-app-generic-*"
   ],
   "template": {
     "aliases": {
-      "nrm-audit-vault": {}
+      "nrm-app": {},
+      "nrm-app-generic": {}
     },
     "settings": {
       "number_of_shards": 1,
@@ -16,16 +17,18 @@
   },
   "priority": 300,
   "composed_of": [
+    "ecs_agent_1.12",
     "ecs_base_1.12",
     "ecs_ecs_1.12",
     "ecs_event_1.12",
+    "ecs_host_1.12",
     "ecs_log_1.12",
     "ecs_service_1.12",
-    "ecs_nrm_audit_vault_1.0",
+    "ecs_nrm_base_1.0",
     "ecs_nrm_kinesis_1.0"
   ],
   "version": 3,
   "_meta": {
-    "description": "NRM Audit Vault indexes"
+    "description": "NRM generic app indexes"
   }
 }

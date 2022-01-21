@@ -139,6 +139,60 @@ export default class OpenSearchSyncService {
     }
   }
 
+  public async syncStateManagementPolicy(settings: settings): Promise<any> {
+    const templateDir = path.resolve(__dirname, '../../configuration-opensearch/state_management_policy');
+    for (const filePath of fs.readdirSync(templateDir)) {
+      if (!filePath.endsWith('.json')) {
+        continue;
+      }
+      const basename = path.basename(filePath, '.json');
+
+      const existing = await this.executeSignedHttpRequest({
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'host': settings.hostname,
+        },
+        hostname: settings.hostname,
+        path: `/_plugins/_ism/policies/${basename}`,
+      }).then((res) => this.waitAndReturnResponseBody(res));
+
+      if (existing.statusCode == 400) {
+        // Create
+        await this.executeSignedHttpRequest({
+          method: 'PUT',
+          body: fs.readFileSync(path.resolve(templateDir, filePath), {encoding: 'utf8'}),
+          headers: {
+            'Content-Type': 'application/json',
+            'host': settings.hostname,
+          },
+          hostname: settings.hostname,
+          path: `/_plugins/_ism/policies/${basename}`,
+        })
+          .then((res) => this.waitAndReturnResponseBody(res))
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          .then((res) => console.log(`[${res.statusCode}] State Management Policy Added - ${basename}`));
+      } else {
+        // Update
+        await this.executeSignedHttpRequest({
+          method: 'PUT',
+          body: fs.readFileSync(path.resolve(templateDir, filePath), {encoding: 'utf8'}),
+          headers: {
+            'Content-Type': 'application/json',
+            'host': settings.hostname,
+          },
+          hostname: settings.hostname,
+          path: `/_plugins/_ism/policies/${basename}?` +
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            `if_seq_no=${existing.body._seq_no}&if_primary_term=${existing.body._primary_term}`,
+        })
+          .then((res) => this.waitAndReturnResponseBody(res))
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          .then((res) => console.log(`[${res.statusCode}] State Management Policy Update - ${basename}`));
+      }
+    }
+  }
+
   private async createSignedHttpRequest(httpRequestParams: any) {
     const httpRequest = new HttpRequest(httpRequestParams);
     const sigV4Init = {

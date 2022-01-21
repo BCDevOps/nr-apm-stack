@@ -29,7 +29,7 @@
       }
     }
   },
-  "priority": 200,
+  "priority": 300,
   "composed_of": [
     "ecs_agent_1.12",
     "ecs_base_1.12",

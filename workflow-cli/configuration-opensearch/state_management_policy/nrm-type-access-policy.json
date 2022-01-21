@@ -1,0 +1,43 @@
+{
+  "policy": {
+    "policy_id": "nrm-type-access-policy",
+    "description": "NRM access retention policy",
+    "schema_version": 1,
+    "last_updated_time": 1628803063474,
+    "error_notification": null,
+    "default_state": "hot",
+    "states": [
+      {
+        "name": "hot",
+        "actions": [],
+        "transitions": [
+          {
+            "state_name": "force_merge",
+            "conditions": {
+              "min_index_age": "8d"
+            }
+          }
+        ]
+      },
+      {
+        "name": "force_merge",
+        "actions": [
+          {
+            "force_merge": {
+              "max_num_segments": 1
+            }
+          }
+        ],
+        "transitions": []
+      }
+    ],
+    "ism_template": [
+      {
+        "index_patterns": [
+          "nrm-access-*"
+        ],
+        "priority": 0
+      }
+    ]
+  }
+}
