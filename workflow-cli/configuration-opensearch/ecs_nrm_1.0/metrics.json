@@ -1,0 +1,107 @@
+{
+  "_meta": {
+    "documentation": "https://apps.nrs.gov.bc.ca/int/confluence/x/PqJvBQ",
+    "version": "1.0"
+  },
+  "template": {
+    "mappings": {
+      "properties": {
+        "host": {
+          "properties": {
+            "cpu": {
+              "properties": {
+                "core_json": {
+                  "doc_values": false,
+                  "index": false,
+                  "type": "keyword"
+                },
+                "user": {
+                  "scaling_factor": 1000,
+                  "type": "scaled_float"
+                },
+                "system": {
+                  "scaling_factor": 1000,
+                  "type": "scaled_float"
+                },
+                "usage_core_max": {
+                  "scaling_factor": 1000,
+                  "type": "scaled_float"
+                },
+                "usage_core_median": {
+                  "scaling_factor": 1000,
+                  "type": "scaled_float"
+                },
+                "usage_core_min": {
+                  "scaling_factor": 1000,
+                  "type": "scaled_float"
+                },
+                "usage_core_stddev": {
+                  "scaling_factor": 1000,
+                  "type": "scaled_float"
+                },
+                "cores": {
+                  "type": "integer"
+                }
+              }
+            },
+            "memory": {
+              "properties": {
+                "free": {
+                  "type": "long"
+                },
+                "total": {
+                  "type": "long"
+                },
+                "used": {
+                  "type": "long"
+                },
+                "used_percentage": {
+                  "scaling_factor": 1000,
+                  "type": "scaled_float"
+                }
+              }
+            },
+            "swap": {
+              "properties": {
+                "free": {
+                  "type": "long"
+                },
+                "total": {
+                  "type": "long"
+                },
+                "used": {
+                  "type": "long"
+                },
+                "used_percentage": {
+                  "scaling_factor": 1000,
+                  "type": "scaled_float"
+                }
+              }
+            },
+            "disk": {
+              "properties": {
+                "free": {
+                  "type": "long"
+                },
+                "mount": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "total": {
+                  "type": "long"
+                },
+                "used": {
+                  "type": "long"
+                },
+                "used_percentage": {
+                  "scaling_factor": 1000,
+                  "type": "scaled_float"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

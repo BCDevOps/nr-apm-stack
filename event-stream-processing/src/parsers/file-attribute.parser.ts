@@ -7,6 +7,7 @@ import {Parser} from '../types/parser';
 @injectable()
 /**
  * Parse attributes from fields
+ * @deprecated
  *
  * Tag: support
  */

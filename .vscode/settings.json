@@ -1,6 +1,7 @@
 {
   "eslint.workingDirectories": [
-    "event-stream-processing"
+    "event-stream-processing",
+    "workflow-cli"
   ],
   "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
   "[javascript]": {

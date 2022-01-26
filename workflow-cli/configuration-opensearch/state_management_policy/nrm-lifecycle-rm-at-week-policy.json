@@ -1,0 +1,40 @@
+{
+  "policy": {
+    "description": "NRM delete at week lifecycle policy",
+    "schema_version": 1,
+    "last_updated_time": 1628803063474,
+    "error_notification": null,
+    "default_state": "hot",
+    "states": [
+      {
+        "name": "hot",
+        "actions": [],
+        "transitions": [
+          {
+            "state_name": "rm_at_week",
+            "conditions": {
+              "min_index_age": "7d"
+            }
+          }
+        ]
+      },
+      {
+        "name": "rm_at_week",
+        "actions": [
+          {
+            "delete": {}
+          }
+        ],
+        "transitions": []
+      }
+    ],
+    "ism_template": [
+      {
+        "index_patterns": [
+          "*.rm_at_week*"
+        ],
+        "priority": 100
+      }
+    ]
+  }
+}

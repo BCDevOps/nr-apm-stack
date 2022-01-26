@@ -21,13 +21,32 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         apacheAccessLog: true,
         appClassification: true,
         deslash: true,
-        fileAttributes: true,
         explodeHttpUrl: true,
         geoIp: true,
         httpStatusOutcome: true,
         threatPhp: true,
         userAgent: true,
         keyAsPath: true,
+      },
+    },
+  },
+  {
+    name: FingerprintCategory.APACHE_ACCESS_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
+        dataset: 'express.access',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: '@timestamp,host.hostname,event.squence,event.original',
+        docId: 'labels.project,service.name,event.squence,event.hash',
+        index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
+        geoIp: true,
+        httpStatusOutcome: true,
+        userAgent: true,
       },
     },
   },
@@ -47,9 +66,8 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
         timestampField: 'timestamp',
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
-        // Remove?
+        // timestampFormat: 'YYYY-MM-DDTHH:mm:ss.SSSZ',
         deslash: true,
-        fileAttributes: true,
         explodeHttpUrl: true,
         geoIp: true,
         httpStatusOutcome: true,
@@ -98,7 +116,6 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         // Remove?
         appClassification: true,
         deslash: true,
-        fileAttributes: true,
         explodeHttpUrl: true,
         geoIp: true,
         httpStatusOutcome: true,
@@ -127,7 +144,6 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         // Remove?
         appClassification: true,
         deslash: true,
-        fileAttributes: true,
         explodeHttpUrl: true,
         geoIp: true,
         httpStatusOutcome: true,
@@ -156,7 +172,6 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         // Remove?
         appClassification: true,
         deslash: true,
-        fileAttributes: true,
         explodeHttpUrl: true,
         geoIp: true,
         httpStatusOutcome: true,

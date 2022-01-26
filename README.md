@@ -20,7 +20,7 @@ The product in deployed using Github actions. A Terraform cloud team server hand
 Notes:
 
 * Terraform is limited in the objects it can manage by the AWS Landing Zone permissions.
-* AWS Secrets Manager holds the keycloak secrets in a secret named `<env>/nrdk/config/keycloak`.
+* Github holds the keycloak secrets.
 * The folder `terragrunt/<env>` holds most of the environment specific configuration.
 
 ## Local Setup

@@ -27,7 +27,6 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "test": "jest",
-    "deploy": "ts-node src/operations/deploy.ts",
     "ts-node": "ts-node",
     "typedoc": "typedoc"
   },

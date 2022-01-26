@@ -115,12 +115,6 @@ variable "ultrawarm_node_instance_type" {
   type = string
   default = "ultrawarm1.medium.elasticsearch"
 }
-/*
-variable "ultrawarm_node_volume_size" {
-  type = number
-  default = null
-}
-*/
 
 provider "aws" {
   region = var.region
@@ -151,7 +145,7 @@ locals {
 }
 
 locals {
-  iam_role_arm = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.caller_assumed_role}"
+  iam_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.caller_assumed_role}"
 }
 
 resource "time_static" "log_group_suffix" {}
@@ -172,7 +166,7 @@ data "aws_iam_policy_document" "access_policies" {
     ]
   }
 
-  # Allows the current account (admin) assumed role to interact with elastic search
+  # Allows the current account (admin) assumed role to interact with Opensearch
   statement {
     effect = "Allow"
     actions = [
@@ -180,7 +174,7 @@ data "aws_iam_policy_document" "access_policies" {
     ]
     principals {
       type        = "AWS"
-      identifiers = [local.iam_role_arm]
+      identifiers = [local.iam_role_arn]
     }
     resources = [
       "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/${local.es_domain_name}/*",
@@ -285,7 +279,7 @@ resource "aws_elasticsearch_domain" "es" {
     enabled = true
     internal_user_database_enabled = false
     master_user_options {
-      master_user_arn = local.iam_role_arm
+      master_user_arn = local.iam_role_arn
     }
   }
   cluster_config {
@@ -500,14 +494,17 @@ resource "null_resource" "es_configure" {
     #working_dir = "../"
     #command = "echo %CD%"
     command = <<EOF
-curl -sSL -o /tmp/node-v12.22.1-linux-x64.tar.gz https://nodejs.org/dist/v12.22.1/node-v12.22.1-linux-x64.tar.gz
+curl -sSL -o /tmp/node-v16.13.2-linux-x64.tar.gz https://nodejs.org/dist/v16.13.2/node-v16.13.2-linux-x64.tar.gz
 mkdir /home/terraform/node
-tar -xf /tmp/node-v12.22.1-linux-x64.tar.gz -C /home/terraform/node --strip-components=1
+tar -xf /tmp/node-v16.13.2-linux-x64.tar.gz -C /home/terraform/node --strip-components=1
 export PATH=/home/terraform/node/bin:$PATH
-npx -p @aws-sdk/client-secrets-manager -p @bcgov/nrdk nrdk deploy --config-script=./_pipeline/lib/config.js --deploy-script=./_pipeline/lib/deploy.js --pr=${var.pr} --env=${var.env}
+export AWS_REGION=ca-central-1
+export OS_URL=apm.io.nrs.gov.bc.ca
+export OS_DOMAIN=nress-prod
+./workflow-cli/bin/dev opensearch-sync
 EOF
   environment = {
-    AWS_ASSUME_ROLE = local.iam_role_arm
+    AWS_ASSUME_ROLE = local.iam_role_arn
   }
   }
   depends_on = [aws_elasticsearch_domain.es]
@@ -520,7 +517,7 @@ provider "elasticsearch" {
   url = "https://${aws_elasticsearch_domain.es.endpoint}"
   healthcheck = false
   elasticsearch_version = aws_elasticsearch_domain.es.elasticsearch_version
-  aws_assume_role_arn = local.iam_role_arm
+  aws_assume_role_arn = local.iam_role_arn
 }
 
 resource "elasticsearch_opendistro_role" "iit_logs_writer" {
@@ -582,35 +579,11 @@ resource "elasticsearch_opendistro_roles_mapping" "nrm_read_all_mapper" {
   backend_roles = ["nrm-read-all"]
 }
 
-resource "elasticsearch_opendistro_role" "wf_write_all" {
-  role_name   = "wf-write-all"
-  description = "WF write role"
-  tenant_permissions {
-    tenant_patterns = ["Wildfire"]
-    allowed_actions = ["kibana_all_write"]
-  }
+module "tenant" {
+  source = "./tenant-module"
+  for_each = { for t in jsondecode(file("./tenants.json")): t.role_name => t }
+  tenant = each.value
   depends_on = [aws_elasticsearch_domain.es]
-}
-
-resource "elasticsearch_opendistro_roles_mapping" "wf_write_all_mapper" {
-  role_name     = elasticsearch_opendistro_role.wf_write_all.id
-  description   = "Mapping KC role to ES role"
-  backend_roles = ["wf-write-all"]
-}
-resource "elasticsearch_opendistro_role" "ppm_write_all" {
-  role_name   = "ppm-write-all"
-  description = "PPM write role"
-  tenant_permissions {
-    tenant_patterns = ["PPM"]
-    allowed_actions = ["kibana_all_write"]
-  }
-  depends_on = [aws_elasticsearch_domain.es]
-}
-
-resource "elasticsearch_opendistro_roles_mapping" "ppm_write_all_mapper" {
-  role_name     = elasticsearch_opendistro_role.ppm_write_all.id
-  description   = "Mapping KC role to ES role"
-  backend_roles = ["ppm-write-all"]
 }
 
 resource "elasticsearch_opendistro_role" "nrm_security" {
@@ -670,5 +643,10 @@ resource "elasticsearch_opendistro_roles_mapping" "alerting_full_access" {
 resource "elasticsearch_opendistro_roles_mapping" "all_access" {
   role_name     = "all_access"
   description   = "Mapping KC role to ES role"
-  backend_roles = ["all_access", "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/BCGOV_WORKLOAD_admin_umafubc9"]
+  backend_roles = [
+    "all_access",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/BCGOV_prod_Automation_Admin_Role",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/BCGOV_WORKLOAD_admin_umafubc9",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/BCGOV_WORKLOAD_developer_umafubc9"
+  ]
 }

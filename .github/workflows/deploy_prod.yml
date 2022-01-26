@@ -33,12 +33,16 @@ jobs:
         with:
           node-version: 14.x
       - run: npm ci
-        working-directory: ./event-stream-processing
+        working-directory: ./workflow-cli
+      - run: cp -R workflow-cli terraform/workflow-cli
+        working-directory: ./
       - name: Download/Install Maxmind databases
-        run: npm run ts-node ./src/operations/download-maxmind-geoip-databases.ts
-        working-directory: ./event-stream-processing
+        run: ./bin/dev lambda-asset-download
+        working-directory: ./workflow-cli
         env:
           MAXMIND_LICENSE_KEY: ${{secrets.MAXMIND_LICENSE_KEY}}
+      - run: npm ci
+        working-directory: ./event-stream-processing
       - run: mkdir dist
         working-directory: ./event-stream-processing
       - run: npm run pack
@@ -60,3 +64,13 @@ jobs:
         env:
           app_image: ${{ env.IMAGE_ID }}:${{ github.event.workflow_run.head_branch}}
         run: terragrunt apply-all --terragrunt-non-interactive
+      - name: Keycloak sync
+        run: ./bin/dev keycloak-sync
+        working-directory: ./workflow-cli
+        env:
+          KEYCLOAK_ADMIN_CLIENT_ID: ${{secrets.KEYCLOAK_ADMIN_CLIENT_ID}}
+          KEYCLOAK_ADMIN_CLIENT_SECRET: ${{secrets.KEYCLOAK_ADMIN_CLIENT_SECRET}}
+          KEYCLOAK_REALM: ${{secrets.KEYCLOAK_REALM}}
+          KEYCLOAK_TARGET_CLIENT_ID: https://apm.io.nrs.gov.bc.ca
+          KEYCLOAK_TARGET_CLIENT_URL: https://apm.io.nrs.gov.bc.ca
+          KEYCLOAK_URL: https://oidc.gov.bc.ca
