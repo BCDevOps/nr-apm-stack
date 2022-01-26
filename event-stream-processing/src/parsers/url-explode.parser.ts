@@ -11,14 +11,14 @@ import {OsDocument} from '../types/os-document';
 /**
  * Add exploded url to document
  */
-export class HttpUrlParser implements Parser {
+export class UrlExplodeParser implements Parser {
   /**
    * Returns true if metadata field explodeHttpUrl is true.
    * @param document The document to match against
    * @returns
    */
   matches(document: OsDocument): boolean {
-    return !!(document.data['@metadata'] && document.data['@metadata'].explodeHttpUrl);
+    return !!(document.data['@metadata'] && document.data['@metadata'].urlExplode);
   }
 
   /**
@@ -26,48 +26,25 @@ export class HttpUrlParser implements Parser {
    * @param document The document to modify
    */
   apply(document: OsDocument): void {
-    if (!lodash.isNil(lodash.get(document.data, 'http.request.line'))) {
-      const value = lodash.get(document.data, 'http.request.line');
-      const firstSpace = value.indexOf(' ');
-      const lastSpace = value.lastIndexOf(' ');
-      if (firstSpace > 0 && lastSpace > firstSpace ) {
-        const httpVersion = value.substring(lastSpace).trim();
-        lodash.set(document.data, 'http.request.method', value.substring(0, firstSpace));
-        if (httpVersion.toUpperCase().startsWith('HTTP/')) {
-          lodash.set(document.data, 'http.version', httpVersion.substring('HTTP/'.length));
-        }
-        const uriOriginal: string = value.substring(firstSpace, lastSpace).trim();
-        lodash.set(document.data, 'url.original', uriOriginal);
-        if (uriOriginal.startsWith('/')) {
-          // eslint-disable-next-line max-len
-          if (!lodash.isNil(lodash.get(document.data, 'url.scheme')) && !lodash.isNil(lodash.get(document.data, 'url.domain')) && !lodash.isNil(lodash.get(document.data, 'url.port'))) {
-            // eslint-disable-next-line max-len
-            const url = new URL(`${lodash.get(document.data, 'url.scheme')}://${lodash.get(document.data, 'url.domain')}:${lodash.get(document.data, 'url.port')}${uriOriginal}`);
-            lodash.merge(document.data.url, this.explodeURL(url));
-          } else {
-            const url = new URL(`http://localhost:80${uriOriginal}`);
-            lodash.merge(document.data.url, this.explodeURL(url));
-            lodash.unset(document.data.url, 'scheme');
-            lodash.unset(document.data.url, 'port');
-            lodash.unset(document.data.url, 'domain');
-            lodash.unset(document.data.url, 'full');
-          }
-        }
+    const urlOriginal = lodash.get(document.data, 'url.original');
+
+    if (urlOriginal.startsWith('/')) {
+      // eslint-disable-next-line max-len
+      if (!lodash.isNil(lodash.get(document.data, 'url.scheme')) && !lodash.isNil(lodash.get(document.data, 'url.domain')) && !lodash.isNil(lodash.get(document.data, 'url.port'))) {
+        // eslint-disable-next-line max-len
+        const url = new URL(`${lodash.get(document.data, 'url.scheme')}://${lodash.get(document.data, 'url.domain')}:${lodash.get(document.data, 'url.port')}${urlOriginal}`);
+        lodash.merge(document.data.url, this.explodeURL(url));
+      } else {
+        const url = new URL(`http://localhost:80${urlOriginal}`);
+        lodash.merge(document.data.url, this.explodeURL(url));
+        lodash.unset(document.data.url, 'scheme');
+        lodash.unset(document.data.url, 'port');
+        lodash.unset(document.data.url, 'domain');
+        lodash.unset(document.data.url, 'full');
       }
+    } else {
+      lodash.merge(document.data.url, this.explodeURL(urlOriginal));
     }
-    if (lodash.get(document.data, 'http.request.referrer') === '-') {
-      delete document.data.http.request.referrer;
-    }
-    /*
-    if (!lodash.isNil(lodash.get(document.data, 'http.request.referrer'))) {
-      try {
-        const url = new URL(lodash.get(document.data, 'http.request.referrer'));
-        document.data.referrer = this.explodeURL(url);
-      } catch (error) {
-        // lodash.set(document.data, 'http.request.referrer.error', error.toString());
-      }
-    }
-    */
   }
 
   private explodeURL(url: URL): any {

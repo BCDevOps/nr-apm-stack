@@ -30,5 +30,6 @@ export interface OsDocument {
   index: string | null;
   type: string;
   data: OsDocumentData;
+  dataExtractedTimestamp?: string;
   error: any;
 }

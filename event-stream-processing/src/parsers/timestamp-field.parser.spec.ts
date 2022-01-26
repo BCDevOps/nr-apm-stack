@@ -2,12 +2,16 @@ import {OsDocument} from '../types/os-document';
 import {TimestampFieldParser} from './timestamp-field.parser';
 
 describe('TimestampFieldParser', () => {
-  it('matches using metadata', () => {
+  it('matches using metadata and dataExtractedTimestamp', () => {
     const parser = new TimestampFieldParser();
     expect(parser.matches({data: {}} as unknown as OsDocument)).toBe(false);
     expect(parser.matches({data: {'@metadata': {'timestampField': 'blah'}}} as unknown as OsDocument)).toBe(false);
     expect(parser.matches({
       data: {'@metadata': {'timestampField': 'blah', 'timestampFormat': 'blah'}},
+    } as unknown as OsDocument)).toBe(true);
+    expect(parser.matches({
+      dataExtractedTimestamp: 'blah',
+      data: {'@metadata': {'timestampFormat': 'blah'}},
     } as unknown as OsDocument)).toBe(true);
   });
 
@@ -67,6 +71,20 @@ describe('TimestampFieldParser', () => {
           timestampFormat: 'DD MM YYYY hh:mm:ss Z',
         },
         'field': '05 06 2020 07:23:23 -0700',
+      },
+    } as unknown as OsDocument;
+    parser.apply(document);
+    expect(document.data['@timestamp']).toEqual('2020-06-05T07:23:23.000-07:00');
+  });
+
+  it('parses timestamp in dataExtractedTimestamp', () => {
+    const parser = new TimestampFieldParser();
+    const document = {
+      dataExtractedTimestamp: '05/Jun/2020:07:23:23 -0700',
+      data: {
+        '@metadata': {
+          timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
+        },
       },
     } as unknown as OsDocument;
     parser.apply(document);

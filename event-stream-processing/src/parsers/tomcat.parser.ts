@@ -6,7 +6,7 @@ import {OsDocument} from '../types/os-document';
 import {RegexService} from '../shared/regex.service';
 
 /* eslint-disable max-len,camelcase,@typescript-eslint/no-unsafe-call */
-const regex_tomcat_localhost_access = /^(?<source__ip>[^ ]+) - - \[(?<event__original_timestamp>[^\]]+)\] "(?<http__request__line>([^"]|(?<=\\)")*)" (?<http__response__status__code>(-?|\d+)) (?<http__response__bytes>(-?|\d+))$/;
+const regex_tomcat_localhost_access = /^(?<source__ip>[^ ]+) - - \[(?<extract_timestamp>[^\]]+)\] "(?<extract_httpRequest>([^"]|(?<=\\)")*)" (?<http__response__status__code>(-?|\d+)) (?<http__response__bytes>(-?|\d+))$/;
 /* eslint-enable max-len */
 
 /**
@@ -43,6 +43,10 @@ export class TomcatParser implements Parser {
    * @param document The document to modify
    */
   apply(document: OsDocument): void {
-    this.regexService.applyRegex(document, 'event.original', [regex_tomcat_localhost_access]);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const extractedFields = this.regexService.applyRegex(document, 'event.original', [regex_tomcat_localhost_access]);
+
+    // TODO: Use this?
+    // extractedFields['httpRequest'];
   }
 }

@@ -12,7 +12,7 @@ describe('ApacheParser', () => {
 
   it('calls regexService.applyRegex when apply called', () => {
     const service = {
-      applyRegex: jest.fn(),
+      applyRegex: jest.fn().mockReturnValue({}),
     } as unknown as RegexService;
     const parser = new ApacheParser(service);
     const testDoc = {} as unknown as OsDocument;

@@ -1,0 +1,37 @@
+{
+  "index_patterns": [
+    "nrm-access-internal-*"
+  ],
+  "template": {
+    "aliases": {
+      "nrm-access-internal": {}
+    },
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 1
+    },
+    "mappings": {
+      "dynamic": "strict"
+    }
+  },
+  "priority": 400,
+  "composed_of": [
+    "ecs_agent_1.12",
+    "ecs_base_1.12",
+    "ecs_client_1.12",
+    "ecs_ecs_1.12",
+    "ecs_event_1.12",
+    "ecs_host_1.12",
+    "ecs_http_1.12",
+    "ecs_log_1.12",
+    "ecs_service_1.12",
+    "ecs_tls_1.12",
+    "ecs_url_1.12",
+    "ecs_nrm_kinesis_1.0",
+    "ecs_nrm_url_1.0"
+  ],
+  "version": 3,
+  "_meta": {
+    "description": "NRM Access internal (non-edge) indexes"
+  }
+}
