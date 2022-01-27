@@ -68,53 +68,22 @@ export class UrlExplodeParser implements Parser {
     if (url.password.length > 0) {
       lodash.set(record, 'password', '-');
     }
-    const indexOfFirstSemicolonInPath: number = url.pathname.indexOf(';');
-    if (indexOfFirstSemicolonInPath > 0) {
-      const pathname = url.pathname;
-      url.pathname = pathname.substring(0, indexOfFirstSemicolonInPath);
-      const pathParam = pathname.substring(indexOfFirstSemicolonInPath + 1 );
-      if (pathParam.length > 0) {
-        lodash.set(record, 'path_param', pathParam);
-      }
-    }
     lodash.set(record, 'domain', url.hostname);
     lodash.set(record, 'path', url.pathname);
     const fileName = path.basename(url.pathname);
     if (fileName.length > 0) {
-      lodash.set(record, 'filename', fileName);
-    }
-    const indexOfLastDotInFileName = fileName.lastIndexOf('.');
-    if (indexOfLastDotInFileName > 0) {
-      const fileExt = fileName.substring(indexOfLastDotInFileName+1).trim();
-      if (fileExt.length > 0) {
-        lodash.set(record, 'extension', fileName.substring(indexOfLastDotInFileName+1));
+      const extention = path.extname(fileName);
+      if (extention !== '') {
+        lodash.set(record, 'extension', extention);
       }
     }
     if (url.search.length > 0) {
-      // this.addQueryKeyValue(record, url);
       lodash.set(record, 'query', url.search.substring(1));
     }
     if (url.hash.length > 1) {
       lodash.set(record, 'fragment', url.hash.substring(1));
     }
-    const uri = `//${lodash.get(record, 'domain')}${lodash.get(record, 'path')}`;
-    lodash.set(record, 'uri', uri);
-    lodash.set(record, 'directory', path.dirname(url.pathname));
     lodash.set(record, 'full', formatUrl(url, {auth: false}));
     return record;
-  }
-
-  private addQueryKeyValue(record: any, url: URL) {
-    const query: string[] = [];
-    const keys = new Set<string>();
-    const values = new Set<string>();
-    for (const [key, value] of url.searchParams) {
-      keys.add(key);
-      values.add(value);
-      query.push(`${key}=${value}`);
-    }
-    lodash.set(record, 'query_kv', query);
-    lodash.set(record, 'query_k', [...keys]);
-    lodash.set(record, 'query_v', [...values]);
   }
 }

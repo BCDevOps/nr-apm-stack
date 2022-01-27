@@ -42,10 +42,9 @@ export class EnvironmentStandardizeParser implements Parser {
     if (value) {
       const lcValue = (value as string).toLowerCase();
       const standardEnv = envAlias[lcValue] ? envAlias[lcValue] : 'unknown';
-      lodash.set(document.data, 'labels.env', standardEnv);
       lodash.set(document.data, 'service.environment', standardEnv);
       if (lcValue !== standardEnv) {
-        lodash.set(document.data, 'labels.env_alias', lcValue);
+        lodash.set(document.data, 'labels.environment_alias', lcValue);
       }
     }
   }

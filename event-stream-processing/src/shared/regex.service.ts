@@ -37,18 +37,18 @@ export class RegexService {
     for (const regex of regexArr) {
       const m = fieldValue.match(regex);
       if (m !== null) {
-        for (const gropName of Object.keys(m.groups)) {
-          const value = m.groups[gropName];
+        for (const groupName of Object.keys(m.groups)) {
+          const value = m.groups[groupName];
           if (skipDash && value === '-') {
             // dash is usually a special value that indicates empty/missing
             continue;
           }
-          if (gropName === 'extract_timestamp') {
+          if (groupName === 'extract_timestamp') {
             document.dataExtractedTimestamp = value;
-          } else if (gropName.startsWith('extract_')) {
-            metaFields[gropName.substring(8)] = value;
+          } else if (groupName.startsWith('extract_')) {
+            metaFields[groupName.substring(8)] = value;
           } else {
-            const fieldName = gropName.replace(underscoreReplaceRegex, '.');
+            const fieldName = groupName.replace(underscoreReplaceRegex, '.');
             lodash.set(document.data, fieldName, value);
           }
         }

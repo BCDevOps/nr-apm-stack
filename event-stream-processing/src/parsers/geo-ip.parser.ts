@@ -25,7 +25,7 @@ export class GeoIpParser implements Parser {
    */
   matches(document: OsDocument): boolean {
     return !!(document.data['@metadata'] && document.data['@metadata'].geoIp) &&
-      !!(document.data?.client?.ip || document.data?.source?.ip || document.data?.source?.address);
+      !!(document.data?.source?.ip || document.data?.source?.address);
   }
 
   /**
@@ -33,10 +33,6 @@ export class GeoIpParser implements Parser {
    * @param document The document to modify
    */
   apply(document: OsDocument): void {
-    if (document.data?.client?.ip) {
-      Object.assign(document.data.client, this.geoIp.lookup(document.data.client.ip));
-    }
-
     if (document.data?.source?.ip) {
       Object.assign(document.data.source, this.geoIp.lookup(document.data.source.ip));
     } else if (document.data?.source?.address) {

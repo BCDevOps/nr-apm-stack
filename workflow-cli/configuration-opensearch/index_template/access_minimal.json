@@ -17,11 +17,11 @@
   "priority": 500,
   "composed_min_of": [
     "ecs_base_1.12",
-    "ecs_client_1.12",
     "ecs_ecs_1.12",
     "ecs_event_1.12",
     "ecs_http_1.12",
     "ecs_service_1.12",
+    "ecs_source_1.12",
     "ecs_url_1.12",
     "ecs_nrm_url_1.0"
   ],

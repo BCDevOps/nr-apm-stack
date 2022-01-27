@@ -12,16 +12,15 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,log.file.name,offset,event.original',
-        docId: 'log.file.name,offset,event.hash',
+        hash: 'host.hostname,log.file.name,event.sequence,event.original',
+        docId: 'log.file.name,event.sequence,event.hash',
         index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
-        timestampField: 'event.original_timestamp',
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
         // Remove?
         apacheAccessLog: true,
         appClassification: true,
         deslash: true,
-        explodeHttpUrl: true,
+        urlExplode: true,
         geoIp: true,
         httpStatusOutcome: true,
         threatPhp: true,
@@ -51,53 +50,6 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
   },
   {
-    name: FingerprintCategory.APACHE_ACCESS_LOGS,
-    fingerprint: {
-      event: {
-        kind: 'event',
-        category: 'web',
-        dataset: 'node.css.http',
-      },
-    },
-    dataDefaults: {
-      '@metadata': {
-        hash: 'kinesis.eventID,log.file.path,log.file.offset,event.original',
-        docId: 'host.hostname,log.file.offset,event.hash',
-        index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
-        timestampField: 'timestamp',
-        timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
-        // timestampFormat: 'YYYY-MM-DDTHH:mm:ss.SSSZ',
-        deslash: true,
-        explodeHttpUrl: true,
-        geoIp: true,
-        httpStatusOutcome: true,
-        ipv: 'clientIp,hostIp',
-        joinKv: 'query',
-        keyAsPath: true,
-        rename: 'azp:client.user.id' +
-          'contentLength:http.response.body.bytes' +
-          'hostname:host.hostname' +
-          'httpVersion:http.version' +
-          'hostIp:host.ip' +
-          'log:event.original' +
-          'level:log.level' +
-          'logFileOffset:log.file.offset' +
-          'logFilePath:log.file.path' +
-          'logStreamDate:event.created' +
-          'method:http.request.method' +
-          'namespace:orchestrator.namespace' +
-          'path:url.path' +
-          'product:service.name' +
-          'query:url.query' +
-          'responseTime:http.response.time' +
-          'statusCode:http.response.status_code' +
-          'userAgent:user_agent.original',
-        threatPhp: true,
-        userAgent: true,
-      },
-    },
-  },
-  {
     name: FingerprintCategory.TOMCAT_ACCESS_LOGS,
     fingerprint: {
       event: {
@@ -108,17 +60,16 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,log.file.name,offset,event.original',
-        docId: 'log.file.name,offset,event.hash',
-        index: 'nrm-logs-<!=labels.application=!>-access-<%=YYYY.MM.DD=%>',
-        timestampField: 'event.original_timestamp',
+        hash: 'host.hostname,log.file.name,event.sequence,event.original',
+        docId: 'log.file.name,event.sequence,event.hash',
+        index: 'nrm-access-internal-<%=YYYY.MM.DD=%>',
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
-        // Remove?
         appClassification: true,
         deslash: true,
-        explodeHttpUrl: true,
+        urlExplode: true,
         geoIp: true,
         httpStatusOutcome: true,
+        tomcatLog: true,
         threatPhp: true,
         userAgent: true,
         keyAsPath: true,
@@ -136,15 +87,14 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,log.file.name,offset,event.original',
-        docId: 'log.file.name,offset,event.hash',
+        hash: 'host.hostname,log.file.name,event.sequence,event.original',
+        docId: 'log.file.name,event.sequence,event.hash',
         index: 'nrm-logs-<!=labels.application=!>-<%=YYYY.MM.DD=%>',
-        timestampField: 'event.original_timestamp',
         timestampFormat: 'DD-MMM-YYYY HH:mm:ss.SSS',
         // Remove?
         appClassification: true,
         deslash: true,
-        explodeHttpUrl: true,
+        urlExplode: true,
         geoIp: true,
         httpStatusOutcome: true,
         threatPhp: true,
@@ -164,15 +114,14 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,log.file.name,offset,event.original',
-        docId: 'log.file.name,offset,event.hash',
+        hash: 'host.hostname,log.file.name,event.sequence,event.original',
+        docId: 'log.file.name,event.sequence,event.hash',
         index: 'nrm-logs-<!=labels.application=!>-<%=YYYY.MM.DD=%>',
-        timestampField: 'event.original_timestamp',
         timestampFormat: 'DD-MMM-YYYY HH:mm:ss.SSS',
         // Remove?
         appClassification: true,
         deslash: true,
-        explodeHttpUrl: true,
+        urlExplode: true,
         geoIp: true,
         httpStatusOutcome: true,
         threatPhp: true,
@@ -209,8 +158,8 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,log.file.name,offset,@timestamp',
-        docId: 'log.file.name,offset,event.hash',
+        hash: 'host.hostname,log.file.name,event.sequence,@timestamp',
+        docId: 'log.file.name,event.sequence,event.hash',
         index: 'nrm-deploy-<%=YYYY.MM=%>',
       },
     },

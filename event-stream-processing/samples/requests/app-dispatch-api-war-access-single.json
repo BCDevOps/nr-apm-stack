@@ -1,20 +1,21 @@
 {
     "date": 1638136333.077786,
-    "offset": 0,
-    "message": "1.2.3.4 - - [24/May/2021:15:20:21 -0700] \"GET /pub/dispatch-api/incidents/7d51081e-35d0-4be2-b69b-e9b11c46a240 HTTP/1.1\" 200 4518",
     "agent.type": "fluentbit",
     "agent.version": "1.8.10",
     "labels": {
-        "env_alias": "dev",
-        "application": "dispatch",
-        "component": "dispatch-api-war",
-        "env": "development"
+        "project": "dispatch"
     },
     "event": {
         "created": "2021-11-28T21:52:13.77Z",
         "kind": "event",
         "category": "web",
-        "dataset": "tomcat.access"
+        "dataset": "tomcat.access",
+        "sequence": 0,
+        "original": "1.2.3.4 - - [24/May/2021:15:20:21 -0700] \"GET /pub/dispatch-api/incidents/7d51081e-35d0-4be2-b69b-e9b11c46a240 HTTP/1.1\" 200 4518"
+    },
+    "service": {
+        "name": "dispatch-api-war",
+        "environment": "development"
     },
     "log": {
         "file": {
