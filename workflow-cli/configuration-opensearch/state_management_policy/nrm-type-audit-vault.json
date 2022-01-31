@@ -1,28 +1,31 @@
 {
   "policy": {
-    "description": "NRM delete at week lifecycle policy",
+    "policy_id": "nrm-type-audit-vault-policy",
+    "description": "NRM Vault audit policy",
     "schema_version": 1,
     "last_updated_time": 1628803063474,
     "error_notification": null,
-    "default_state": "hot",
+    "default_state": "initial",
     "states": [
       {
-        "name": "hot",
+        "name": "initial",
         "actions": [],
         "transitions": [
           {
-            "state_name": "rm_at_week",
+            "state_name": "force_merge",
             "conditions": {
-              "min_index_age": "7d"
+              "min_index_age": "14d"
             }
           }
         ]
       },
       {
-        "name": "rm_at_week",
+        "name": "force_merge",
         "actions": [
           {
-            "delete": {}
+            "force_merge": {
+              "max_num_segments": 1
+            }
           }
         ],
         "transitions": []
@@ -31,9 +34,9 @@
     "ism_template": [
       {
         "index_patterns": [
-          "*.rm_at_week*"
+          "nrm-audit-vault-*"
         ],
-        "priority": 100
+        "priority": 0
       }
     ]
   }
