@@ -91,17 +91,9 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       '@metadata': {
         hash: 'host.hostname,log.file.name,event.sequence,event.original',
         docId: 'log.file.name,event.sequence,event.hash',
-        index: 'nrm-logs-<!=labels.application=!>-<%=YYYY.MM.DD=%>',
+        index: 'nrm-tomcat-localhost-<%=YYYY.MM.DD=%>',
         timestampFormat: 'DD-MMM-YYYY HH:mm:ss.SSS',
-        // Remove?
-        appClassification: true,
-        deslash: true,
         environmentStandardize: true,
-        urlExplode: true,
-        geoIp: true,
-        httpStatusOutcome: true,
-        threatPhp: true,
-        userAgent: true,
         keyAsPath: true,
       },
     },
@@ -119,17 +111,29 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       '@metadata': {
         hash: 'host.hostname,log.file.name,event.sequence,event.original',
         docId: 'log.file.name,event.sequence,event.hash',
-        index: 'nrm-logs-<!=labels.application=!>-<%=YYYY.MM.DD=%>',
+        index: 'nrm-tomcat-catalina-<%=YYYY.MM.DD=%>',
         timestampFormat: 'DD-MMM-YYYY HH:mm:ss.SSS',
-        // Remove?
-        appClassification: true,
-        deslash: true,
         environmentStandardize: true,
-        urlExplode: true,
-        geoIp: true,
-        httpStatusOutcome: true,
-        threatPhp: true,
-        userAgent: true,
+        keyAsPath: true,
+      },
+    },
+  },
+  {
+    name: FingerprintCategory.APP_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
+        dataset: 'application.log',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: 'host.hostname,log.file.name,offset,event.original',
+        docId: 'log.file.name,offset,event.hash',
+        index: 'nrm-app-generic-<%=YYYY.MM.DD=%>',
+        timestampFormat: 'DD-MMM-YYYY HH:mm:ss.SSS',
+        environmentStandardize: true,
         keyAsPath: true,
       },
     },
