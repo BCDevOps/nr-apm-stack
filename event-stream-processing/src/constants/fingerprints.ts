@@ -16,10 +16,10 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         docId: 'log.file.name,event.sequence,event.hash',
         index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
-        // Remove?
         apacheAccessLog: true,
         appClassification: true,
         deslash: true,
+        environmentStandardize: true,
         urlExplode: true,
         geoIp: true,
         httpStatusOutcome: true,
@@ -43,6 +43,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         hash: '@timestamp,host.hostname,event.squence,event.original',
         docId: 'labels.project,service.name,event.squence,event.hash',
         index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
+        environmentStandardize: true,
         geoIp: true,
         httpStatusOutcome: true,
         userAgent: true,
@@ -66,6 +67,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
         appClassification: true,
         deslash: true,
+        environmentStandardize: true,
         urlExplode: true,
         geoIp: true,
         httpStatusOutcome: true,
@@ -94,6 +96,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         // Remove?
         appClassification: true,
         deslash: true,
+        environmentStandardize: true,
         urlExplode: true,
         geoIp: true,
         httpStatusOutcome: true,
@@ -121,6 +124,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         // Remove?
         appClassification: true,
         deslash: true,
+        environmentStandardize: true,
         urlExplode: true,
         geoIp: true,
         httpStatusOutcome: true,
