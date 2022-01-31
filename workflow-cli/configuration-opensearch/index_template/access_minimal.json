@@ -4,7 +4,8 @@
   ],
   "template": {
     "aliases": {
-      "nrm-access": {}
+      "nrm-access": {},
+      "nrm-access-external": {}
     },
     "settings": {
       "number_of_shards": 1,
@@ -15,7 +16,7 @@
     }
   },
   "priority": 500,
-  "composed_min_of": [
+  "composed_of": [
     "ecs_base_1.12",
     "ecs_ecs_1.12",
     "ecs_event_1.12",
