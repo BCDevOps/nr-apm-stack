@@ -9,7 +9,7 @@ describe('UrlExplodeParser', () => {
     expect(parser.matches({data: {'@metadata': {}}} as unknown as OsDocument)).toBe(false);
   });
 
-  it('http.request.line - 01', () => {
+  it('url.original - 01', () => {
     const parser = new UrlExplodeParser();
     const document = {data: {url: {original: '/?XDEBUG_SESSION_START=phpstorm'}}} as unknown as OsDocument;
     parser.apply(document);
@@ -18,7 +18,7 @@ describe('UrlExplodeParser', () => {
     expect(document.data).toHaveProperty('url.query', 'XDEBUG_SESSION_START=phpstorm');
   });
 
-  it('http.request.line - 02', () => {
+  it('url.original - 02', () => {
     const parser = new UrlExplodeParser();
     const document = {data: {url: {original: '/?XDEBUG_SESSION_START=phpstorm#fragment'}}} as unknown as OsDocument;
     parser.apply(document);
@@ -27,7 +27,7 @@ describe('UrlExplodeParser', () => {
     expect(document.data).toHaveProperty('url.query', 'XDEBUG_SESSION_START=phpstorm');
   });
 
-  it('http.request.line - 03', () => {
+  it('url.original - 03', () => {
     const parser = new UrlExplodeParser();
     const document = {data: {url: {original: '/ext/jcrs/rest_v2/import?update=false'}}} as unknown as OsDocument;
     parser.apply(document);
@@ -36,7 +36,7 @@ describe('UrlExplodeParser', () => {
     expect(document.data).toHaveProperty('url.query', 'update=false');
   });
 
-  it('http.request.line - 04', () => {
+  it('url.original - 04', () => {
     const parser = new UrlExplodeParser();
     // eslint-disable-next-line max-len
     const document = {data: {url: {original: '/ext/farm/farm265.do;jsessionid=JA6pko6NolLG_MPnJNoBbx75a-aAV9x99zjo0ECs1tH-VVS0waj4!1029141353'}}} as unknown as OsDocument;
@@ -50,7 +50,7 @@ describe('UrlExplodeParser', () => {
     expect(document.data).not.toHaveProperty('url.query');
   });
 
-  it('http.request.line - 05', () => {
+  it('url.original - 05', () => {
     const parser = new UrlExplodeParser();
     // eslint-disable-next-line max-len
     const document = {data: {url: {original: '/pub/oauth2/v1/oauth/token?disableDeveloperFilter=true&grant_type=client_credentials&scope=ACTIVEMQ.*'}}} as unknown as OsDocument;
@@ -62,7 +62,7 @@ describe('UrlExplodeParser', () => {
     expect(document.data).toHaveProperty('url.query', 'disableDeveloperFilter=true&grant_type=client_credentials&scope=ACTIVEMQ.*');
   });
 
-  it('http.request.line - 06', () => {
+  it('url.original - 06', () => {
     const parser = new UrlExplodeParser();
     // eslint-disable-next-line max-len
     const document = {data: {url: {original: '/pub/oauth2/v1/oauth/token?disableDeveloperFilter=true&grant_type=client_credentials&scope=DSP.*'}}} as unknown as OsDocument;
@@ -73,7 +73,7 @@ describe('UrlExplodeParser', () => {
     expect(document.data).toHaveProperty('url.query',
       'disableDeveloperFilter=true&grant_type=client_credentials&scope=DSP.*');
   });
-  it('http.request.line - 07', () => {
+  it('url.original - 07', () => {
     const parser = new UrlExplodeParser();
     const document = {data: {url: {original: '/ext/farm/farm265.do;'}}} as unknown as OsDocument;
     parser.apply(document);
@@ -82,7 +82,7 @@ describe('UrlExplodeParser', () => {
     // expect(document.data).not.toHaveProperty('url.path_param');
     expect(document.data).not.toHaveProperty('url.query');
   });
-  it('http.request.line - 08', () => {
+  it('url.original - 08', () => {
     const parser = new UrlExplodeParser();
     // eslint-disable-next-line max-len
     const document = {data: {url: {original: '/WebID/IISWebAgentIF.dll?postdata=\\"><script>foo</script>'}}} as unknown as OsDocument;

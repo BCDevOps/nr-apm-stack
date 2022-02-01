@@ -28,6 +28,8 @@
     "ecs_source_1.12",
     "ecs_tls_1.12",
     "ecs_url_1.12",
+    "ecs_user_agent_1.12",
+    "ecs_nrm_base_1.0",
     "ecs_nrm_kinesis_1.0"
   ],
   "version": 3,

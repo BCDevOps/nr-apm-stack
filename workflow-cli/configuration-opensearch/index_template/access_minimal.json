@@ -24,7 +24,7 @@
     "ecs_service_1.12",
     "ecs_source_1.12",
     "ecs_url_1.12",
-    "ecs_nrm_url_1.0"
+    "ecs_nrm_base_1.0"
   ],
   "version": 3,
   "_meta": {
