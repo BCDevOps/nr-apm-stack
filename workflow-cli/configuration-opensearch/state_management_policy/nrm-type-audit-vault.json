@@ -14,7 +14,7 @@
           {
             "state_name": "force_merge",
             "conditions": {
-              "min_index_age": "14d"
+              "min_index_age": "40d"
             }
           }
         ]
