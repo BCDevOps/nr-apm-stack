@@ -14,7 +14,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       '@metadata': {
         hash: 'host.hostname,basename(log.file.path),event.sequence,event.original',
         docId: 'basename(log.file.path),event.sequence,event.hash',
-        index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
+        index: 'nrm-access-external-<%=YYYY.MM.DD=%>',
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
         apacheAccessLog: true,
         appClassification: true,
@@ -42,7 +42,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       '@metadata': {
         hash: '@timestamp,host.hostname,event.squence,event.original',
         docId: 'labels.project,service.name,event.squence,event.hash',
-        index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
+        index: 'nrm-access-external-<%=YYYY.MM.DD=%>',
         environmentStandardize: true,
         geoIp: true,
         httpStatusOutcome: true,
