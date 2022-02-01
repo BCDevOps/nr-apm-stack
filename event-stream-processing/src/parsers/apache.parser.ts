@@ -26,7 +26,6 @@ const regex_apache_standard02 = /^(?<source__ip>[^ ]+) ([^ ]+) (?<user__name>[^ 
 export class ApacheParser implements Parser {
   /**
    * Constructor
-   * @param logger
    */
   constructor(
     @inject(TYPES.RegexService) private regexService: RegexService,

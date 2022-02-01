@@ -12,8 +12,8 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,log.file.name,event.sequence,event.original',
-        docId: 'log.file.name,event.sequence,event.hash',
+        hash: 'host.hostname,basename(log.file.path),event.sequence,event.original',
+        docId: 'basename(log.file.path),event.sequence,event.hash',
         index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
         apacheAccessLog: true,
@@ -61,8 +61,8 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,log.file.name,event.sequence,event.original',
-        docId: 'log.file.name,event.sequence,event.hash',
+        hash: 'host.hostname,basename(log.file.path),event.sequence,event.original',
+        docId: 'basename(log.file.path),event.sequence,event.hash',
         index: 'nrm-access-internal-<%=YYYY.MM.DD=%>',
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
         appClassification: true,
@@ -89,8 +89,8 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,log.file.name,event.sequence,event.original',
-        docId: 'log.file.name,event.sequence,event.hash',
+        hash: 'host.hostname,basename(log.file.path),event.sequence,event.original',
+        docId: 'basename(log.file.path),event.sequence,event.hash',
         index: 'nrm-tomcat-localhost-<%=YYYY.MM.DD=%>',
         timestampFormat: 'DD-MMM-YYYY HH:mm:ss.SSS',
         environmentStandardize: true,
@@ -109,8 +109,8 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,log.file.name,event.sequence,event.original',
-        docId: 'log.file.name,event.sequence,event.hash',
+        hash: 'host.hostname,basename(log.file.path),event.sequence,event.original',
+        docId: 'basename(log.file.path),event.sequence,event.hash',
         index: 'nrm-tomcat-catalina-<%=YYYY.MM.DD=%>',
         timestampFormat: 'DD-MMM-YYYY HH:mm:ss.SSS',
         environmentStandardize: true,
@@ -129,8 +129,8 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,log.file.name,offset,event.original',
-        docId: 'log.file.name,offset,event.hash',
+        hash: 'host.hostname,basename(log.file.path),event.sequence,event.original',
+        docId: 'basename(log.file.path),event.sequence,event.hash',
         index: 'nrm-app-generic-<%=YYYY.MM.DD=%>',
         timestampFormat: 'DD-MMM-YYYY HH:mm:ss.SSS',
         environmentStandardize: true,
@@ -166,8 +166,8 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: 'host.hostname,log.file.name,event.sequence,@timestamp',
-        docId: 'log.file.name,event.sequence,event.hash',
+        hash: 'host.hostname,basename(log.file.path),event.sequence,@timestamp',
+        docId: 'basename(log.file.path),event.sequence,event.hash',
         index: 'nrm-deploy-<%=YYYY.MM=%>',
       },
     },

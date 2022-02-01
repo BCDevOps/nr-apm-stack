@@ -5,6 +5,7 @@ import {TYPES} from './inversify.types';
 import {AwsHttpClientService} from './util/aws-http-client.service';
 import {DateAndTimeService} from './shared/date-and-time.service';
 import {EcsTransformService} from './ecs-transform.service';
+import {FieldExtractorService} from './shared/field-extractor.service';
 import {GeoIpService} from './util/geoip.service';
 import {GeoIpMaxmindService} from './util/geoip-maxmind.service';
 import {OpenSearchService} from './open-search.service';
@@ -51,6 +52,7 @@ function create(): Container {
   const myContainer = new Container({defaultScope: BindingScopeEnum.Singleton});
   myContainer.bind<LoggerService>(TYPES.LoggerService).to(LoggerConsoleService);
   myContainer.bind<EcsTransformService>(TYPES.EcsTransformService).to(EcsTransformService);
+  myContainer.bind<FieldExtractorService>(TYPES.FieldExtractorService).to(FieldExtractorService);
   myContainer.bind<GeoIpService>(TYPES.GeoIpService).to(GeoIpMaxmindService);
   myContainer.bind<MaxmindCityLookupService>(TYPES.MaxmindCityLookupService).to(MaxmindCityLookupService);
   myContainer.bind<MaxmindAsnLookupService>(TYPES.MaxmindAsnLookupService).to(MaxmindAsnLookupService);
