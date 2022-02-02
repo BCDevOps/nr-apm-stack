@@ -9,6 +9,13 @@ describe('UrlExplodeParser', () => {
     expect(parser.matches({data: {'@metadata': {}}} as unknown as OsDocument)).toBe(false);
   });
 
+  it('do nothing if undefined', () => {
+    const parser = new UrlExplodeParser();
+    const document = {data: {url: {}}} as unknown as OsDocument;
+    parser.apply(document);
+    expect(document.data).toHaveProperty('url');
+  });
+
   it('url.original - 01', () => {
     const parser = new UrlExplodeParser();
     const document = {data: {url: {original: '/?XDEBUG_SESSION_START=phpstorm'}}} as unknown as OsDocument;
