@@ -28,6 +28,11 @@ export class UrlExplodeParser implements Parser {
   apply(document: OsDocument): void {
     const urlOriginal = lodash.get(document.data, 'url.original');
 
+    // Do nothing if not set
+    if (!urlOriginal) {
+      return;
+    }
+
     if (urlOriginal.startsWith('/')) {
       // eslint-disable-next-line max-len
       if (!lodash.isNil(lodash.get(document.data, 'url.scheme')) && !lodash.isNil(lodash.get(document.data, 'url.domain')) && !lodash.isNil(lodash.get(document.data, 'url.port'))) {
