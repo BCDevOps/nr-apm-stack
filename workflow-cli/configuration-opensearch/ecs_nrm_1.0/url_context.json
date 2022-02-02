@@ -6,7 +6,7 @@
   "template": {
     "mappings": {
       "properties": {
-        "labels": {
+        "url": {
           "properties": {
             "context": {
               "ignore_above": 1024,

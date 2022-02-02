@@ -7,7 +7,7 @@ import * as querystring from 'querystring';
 import {OsDocument} from '../types/os-document';
 
 // eslint-disable-next-line max-len
-const knownAppContextRegex = /^(?<labels__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata))(\/((geoserver)|(pls)))?)\/(?<labels__project>[^\/]*).*$/m;
+const knownAppContextRegex = /^(?<url__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata))(\/((geoserver)|(pls)))?)\/(?<labels__project>[^\/]*).*$/m;
 
 @injectable()
 /**
