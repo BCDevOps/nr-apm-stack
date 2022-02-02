@@ -24,6 +24,7 @@
     "ecs_host_1.12",
     "ecs_http_1.12",
     "ecs_log_1.12",
+    "ecs_organization_1.12",
     "ecs_service_1.12",
     "ecs_source_1.12",
     "ecs_tls_1.12",
