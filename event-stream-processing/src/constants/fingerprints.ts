@@ -40,7 +40,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: '@timestamp,host.hostname,event.squence,event.original',
+        hash: '@timestamp,host.name,event.squence,event.original',
         docId: 'labels.project,service.name,event.squence,event.hash',
         index: 'nrm-access-external-<%=YYYY.MM.DD=%>',
         environmentStandardize: true,
