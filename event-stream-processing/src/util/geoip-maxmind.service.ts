@@ -1,6 +1,6 @@
 import {injectable, inject} from 'inversify';
 import {TYPES} from '../inversify.types';
-import {GeoIpService} from './geoip.service';
+import {GeoIpService, GeoIpServiceResult} from './geoip.service';
 import {MaxmindAsnLookupService} from './maxmindAsnLookup.service';
 import {MaxmindCityLookupService} from './maxmindCityLookup.service';
 
@@ -11,7 +11,7 @@ export class GeoIpMaxmindService implements GeoIpService {
     @inject(TYPES.MaxmindAsnLookupService) private asnLookup: MaxmindAsnLookupService,
   ) {}
 
-  public lookup(ipAddress: string): any {
+  public lookup(ipAddress: string): GeoIpServiceResult {
     const cityLookupResponse = this.cityLookup.lookup(ipAddress);
     const asnLookupResponse = this.asnLookup.lookup(ipAddress);
     const resultGeo: any = {};

@@ -1,11 +1,10 @@
 {
   "index_patterns": [
-    "nrm-app-generic-*"
+    "nrm-tomcat-catalina-*"
   ],
   "template": {
     "aliases": {
-      "nrm-app": {},
-      "nrm-app-generic": {}
+      "nrm-tomcat-catalina": {}
     },
     "settings": {
       "number_of_shards": 1,
@@ -30,6 +29,6 @@
   ],
   "version": 3,
   "_meta": {
-    "description": "NRM generic app indexes"
+    "description": "NRM Tomcat Catalina indexes"
   }
 }

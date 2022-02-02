@@ -1,7 +1,9 @@
-import {injectable} from 'inversify';
+import {inject, injectable} from 'inversify';
 import {Parser} from '../types/parser';
 import lodash from 'lodash';
 import {OsDocument} from '../types/os-document';
+import {TYPES} from '../inversify.types';
+import {FieldExtractorService} from '../shared/field-extractor.service';
 
 @injectable()
 /**
@@ -10,6 +12,13 @@ import {OsDocument} from '../types/os-document';
  * Tag: Meta
  */
 export class DocumentIdParser implements Parser {
+  /**
+   * Constructor
+   */
+  constructor(
+    @inject(TYPES.FieldExtractorService) private fieldExtractorService: FieldExtractorService,
+  ) {}
+
   /**
    * Returns true if metadata has a docid field.
    * @param document The document to match against
@@ -27,8 +36,7 @@ export class DocumentIdParser implements Parser {
     const docIdPattern: string = lodash.get(document.data, '@metadata.docId');
 
     // assign document id
-    const id = docIdPattern.split(',')
-      .map((path) => lodash.get(document.data, path, ''))
+    const id = this.fieldExtractorService.fieldStringToArray(docIdPattern, document)
       .join(':');
 
     document.id = id;

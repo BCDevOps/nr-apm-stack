@@ -25,7 +25,6 @@ export default class OpenSearchSync extends Command {
 
     await service.getDomain(flags);
     await service.syncComponentTemplates(flags);
-    // Disable until discussed
-    // await service.syncStateManagementPolicy(flags);
+    await service.syncStateManagementPolicy(flags);
   }
 }

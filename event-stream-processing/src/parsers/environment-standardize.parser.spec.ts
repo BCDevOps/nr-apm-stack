@@ -19,8 +19,7 @@ describe('EnvironmentStandardizeParser', () => {
       environment: 'integration',
     });
     expect(document.data.labels).toEqual({
-      env: 'integration',
-      env_alias: 'wfint',
+      environment_alias: 'wfint',
     });
   });
 });

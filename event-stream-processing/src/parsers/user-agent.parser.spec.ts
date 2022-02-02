@@ -38,8 +38,6 @@ describe('UserAgentParser', () => {
           },
           device: {
             model: 'stop',
-            type: 'him',
-            vendor: 'vend',
           },
         })),
       } as unknown as UAParser;
@@ -60,8 +58,6 @@ describe('UserAgentParser', () => {
         },
         device: {
           name: 'stop',
-          type: 'him',
-          vendor: 'vend',
         },
       },
     });

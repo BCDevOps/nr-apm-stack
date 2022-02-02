@@ -5,6 +5,7 @@ import {TYPES} from './inversify.types';
 import {AwsHttpClientService} from './util/aws-http-client.service';
 import {DateAndTimeService} from './shared/date-and-time.service';
 import {EcsTransformService} from './ecs-transform.service';
+import {FieldExtractorService} from './shared/field-extractor.service';
 import {GeoIpService} from './util/geoip.service';
 import {GeoIpMaxmindService} from './util/geoip-maxmind.service';
 import {OpenSearchService} from './open-search.service';
@@ -28,12 +29,10 @@ import {DeslashParser} from './parsers/deslash.parser';
 import {DocumentIdParser} from './parsers/document-id.parser';
 import {DocumentIndexParser} from './parsers/document-index.parser';
 import {EnvironmentStandardizeParser} from './parsers/environment-standardize.parser';
-import {FileAttributeParser} from './parsers/file-attribute.parser';
 import {KinesisParser} from './parsers/kinesis.parser';
 import {GeoIpParser} from './parsers/geo-ip.parser';
 import {HashParser} from './parsers/hash.parser';
 import {HttpStatusEventOutcomeParser} from './parsers/http-status-event-outcome.parser';
-import {HttpUrlParser} from './parsers/http-url.parser';
 import {IpvParser} from './parsers/ipv.parser';
 import {JoinKvParser} from './parsers/join-kv.parser';
 import {KeyAsPathParser} from './parsers/key-as-path.parser';
@@ -43,6 +42,7 @@ import {ThreatPhpParser} from './parsers/threat-php.parser';
 import {TimestampFieldParser} from './parsers/timestamp-field.parser';
 import {TomcatParser} from './parsers/tomcat.parser';
 import {UserAgentParser} from './parsers/user-agent.parser';
+import {UrlExplodeParser} from './parsers/url-explode.parser';
 
 /**
  * Create the container
@@ -52,6 +52,7 @@ function create(): Container {
   const myContainer = new Container({defaultScope: BindingScopeEnum.Singleton});
   myContainer.bind<LoggerService>(TYPES.LoggerService).to(LoggerConsoleService);
   myContainer.bind<EcsTransformService>(TYPES.EcsTransformService).to(EcsTransformService);
+  myContainer.bind<FieldExtractorService>(TYPES.FieldExtractorService).to(FieldExtractorService);
   myContainer.bind<GeoIpService>(TYPES.GeoIpService).to(GeoIpMaxmindService);
   myContainer.bind<MaxmindCityLookupService>(TYPES.MaxmindCityLookupService).to(MaxmindCityLookupService);
   myContainer.bind<MaxmindAsnLookupService>(TYPES.MaxmindAsnLookupService).to(MaxmindAsnLookupService);
@@ -81,13 +82,12 @@ function create(): Container {
   // Stage: Parse
   myContainer.bind<Parser>(TYPES.Parser).to(DeslashParser);
   myContainer.bind<Parser>(TYPES.Parser).to(EnvironmentStandardizeParser);
-  myContainer.bind<Parser>(TYPES.Parser).to(HttpUrlParser);
   myContainer.bind<Parser>(TYPES.Parser).to(HttpStatusEventOutcomeParser);
   myContainer.bind<Parser>(TYPES.Parser).to(IpvParser);
   myContainer.bind<Parser>(TYPES.Parser).to(JoinKvParser);
   myContainer.bind<Parser>(TYPES.Parser).to(GeoIpParser);
   myContainer.bind<Parser>(TYPES.Parser).to(UserAgentParser);
-  myContainer.bind<Parser>(TYPES.Parser).to(FileAttributeParser);
+  myContainer.bind<Parser>(TYPES.Parser).to(UrlExplodeParser);
   myContainer.bind<Parser>(TYPES.Parser).to(ApplicationClassificationParser);
   myContainer.bind<Parser>(TYPES.Parser).to(ThreatPhpParser);
 

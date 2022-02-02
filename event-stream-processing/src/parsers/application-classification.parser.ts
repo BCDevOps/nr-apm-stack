@@ -7,7 +7,7 @@ import * as querystring from 'querystring';
 import {OsDocument} from '../types/os-document';
 
 // eslint-disable-next-line max-len
-const knownAppContextRegex = /^(?<labels__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata))(\/((geoserver)|(pls)))?)\/(?<labels__application>[^\/]*).*$/m;
+const knownAppContextRegex = /^(?<url__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata))(\/((geoserver)|(pls)))?)\/(?<labels__project>[^\/]*).*$/m;
 
 @injectable()
 /**
@@ -38,30 +38,30 @@ export class ApplicationClassificationParser implements Parser {
 
     for (const knownDomain of knownDomains) {
       if ((knownDomain.regex).test(urlDomain.toLowerCase())) {
-        lodash.set(document.data, 'labels.application', knownDomain.app);
+        lodash.set(document.data, 'service.name', knownDomain.app);
       }
     }
 
-    if (lodash.isNil(lodash.get(document.data, 'labels.application'))) {
+    if (lodash.isNil(lodash.get(document.data, 'service.name'))) {
       const m = knownAppContextRegex.exec(urlPath);
       if (m !== null && m.groups) {
-        for (const gropName of Object.keys(m.groups)) {
-          const fieldName = gropName.replace('__', '.');
-          const groupValue = m.groups[gropName].toLowerCase();
+        for (const groupName of Object.keys(m.groups)) {
+          const fieldName = groupName.replace('__', '.');
+          const groupValue = m.groups[groupName].toLowerCase();
           lodash.set(document.data, fieldName, groupValue);
         }
       }
     }
-    if (lodash.isNil(lodash.get(document.data, 'labels.application')) && urlPath.startsWith('/clp-cgi')) {
-      lodash.set(document.data, 'labels.application', 'clp-cgi');
+    if (lodash.isNil(lodash.get(document.data, 'service.name')) && urlPath.startsWith('/clp-cgi')) {
+      lodash.set(document.data, 'service.name', 'clp-cgi');
     }
     // https://www.oracle-and-apex.com/apex-url-format/
-    if (lodash.get(document.data, 'labels.application') === 'apex') {
+    if (lodash.get(document.data, 'service.name') === 'apex') {
       const qs = lodash.get(document.data, 'url.query');
       if (qs) {
         const qsmap = querystring.parse(qs);
         if (qsmap.p) {
-          lodash.set(document.data, 'labels.application', 'apex-'+(qsmap.p as string).split(':')[0]);
+          lodash.set(document.data, 'service.name', 'apex-'+(qsmap.p as string).split(':')[0]);
         }
       }
     }

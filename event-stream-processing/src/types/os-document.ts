@@ -2,6 +2,7 @@ import {KinesisStreamRecord} from 'aws-lambda';
 
 export enum FingerprintCategory {
   APACHE_ACCESS_LOGS = 'APACHE_ACCESS_LOGS',
+  APP_LOGS = 'APP_LOGS',
   TOMCAT_ACCESS_LOGS = 'TOMCAT_ACCESS_LOGS',
   TOMCAT_LOCALHOST_LOGS = 'TOMCAT_LOCALHOST_LOGS',
   TOMCAT_CATALINA_LOGS = 'TOMCAT_CATALINA_LOGS',
@@ -30,5 +31,6 @@ export interface OsDocument {
   index: string | null;
   type: string;
   data: OsDocumentData;
+  dataExtractedTimestamp?: string;
   error: any;
 }

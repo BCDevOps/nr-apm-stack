@@ -40,8 +40,8 @@ export class UserAgentParser implements Parser {
       },
       device: {
         name: ua.device?.model,
-        type: ua.device?.type,
-        vendor: ua.device?.vendor,
+        // type: ua.device?.type,
+        // vendor: ua.device?.vendor,
       },
     };
 

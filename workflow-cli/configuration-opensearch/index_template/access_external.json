@@ -1,11 +1,11 @@
 {
   "index_patterns": [
-    "nrm-app-generic-*"
+    "nrm-access-external-*"
   ],
   "template": {
     "aliases": {
-      "nrm-app": {},
-      "nrm-app-generic": {}
+      "nrm-access": {},
+      "nrm-access-external": {}
     },
     "settings": {
       "number_of_shards": 1,
@@ -22,14 +22,21 @@
     "ecs_ecs_1.12",
     "ecs_event_1.12",
     "ecs_host_1.12",
+    "ecs_http_1.12",
     "ecs_log_1.12",
     "ecs_organization_1.12",
     "ecs_service_1.12",
+    "ecs_source_1.12",
+    "ecs_tls_1.12",
+    "ecs_url_1.12",
+    "ecs_user_agent_1.12",
     "ecs_nrm_base_1.0",
-    "ecs_nrm_kinesis_1.0"
+    "ecs_nrm_kinesis_1.0",
+    "ecs_nrm_user_agent_1.0",
+    "ecs_nrm_url_context_1.0"
   ],
   "version": 3,
   "_meta": {
-    "description": "NRM generic app indexes"
+    "description": "NRM Access indexes"
   }
 }

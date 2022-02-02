@@ -17,7 +17,7 @@ export class TimestampFieldParser implements Parser {
    */
   matches(document: OsDocument): boolean {
     return !!(document.data['@metadata'] &&
-      document.data['@metadata'].timestampField &&
+      (document.data['@metadata'].timestampField || document.dataExtractedTimestamp) &&
       document.data['@metadata'].timestampFormat);
   }
 
@@ -28,7 +28,7 @@ export class TimestampFieldParser implements Parser {
   apply(document: OsDocument): void {
     const fieldName: string = document.data['@metadata'].timestampField;
     const tsFormat: string = document.data['@metadata'].timestampFormat;
-    const value: string = lodash.get(document.data, fieldName);
+    const value: string = fieldName ? lodash.get(document.data, fieldName) : document.dataExtractedTimestamp;
 
     if (value) {
       // lodash.set(record.data, fieldName, value)

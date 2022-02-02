@@ -155,9 +155,9 @@ export default class OpenSearchSyncService {
         },
         hostname: settings.hostname,
         path: `/_plugins/_ism/policies/${basename}`,
-      }).then((res) => this.waitAndReturnResponseBody(res));
+      }).then((res) => this.waitAndReturnResponseBody(res, [404]));
 
-      if (existing.statusCode == 400) {
+      if (existing.statusCode === 404) {
         // Create
         await this.executeSignedHttpRequest({
           method: 'PUT',
@@ -174,6 +174,7 @@ export default class OpenSearchSyncService {
           .then((res) => console.log(`[${res.statusCode}] State Management Policy Added - ${basename}`));
       } else {
         // Update
+        const bodyJson = JSON.parse(existing.body);
         await this.executeSignedHttpRequest({
           method: 'PUT',
           body: fs.readFileSync(path.resolve(templateDir, filePath), {encoding: 'utf8'}),
@@ -182,9 +183,13 @@ export default class OpenSearchSyncService {
             'host': settings.hostname,
           },
           hostname: settings.hostname,
-          path: `/_plugins/_ism/policies/${basename}?` +
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            `if_seq_no=${existing.body._seq_no}&if_primary_term=${existing.body._primary_term}`,
+          path: `/_plugins/_ism/policies/${basename}`,
+          query: {
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            if_seq_no: `${bodyJson._seq_no}`,
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            if_primary_term: `${bodyJson._primary_term}`,
+          },
         })
           .then((res) => this.waitAndReturnResponseBody(res))
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -212,7 +217,7 @@ export default class OpenSearchSyncService {
     return nodeHttpHandler.handle(signedHttpRequest as any);
   }
 
-  private async waitAndReturnResponseBody(res: any) {
+  private async waitAndReturnResponseBody(res: any, ignoreStatus: number[] = []) {
     return new Promise<{statusCode: any, body: any}>((resolve, reject) => {
       const incomingMessage = res.response.body;
       let body = '';
@@ -220,7 +225,8 @@ export default class OpenSearchSyncService {
         body += chunk;
       });
       incomingMessage.on('end', () => {
-        if (res.response.statusCode >= 400 && res.response.statusCode < 500) {
+        if (res.response.statusCode >= 400 && res.response.statusCode < 500 &&
+          ignoreStatus.indexOf(res.response.statusCode) === -1) {
           console.error(body);
         }
         resolve({statusCode: res.response.statusCode, body});
