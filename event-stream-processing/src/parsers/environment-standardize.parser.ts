@@ -13,6 +13,7 @@ const envAlias: {[key: string]: string} = {
   staging1: 'staging',
   staging2: 'staging',
   staging3: 'staging',
+  undefined: 'undefined',
   wfprd: 'production',
   wftst: 'test',
   wfint: 'integration',
@@ -41,7 +42,7 @@ export class EnvironmentStandardizeParser implements Parser {
     const value = lodash.get(document.data, 'service.environment');
     if (value) {
       const lcValue = (value as string).toLowerCase();
-      const standardEnv = envAlias[lcValue] ? envAlias[lcValue] : 'unknown';
+      const standardEnv = envAlias[lcValue] ? envAlias[lcValue] : 'undefined';
       lodash.set(document.data, 'service.environment', standardEnv);
       if (lcValue !== standardEnv) {
         lodash.set(document.data, 'labels.environment_alias', lcValue);
