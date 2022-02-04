@@ -46,6 +46,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         environmentStandardize: true,
         geoIp: true,
         httpStatusOutcome: true,
+        rename: 'labels.azp:source.user.id',
         userAgent: true,
       },
     },
