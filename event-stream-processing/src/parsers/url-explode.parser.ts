@@ -5,6 +5,7 @@ import lodash from 'lodash';
 import * as path from 'path';
 import {format as formatUrl, URL} from 'url';
 import {OsDocument} from '../types/os-document';
+import {ParserError} from '../util/parser.error';
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
 @injectable()
@@ -33,22 +34,26 @@ export class UrlExplodeParser implements Parser {
       return;
     }
 
-    if (urlOriginal.startsWith('/')) {
-      // eslint-disable-next-line max-len
-      if (!lodash.isNil(lodash.get(document.data, 'url.scheme')) && !lodash.isNil(lodash.get(document.data, 'url.domain')) && !lodash.isNil(lodash.get(document.data, 'url.port'))) {
+    try {
+      if (urlOriginal.startsWith('/')) {
         // eslint-disable-next-line max-len
-        const url = new URL(`${lodash.get(document.data, 'url.scheme')}://${lodash.get(document.data, 'url.domain')}:${lodash.get(document.data, 'url.port')}${urlOriginal}`);
-        lodash.merge(document.data.url, this.explodeURL(url));
+        if (!lodash.isNil(lodash.get(document.data, 'url.scheme')) && !lodash.isNil(lodash.get(document.data, 'url.domain')) && !lodash.isNil(lodash.get(document.data, 'url.port'))) {
+          // eslint-disable-next-line max-len
+          const url = new URL(`${lodash.get(document.data, 'url.scheme')}://${lodash.get(document.data, 'url.domain')}:${lodash.get(document.data, 'url.port')}${urlOriginal}`);
+          lodash.merge(document.data.url, this.explodeURL(url));
+        } else {
+          const url = new URL(`http://localhost:80${urlOriginal}`);
+          lodash.merge(document.data.url, this.explodeURL(url));
+          lodash.unset(document.data.url, 'scheme');
+          lodash.unset(document.data.url, 'port');
+          lodash.unset(document.data.url, 'domain');
+          lodash.unset(document.data.url, 'full');
+        }
       } else {
-        const url = new URL(`http://localhost:80${urlOriginal}`);
-        lodash.merge(document.data.url, this.explodeURL(url));
-        lodash.unset(document.data.url, 'scheme');
-        lodash.unset(document.data.url, 'port');
-        lodash.unset(document.data.url, 'domain');
-        lodash.unset(document.data.url, 'full');
+        lodash.merge(document.data.url, this.explodeURL(urlOriginal));
       }
-    } else {
-      lodash.merge(document.data.url, this.explodeURL(urlOriginal));
+    } catch (e: unknown) {
+      throw new ParserError(`Could not parse [${urlOriginal}]`, this.constructor.name);
     }
   }
 

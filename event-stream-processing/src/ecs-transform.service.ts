@@ -52,13 +52,14 @@ export class EcsTransformService {
           try {
             return this.parseDocumentData(document);
           } catch (error: unknown) {
-            const team: string = document.data['@metadata'].team ? document.data['@metadata'].team : 'unknown';
             const parser: string = error instanceof ParserError ? error.parser : 'unknown';
+            const message: string = error instanceof ParserError || error instanceof GenericError ?
+              error.message : '';
+            const team: string = document.data.organization?.id ? document.data.organization.id : 'unknown';
             const hostName: string = document.data.host?.hostname ? document.data.host?.hostname as string : '';
-            const fileName: string = document.data.log?.file?.name ? document.data.log?.file?.name as string : '';
-            const offset: string = document.data.offset ? document.data.offset as string : '';
+            const sequence: string = document.data.event?.sequence ? document.data.event?.sequence : '';
             this.logger.log(
-              `PARSE_ERROR [${parser}] ${team} ${hostName} ${fileName} ${offset} ${document.fingerprint.name}`);
+              `PARSE_ERROR [${parser}] ${team} ${hostName} ${sequence} ${document.fingerprint.name} : ${message}`);
             throw error;
           }
         });
@@ -89,7 +90,7 @@ export class EcsTransformService {
       if (error instanceof ParserError) {
         throw error;
       } else {
-        throw new GenericError(`Error processing event`, error);
+        throw new GenericError('Internal', error);
       }
     }
     return document;
@@ -103,7 +104,11 @@ export class EcsTransformService {
           parser.apply(document);
         }
       } catch (error: any) {
-        throw new ParserError(`Error applying parser ${parser.constructor.name}`, parser.constructor.name, error);
+        if (error instanceof ParserError) {
+          throw error;
+        } else {
+          throw new ParserError('Unknown data issue', parser.constructor.name, error);
+        }
       }
     }
   }
