@@ -96,7 +96,16 @@ export class OpenSearchPostService implements OpenSearchService {
             const document = index.get(meta._id);
             if (document) {
               document.error = meta.error;
-              this.logger.log('ES_ERROR ' + JSON.stringify(document.data));
+              const team: string = document.data.organization?.id ? document.data.organization.id : 'unknown';
+              const hostName: string = document.data.host?.hostname ? document.data.host?.hostname as string : '';
+              const sequence: string = document.data.event?.sequence ? document.data.event?.sequence : '';
+              const message = typeof meta.error.type === 'string' ? meta.error.type as string : 'Unknown' +
+                `: ${typeof meta.error.reason === 'string' ? meta.error.reason as string : 'Unknown'}`;
+
+              this.logger.log(
+                `ES_DOCERROR ${team} ${hostName} ${sequence} ${document.fingerprint.name} : ${message}`);
+
+              this.logger.debug('ES_ERROR ' + JSON.stringify(document.data));
               errors.push(document);
             } else {
               this.logger.log('ES_ERROR_DOC_NOT_FOUND ' + JSON.stringify(item));
