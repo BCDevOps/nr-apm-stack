@@ -69,7 +69,6 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         deslash: true,
         environmentStandardize: true,
         urlExplode: true,
-        geoIp: true,
         httpStatusOutcome: true,
         tomcatLog: true,
         threatPhp: true,
