@@ -104,7 +104,7 @@ export class OpenSearchPostService implements OpenSearchService {
                 `: ${typeof meta.error.reason === 'string' ? meta.error.reason as string : 'Unknown'}`;
 
               this.logger.log(
-                `ES_DOCERROR ${team} ${hostName} ${path} ${sequence} ${document.fingerprint.name} : ${message}`);
+                `ES_DOCERROR ${team} ${hostName} ${path}:${sequence} ${document.fingerprint.name} : ${message}`);
 
               this.logger.debug('ES_ERROR ' + JSON.stringify(document.data));
               errors.push(document);
