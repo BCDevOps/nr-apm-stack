@@ -3,7 +3,7 @@
     "role_name": "csst-write-all",
     "description": "Common services showcase team",
     "tenant_permissions": {
-      "tenant_patterns": ["Common_Services_Showcase_Team"],
+      "tenant_patterns": ["Common_Services_Showcase"],
       "allowed_actions": ["kibana_all_write"]
     }
   },
