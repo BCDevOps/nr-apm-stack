@@ -163,8 +163,8 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     fingerprint: {
       event: {
         kind: 'event',
-        category: ['configuration'],
-        type: ['installation'],
+        category: 'configuration',
+        type: 'installation',
       },
     },
     dataDefaults: {
@@ -172,6 +172,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         hash: 'host.hostname,basename(log.file.path),event.sequence,@timestamp',
         docId: 'basename(log.file.path),event.sequence,event.hash',
         index: 'nrm-deploy-<%=YYYY.MM=%>',
+        environmentStandardize: true,
       },
     },
   },
