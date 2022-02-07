@@ -58,8 +58,9 @@ export class EcsTransformService {
             const team: string = document.data.organization?.id ? document.data.organization.id : 'unknown';
             const hostName: string = document.data.host?.hostname ? document.data.host?.hostname as string : '';
             const sequence: string = document.data.event?.sequence ? document.data.event?.sequence : '';
-            this.logger.log(
-              `PARSE_ERROR [${parser}] ${team} ${hostName} ${sequence} ${document.fingerprint.name} : ${message}`);
+            const path: string = document.data.log?.file?.path ? document.data.log?.file?.path : '';
+            // eslint-disable-next-line max-len
+            this.logger.log(`PARSE_ERROR:${parser} ${team} ${hostName} ${path}:${sequence} ${document.fingerprint.name} : ${message}`);
             throw error;
           }
         });
