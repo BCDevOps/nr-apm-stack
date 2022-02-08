@@ -1,5 +1,21 @@
 [
   {
+    "role_name": "csst-write-all",
+    "description": "Common services showcase team",
+    "tenant_permissions": {
+      "tenant_patterns": ["Common_Services_Showcase"],
+      "allowed_actions": ["kibana_all_write"]
+    }
+  },
+  {
+    "role_name": "fsamp-write-all",
+    "description": "Forestry Suite of Applications Modernization Program",
+    "tenant_permissions": {
+      "tenant_patterns": ["FSA_Modernization_Program"],
+      "allowed_actions": ["kibana_all_write"]
+    }
+  },
+  {
     "role_name": "wf-write-all",
     "description": "WF tenant",
     "tenant_permissions": {
