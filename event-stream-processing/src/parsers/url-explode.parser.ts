@@ -8,6 +8,7 @@ import {OsDocument} from '../types/os-document';
 import {ParserError} from '../util/parser.error';
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
+const regexUrlWithProtocol = /^\w+\:\/\//;
 @injectable()
 /**
  * Add exploded url to document
@@ -27,7 +28,7 @@ export class UrlExplodeParser implements Parser {
    * @param document The document to modify
    */
   apply(document: OsDocument): void {
-    const urlOriginal = lodash.get(document.data, 'url.original');
+    const urlOriginal: string = lodash.get(document.data, 'url.original');
 
     // Do nothing if not set
     if (!urlOriginal) {
@@ -49,8 +50,12 @@ export class UrlExplodeParser implements Parser {
           lodash.unset(document.data.url, 'domain');
           lodash.unset(document.data.url, 'full');
         }
+      } else if (urlOriginal === '*') {
+        // Do nothing
+      } else if (regexUrlWithProtocol.exec(urlOriginal)) {
+        lodash.merge(document.data.url, this.explodeURL(new URL(urlOriginal)));
       } else {
-        lodash.merge(document.data.url, this.explodeURL(urlOriginal));
+        lodash.merge(document.data.url, this.explodeURL(new URL(`http://${urlOriginal}`)));
       }
     } catch (e: unknown) {
       throw new ParserError(`Could not parse [${urlOriginal}]`, this.constructor.name);

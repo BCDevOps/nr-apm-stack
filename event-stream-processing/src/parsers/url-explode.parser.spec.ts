@@ -98,4 +98,38 @@ describe('UrlExplodeParser', () => {
     // expect(document.data).not.toHaveProperty('url.path_param');
     expect(document.data).toHaveProperty('url.query', 'postdata=\\%22%3E%3Cscript%3Efoo%3C/script%3E');
   });
+  it('url.original - 09', () => {
+    const parser = new UrlExplodeParser();
+    // eslint-disable-next-line max-len
+    const document = {data: {url: {original: '*'}}} as unknown as OsDocument;
+    parser.apply(document);
+    expect(document.data).not.toHaveProperty('url.path');
+    expect(document.data).toHaveProperty('url.original', '*');
+  });
+  it('url.original - 10', () => {
+    const parser = new UrlExplodeParser();
+    // eslint-disable-next-line max-len
+    const document = {data: {url: {original: 'http://5.188.210.227/echo.php'}}} as unknown as OsDocument;
+    parser.apply(document);
+    expect(document.data).toHaveProperty('url.path', '/echo.php');
+    expect(document.data).toHaveProperty('url.original', 'http://5.188.210.227/echo.php');
+  });
+  it('url.original - 11', () => {
+    const parser = new UrlExplodeParser();
+    // eslint-disable-next-line max-len
+    const document = {data: {url: {original: 'logontest7.gov.bc.ca:598'}}} as unknown as OsDocument;
+    parser.apply(document);
+    expect(document.data).toHaveProperty('url.path', '/');
+    expect(document.data).toHaveProperty('url.original', 'logontest7.gov.bc.ca:598');
+    expect(document.data).toHaveProperty('url.domain', 'logontest7.gov.bc.ca');
+    expect(document.data).toHaveProperty('url.port', '598');
+  });
+  it('url.original - 12', () => {
+    const parser = new UrlExplodeParser();
+    // eslint-disable-next-line max-len
+    const document = {data: {url: {original: '/http://5.188.210.227/echo.php'}}} as unknown as OsDocument;
+    parser.apply(document);
+    expect(document.data).toHaveProperty('url.path', '/http://5.188.210.227/echo.php');
+    expect(document.data).toHaveProperty('url.original', '/http://5.188.210.227/echo.php');
+  });
 });
