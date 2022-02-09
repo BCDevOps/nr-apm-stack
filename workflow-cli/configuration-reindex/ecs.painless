@@ -1,0 +1,68 @@
+if (ctx._source.event.dataset == "apache.access") {
+  if (ctx._source.service == null) {
+    ctx._source.service = new HashMap();
+  }
+  if (ctx._source.offset != null) {
+    ctx._source.event.sequence = ctx._source.remove("offset");
+  }
+  if (ctx._source.apache != null) {
+    ctx._source.remove("apache");
+  }
+  if (ctx._source.message != null) {
+    ctx._source.event.original = ctx._source.remove("message");
+  }
+  ctx._source.log.file.remove("extension");
+  ctx._source.log.file.remove("name");
+  ctx._source.log.file.remove("directory");
+  ctx._source.remove("@event");
+  ctx._source.url.remove("file");
+  ctx._source.url.remove("uri");
+  ctx._source.url.remove("query_v");
+  ctx._source.url.remove("query_kv");
+  ctx._source.url.remove("query_k");
+  ctx._source.url.remove("path_param");
+  if (ctx._source.labels.application != null) {
+    ctx._source.labels.project = ctx._source.labels.remove("application");
+  }
+  if (ctx._source.labels.env_alias != null) {
+    ctx._source.labels.environment_alias = ctx._source.labels.remove("env_alias");
+  }
+  if (ctx._source.labels.format != null) {
+    ctx._source.labels.remove("format");
+  }
+  if (ctx._source.labels.context != null) {
+    ctx._source.url.context = ctx._source.labels.remove("context");
+  }
+  if (ctx._source.labels.env != null) {
+    ctx._source.service.environment = ctx._source.labels.remove("env");
+    if (ctx._source.service.environment == "staging1" || ctx._source.service.environment == "staging2" || ctx._source.service.environment == "staging3") {
+      ctx._source.service.environment = "staging";
+    }
+  }
+  if (ctx._source.client != null) {
+    ctx._source.source = ctx._source.remove("client");
+  }
+  if (ctx._source.http.request != null && ctx._source.http.request.referrer != null) {
+    ctx._source.http.request.referrer = ctx._source.http.request.referrer.original;
+  }
+  if (ctx._source.http.request != null) {
+    ctx._source.http.request.remove("line");
+  }
+  ctx._source.event.remove("original_timestamp");
+  if (ctx._source.tls != null && ctx._source.tls.cypher != null) {
+    ctx._source.tls.cipher = ctx._source.tls.remove("cypher");
+  }
+}
+if (ctx._source.event.dataset == "express.access") {
+  if (ctx._source.host.namespace != null) {
+    ctx._source.host.name = ctx._source.host.remove("namespace");
+  }
+
+  if (ctx._source.http.request.referrer.uri != null) {
+    ctx._source.http.request.referrer = ctx._source.http.request.referrer.uri;
+  }
+
+  if (ctx._source.http.response.time != null) {
+    ctx._source.event.duration = ctx._source.http.response.remove("time") * 1000000;
+  }
+}
