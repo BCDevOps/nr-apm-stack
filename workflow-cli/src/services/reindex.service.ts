@@ -51,6 +51,7 @@ export default class ReindexService extends AwsService {
         } else {
           spinner.succeed();
           spinner.start().info(`DELETE ${reindexConfig.source.indexPrefix as string}${reindexDate}`);
+          await tp.setTimeout(Math.round(10000));
           // spinner.start(`DELETE ${reindexConfig.source.indexPrefix as string}${reindexDate}`);
           // const delSuccess =
           //   await this.deleteIndex(`DELETE ${reindexConfig.source.indexPrefix as string}${reindexDate}`, settings);
