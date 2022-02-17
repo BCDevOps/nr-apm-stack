@@ -40,6 +40,7 @@ import {RemoveMetadataParser} from './parsers/remove-metadata.parser';
 import {RenameParser} from './parsers/rename.parser';
 import {ThreatPhpParser} from './parsers/threat-php.parser';
 import {TimestampFieldParser} from './parsers/timestamp-field.parser';
+import {TimestampGuardParser} from './parsers/timestamp-guard.parser';
 import {TomcatParser} from './parsers/tomcat.parser';
 import {UserAgentParser} from './parsers/user-agent.parser';
 import {UrlExplodeParser} from './parsers/url-explode.parser';
@@ -96,6 +97,7 @@ function create(): Container {
 
   // Stage: FINALIZE
   myContainer.bind<Parser>(TYPES.FinalizeParser).to(TimestampFieldParser);
+  myContainer.bind<Parser>(TYPES.FinalizeParser).to(TimestampGuardParser);
   myContainer.bind<Parser>(TYPES.FinalizeParser).to(DocumentIndexParser);
   myContainer.bind<Parser>(TYPES.FinalizeParser).to(DocumentIdParser);
   myContainer.bind<Parser>(TYPES.FinalizeParser).to(RemoveMetadataParser);
