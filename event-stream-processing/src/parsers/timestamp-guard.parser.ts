@@ -7,7 +7,8 @@ import {ParserError} from '../util/parser.error';
 
 @injectable()
 /**
- * Ensure timestamp is not outside allowed period
+ * Ensure timestamp is not outside allowed period. Durations are in ISO_8601 format.
+ * See: https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
  * Tag: Support
  */
 export class TimestampGuardParser implements Parser {
