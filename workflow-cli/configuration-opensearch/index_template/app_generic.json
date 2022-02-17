@@ -20,6 +20,7 @@
     "ecs_agent_1.12",
     "ecs_base_1.12",
     "ecs_ecs_1.12",
+    "ecs_error_1.12",
     "ecs_event_1.12",
     "ecs_host_1.12",
     "ecs_log_1.12",
