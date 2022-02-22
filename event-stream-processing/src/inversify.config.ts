@@ -70,8 +70,10 @@ function create(): Container {
   myContainer.bind<RegexService>(TYPES.RegexService).to(RegexService);
   myContainer.bind<SubsetService>(TYPES.SubsetService).to(SubsetService);
 
-  // Stage: INIT
-  myContainer.bind<Parser>(TYPES.InitParser).to(KeyAsPathParser);
+  // Stage: PreInit
+  myContainer.bind<Parser>(TYPES.PreInitParser).to(KeyAsPathParser);
+
+  // Stage: Init
   myContainer.bind<Parser>(TYPES.InitParser).to(KinesisParser);
 
   // Stage: PreParse

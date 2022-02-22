@@ -20,6 +20,7 @@ export class EcsTransformService {
    * @param logger
    */
   constructor(
+    @multiInject(TYPES.PreInitParser) private preInitParsers: Parser[],
     @multiInject(TYPES.InitParser) private initParsers: Parser[],
     @multiInject(TYPES.PreParser) private preParsers: Parser[],
     @multiInject(TYPES.Parser) private parsers: Parser[],
@@ -80,6 +81,8 @@ export class EcsTransformService {
    */
   private parseDocumentData(document: OsDocument): OsDocument {
     try {
+      this.runParsers(document, this.preInitParsers);
+      this.ksrMapper.toFingerprintedDocument(document);
       this.runParsers(document, this.initParsers);
       this.runParsers(document, this.preParsers);
       this.runParsers(document, this.parsers);

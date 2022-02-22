@@ -11,11 +11,14 @@ import {OsDocument} from '../types/os-document';
 export class KeyAsPathParser implements Parser {
   /**
    * Returns true if metadata field keyAsPath is true.
+   * Note: This will work even if the metadata field is not nested.
    * @param document The document to match against
    * @returns
    */
   matches(document: OsDocument): boolean {
-    return !!(document.data['@metadata'] && document.data['@metadata'].keyAsPath);
+    return !!(
+      (document.data['@metadata'] && document.data['@metadata'].keyAsPath) || document.data['@metadata.keyAsPath']
+    );
   }
 
   /**

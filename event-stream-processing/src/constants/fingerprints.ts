@@ -1,5 +1,15 @@
 import {OsDocumentFingerprint, FingerprintCategory} from '../types/os-document';
 
+export const FINGERPRINT_UNKNOWN: OsDocumentFingerprint = {
+  name: FingerprintCategory.UNKNOWN,
+  fingerprint: null,
+  dataDefaults: {
+    '@metadata': {
+      docId: 'kinesis.eventID,event.hash',
+    },
+  },
+};
+
 export const FINGERPRINTS: OsDocumentFingerprint[] = [
   {
     name: FingerprintCategory.APACHE_ACCESS_LOGS,
@@ -222,13 +232,5 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
   },
   // Unknown should be last
-  {
-    name: FingerprintCategory.UNKNOWN,
-    fingerprint: null,
-    dataDefaults: {
-      '@metadata': {
-        docId: 'kinesis.eventID,event.hash',
-      },
-    },
-  },
+  FINGERPRINT_UNKNOWN,
 ];
