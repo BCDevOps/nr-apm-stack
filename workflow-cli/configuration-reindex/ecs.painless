@@ -1,0 +1,166 @@
+if (ctx._source.event.dataset == "apache.access") {
+  if (ctx._source.service == null) {
+    ctx._source.service = new HashMap();
+  }
+  if (ctx._source.offset != null) {
+    ctx._source.event.sequence = ctx._source.remove("offset");
+  }
+  if (ctx._source.apache != null) {
+    ctx._source.remove("apache");
+  }
+  if (ctx._source.message != null) {
+    ctx._source.event.original = ctx._source.remove("message");
+  }
+  ctx._source.log.file.remove("extension");
+  ctx._source.log.file.remove("name");
+  ctx._source.log.file.remove("directory");
+  ctx._source.remove("@event");
+  if (ctx._source.url != null && ctx._source.url.file != null) {
+    ctx._source.url.remove("file");
+  }
+  if (ctx._source.url != null && ctx._source.url.uri != null) {
+    ctx._source.url.remove("uri");
+  }
+  if (ctx._source.url != null && ctx._source.url.query_v != null) {
+    ctx._source.url.remove("query_v");
+  }
+  if (ctx._source.url != null && ctx._source.url.query_kv != null) {
+    ctx._source.url.remove("query_kv");
+  }
+  if (ctx._source.url != null && ctx._source.url.query_k != null) {
+    ctx._source.url.remove("query_k");
+  }
+  if (ctx._source.url != null && ctx._source.url.path_param != null) {
+    ctx._source.url.remove("path_param");
+  }
+  if (ctx._source.labels.application != null) {
+    ctx._source.labels.project = ctx._source.labels.remove("application");
+  }
+  if (ctx._source.labels.env_alias != null) {
+    ctx._source.labels.environment_alias = ctx._source.labels.remove("env_alias");
+  }
+  if (ctx._source.labels.format != null) {
+    ctx._source.labels.remove("format");
+  }
+  if (ctx._source.labels.context != null) {
+    ctx._source.url.context = ctx._source.labels.remove("context");
+  }
+  if (ctx._source.labels.env != null) {
+    ctx._source.service.environment = ctx._source.labels.remove("env");
+    if (ctx._source.service.environment == "staging1" || ctx._source.service.environment == "staging2" || ctx._source.service.environment == "staging3") {
+      ctx._source.service.environment = "staging";
+    }
+  }
+  if (ctx._source.client != null) {
+    ctx._source.source = ctx._source.remove("client");
+  }
+  if (ctx._source.http != null && ctx._source.http.request != null && ctx._source.http.request.referrer != null) {
+    ctx._source.http.request.referrer = ctx._source.http.request.referrer.original;
+  }
+  if (ctx._source.http != null && ctx._source.http.request != null) {
+    ctx._source.http.request.remove("line");
+  }
+  ctx._source.event.remove("original_timestamp");
+  if (ctx._source.tls != null && ctx._source.tls.cypher != null) {
+    ctx._source.tls.cipher = ctx._source.tls.remove("cypher");
+  }
+
+  if (ctx._source.user_agent != null && ctx._source.user_agent.engine != null) {
+    ctx._source.user_agent.remove("engine");
+  }
+
+  if (ctx._source.user_agent != null && ctx._source.user_agent.cpu != null) {
+    ctx._source.user_agent.remove("cpu");
+  }
+
+  if (ctx._source.user_agent != null && ctx._source.user_agent.device != null && ctx._source.user_agent.device.name == null) {
+    ctx._source.user_agent.remove("device");
+  }
+
+  if (ctx._source.user_agent != null && ctx._source.user_agent.browser != null) {
+    if (ctx._source.user_agent.browser.name != null && ctx._source.user_agent.name == null) {
+      ctx._source.user_agent.name = ctx._source.user_agent.browser.name;
+    }
+    if (ctx._source.user_agent.browser.version != null && ctx._source.user_agent.version == null) {
+      ctx._source.user_agent.version = ctx._source.user_agent.browser.version;
+    }
+    ctx._source.user_agent.remove("browser");
+  }
+
+  if (ctx._source.timestamp != null) {
+    ctx._source.remove("timestamp");
+  }
+
+  if (ctx._source.event != null && ctx._source.event.kinesis != null) {
+    ctx._source.kinesis = ctx._source.event.remove("kinesis");
+  }
+}
+if (ctx._source.event.dataset == "express.access") {
+  if (ctx._source.host.namespace != null) {
+    ctx._source.host.name = ctx._source.host.remove("namespace");
+  }
+
+  if (ctx._source.http.request.referrer.uri != null) {
+    ctx._source.http.request.referrer = ctx._source.http.request.referrer.uri;
+  }
+
+  if (ctx._source.http.response.time != null) {
+    ctx._source.event.duration = ctx._source.http.response.remove("time") * 1000000;
+  }
+}
+
+if (ctx._source.event.dataset == "node.css.http") {
+  if (ctx._source.service == null) {
+    ctx._source.service = new HashMap();
+  }
+  if (ctx._source.host == null) {
+    ctx._source.host = new HashMap();
+  }
+
+  if (ctx._source.message != null) {
+    ctx._source.event.original = ctx._source.remove("message");
+  }
+  if (ctx._source.timestamp != null) {
+    ctx._source.remove("timestamp");
+  }
+  if (ctx._source.labels.env != null) {
+    ctx._source.service.environment = ctx._source.labels.remove("env");
+    if (ctx._source.service.environment == "staging1" || ctx._source.service.environment == "staging2" || ctx._source.service.environment == "staging3") {
+      ctx._source.service.environment = "staging";
+    }
+  }
+  if (ctx._source.labels.application != null) {
+    ctx._source.labels.project = ctx._source.labels.remove("application");
+    ctx._source.service.name = ctx._source.labels.project;
+  }
+  if (ctx._source.kubernetes != null) {
+    if (ctx._source.kubernetes.namespace_name != null) {
+      ctx._source.host.name = ctx._source.kubernetes.remove("namespace_name");
+    }
+    if (ctx._source.kubernetes.pod_ip != null) {
+      ctx._source.host.ip = ctx._source.kubernetes.remove("pod_ip");
+    }
+    if (ctx._source.kubernetes.pod_name != null) {
+      ctx._source.host.hostname = ctx._source.kubernetes.remove("pod_name");
+    }
+    ctx._source.remove("kubernetes");
+  }
+
+  if (ctx._source.log.file.offset != null) {
+    ctx._source.event.sequence = ctx._source.log.file.remove("offset");
+  }
+  ctx._source.log.file.remove("extension");
+  ctx._source.log.file.remove("directory");
+  ctx._source.log.file.remove("name");
+  ctx._source.remove("ip");
+  ctx._source.event.type = "access";
+  if (ctx._source.client != null) {
+    ctx._source.source = ctx._source.remove("client");
+  }
+  if (ctx._source.http != null && ctx._source.http.response.time != null) {
+    ctx._source.event.duration = ctx._source.http.response.remove("time") * 1000000;
+  }
+  if (ctx._source.http == null) {
+    ctx['op'] = 'delete';
+  }
+}

@@ -1,7 +1,7 @@
-oclif-hello-world
+workflow-cli
 =================
 
-oclif example Hello World CLI
+AWS Deployment Workflow CLI
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 [![Version](https://img.shields.io/npm/v/oclif-hello-world.svg)](https://npmjs.org/package/oclif-hello-world)
@@ -20,7 +20,7 @@ $ npm install -g workflow-cli
 $ workflow-cli COMMAND
 running command...
 $ workflow-cli (--version)
-workflow-cli/1.0.0 darwin-x64 node-v16.6.2
+workflow-cli/1.0.0 darwin-x64 node-v17.3.1
 $ workflow-cli --help [COMMAND]
 USAGE
   $ workflow-cli COMMAND
@@ -39,6 +39,7 @@ USAGE
 * [`workflow-cli plugins:link PLUGIN`](#workflow-cli-pluginslink-plugin)
 * [`workflow-cli plugins:uninstall PLUGIN...`](#workflow-cli-pluginsuninstall-plugin)
 * [`workflow-cli plugins update`](#workflow-cli-plugins-update)
+* [`workflow-cli reindex`](#workflow-cli-reindex)
 
 ## `workflow-cli help [COMMAND]`
 
@@ -108,15 +109,15 @@ Sync OpenSearch settings
 
 ```
 USAGE
-  $ workflow-cli opensearch-sync -u <value> -d <value> --region <value> --accessId <value> --accessKey <value> --arn
-    <value>
+  $ workflow-cli opensearch-sync -u <value> -d <value> --region <value> --accessId <value> --accessKey <value> [--arn
+    <value>]
 
 FLAGS
   -d, --domainName=<value>  (required) OpenSearch Domain
   -u, --hostname=<value>    (required) OpenSearch url
   --accessId=<value>        (required) AWS access key id
   --accessKey=<value>       (required) AWS secret access key
-  --arn=<value>             (required) AWS ARN
+  --arn=<value>             AWS ARN
   --region=<value>          (required) AWS region
 
 DESCRIPTION
@@ -270,5 +271,29 @@ FLAGS
 
 DESCRIPTION
   Update installed plugins.
+```
+
+## `workflow-cli reindex`
+
+Bulk reindex runner
+
+```
+USAGE
+  $ workflow-cli reindex -u <value> -d <value> --region <value> --accessId <value> --accessKey <value> [--arn
+    <value>]
+
+FLAGS
+  -d, --domainName=<value>  (required) OpenSearch Domain
+  -u, --hostname=<value>    (required) OpenSearch url
+  --accessId=<value>        (required) AWS access key id
+  --accessKey=<value>       (required) AWS secret access key
+  --arn=<value>             AWS ARN
+  --region=<value>          (required) AWS region
+
+DESCRIPTION
+  Bulk reindex runner
+
+EXAMPLES
+  $ workflow-cli reindex
 ```
 <!-- commandsstop -->

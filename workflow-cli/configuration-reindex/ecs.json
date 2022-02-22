@@ -1,0 +1,19 @@
+{
+  "source": {
+    "indexPrefix": "nrm-logs-access-"
+  },
+  "dest": {
+    "indexPrefix": "nrm-access-external-"
+  },
+  "prototype": {
+    "conflicts": "proceed",
+    "source": {},
+    "dest":{
+      "op_type":"create"
+    },
+    "script": {
+      "lang": "painless",
+      "inline": ""
+    }
+  }
+}
