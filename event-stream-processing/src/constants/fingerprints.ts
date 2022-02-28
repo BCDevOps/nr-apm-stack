@@ -242,6 +242,22 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       },
     },
   },
+  {
+    name: FingerprintCategory.METRICS,
+    fingerprint: {
+      event: {
+        kind: 'metric',
+        dataset: 'host.proc',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        docId: 'kinesis.eventID',
+        index: 'nrm-metrics-<%=YYYY.MM.DD=%>',
+        timestampGuard: 'PT10M',
+      },
+    },
+  },
   // Unknown should be last
   FINGERPRINT_UNKNOWN,
 ];
