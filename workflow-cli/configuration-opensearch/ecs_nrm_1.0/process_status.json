@@ -1,0 +1,59 @@
+{
+  "_meta": {
+    "documentation": "https://apps.nrs.gov.bc.ca/int/confluence/x/PqJvBQ",
+    "version": "1.0"
+  },
+  "template": {
+    "mappings": {
+      "properties": {
+        "process": {
+          "properties": {
+            "status": {
+              "properties": {
+                "alive": {
+                  "type": "boolean"
+                },
+                "fileDescriptor": {
+                  "type": "long"
+                },
+                "VmStk": {
+                  "type": "long"
+                },
+                "VmExe": {
+                  "type": "long"
+                },
+                "VmLib": {
+                  "type": "long"
+                },
+                "VmPTE": {
+                  "type": "long"
+                },
+                "VmSwap": {
+                  "type": "long"
+                },
+                "VmPeak": {
+                  "type": "long"
+                },
+                "VmSize": {
+                  "type": "long"
+                },
+                "VmLck": {
+                  "type": "long"
+                },
+                "VmHWM": {
+                  "type": "long"
+                },
+                "VmRSS": {
+                  "type": "long"
+                },
+                "VmData": {
+                  "type": "long"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
