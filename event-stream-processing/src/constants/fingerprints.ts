@@ -143,6 +143,29 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         category: 'web',
         dataset: 'application.log',
       },
+      service: {
+        name: 'knox',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: 'host.hostname,basename(log.file.path),event.sequence,@timestamp',
+        docId: 'basename(log.file.path),event.sequence,event.hash',
+        index: 'nrm-app-generic-<%=YYYY.MM.DD=%>',
+        timestampGuard: 'P14D',
+        environmentStandardize: true,
+        keyAsPath: true,
+      },
+    },
+  },
+  {
+    name: FingerprintCategory.APP_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
+        dataset: 'application.log',
+      },
     },
     dataDefaults: {
       '@metadata': {
