@@ -74,6 +74,7 @@
     "lodash": "^4.17.21",
     "maxmind": "^4.3.1",
     "moment": "^2.29.1",
+    "moment-timezone": "^0.5.34",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
     "ua-parser-js": "^0.7.28"

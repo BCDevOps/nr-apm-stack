@@ -77,6 +77,21 @@ describe('TimestampFieldParser', () => {
     expect(document.data['@timestamp']).toEqual('2020-06-05T07:23:23.000-07:00');
   });
 
+  it('parses using timestamp timezone', () => {
+    const parser = new TimestampFieldParser();
+    const document = {
+      data: {
+        '@metadata': {
+          timestampField: 'field',
+          timestampFormat: 'YYYY-MM-DD HH:mm:ss',
+        },
+        'field': '2022-03-04 14:08:59',
+      },
+    } as unknown as OsDocument;
+    parser.apply(document);
+    expect(document.data['@timestamp']).toEqual('2022-03-04T14:08:59.000-08:00');
+  });
+
   it('parses timestamp in dataExtractedTimestamp', () => {
     const parser = new TimestampFieldParser();
     const document = {

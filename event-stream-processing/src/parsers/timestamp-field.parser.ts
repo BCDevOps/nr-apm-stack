@@ -1,6 +1,7 @@
 import {injectable} from 'inversify';
 import {Parser} from '../types/parser';
 import lodash from 'lodash';
+import 'moment-timezone';
 import moment from 'moment';
 import {OsDocument} from '../types/os-document';
 
@@ -28,11 +29,12 @@ export class TimestampFieldParser implements Parser {
   apply(document: OsDocument): void {
     const fieldName: string = document.data['@metadata'].timestampField;
     const tsFormat: string = document.data['@metadata'].timestampFormat;
+    const timezone: string = document.data['@metadata'].timestampTimezone;
     const value: string = fieldName ? lodash.get(document.data, fieldName) : document.dataExtractedTimestamp;
 
     if (value) {
       // lodash.set(record.data, fieldName, value)
-      const date = moment(value, tsFormat);
+      const date = timezone ? moment.tz(tsFormat, timezone) : moment(value, tsFormat);
       if (date.isValid()) {
         lodash.set(document.data, '@timestamp', date.toISOString(true));
       } else {
