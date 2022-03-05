@@ -44,7 +44,7 @@ describe('TimestampFieldParser', () => {
     } as unknown as OsDocument;
     expect(() => {
       parser.apply(document);
-    }).toThrow('Invalid Date: fefefef');
+    }).toThrow('Invalid date: \'fefefef\' invalid for format \'DD/MMM/YYYY:HH:mm:ss Z\'');
   });
 
   it('parses apache timestamp', () => {

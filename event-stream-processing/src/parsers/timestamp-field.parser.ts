@@ -38,7 +38,7 @@ export class TimestampFieldParser implements Parser {
       if (date.isValid()) {
         lodash.set(document.data, '@timestamp', date.toISOString(true));
       } else {
-        throw new Error(`Invalid Date: ${value}`);
+        throw new Error(`Invalid date: '${value}' invalid for format '${tsFormat}'`);
       }
     } else {
       throw new Error(`No value set for timestamp: ${fieldName}`);
