@@ -34,11 +34,11 @@ export class TimestampFieldParser implements Parser {
 
     if (value) {
       // lodash.set(record.data, fieldName, value)
-      const date = timezone ? moment.tz(tsFormat, timezone) : moment(value, tsFormat);
+      const date = timezone ? moment.tz(value, tsFormat, timezone) : moment(value, tsFormat);
       if (date.isValid()) {
         lodash.set(document.data, '@timestamp', date.toISOString(true));
       } else {
-        throw new Error(`Invalid Date: ${value}`);
+        throw new Error(`Invalid date: '${value}' invalid for format '${tsFormat}'`);
       }
     } else {
       throw new Error(`No value set for timestamp: ${fieldName}`);

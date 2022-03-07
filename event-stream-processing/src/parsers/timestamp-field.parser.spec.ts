@@ -44,7 +44,7 @@ describe('TimestampFieldParser', () => {
     } as unknown as OsDocument;
     expect(() => {
       parser.apply(document);
-    }).toThrow('Invalid Date: fefefef');
+    }).toThrow('Invalid date: \'fefefef\' invalid for format \'DD/MMM/YYYY:HH:mm:ss Z\'');
   });
 
   it('parses apache timestamp', () => {
@@ -84,12 +84,13 @@ describe('TimestampFieldParser', () => {
         '@metadata': {
           timestampField: 'field',
           timestampFormat: 'YYYY-MM-DD HH:mm:ss',
+          timestampTimezone: 'America/New_York',
         },
         'field': '2022-03-04 14:08:59',
       },
     } as unknown as OsDocument;
     parser.apply(document);
-    expect(document.data['@timestamp']).toEqual('2022-03-04T14:08:59.000-08:00');
+    expect(document.data['@timestamp']).toEqual('2022-03-04T14:08:59.000-05:00');
   });
 
   it('parses timestamp in dataExtractedTimestamp', () => {
