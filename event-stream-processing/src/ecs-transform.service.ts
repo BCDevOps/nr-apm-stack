@@ -57,11 +57,12 @@ export class EcsTransformService {
             const message: string = error instanceof ParserError || error instanceof GenericError ?
               error.message : '';
             const team: string = document.data.organization?.id ? document.data.organization.id : 'unknown';
-            const hostName: string = document.data.host?.hostname ? document.data.host?.hostname as string : '';
+            const hostName: string = document.data.host?.hostname ? document.data.host?.hostname : '';
+            const serviceName: string = document.data.service?.name ? document.data.service?.name : '';
             const sequence: string = document.data.event?.sequence ? document.data.event?.sequence : '';
             const path: string = document.data.log?.file?.path ? document.data.log?.file?.path : '';
             // eslint-disable-next-line max-len
-            this.logger.log(`PARSE_ERROR:${parser} ${team} ${hostName} ${path}:${sequence} ${document.fingerprint.name} : ${message}`);
+            this.logger.log(`PARSE_ERROR:${parser} ${team} ${hostName} ${serviceName} ${path}:${sequence} ${document.fingerprint.name} : ${message}`);
             throw error;
           }
         });
