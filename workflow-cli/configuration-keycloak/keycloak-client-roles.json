@@ -21,5 +21,11 @@
   },
   {
     "name": "alerting_full_access"
+  },
+  {
+    "name": "anomaly_full_access"
+  },
+  {
+    "name": "anomaly_read_access"
   }
 ]
