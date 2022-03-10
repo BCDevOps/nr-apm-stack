@@ -640,6 +640,18 @@ resource "elasticsearch_opendistro_roles_mapping" "alerting_full_access" {
   backend_roles = ["alerting_full_access"]
 }
 
+resource "elasticsearch_opendistro_roles_mapping" "anomaly_full_access" {
+  role_name     = "anomaly_full_access"
+  description   = "Mapping KC role to ES role"
+  backend_roles = ["anomaly_full_access"]
+}
+
+resource "elasticsearch_opendistro_roles_mapping" "anomaly_read_access" {
+  role_name     = "anomaly_read_access"
+  description   = "Mapping KC role to ES role"
+  backend_roles = ["anomaly_read_access"]
+}
+
 resource "elasticsearch_opendistro_roles_mapping" "all_access" {
   role_name     = "all_access"
   description   = "Mapping KC role to ES role"
