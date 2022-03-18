@@ -29,13 +29,11 @@ export class OpenSearchPostService implements OpenSearchService {
     const parsingErrors: OsDocument[] = [];
     for (const document of documents) {
       if (document.id === null) {
-        this.logger.debug('document:', document);
-        this.logger.log('ES_ERROR Document with no id');
+        this.logDocError('ES_ERROR', document, 'Document with no id');
         break;
       }
       if (document.index === null) {
-        this.logger.debug('document:', document);
-        this.logger.log('ES_ERROR Document with no index');
+        this.logDocError('ES_ERROR', document, 'Document with no index');
         break;
       }
       index.set(document.id, document);
@@ -96,18 +94,10 @@ export class OpenSearchPostService implements OpenSearchService {
             const document = index.get(meta._id);
             if (document) {
               document.error = meta.error;
-              const team: string = document.data.organization?.id ? document.data.organization.id : 'unknown';
-              const hostName: string = document.data.host?.hostname ? document.data.host?.hostname as string : '';
-              const serviceName: string = document.data.service?.name ? document.data.service?.name : '';
-              const sequence: string = document.data.event?.sequence ? document.data.event?.sequence : '';
-              const path: string = document.data.log?.file?.path ? document.data.log?.file?.path : '';
               const message = (typeof meta.error.type === 'string' ? meta.error.type as string : 'Unknown') +
                 `: ${typeof meta.error.reason === 'string' ? meta.error.reason as string : 'Unknown'}`;
 
-              // eslint-disable-next-line max-len
-              this.logger.log(`ES_DOCERROR ${team} ${hostName} ${serviceName} ${path}:${sequence} ${document.fingerprint.name} : ${message}`);
-
-              this.logger.debug('ES_ERROR ' + JSON.stringify(document.data));
+              this.logDocError('ES_DOCERROR', document, message);
               errors.push(document);
             } else {
               this.logger.log('ES_ERROR_DOC_NOT_FOUND ' + JSON.stringify(item));
@@ -116,5 +106,16 @@ export class OpenSearchPostService implements OpenSearchService {
         }
         return {success: errors.length === 0, errors: errors};
       });
+  }
+
+  private logDocError(type: string, document: OsDocument, message: string) {
+    const team: string = document.data.organization?.id ? document.data.organization.id : 'unknown';
+    const hostName: string = document.data.host?.hostname ? document.data.host?.hostname as string : '';
+    const serviceName: string = document.data.service?.name ? document.data.service?.name : '';
+    const sequence: string = document.data.event?.sequence ? document.data.event?.sequence : '';
+    const path: string = document.data.log?.file?.path ? document.data.log?.file?.path : '';
+    // eslint-disable-next-line max-len
+    this.logger.log(`${type} ${team} ${hostName} ${serviceName} ${path}:${sequence} ${document.fingerprint.name} : ${message}`);
+    this.logger.debug('ES_ERROR ' + JSON.stringify(document.data));
   }
 }
