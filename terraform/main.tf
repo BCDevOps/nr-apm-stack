@@ -734,3 +734,46 @@ resource "aws_sns_topic" "wf-priority" {
 }
 EOF
 }
+
+resource "aws_iam_role" "opensearch_sns_role" {
+  name = "opensearch_sns_${local.es_domain_name}"
+
+  # Terraform's "jsonencode" function converts a
+  # Terraform expression result to valid JSON syntax.
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "es.amazonaws.com"
+        }
+        Condition = {
+          StringEquals = {
+            "aws:SourceAccount" = "account-id"
+          },
+          ArnLike = {
+            "aws:SourceArn": "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/${local.es_domain_name}"
+          }
+        }
+      },
+    ]
+  })
+
+  inline_policy {
+    name = "opensearch_sns_role_policy"
+
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          Effect = "Allow"
+          Action = "sns:Publish"
+          Resource = "sns-topic-arn"
+        }
+      ]
+    })
+  }
+}
