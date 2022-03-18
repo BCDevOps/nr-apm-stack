@@ -752,7 +752,7 @@ resource "aws_iam_role" "opensearch_sns_role" {
         }
         Condition = {
           StringEquals = {
-            "aws:SourceAccount" = "account-id"
+            "aws:SourceAccount" = data.aws_caller_identity.current.account_id
           },
           ArnLike = {
             "aws:SourceArn": "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/${local.es_domain_name}"
