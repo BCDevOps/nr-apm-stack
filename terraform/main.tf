@@ -663,8 +663,8 @@ resource "elasticsearch_opendistro_roles_mapping" "all_access" {
   ]
 }
 
-resource "aws_sns_topic" "wf-normal" {
-  name          = "wf-normal"
+resource "aws_sns_topic" "wf_normal" {
+  name          = "wf_normal"
   display_name  = "WF"
   policy        = <<EOF
 {
@@ -699,8 +699,8 @@ resource "aws_sns_topic" "wf-normal" {
 EOF
 }
 
-resource "aws_sns_topic" "wf-priority" {
-  name          = "wf-priority"
+resource "aws_sns_topic" "wf_priority" {
+  name          = "wf_priority"
   display_name  = "WFPriority"
   policy        = <<EOF
 {
@@ -769,9 +769,12 @@ resource "aws_iam_role" "opensearch_sns_role" {
       Version = "2012-10-17"
       Statement = [
         {
+          Action = ["sns:Publish"]
           Effect = "Allow"
-          Action = "sns:Publish"
-          Resource = "sns-topic-arn"
+          Resource = [
+            aws_sns_topic.wf_priority.id,
+            aws_sns_topic.wf_normal.id
+          ]
         }
       ]
     })
