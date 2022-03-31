@@ -16,6 +16,14 @@
                 "fileDescriptor": {
                   "type": "long"
                 },
+                "cpu_percentage": {
+                  "scaling_factor": 1000,
+                  "type": "scaled_float"
+                },
+                "memory_percentage": {
+                  "scaling_factor": 1000,
+                  "type": "scaled_float"
+                },
                 "VmStk": {
                   "type": "long"
                 },
