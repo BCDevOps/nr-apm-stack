@@ -2,12 +2,6 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import {HttpRequest} from '@aws-sdk/protocol-http';
-import {Sha256} from '@aws-crypto/sha256-js';
-import {defaultProvider} from '@aws-sdk/credential-provider-node';
-import {SignatureV4} from '@aws-sdk/signature-v4';
-import {NodeHttpHandler} from '@aws-sdk/node-http-handler';
-import {STSClient, AssumeRoleCommand} from '@aws-sdk/client-sts';
 import {ElasticsearchServiceClient, DescribeElasticsearchDomainCommand}
   from '@aws-sdk/client-elasticsearch-service';
 import AwsService from './aws.service';

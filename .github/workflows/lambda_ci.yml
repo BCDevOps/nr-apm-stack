@@ -25,13 +25,17 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 14.x
-      - run: npm ci
+      - run: npm ci - esp
         working-directory: ./event-stream-processing
-      - run: npm run test
+      - run: npm ci - wf-cli
+        working-directory: ./workflow-cli
+      - run: npm run test - esp
         working-directory: ./event-stream-processing
         env:
           TZ: America/Vancouver
-      - run: npm run check-lint
+      - run: npm run check-lint - esp
         working-directory: ./event-stream-processing
+      - run: npm run check-lint - wf-cli
+        working-directory: ./workflow-cli
       - run: npm run pack
         working-directory: ./event-stream-processing
