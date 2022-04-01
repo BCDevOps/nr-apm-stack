@@ -21,7 +21,7 @@ export FUNBUCKS_HOME="${FUNBUCKS_HOME}"
 # Example mounts for logs:
 # -v "/mnt/c/tmp/logs/apache:/tmp/logs/apache"
 # -v "/mnt/c/tmp/logs/dispatch/dispatch-api-war:/tmp/logs/dispatch/dispatch-api-war"
-docker run --rm \
+podman run --rm \
     -v "${FUNBUCKS_HOME}/output:/config" \
     -v "/mnt/c/tmp/logs/wfdm/wfdm-document-management-api:/data/WFDM/wfdm-document-management-api" \
     -v "/proc/stat:/proc/stat:ro" \
