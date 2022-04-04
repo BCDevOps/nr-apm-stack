@@ -31,7 +31,7 @@ export class KinesisStreamService {
    * @returns A promise to wait on
    */
   public async handle(event: KinesisStreamEvent, context: Context): Promise<OpenSearchBulkResult> {
-    this.logger.log(`Transforming kinesis records to ES documents`);
+    this.logger.log(`Transforming ${event.Records.length} kinesis records to ES documents`);
     const docs = this.ecsTransformService.transform(event);
     this.logger.log(`Submitting ${docs.length} documents to ES`);
     return this.openSearch.bulk(docs).then((value) => {

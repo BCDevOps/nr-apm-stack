@@ -63,12 +63,14 @@ export class EcsTransformService {
             const path: string = document.data.log?.file?.path ? document.data.log?.file?.path : '';
             // eslint-disable-next-line max-len
             this.logger.log(`PARSE_ERROR:${parser} ${team} ${hostName} ${serviceName} ${path}:${sequence} ${document.fingerprint.name} : ${message}`);
-            throw error;
+            badDocs++;
+            return undefined;
           }
-        });
+        })
+        .filter((document): document is OsDocument => document !== undefined);
 
       if (badDocs > 0) {
-        this.logger.log(`${badDocs} documents rejected`);
+        this.logger.log(`Rejected ${badDocs} records`);
       }
       return docs;
     }
