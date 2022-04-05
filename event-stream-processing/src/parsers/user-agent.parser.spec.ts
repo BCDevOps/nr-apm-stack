@@ -1,7 +1,6 @@
 import {OsDocument} from '../types/os-document';
 import {UserAgentParser} from './user-agent.parser';
-import UAParser from 'ua-parser-js';
-import {mocked} from 'ts-jest/utils';
+import UAParser, {IResult} from 'ua-parser-js';
 
 jest.mock('ua-parser-js');
 
@@ -25,7 +24,7 @@ describe('UserAgentParser', () => {
   });
 
   it('sets user agent', () => {
-    mocked(UAParser).mockImplementation(() => {
+    jest.mocked(UAParser).mockImplementation(() => {
       return {
         getResult: jest.fn(() => ({
           browser: {
@@ -40,7 +39,7 @@ describe('UserAgentParser', () => {
             model: 'stop',
           },
         })),
-      } as unknown as UAParser;
+      } as unknown as IResult;
     });
     const parser = new UserAgentParser();
     const document = {data: {user_agent: {
@@ -64,10 +63,10 @@ describe('UserAgentParser', () => {
   });
 
   it('GoogleBot', () => {
-    mocked(UAParser).mockImplementation(() => {
+    jest.mocked(UAParser).mockImplementation(() => {
       return {
         getResult: jest.fn(() => ({})),
-      } as unknown as UAParser;
+      } as unknown as IResult;
     });
     const parser = new UserAgentParser();
     const document = {data: {user_agent: {
@@ -83,17 +82,17 @@ describe('UserAgentParser', () => {
   });
 
   it('YandexBot', () => {
-    mocked(UAParser).mockImplementation(() => {
+    jest.mocked(UAParser).mockImplementation(() => {
       return {
         getResult: jest.fn(() => ({})),
-      } as unknown as UAParser;
+      } as unknown as IResult;
     });
     const parser = new UserAgentParser();
     const document = {data: {user_agent: {
       original: 'Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)'}},
     } as unknown as OsDocument;
     parser.apply(document);
-    expect(mocked(UAParser)).toBeCalledTimes(1);
+    expect(jest.mocked(UAParser)).toBeCalledTimes(1);
     expect(document.data).toEqual({
       user_agent: {
         original: 'Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)',
