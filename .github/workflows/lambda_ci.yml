@@ -33,7 +33,7 @@ jobs:
         working-directory: ./event-stream-processing
       - run: npm run check-lint
         working-directory: ./workflow-cli
-      - run: npm run test - esp
+      - run: npm run test
         working-directory: ./event-stream-processing
         env:
           TZ: America/Vancouver
