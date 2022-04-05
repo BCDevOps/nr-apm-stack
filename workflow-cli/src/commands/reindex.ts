@@ -2,11 +2,11 @@ import {Command, Flags} from '@oclif/core';
 import ReindexService from '../services/reindex.service';
 
 export default class Reindex extends Command {
-  static description = 'Bulk reindex runner'
+  static description = 'Bulk reindex runner';
 
   static examples = [
     '<%= config.bin %> <%= command.id %>',
-  ]
+  ];
 
   static flags = {
     hostname: Flags.string({char: 'u', description: 'OpenSearch url', env: 'OS_URL', required: true}),
@@ -17,7 +17,7 @@ export default class Reindex extends Command {
     arn: Flags.string({description: 'AWS ARN', env: 'AWS_ASSUME_ROLE'}),
     config: Flags.string({char: 'c', description: 'The configuration file name (without .json)',
       env: 'REINDEX_CONFIG_NAME', required: true}),
-  }
+  };
 
   public async run(): Promise<void> {
     const {flags} = await this.parse(Reindex);

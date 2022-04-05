@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line max-len
 import {DescribeElasticsearchDomainCommand, DescribeElasticsearchDomainCommandOutput, ElasticsearchServiceClient} from '@aws-sdk/client-elasticsearch-service';
 
