@@ -29,7 +29,7 @@ describe('KinesisStreamService', () => {
       osService,
       logger,
     );
-    const fakeEvent = {} as KinesisStreamEvent;
+    const fakeEvent = {Records: []} as KinesisStreamEvent;
     const fakeContext = {} as Context;
 
     await ks.handle(fakeEvent, fakeContext);
@@ -40,7 +40,7 @@ describe('KinesisStreamService', () => {
     expect(osService.bulk).toBeCalledTimes(1);
     expect(osService.bulk).toBeCalledWith(docs);
     expect(logger.log).toBeCalledTimes(4);
-    expect(logger.log).toBeCalledWith('Transforming kinesis records to ES documents');
+    expect(logger.log).toBeCalledWith('Transforming 0 kinesis records to ES documents');
     expect(logger.log).toBeCalledWith('Submitting 3 documents to ES');
     expect(logger.log).toBeCalledWith('2 documents added');
     expect(logger.log).toBeCalledWith('1 documents failed');

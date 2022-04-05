@@ -30,11 +30,13 @@ export class OpenSearchPostService implements OpenSearchService {
     for (const document of documents) {
       if (document.id === null) {
         this.logDocError('ES_ERROR', document, 'Document with no id');
-        break;
+        parsingErrors.push(document);
+        continue;
       }
       if (document.index === null) {
         this.logDocError('ES_ERROR', document, 'Document with no index');
-        break;
+        parsingErrors.push(document);
+        continue;
       }
       index.set(document.id, document);
       if (!document.error) {
@@ -60,6 +62,9 @@ export class OpenSearchPostService implements OpenSearchService {
     this.logger.log(`${parsingErrors.length} documents with parsing error and not posted to ES`);
     this.logger.debug('ES_REQUEST_BODY:', body);
     this.logger.debug('ES_REQUEST_QUERY:', query);
+    if (body.length === 0) {
+      return Promise.resolve({success: true, errors: []});
+    }
     return await this.awsHttpClient.executeSignedHttpRequest({
       hostname: this.url.hostname,
       protocol: 'https',
