@@ -25,6 +25,7 @@
     "ecs_process_1.12",
     "ecs_service_1.12",
     "ecs_nrm_base_1.0",
+    "ecs_nrm_host_network_1.0",
     "ecs_nrm_kinesis_1.0",
     "ecs_nrm_metrics_1.0",
     "ecs_nrm_process_status_1.0"
