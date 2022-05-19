@@ -4,6 +4,7 @@ import lodash from 'lodash';
 import 'moment-timezone';
 import moment from 'moment';
 import {OsDocument} from '../types/os-document';
+import {ParserError} from '../util/parser.error';
 
 @injectable()
 /**
@@ -38,10 +39,10 @@ export class TimestampFieldParser implements Parser {
       if (date.isValid()) {
         lodash.set(document.data, '@timestamp', date.toISOString(true));
       } else {
-        throw new Error(`Invalid date: '${value}' invalid for format '${tsFormat}'`);
+        throw new ParserError(`Invalid date: '${value}' invalid for format '${tsFormat}'`, this.constructor.name);
       }
     } else {
-      throw new Error(`No value set for timestamp: ${fieldName}`);
+      throw new ParserError(`No value set for timestamp: ${fieldName}`, this.constructor.name);
     }
   }
 }
