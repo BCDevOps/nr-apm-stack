@@ -39,6 +39,8 @@ jobs:
         working-directory: ./workflow-cli
         env:
           MAXMIND_LICENSE_KEY: ${{secrets.MAXMIND_LICENSE_KEY}}
+      - run: mv workflow-cli terraform/workflow-cli
+        working-directory: ./
       - run: npm ci
         working-directory: ./event-stream-processing
       - run: mkdir dist
@@ -64,7 +66,7 @@ jobs:
         run: terragrunt apply-all --terragrunt-non-interactive
       - name: Keycloak sync
         run: ./bin/dev keycloak-sync
-        working-directory: ./workflow-cli
+        working-directory: ./workflow-cli/terraform
         env:
           KEYCLOAK_ADMIN_CLIENT_ID: ${{secrets.KEYCLOAK_ADMIN_CLIENT_ID}}
           KEYCLOAK_ADMIN_CLIENT_SECRET: ${{secrets.KEYCLOAK_ADMIN_CLIENT_SECRET}}
