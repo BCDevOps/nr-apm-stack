@@ -196,6 +196,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       '@metadata': {
         hash: 'service.name,response.data_json',
         docId: 'kinesis.eventID,event.hash',
+        geoIp: true,
         index: 'nrm-audit-vault-<%=YYYY.MM=%>',
         timestampGuard: 'P14D',
       },
