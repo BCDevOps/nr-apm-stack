@@ -495,6 +495,7 @@ resource "null_resource" "es_configure" {
     #command = "echo %CD%"
     command = <<EOF
 curl -sSL -o /tmp/node-v16.15.0-linux-x64.tar.gz https://nodejs.org/dist/v16.15.0/node-v16.15.0-linux-x64.tar.gz
+mkdir /tmp/node
 tar -xf /tmp/node-v16.15.0-linux-x64.tar.gz -C /tmp/node --strip-components=1
 export PATH=/tmp/node/bin:$PATH
 export AWS_REGION=ca-central-1
