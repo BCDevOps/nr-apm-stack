@@ -273,6 +273,22 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     fingerprint: {
       event: {
         kind: 'metric',
+        dataset: 'host.network',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        docId: 'kinesis.eventID',
+        index: 'nrm-metrics-<%=YYYY.MM.DD=%>',
+        timestampGuard: 'PT10M',
+      },
+    },
+  },
+  {
+    name: FingerprintCategory.METRICS,
+    fingerprint: {
+      event: {
+        kind: 'metric',
         dataset: 'process.info',
       },
     },
