@@ -23,9 +23,7 @@
                       "type": "long"
                     }
                   }
-                }
-              },
-              "network" : {
+                },
                 "interface": {
                   "ignore_above": 1024,
                   "type": "keyword"

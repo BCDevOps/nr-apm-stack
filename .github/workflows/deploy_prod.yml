@@ -9,8 +9,8 @@ on:
     branches: [main]
 
 env:
-  TF_VERSION: 0.15.3
-  TG_VERSION: 0.29.2
+  TF_VERSION: <1.2.0
+  TG_VERSION: 0.37.1
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "deploy"
@@ -25,17 +25,15 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
-      - name: Use Node.js 14.x
-        uses: actions/setup-node@v1
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 16
       - run: npm ci
         working-directory: ./workflow-cli
-      - run: cp -R workflow-cli terraform/workflow-cli
-        working-directory: ./
       - name: Download/Install Maxmind databases
         run: ./bin/dev lambda-asset-download
         working-directory: ./workflow-cli
@@ -50,10 +48,12 @@ jobs:
       - run: npm run clean
         working-directory: ./event-stream-processing
       # Install/Setup terraform CLI
-      - uses: hashicorp/setup-terraform@v1
+      - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{ env.TF_VERSION }}
           cli_config_credentials_token: ${{ secrets.TFC_TEAM_TOKEN }}
+      - run: mv workflow-cli terraform/workflow-cli
+        working-directory: ./
       # Install/Setup terragrunt CLI
       - uses: peter-murray/terragrunt-github-action@v1.0.0
         with:
@@ -64,6 +64,9 @@ jobs:
         env:
           app_image: ${{ env.IMAGE_ID }}:${{ github.event.workflow_run.head_branch}}
         run: terragrunt apply-all --terragrunt-non-interactive
+      - run: mv terraform/workflow-cli workflow-cli
+        working-directory: ./
+      # Install/Setup terragrunt CLI
       - name: Keycloak sync
         run: ./bin/dev keycloak-sync
         working-directory: ./workflow-cli
