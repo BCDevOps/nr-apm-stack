@@ -8,8 +8,8 @@ terraform {
 }
 
 resource "aws_sns_topic" "topic" {
-  name          = var.tenant["name"]
-  display_name  = var.tenant["display"]
+  name          = var.topic["name"]
+  display_name  = var.topic["display"]
   policy        = <<EOF
 {
   "Version": "2008-10-17",
@@ -31,7 +31,7 @@ resource "aws_sns_topic" "topic" {
         "SNS:AddPermission",
         "SNS:Subscribe"
       ],
-      "Resource": "arn:aws:sns:${var.aws_region_name}:${var.aws_account_id}:${var.tenant.resourceId}",
+      "Resource": "arn:aws:sns:${var.aws_region_name}:${var.aws_account_id}:${var.topic.resourceId}",
       "Condition": {
         "StringEquals": {
           "AWS:SourceOwner": "${var.aws_account_id}"
