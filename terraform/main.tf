@@ -709,7 +709,7 @@ resource "aws_iam_role" "opensearch_sns_role" {
         {
           Action = ["sns:Publish"]
           Effect = "Allow"
-          Resource = module.topic.topic_id
+          Resource = module.topic[*].topic_id
         }
       ]
     })
