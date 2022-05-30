@@ -517,7 +517,7 @@ EOF
 provider "elasticsearch" {
   url = "https://${aws_opensearch_domain.es.endpoint}"
   healthcheck = false
-  elasticsearch_version = aws_opensearch_domain.es.elasticsearch_version
+  elasticsearch_version = aws_opensearch_domain.es.engine_version
   aws_assume_role_arn = local.iam_role_arn
 }
 
