@@ -254,17 +254,17 @@ resource "aws_cloudwatch_log_resource_policy" "es_logs" {
 CONFIG
 }
 
-resource "aws_elasticsearch_domain" "es" {
+resource "aws_opensearch_domain" "es" {
   domain_name           = local.es_domain_name
   # Not provided as we manage manually
-  # elasticsearch_version = "7.10"
+  # engine_version = "7.10"
   # VPC deployment is not supported atm. We can used public endpoint while we experiment
   #vpc_options {
   #  subnet_ids         = data.aws_subnet_ids.web.ids
   #  security_group_ids = data.aws_security_groups.web.ids
   #}
   lifecycle {
-    ignore_changes = [ elasticsearch_version, advanced_options ]
+    ignore_changes = [ engine_version, advanced_options ]
   }
   domain_endpoint_options {
     enforce_https       = true
@@ -470,7 +470,7 @@ resource "aws_lambda_function" "lambda_iit_agents" {
   publish       = false
   environment   {
     variables   = {
-      "ES_URL"  = "https://${aws_elasticsearch_domain.es.endpoint}"
+      "ES_URL"  = "https://${aws_opensearch_domain.es.endpoint}"
       "MAXMIND_DB_DIR"  = "/opt/nodejs/asset"
       "LOG_LEVEL" = "info"
     }
@@ -508,16 +508,16 @@ EOF
     AWS_ASSUME_ROLE = local.iam_role_arn
   }
   }
-  depends_on = [aws_elasticsearch_domain.es]
+  depends_on = [aws_opensearch_domain.es]
 }
 
 /* The Elastic Search configuration may need to move to another module/workspace*/
 /* it fails on the first deployment because terraform can't initialize the provider as ES endpoint doesn't yet exist*/
 
 provider "elasticsearch" {
-  url = "https://${aws_elasticsearch_domain.es.endpoint}"
+  url = "https://${aws_opensearch_domain.es.endpoint}"
   healthcheck = false
-  elasticsearch_version = aws_elasticsearch_domain.es.elasticsearch_version
+  elasticsearch_version = aws_opensearch_domain.es.elasticsearch_version
   aws_assume_role_arn = local.iam_role_arn
 }
 
@@ -531,7 +531,7 @@ resource "elasticsearch_opensearch_role" "iit_logs_writer" {
     index_patterns  = ["iitd-*", "iit-*", "nrm-*"]
     allowed_actions = ["indices:data/write/bulk","indices:data/write/index","indices:data/write/bulk*","create_index"]
   }
-  depends_on = [aws_elasticsearch_domain.es]
+  depends_on = [aws_opensearch_domain.es]
 }
 
 resource "elasticsearch_opensearch_roles_mapping" "iit_logs_writer_mapper" {
@@ -571,7 +571,7 @@ resource "elasticsearch_opensearch_role" "nrm_read_all" {
     tenant_patterns = ["*"]
     allowed_actions = ["kibana_all_read"]
   }
-  depends_on = [aws_elasticsearch_domain.es]
+  depends_on = [aws_opensearch_domain.es]
 }
 
 resource "elasticsearch_opensearch_roles_mapping" "nrm_read_all_mapper" {
@@ -584,7 +584,7 @@ module "tenant" {
   source = "./tenant-module"
   for_each = { for t in jsondecode(file("./tenants.json")): t.role_name => t }
   tenant = each.value
-  depends_on = [aws_elasticsearch_domain.es]
+  depends_on = [aws_opensearch_domain.es]
 }
 
 resource "elasticsearch_opensearch_role" "nrm_security" {
@@ -614,7 +614,7 @@ resource "elasticsearch_opensearch_role" "nrm_security" {
     tenant_patterns = ["infraops"]
     allowed_actions = ["kibana_all_read"]
   }
-  depends_on = [aws_elasticsearch_domain.es]
+  depends_on = [aws_opensearch_domain.es]
 }
 
 resource "elasticsearch_opensearch_roles_mapping" "nrm_security_mapper" {
@@ -670,7 +670,7 @@ module "topic" {
   topic = each.value
   aws_region_name = data.aws_region.current.name
   aws_account_id = data.aws_caller_identity.current.account_id
-  depends_on = [aws_elasticsearch_domain.es]
+  depends_on = [aws_opensearch_domain.es]
 }
 
 resource "aws_iam_role" "opensearch_sns_role" {
