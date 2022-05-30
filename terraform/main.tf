@@ -9,15 +9,15 @@ terraform {
   required_providers {
     aws = {
       source = "hashicorp/aws"
-      version = "3.63.0"
+      version = "4.16.0"
     }
     keycloak = {
       source = "mrparkers/keycloak"
-      version = "3.0.1"
+      version = "3.8.1"
     }
     elasticsearch = {
       source = "phillbaker/elasticsearch"
-      version = "1.6.3"
+      version = "2.0.1"
     }
   }
 }
@@ -256,7 +256,8 @@ CONFIG
 
 resource "aws_elasticsearch_domain" "es" {
   domain_name           = local.es_domain_name
-  elasticsearch_version = "7.10"
+  # Not provided as we manage manually
+  # elasticsearch_version = "7.10"
   # VPC deployment is not supported atm. We can used public endpoint while we experiment
   #vpc_options {
   #  subnet_ids         = data.aws_subnet_ids.web.ids
@@ -663,76 +664,13 @@ resource "elasticsearch_opendistro_roles_mapping" "all_access" {
   ]
 }
 
-resource "aws_sns_topic" "wf_normal" {
-  name          = "wf_normal"
-  display_name  = "WF"
-  policy        = <<EOF
-{
-  "Version": "2008-10-17",
-  "Id": "__default_policy_ID",
-  "Statement": [
-    {
-      "Sid": "__default_statement_ID",
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "*"
-      },
-      "Action": [
-        "SNS:Publish",
-        "SNS:RemovePermission",
-        "SNS:SetTopicAttributes",
-        "SNS:DeleteTopic",
-        "SNS:ListSubscriptionsByTopic",
-        "SNS:GetTopicAttributes",
-        "SNS:AddPermission",
-        "SNS:Subscribe"
-      ],
-      "Resource": "arn:aws:sns:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:wf-normal",
-      "Condition": {
-        "StringEquals": {
-          "AWS:SourceOwner": "${data.aws_caller_identity.current.account_id}"
-        }
-      }
-    }
-  ]
-}
-EOF
-}
-
-resource "aws_sns_topic" "wf_priority" {
-  name          = "wf_priority"
-  display_name  = "WFPriority"
-  policy        = <<EOF
-{
-  "Version": "2008-10-17",
-  "Id": "__default_policy_ID",
-  "Statement": [
-    {
-      "Sid": "__default_statement_ID",
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "*"
-      },
-      "Action": [
-        "SNS:Publish",
-        "SNS:RemovePermission",
-        "SNS:SetTopicAttributes",
-        "SNS:DeleteTopic",
-        "SNS:ListSubscriptionsByTopic",
-        "SNS:GetTopicAttributes",
-        "SNS:AddPermission",
-        "SNS:Subscribe"
-      ],
-      "Resource": "arn:aws:sns:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:wf-priority",
-      "Condition": {
-        "StringEquals": {
-          "AWS:SourceOwner": "${data.aws_caller_identity.current.account_id}"
-        }
-      }
-    }
-  ]
-}
-EOF
+module "topic" {
+  source = "./topic-module"
+  for_each = { for t in jsondecode(file("./topics.json")): t.name => t }
+  topic = each.value
+  aws_region_name = data.aws_region.current.name
+  aws_account_id = data.aws_caller_identity.current.account_id
+  depends_on = [aws_elasticsearch_domain.es]
 }
 
 resource "aws_iam_role" "opensearch_sns_role" {
@@ -771,10 +709,7 @@ resource "aws_iam_role" "opensearch_sns_role" {
         {
           Action = ["sns:Publish"]
           Effect = "Allow"
-          Resource = [
-            aws_sns_topic.wf_priority.id,
-            aws_sns_topic.wf_normal.id
-          ]
+          Resource = module.topic.topic_id
         }
       ]
     })
