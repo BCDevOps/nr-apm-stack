@@ -12,7 +12,7 @@ terraform {
 }
 
 
-resource "elasticsearch_opendistro_roles_mapping" "tenant_role" {
+resource "elasticsearch_opendistro_role" "tenant_role" {
   role_name   = var.tenant["role_name"]
   description = var.tenant["description"]
   tenant_permissions {
