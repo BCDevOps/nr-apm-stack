@@ -1,0 +1,65 @@
+
+name: plan_prod
+
+# Controls when the action will run.
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    branches: [main]
+
+env:
+  TF_VERSION: <1.2.0
+  TG_VERSION: 0.37.1
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "plan"
+  plan:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Production GitHub repo environment
+    environment:
+      name: production
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm ci
+        working-directory: ./workflow-cli
+      - name: Download/Install Maxmind databases
+        run: ./bin/dev lambda-asset-download
+        working-directory: ./workflow-cli
+        env:
+          MAXMIND_LICENSE_KEY: ${{secrets.MAXMIND_LICENSE_KEY}}
+      - run: npm ci
+        working-directory: ./event-stream-processing
+      - run: mkdir dist
+        working-directory: ./event-stream-processing
+      - run: npm run pack
+        working-directory: ./event-stream-processing
+      - run: npm run clean
+        working-directory: ./event-stream-processing
+      # Install/Setup terraform CLI
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          cli_config_credentials_token: ${{ secrets.TFC_TEAM_TOKEN }}
+      - run: mv workflow-cli terraform/workflow-cli
+        working-directory: ./
+      # Install/Setup terragrunt CLI
+      - uses: peter-murray/terragrunt-github-action@v1.0.0
+        with:
+          terragrunt_version: ${{ env.TG_VERSION }}
+      # Apply changes
+      - name: Terragrunt Plan
+        working-directory: terragrunt/prod
+        env:
+          app_image: ${{ env.IMAGE_ID }}:${{ github.event.workflow_run.head_branch}}
+        run: terragrunt run-all plan --terragrunt-non-interactive -refresh-only
