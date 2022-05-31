@@ -580,6 +580,90 @@ resource "elasticsearch_opensearch_roles_mapping" "nrm_read_all_mapper" {
   backend_roles = ["nrm-read-all"]
 }
 
+module "tenant" {
+  source = "./tenant-module"
+  for_each = { for t in jsondecode(file("./tenants.json")): t.role_name => t }
+  tenant = each.value
+  depends_on = [aws_opensearch_domain.es]
+}
+
+resource "elasticsearch_opensearch_role" "nrm_security" {
+  role_name   = "nrm-security"
+  description = "NRM security role"
+  cluster_permissions = [
+    "cluster_composite_ops",
+    "cluster:admin/opendistro/reports/definition/create",
+    "cluster:admin/opendistro/reports/definition/update",
+    "cluster:admin/opendistro/reports/definition/on_demand",
+    "cluster:admin/opendistro/reports/definition/delete",
+    "cluster:admin/opendistro/reports/definition/get",
+    "cluster:admin/opendistro/reports/definition/list",
+    "cluster:admin/opendistro/reports/instance/list",
+    "cluster:admin/opendistro/reports/instance/get",
+    "cluster:admin/opendistro/reports/menu/download"
+  ]
+  index_permissions {
+    index_patterns  = ["iitd-*", "iit-*", "nrm-*"]
+    allowed_actions = ["read", "indices:admin/resolve/index", "indices:data/read/get", "indices:monitor/settings/get"]
+  }
+  index_permissions {
+    index_patterns  = [".kibana_*"]
+    allowed_actions = ["kibana_all_read"]
+  }
+  tenant_permissions {
+    tenant_patterns = ["infraops"]
+    allowed_actions = ["kibana_all_read"]
+  }
+  depends_on = [aws_opensearch_domain.es]
+}
+
+resource "elasticsearch_opensearch_roles_mapping" "nrm_security_mapper" {
+  role_name     = elasticsearch_opensearch_role.nrm_security.id
+  description   = "Mapping KC role to ES role"
+  backend_roles = ["nrm-security"]
+}
+
+resource "elasticsearch_opensearch_roles_mapping" "alerting_read_access" {
+  role_name     = "alerting_read_access"
+  description   = "Mapping KC role to ES role"
+  backend_roles = ["alerting_read_access"]
+}
+
+resource "elasticsearch_opensearch_roles_mapping" "alerting_ack_alerts" {
+  role_name     = "alerting_ack_alerts"
+  description   = "Mapping KC role to ES role"
+  backend_roles = ["alerting_ack_alerts"]
+}
+
+resource "elasticsearch_opensearch_roles_mapping" "alerting_full_access" {
+  role_name     = "alerting_full_access"
+  description   = "Mapping KC role to ES role"
+  backend_roles = ["alerting_full_access"]
+}
+
+resource "elasticsearch_opensearch_roles_mapping" "anomaly_full_access" {
+  role_name     = "anomaly_full_access"
+  description   = "Mapping KC role to ES role"
+  backend_roles = ["anomaly_full_access"]
+}
+
+resource "elasticsearch_opensearch_roles_mapping" "anomaly_read_access" {
+  role_name     = "anomaly_read_access"
+  description   = "Mapping KC role to ES role"
+  backend_roles = ["anomaly_read_access"]
+}
+
+resource "elasticsearch_opensearch_roles_mapping" "all_access" {
+  role_name     = "all_access"
+  description   = "Mapping KC role to ES role"
+  backend_roles = [
+    "all_access",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/BCGOV_prod_Automation_Admin_Role",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/BCGOV_WORKLOAD_admin_umafubc9",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/BCGOV_WORKLOAD_developer_umafubc9"
+  ]
+}
+
 module "topic" {
   source = "./topic-module"
   for_each = { for t in jsondecode(file("./topics.json")): t.name => t }
