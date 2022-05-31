@@ -62,4 +62,4 @@ jobs:
         working-directory: terragrunt/prod
         env:
           app_image: ${{ env.IMAGE_ID }}:${{ github.event.workflow_run.head_branch}}
-        run: terragrunt run-all plan --terragrunt-non-interactive -refresh-only
+        run: terragrunt run-all plan --terragrunt-non-interactive
