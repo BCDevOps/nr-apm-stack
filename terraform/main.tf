@@ -519,7 +519,7 @@ provider "elasticsearch" {
   aws_assume_role_arn = local.iam_role_arn
 }
 
-resource "elasticsearch_opensearch_role" "iit_logs_writer" {
+resource "elasticsearch_opendistro_role" "iit_logs_writer" {
   role_name   = "iitd-logs-writer"
   description = "Logs writer role"
 
@@ -532,15 +532,15 @@ resource "elasticsearch_opensearch_role" "iit_logs_writer" {
   depends_on = [aws_opensearch_domain.es]
 }
 
-resource "elasticsearch_opensearch_roles_mapping" "iit_logs_writer_mapper" {
-  role_name     = elasticsearch_opensearch_role.iit_logs_writer.id
+resource "elasticsearch_opendistro_roles_mapping" "iit_logs_writer_mapper" {
+  role_name     = elasticsearch_opendistro_role.iit_logs_writer.id
   description   = "Mapping AWS IAM roles to ES role"
   backend_roles = [
     aws_iam_role.lambda_iit_agents.arn
   ]
 }
 
-resource "elasticsearch_opensearch_role" "nrm_read_all" {
+resource "elasticsearch_opendistro_role" "nrm_read_all" {
   role_name   = "nrm-read-all"
   description = "NRM read role"
   cluster_permissions = [
@@ -572,14 +572,20 @@ resource "elasticsearch_opensearch_role" "nrm_read_all" {
   depends_on = [aws_opensearch_domain.es]
 }
 
-resource "elasticsearch_opensearch_roles_mapping" "nrm_read_all_mapper" {
-  role_name     = elasticsearch_opensearch_role.nrm_read_all.id
+resource "elasticsearch_opendistro_roles_mapping" "nrm_read_all_mapper" {
+  role_name     = elasticsearch_opendistro_role.nrm_read_all.id
   description   = "Mapping KC role to ES role"
   backend_roles = ["nrm-read-all"]
 }
 
+module "tenant" {
+  source = "./tenant-module"
+  for_each = { for t in jsondecode(file("./tenants.json")): t.role_name => t }
+  tenant = each.value
+  depends_on = [aws_opensearch_domain.es]
+}
 
-resource "elasticsearch_opensearch_role" "nrm_security" {
+resource "elasticsearch_opendistro_role" "nrm_security" {
   role_name   = "nrm-security"
   description = "NRM security role"
   cluster_permissions = [
@@ -609,43 +615,43 @@ resource "elasticsearch_opensearch_role" "nrm_security" {
   depends_on = [aws_opensearch_domain.es]
 }
 
-resource "elasticsearch_opensearch_roles_mapping" "nrm_security_mapper" {
-  role_name     = elasticsearch_opensearch_role.nrm_security.id
+resource "elasticsearch_opendistro_roles_mapping" "nrm_security_mapper" {
+  role_name     = elasticsearch_opendistro_role.nrm_security.id
   description   = "Mapping KC role to ES role"
   backend_roles = ["nrm-security"]
 }
 
-resource "elasticsearch_opensearch_roles_mapping" "alerting_read_access" {
+resource "elasticsearch_opendistro_roles_mapping" "alerting_read_access" {
   role_name     = "alerting_read_access"
   description   = "Mapping KC role to ES role"
   backend_roles = ["alerting_read_access"]
 }
 
-resource "elasticsearch_opensearch_roles_mapping" "alerting_ack_alerts" {
+resource "elasticsearch_opendistro_roles_mapping" "alerting_ack_alerts" {
   role_name     = "alerting_ack_alerts"
   description   = "Mapping KC role to ES role"
   backend_roles = ["alerting_ack_alerts"]
 }
 
-resource "elasticsearch_opensearch_roles_mapping" "alerting_full_access" {
+resource "elasticsearch_opendistro_roles_mapping" "alerting_full_access" {
   role_name     = "alerting_full_access"
   description   = "Mapping KC role to ES role"
   backend_roles = ["alerting_full_access"]
 }
 
-resource "elasticsearch_opensearch_roles_mapping" "anomaly_full_access" {
+resource "elasticsearch_opendistro_roles_mapping" "anomaly_full_access" {
   role_name     = "anomaly_full_access"
   description   = "Mapping KC role to ES role"
   backend_roles = ["anomaly_full_access"]
 }
 
-resource "elasticsearch_opensearch_roles_mapping" "anomaly_read_access" {
+resource "elasticsearch_opendistro_roles_mapping" "anomaly_read_access" {
   role_name     = "anomaly_read_access"
   description   = "Mapping KC role to ES role"
   backend_roles = ["anomaly_read_access"]
 }
 
-resource "elasticsearch_opensearch_roles_mapping" "all_access" {
+resource "elasticsearch_opendistro_roles_mapping" "all_access" {
   role_name     = "all_access"
   description   = "Mapping KC role to ES role"
   backend_roles = [
