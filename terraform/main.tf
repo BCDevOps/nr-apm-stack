@@ -578,12 +578,6 @@ resource "elasticsearch_opensearch_roles_mapping" "nrm_read_all_mapper" {
   backend_roles = ["nrm-read-all"]
 }
 
-module "tenant" {
-  source = "./tenant-module"
-  for_each = { for t in jsondecode(file("./tenants.json")): t.role_name => t }
-  tenant = each.value
-  depends_on = [aws_opensearch_domain.es]
-}
 
 resource "elasticsearch_opensearch_role" "nrm_security" {
   role_name   = "nrm-security"
