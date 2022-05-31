@@ -9,9 +9,3 @@ variable "tenant" {
     })
   })
 }
-
-variable "tag_refresh_value" {
-  type = string
-  description = "Refresh value"
-  default = "1"
-}
