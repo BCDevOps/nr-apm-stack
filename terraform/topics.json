@@ -1,0 +1,37 @@
+[
+  {
+    "name": "wf_priority",
+    "display": "WFPriority",
+    "resourceId": "wf-priority"
+  },
+  {
+    "name": "wf_normal",
+    "display": "WF",
+    "resourceId": "wf-normal"
+  },
+  {
+    "name": "appdlvr_priority",
+    "display": "AppdlvrPriority",
+    "resourceId": "appdlvr-priority"
+  },
+  {
+    "name": "appdlvr_normal",
+    "display": "Appdlvr",
+    "resourceId": "appdlvr-normal"
+  },
+  {
+    "name": "midtier_priority",
+    "display": "MidtierPriority",
+    "resourceId": "midtier-priority"
+  },
+  {
+    "name": "midtier_normal",
+    "display": "Midtier",
+    "resourceId": "midtier-normal"
+  },
+  {
+    "name": "message_queue",
+    "display": "SQS",
+    "resourceId": "message-queue"
+  }
+]

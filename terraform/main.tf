@@ -9,15 +9,15 @@ terraform {
   required_providers {
     aws = {
       source = "hashicorp/aws"
-      version = "3.63.0"
+      version = "4.16.0"
     }
     keycloak = {
       source = "mrparkers/keycloak"
-      version = "3.0.1"
+      version = "3.8.1"
     }
     elasticsearch = {
       source = "phillbaker/elasticsearch"
-      version = "1.6.3"
+      version = "2.0.2"
     }
   }
 }
@@ -254,16 +254,17 @@ resource "aws_cloudwatch_log_resource_policy" "es_logs" {
 CONFIG
 }
 
-resource "aws_elasticsearch_domain" "es" {
+resource "aws_opensearch_domain" "es" {
   domain_name           = local.es_domain_name
-  elasticsearch_version = "7.10"
+  # Not provided as we manage manually
+  # engine_version = "7.10"
   # VPC deployment is not supported atm. We can used public endpoint while we experiment
   #vpc_options {
   #  subnet_ids         = data.aws_subnet_ids.web.ids
   #  security_group_ids = data.aws_security_groups.web.ids
   #}
   lifecycle {
-    ignore_changes = [ elasticsearch_version, advanced_options ]
+    ignore_changes = [ engine_version, advanced_options ]
   }
   domain_endpoint_options {
     enforce_https       = true
@@ -469,7 +470,7 @@ resource "aws_lambda_function" "lambda_iit_agents" {
   publish       = false
   environment   {
     variables   = {
-      "ES_URL"  = "https://${aws_elasticsearch_domain.es.endpoint}"
+      "ES_URL"  = "https://${aws_opensearch_domain.es.endpoint}"
       "MAXMIND_DB_DIR"  = "/opt/nodejs/asset"
       "LOG_LEVEL" = "info"
     }
@@ -507,20 +508,20 @@ EOF
     AWS_ASSUME_ROLE = local.iam_role_arn
   }
   }
-  depends_on = [aws_elasticsearch_domain.es]
+  depends_on = [aws_opensearch_domain.es]
 }
 
 /* The Elastic Search configuration may need to move to another module/workspace*/
 /* it fails on the first deployment because terraform can't initialize the provider as ES endpoint doesn't yet exist*/
 
 provider "elasticsearch" {
-  url = "https://${aws_elasticsearch_domain.es.endpoint}"
+  url = "https://${aws_opensearch_domain.es.endpoint}"
+  aws_region = "ca-central-1"
   healthcheck = false
-  elasticsearch_version = aws_elasticsearch_domain.es.elasticsearch_version
   aws_assume_role_arn = local.iam_role_arn
 }
 
-resource "elasticsearch_opendistro_role" "iit_logs_writer" {
+resource "elasticsearch_opensearch_role" "iit_logs_writer" {
   role_name   = "iitd-logs-writer"
   description = "Logs writer role"
 
@@ -530,18 +531,18 @@ resource "elasticsearch_opendistro_role" "iit_logs_writer" {
     index_patterns  = ["iitd-*", "iit-*", "nrm-*"]
     allowed_actions = ["indices:data/write/bulk","indices:data/write/index","indices:data/write/bulk*","create_index"]
   }
-  depends_on = [aws_elasticsearch_domain.es]
+  depends_on = [aws_opensearch_domain.es]
 }
 
-resource "elasticsearch_opendistro_roles_mapping" "iit_logs_writer_mapper" {
-  role_name     = elasticsearch_opendistro_role.iit_logs_writer.id
+resource "elasticsearch_opensearch_roles_mapping" "iit_logs_writer_mapper" {
+  role_name     = elasticsearch_opensearch_role.iit_logs_writer.id
   description   = "Mapping AWS IAM roles to ES role"
   backend_roles = [
     aws_iam_role.lambda_iit_agents.arn
   ]
 }
 
-resource "elasticsearch_opendistro_role" "nrm_read_all" {
+resource "elasticsearch_opensearch_role" "nrm_read_all" {
   role_name   = "nrm-read-all"
   description = "NRM read role"
   cluster_permissions = [
@@ -570,11 +571,11 @@ resource "elasticsearch_opendistro_role" "nrm_read_all" {
     tenant_patterns = ["*"]
     allowed_actions = ["kibana_all_read"]
   }
-  depends_on = [aws_elasticsearch_domain.es]
+  depends_on = [aws_opensearch_domain.es]
 }
 
-resource "elasticsearch_opendistro_roles_mapping" "nrm_read_all_mapper" {
-  role_name     = elasticsearch_opendistro_role.nrm_read_all.id
+resource "elasticsearch_opensearch_roles_mapping" "nrm_read_all_mapper" {
+  role_name     = elasticsearch_opensearch_role.nrm_read_all.id
   description   = "Mapping KC role to ES role"
   backend_roles = ["nrm-read-all"]
 }
@@ -583,10 +584,10 @@ module "tenant" {
   source = "./tenant-module"
   for_each = { for t in jsondecode(file("./tenants.json")): t.role_name => t }
   tenant = each.value
-  depends_on = [aws_elasticsearch_domain.es]
+  depends_on = [aws_opensearch_domain.es]
 }
 
-resource "elasticsearch_opendistro_role" "nrm_security" {
+resource "elasticsearch_opensearch_role" "nrm_security" {
   role_name   = "nrm-security"
   description = "NRM security role"
   cluster_permissions = [
@@ -613,46 +614,46 @@ resource "elasticsearch_opendistro_role" "nrm_security" {
     tenant_patterns = ["infraops"]
     allowed_actions = ["kibana_all_read"]
   }
-  depends_on = [aws_elasticsearch_domain.es]
+  depends_on = [aws_opensearch_domain.es]
 }
 
-resource "elasticsearch_opendistro_roles_mapping" "nrm_security_mapper" {
-  role_name     = elasticsearch_opendistro_role.nrm_security.id
+resource "elasticsearch_opensearch_roles_mapping" "nrm_security_mapper" {
+  role_name     = elasticsearch_opensearch_role.nrm_security.id
   description   = "Mapping KC role to ES role"
   backend_roles = ["nrm-security"]
 }
 
-resource "elasticsearch_opendistro_roles_mapping" "alerting_read_access" {
+resource "elasticsearch_opensearch_roles_mapping" "alerting_read_access" {
   role_name     = "alerting_read_access"
   description   = "Mapping KC role to ES role"
   backend_roles = ["alerting_read_access"]
 }
 
-resource "elasticsearch_opendistro_roles_mapping" "alerting_ack_alerts" {
+resource "elasticsearch_opensearch_roles_mapping" "alerting_ack_alerts" {
   role_name     = "alerting_ack_alerts"
   description   = "Mapping KC role to ES role"
   backend_roles = ["alerting_ack_alerts"]
 }
 
-resource "elasticsearch_opendistro_roles_mapping" "alerting_full_access" {
+resource "elasticsearch_opensearch_roles_mapping" "alerting_full_access" {
   role_name     = "alerting_full_access"
   description   = "Mapping KC role to ES role"
   backend_roles = ["alerting_full_access"]
 }
 
-resource "elasticsearch_opendistro_roles_mapping" "anomaly_full_access" {
+resource "elasticsearch_opensearch_roles_mapping" "anomaly_full_access" {
   role_name     = "anomaly_full_access"
   description   = "Mapping KC role to ES role"
   backend_roles = ["anomaly_full_access"]
 }
 
-resource "elasticsearch_opendistro_roles_mapping" "anomaly_read_access" {
+resource "elasticsearch_opensearch_roles_mapping" "anomaly_read_access" {
   role_name     = "anomaly_read_access"
   description   = "Mapping KC role to ES role"
   backend_roles = ["anomaly_read_access"]
 }
 
-resource "elasticsearch_opendistro_roles_mapping" "all_access" {
+resource "elasticsearch_opensearch_roles_mapping" "all_access" {
   role_name     = "all_access"
   description   = "Mapping KC role to ES role"
   backend_roles = [
@@ -663,76 +664,13 @@ resource "elasticsearch_opendistro_roles_mapping" "all_access" {
   ]
 }
 
-resource "aws_sns_topic" "wf_normal" {
-  name          = "wf_normal"
-  display_name  = "WF"
-  policy        = <<EOF
-{
-  "Version": "2008-10-17",
-  "Id": "__default_policy_ID",
-  "Statement": [
-    {
-      "Sid": "__default_statement_ID",
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "*"
-      },
-      "Action": [
-        "SNS:Publish",
-        "SNS:RemovePermission",
-        "SNS:SetTopicAttributes",
-        "SNS:DeleteTopic",
-        "SNS:ListSubscriptionsByTopic",
-        "SNS:GetTopicAttributes",
-        "SNS:AddPermission",
-        "SNS:Subscribe"
-      ],
-      "Resource": "arn:aws:sns:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:wf-normal",
-      "Condition": {
-        "StringEquals": {
-          "AWS:SourceOwner": "${data.aws_caller_identity.current.account_id}"
-        }
-      }
-    }
-  ]
-}
-EOF
-}
-
-resource "aws_sns_topic" "wf_priority" {
-  name          = "wf_priority"
-  display_name  = "WFPriority"
-  policy        = <<EOF
-{
-  "Version": "2008-10-17",
-  "Id": "__default_policy_ID",
-  "Statement": [
-    {
-      "Sid": "__default_statement_ID",
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "*"
-      },
-      "Action": [
-        "SNS:Publish",
-        "SNS:RemovePermission",
-        "SNS:SetTopicAttributes",
-        "SNS:DeleteTopic",
-        "SNS:ListSubscriptionsByTopic",
-        "SNS:GetTopicAttributes",
-        "SNS:AddPermission",
-        "SNS:Subscribe"
-      ],
-      "Resource": "arn:aws:sns:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:wf-priority",
-      "Condition": {
-        "StringEquals": {
-          "AWS:SourceOwner": "${data.aws_caller_identity.current.account_id}"
-        }
-      }
-    }
-  ]
-}
-EOF
+module "topic" {
+  source = "./topic-module"
+  for_each = { for t in jsondecode(file("./topics.json")): t.name => t }
+  topic = each.value
+  aws_region_name = data.aws_region.current.name
+  aws_account_id = data.aws_caller_identity.current.account_id
+  depends_on = [aws_opensearch_domain.es]
 }
 
 resource "aws_iam_role" "opensearch_sns_role" {
@@ -772,8 +710,7 @@ resource "aws_iam_role" "opensearch_sns_role" {
           Action = ["sns:Publish"]
           Effect = "Allow"
           Resource = [
-            aws_sns_topic.wf_priority.id,
-            aws_sns_topic.wf_normal.id
+            for k, v in module.topic : v.topic_id
           ]
         }
       ]

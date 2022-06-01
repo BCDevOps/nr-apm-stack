@@ -2,17 +2,17 @@ terraform {
   required_providers {
     aws = {
       source = "hashicorp/aws"
-      version = "3.63.0"
+      version = "4.16.0"
     }
     elasticsearch = {
       source = "phillbaker/elasticsearch"
-      version = "1.6.3"
+      version = "2.0.2"
     }
   }
 }
 
 
-resource "elasticsearch_opendistro_role" "tenant_role" {
+resource "elasticsearch_opensearch_role" "tenant_role" {
   role_name   = var.tenant["role_name"]
   description = var.tenant["description"]
   tenant_permissions {
@@ -21,8 +21,8 @@ resource "elasticsearch_opendistro_role" "tenant_role" {
   }
 }
 
-resource "elasticsearch_opendistro_roles_mapping" "tenant_write_all_mapper" {
-  role_name     = elasticsearch_opendistro_role.tenant_role.id
-  description   = "Mapping KC role to ES role"
+resource "elasticsearch_opensearch_roles_mapping" "tenant_write_all_mapper" {
+  role_name     = elasticsearch_opensearch_role.tenant_role.id
+  description   = "Mapping Keycloak role to ES role"
   backend_roles = [var.tenant["role_name"]]
 }
