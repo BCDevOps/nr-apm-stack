@@ -62,4 +62,4 @@ jobs:
         working-directory: terragrunt/prod
         env:
           app_image: ${{ env.IMAGE_ID }}:${{ github.event.workflow_run.head_branch}}
-        run: terragrunt run-all plan --terragrunt-non-interactive
+        run: terragrunt import elasticsearch_opensearch_role.nrm_security nrm-security --terragrunt-non-interactive
