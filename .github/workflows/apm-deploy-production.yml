@@ -1,0 +1,82 @@
+name: APM Deploy to Production
+
+on:
+  workflow_dispatch:
+    branches: [main]
+
+env:
+  TF_VERSION: 0.15.4
+  TG_VERSION: 0.37.1
+
+jobs:
+  checkout:
+    name: Checkout
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+  build:
+    name: Build Node
+    needs: [checkout]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm ci
+        working-directory: ./workflow-cli
+      - name: Download/Install Maxmind databases
+        run: ./bin/dev lambda-asset-download
+        working-directory: ./workflow-cli
+        env:
+          MAXMIND_LICENSE_KEY: ${{secrets.MAXMIND_LICENSE_KEY}}
+      - run: npm ci
+        working-directory: ./event-stream-processing
+      - run: mkdir dist
+        working-directory: ./event-stream-processing
+      - run: npm run pack
+        working-directory: ./event-stream-processing
+      - run: npm run clean
+        working-directory: ./event-stream-processing
+  setup:
+    name: Setup Terraform
+    needs: [checkout]
+    runs-on: ubuntu-latest
+    steps:
+      # Install/Setup terraform CLI
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          cli_config_credentials_token: ${{ secrets.TFC_TEAM_TOKEN }}
+      - run: mv workflow-cli terraform/workflow-cli
+        working-directory: ./
+      # Install/Setup terragrunt CLI
+      - uses: peter-murray/terragrunt-github-action@v1.0.0
+        with:
+          terragrunt_version: ${{ env.TG_VERSION }}
+  plan:
+    name: Terragrunt Plan
+    needs: [build, setup]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run
+        working-directory: terragrunt/prod
+        env:
+          app_image: ${{ env.IMAGE_ID }}:${{ github.event.workflow_run.head_branch}}
+        run: terragrunt run-all plan --terragrunt-non-interactive
+  apply:
+    name: Terragrunt Apply
+    needs: [plan]
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - name: Run
+        working-directory: terragrunt/prod
+        env:
+          app_image: ${{ env.IMAGE_ID }}:${{ github.event.workflow_run.head_branch}}
+        run: terragrunt run-all plan --terragrunt-non-interactive
+
+
