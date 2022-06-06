@@ -69,9 +69,13 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: event-stream-processing
-          path: event-stream-processing-dblzip.zip
+          path: event-stream-processing.zip
       - name: Unzip ESP
-        run: unzip event-stream-processing-dblzip.zip
+        run: unzip event-stream-processing.zip
+      - name: Files
+        run: pwd
+      - name: Files2
+        run: ls
       - name: Run
         working-directory: terragrunt/prod
         env:
