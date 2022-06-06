@@ -22,14 +22,12 @@ jobs:
           node-version: 16
       - run: npm ci
         working-directory: ./event-stream-processing
-      - run: mkdir dist
-        working-directory: ./event-stream-processing
       - run: npm run pack
         working-directory: ./event-stream-processing
       - uses: actions/upload-artifact@v3
         with:
           name: event-stream-processing
-          path: event-stream-processing/dist/event-stream-processing.zip
+          path: event-stream-processing/event-stream-processing.zip
   buildWorkflow:
     name: Build Workflow
     runs-on: ubuntu-latest
@@ -42,8 +40,6 @@ jobs:
         with:
           node-version: 16
       - run: npm ci
-        working-directory: ./workflow-cli
-      - run: mkdir dist
         working-directory: ./workflow-cli
       - run: npm run pack
         working-directory: ./workflow-cli
@@ -76,7 +72,7 @@ jobs:
         run: terragrunt run-all plan --terragrunt-non-interactive
   apply:
     name: Terragrunt Apply
-    needs: [buildLambda, buildWorkflow]
+    needs: [plan, buildWorkflow]
     runs-on: ubuntu-latest
     environment:
       name: production
