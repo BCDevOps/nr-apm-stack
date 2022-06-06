@@ -9,74 +9,133 @@ env:
   TG_VERSION: 0.37.1
 
 jobs:
-  checkout:
-    name: Checkout
+  buildLambda:
+    name: Build Lambda
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
-  build:
-    name: Build Node
-    needs: [checkout]
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm ci
+        working-directory: ./event-stream-processing
+      - run: npm run pack
+        working-directory: ./event-stream-processing
+      - uses: actions/upload-artifact@v3
+        with:
+          name: event-stream-processing
+          path: event-stream-processing/event-stream-processing.zip
+          retention-days: 1
+  buildWorkflow:
+    name: Build Workflow
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
       - name: Use Node.js 16
         uses: actions/setup-node@v3
         with:
           node-version: 16
       - run: npm ci
         working-directory: ./workflow-cli
-      - name: Download/Install Maxmind databases
-        run: ./bin/dev lambda-asset-download
-        working-directory: ./workflow-cli
-        env:
-          MAXMIND_LICENSE_KEY: ${{secrets.MAXMIND_LICENSE_KEY}}
-      - run: npm ci
-        working-directory: ./event-stream-processing
-      - run: mkdir dist
-        working-directory: ./event-stream-processing
       - run: npm run pack
-        working-directory: ./event-stream-processing
-      - run: npm run clean
-        working-directory: ./event-stream-processing
-  setup:
-    name: Setup Terraform
-    needs: [checkout]
+        working-directory: ./workflow-cli
+      - uses: actions/upload-artifact@v3
+        with:
+          name: workflow-cli
+          path: workflow-cli/workflow-cli.zip
+          retention-days: 1
+
+  plan:
+    name: Terraform Plan
+    needs: [buildLambda]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
       # Install/Setup terraform CLI
       - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{ env.TF_VERSION }}
           cli_config_credentials_token: ${{ secrets.TFC_TEAM_TOKEN }}
-      - run: mv workflow-cli terraform/workflow-cli
-        working-directory: ./
       # Install/Setup terragrunt CLI
       - uses: peter-murray/terragrunt-github-action@v1.0.0
         with:
           terragrunt_version: ${{ env.TG_VERSION }}
-  plan:
-    name: Terragrunt Plan
-    needs: [build, setup]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Run
+      - uses: actions/download-artifact@v3
+        with:
+          name: event-stream-processing
+          path: ./terraform
+      - name: Terraform Plan - Review before apply
         working-directory: terragrunt/prod
         env:
           app_image: ${{ env.IMAGE_ID }}:${{ github.event.workflow_run.head_branch}}
         run: terragrunt run-all plan --terragrunt-non-interactive
   apply:
-    name: Terragrunt Apply
-    needs: [plan]
+    name: Terraform Apply
+    needs: [plan, buildWorkflow]
     runs-on: ubuntu-latest
     environment:
       name: production
     steps:
-      - name: Run
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+      # Install/Setup terraform CLI
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          cli_config_credentials_token: ${{ secrets.TFC_TEAM_TOKEN }}
+      # Install/Setup terragrunt CLI
+      - uses: peter-murray/terragrunt-github-action@v1.0.0
+        with:
+          terragrunt_version: ${{ env.TG_VERSION }}
+      - uses: actions/download-artifact@v3
+        with:
+          name: event-stream-processing
+          path: ./terraform
+      - uses: actions/download-artifact@v3
+        with:
+          name: workflow-cli
+          path: ./terraform
+      - name: Unzip Cli
+        working-directory: terraform
+        run: unzip -qq workflow-cli.zip -d ./workflow-cli
+      - name: Terraform Apply
         working-directory: terragrunt/prod
         env:
           app_image: ${{ env.IMAGE_ID }}:${{ github.event.workflow_run.head_branch}}
-        run: terragrunt run-all plan --terragrunt-non-interactive
-
-
+        run: terragrunt run-all apply --terragrunt-non-interactive
+  keycloak:
+    name: Keycloak Sync
+    needs: [apply]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - uses: actions/download-artifact@v3
+        with:
+          name: workflow-cli
+          path: ./tmp
+      - name: Unzip Cli
+        run: unzip -qq ./tmp/workflow-cli.zip -d ./workflow-cli-dist
+      - name: Keycloak sync
+        run: ./bin/run keycloak-sync
+        working-directory: ./workflow-cli-dist
+        env:
+          KEYCLOAK_ADMIN_CLIENT_ID: ${{secrets.KEYCLOAK_ADMIN_CLIENT_ID}}
+          KEYCLOAK_ADMIN_CLIENT_SECRET: ${{secrets.KEYCLOAK_ADMIN_CLIENT_SECRET}}
+          KEYCLOAK_REALM: ${{secrets.KEYCLOAK_REALM}}
+          KEYCLOAK_TARGET_CLIENT_ID: https://apm.io.nrs.gov.bc.ca
+          KEYCLOAK_TARGET_CLIENT_URL: https://apm.io.nrs.gov.bc.ca
+          KEYCLOAK_URL: https://oidc.gov.bc.ca

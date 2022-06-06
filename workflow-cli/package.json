@@ -6,6 +6,7 @@
   "bin": {
     "workflow-cli": "./bin/run"
   },
+  "bundledDependencies": true,
   "dependencies": {
     "@aws-crypto/sha256-js": "^2.0.1",
     "@aws-sdk/client-elasticsearch-service": "^3.58.0",
@@ -34,6 +35,7 @@
     "eslint-plugin-jest": "^26.1.3",
     "globby": "^11.1.0",
     "mocha": "^9.2.2",
+    "npm-pack-zip": "^1.3.0",
     "oclif": "^2.6.2",
     "shx": "^0.3.4",
     "ts-node": "^10.7.0",
@@ -46,6 +48,9 @@
   },
   "files": [
     "/bin",
+    "/configuration-keycloak",
+    "/configuration-opensearch",
+    "/configuration-reindex",
     "/dist",
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
@@ -70,6 +75,7 @@
     "build": "shx rm -rf dist && tsc -b",
     "lint": "eslint . --ext .ts --config .eslintrc.json",
     "check-lint": "eslint . --ext .ts --config .eslintrc.json",
+    "pack": "npm-pack-zip",
     "postpack": "shx rm -f oclif.manifest.json",
     "posttest": "npm lint",
     "prepack": "npm run build && oclif manifest && oclif readme",

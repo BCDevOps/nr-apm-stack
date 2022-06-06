@@ -20,7 +20,7 @@ $ npm install -g workflow-cli
 $ workflow-cli COMMAND
 running command...
 $ workflow-cli (--version)
-workflow-cli/1.0.0 darwin-x64 node-v17.3.1
+workflow-cli/1.0.0 darwin-x64 node-v17.8.0
 $ workflow-cli --help [COMMAND]
 USAGE
   $ workflow-cli COMMAND
@@ -34,10 +34,13 @@ USAGE
 * [`workflow-cli lambda-asset-download [FILE]`](#workflow-cli-lambda-asset-download-file)
 * [`workflow-cli opensearch-sync`](#workflow-cli-opensearch-sync)
 * [`workflow-cli plugins`](#workflow-cli-plugins)
-* [`workflow-cli plugins:inspect PLUGIN...`](#workflow-cli-pluginsinspect-plugin)
 * [`workflow-cli plugins:install PLUGIN...`](#workflow-cli-pluginsinstall-plugin)
+* [`workflow-cli plugins:inspect PLUGIN...`](#workflow-cli-pluginsinspect-plugin)
+* [`workflow-cli plugins:install PLUGIN...`](#workflow-cli-pluginsinstall-plugin-1)
 * [`workflow-cli plugins:link PLUGIN`](#workflow-cli-pluginslink-plugin)
 * [`workflow-cli plugins:uninstall PLUGIN...`](#workflow-cli-pluginsuninstall-plugin)
+* [`workflow-cli plugins:uninstall PLUGIN...`](#workflow-cli-pluginsuninstall-plugin-1)
+* [`workflow-cli plugins:uninstall PLUGIN...`](#workflow-cli-pluginsuninstall-plugin-2)
 * [`workflow-cli plugins update`](#workflow-cli-plugins-update)
 * [`workflow-cli reindex`](#workflow-cli-reindex)
 
@@ -59,7 +62,7 @@ DESCRIPTION
   Display help for workflow-cli.
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.1.10/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.1.12/src/commands/help.ts)_
 
 ## `workflow-cli keycloak-sync`
 
@@ -145,7 +148,45 @@ EXAMPLES
   $ workflow-cli plugins
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.0.11/src/commands/plugins/index.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.1.0/src/commands/plugins/index.ts)_
+
+## `workflow-cli plugins:install PLUGIN...`
+
+Installs a plugin into the CLI.
+
+```
+USAGE
+  $ workflow-cli plugins:install PLUGIN...
+
+ARGUMENTS
+  PLUGIN  Plugin to install.
+
+FLAGS
+  -f, --force    Run yarn install with force flag.
+  -h, --help     Show CLI help.
+  -v, --verbose
+
+DESCRIPTION
+  Installs a plugin into the CLI.
+
+  Can be installed from npm or a git url.
+
+  Installation of a user-installed plugin will override a core plugin.
+
+  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
+  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
+  the CLI without the need to patch and update the whole CLI.
+
+ALIASES
+  $ workflow-cli plugins add
+
+EXAMPLES
+  $ workflow-cli plugins:install myplugin 
+
+  $ workflow-cli plugins:install https://github.com/someuser/someplugin
+
+  $ workflow-cli plugins:install someuser/someplugin
+```
 
 ## `workflow-cli plugins:inspect PLUGIN...`
 
@@ -257,6 +298,52 @@ ALIASES
   $ workflow-cli plugins remove
 ```
 
+## `workflow-cli plugins:uninstall PLUGIN...`
+
+Removes a plugin from the CLI.
+
+```
+USAGE
+  $ workflow-cli plugins:uninstall PLUGIN...
+
+ARGUMENTS
+  PLUGIN  plugin to uninstall
+
+FLAGS
+  -h, --help     Show CLI help.
+  -v, --verbose
+
+DESCRIPTION
+  Removes a plugin from the CLI.
+
+ALIASES
+  $ workflow-cli plugins unlink
+  $ workflow-cli plugins remove
+```
+
+## `workflow-cli plugins:uninstall PLUGIN...`
+
+Removes a plugin from the CLI.
+
+```
+USAGE
+  $ workflow-cli plugins:uninstall PLUGIN...
+
+ARGUMENTS
+  PLUGIN  plugin to uninstall
+
+FLAGS
+  -h, --help     Show CLI help.
+  -v, --verbose
+
+DESCRIPTION
+  Removes a plugin from the CLI.
+
+ALIASES
+  $ workflow-cli plugins unlink
+  $ workflow-cli plugins remove
+```
+
 ## `workflow-cli plugins update`
 
 Update installed plugins.
@@ -279,10 +366,11 @@ Bulk reindex runner
 
 ```
 USAGE
-  $ workflow-cli reindex -u <value> -d <value> --region <value> --accessId <value> --accessKey <value> [--arn
-    <value>]
+  $ workflow-cli reindex -u <value> -d <value> --region <value> --accessId <value> --accessKey <value> -c
+    <value> [--arn <value>]
 
 FLAGS
+  -c, --config=<value>      (required) The configuration file name (without .json)
   -d, --domainName=<value>  (required) OpenSearch Domain
   -u, --hostname=<value>    (required) OpenSearch url
   --accessId=<value>        (required) AWS access key id

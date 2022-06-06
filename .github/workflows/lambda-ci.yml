@@ -1,6 +1,4 @@
-# This is a basic workflow to help you get started with Actions
-
-name: lambda_ci
+name: APM Lambda Continuous Intergation
 
 # Controls when the action will run.
 on: [push, pull_request]
@@ -18,13 +16,13 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
-      - name: Use Node.js 14.x
-        uses: actions/setup-node@v1
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 16
       - run: npm ci
         working-directory: ./event-stream-processing
       - run: npm ci

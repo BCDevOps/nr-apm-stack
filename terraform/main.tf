@@ -464,8 +464,8 @@ resource "aws_lambda_function" "lambda_iit_agents" {
   #s3_bucket     = data.aws_s3_bucket_object.lambda_stream_processing_code.bucket
   #s3_key        = data.aws_s3_bucket_object.lambda_stream_processing_code.key
   #s3_object_version = data.aws_s3_bucket_object.lambda_stream_processing_code.version_id
-  filename = "dist/event-stream-processing.zip"
-  source_code_hash = filebase64sha256("dist/event-stream-processing.zip")
+  filename = "event-stream-processing.zip"
+  source_code_hash = filebase64sha256("event-stream-processing.zip")
   layers = [data.aws_lambda_layer_version.maxmind_geoip_db.arn]
   publish       = false
   environment   {
@@ -502,7 +502,7 @@ export PATH=/tmp/node/bin:$PATH
 export AWS_REGION=ca-central-1
 export OS_URL=apm.io.nrs.gov.bc.ca
 export OS_DOMAIN=nress-prod
-./workflow-cli/bin/dev opensearch-sync
+./workflow-cli/bin/run opensearch-sync
 EOF
   environment = {
     AWS_ASSUME_ROLE = local.iam_role_arn
