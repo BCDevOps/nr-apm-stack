@@ -52,6 +52,9 @@ jobs:
     needs: [buildLambda]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
       # Install/Setup terraform CLI
       - uses: hashicorp/setup-terraform@v2
         with:
@@ -64,7 +67,9 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: event-stream-processing
-          path: event-stream-processing.zip
+          path: event-stream-processing-dblzip.zip
+      - name: Unzip ESP
+        run: unzip event-stream-processing-dblzip.zip
       - name: Run
         working-directory: terragrunt/prod
         env:
@@ -77,6 +82,9 @@ jobs:
     environment:
       name: production
     steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
       # Install/Setup terraform CLI
       - uses: hashicorp/setup-terraform@v2
         with:
