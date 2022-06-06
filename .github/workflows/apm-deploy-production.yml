@@ -70,8 +70,8 @@ jobs:
         with:
           name: event-stream-processing
           path: event-stream-processing.zip
-      - name: PWD
-        run: pwd
+      - name: ls
+        run: ls
       - name: Unzip ESP
         run: unzip event-stream-processing.zip
       - name: Files
