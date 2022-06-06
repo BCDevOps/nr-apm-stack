@@ -106,7 +106,7 @@ jobs:
       - name: Unzip Cli
         working-directory: terraform
         run: unzip -qq workflow-cli.zip -d ./workflow-cli
-      - name: Run
+      - name: Terraform Apply
         working-directory: terragrunt/prod
         env:
           app_image: ${{ env.IMAGE_ID }}:${{ github.event.workflow_run.head_branch}}
@@ -125,7 +125,6 @@ jobs:
           name: workflow-cli
           path: ./tmp
       - name: Unzip Cli
-        working-directory: workflow
         run: unzip -qq ./tmp/workflow-cli.zip -d ./workflow-cli
       - name: Keycloak sync
         run: ./bin/run keycloak-sync
