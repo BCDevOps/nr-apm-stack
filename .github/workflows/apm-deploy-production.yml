@@ -75,7 +75,7 @@ jobs:
         run: ls
       - name: Unzip ESP
         working-directory: ./terraform
-        run: ls && unzip event-stream-processing.zip
+        run: ls && unzip /home/runner/work/nr-apm-stack/nr-apm-stack/terraform/event-stream-processing.zip
       - name: Files1
         working-directory: ./terraform
         run: pwd
