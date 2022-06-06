@@ -71,8 +71,7 @@ jobs:
           name: event-stream-processing
           path: ./
       - name: Files0
-        working-directory: ./terraform
-        run: ls -l
+        run: md5sum event-stream-processing.zip
       - name: Unzip ESP (Outer zip)
         run: unzip -qq event-stream-processing.zip -d ./terraform
       - name: Files2
