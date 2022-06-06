@@ -128,7 +128,7 @@ jobs:
         working-directory: workflow
         run: unzip -qq ./tmp/workflow-cli.zip -d ./workflow-cli
       - name: Keycloak sync
-        run: ./bin/dev keycloak-sync
+        run: ./bin/run keycloak-sync
         working-directory: ./workflow-cli
         env:
           KEYCLOAK_ADMIN_CLIENT_ID: ${{secrets.KEYCLOAK_ADMIN_CLIENT_ID}}
