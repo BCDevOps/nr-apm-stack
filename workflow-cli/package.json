@@ -19,7 +19,7 @@
     "@oclif/plugin-help": "^5.1.12",
     "@oclif/plugin-plugins": "^2.1.0",
     "@types/ejs": "^3.1.0",
-    "ejs": "^3.1.6",
+    "ejs": "^3.1.7",
     "ora": "^5.4.1"
   },
   "devDependencies": {
