@@ -502,7 +502,7 @@ export PATH=/tmp/node/bin:$PATH
 export AWS_REGION=ca-central-1
 export OS_URL=apm.io.nrs.gov.bc.ca
 export OS_DOMAIN=nress-prod
-./workflow-cli/bin/dev opensearch-sync
+./terraform/workflow-cli/bin/run opensearch-sync
 EOF
   environment = {
     AWS_ASSUME_ROLE = local.iam_role_arn
