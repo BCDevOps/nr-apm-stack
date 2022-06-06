@@ -71,7 +71,7 @@ jobs:
         with:
           name: event-stream-processing
           path: ./terraform
-      - name: Run
+      - name: Terraform Plan (Review)
         working-directory: terragrunt/prod
         env:
           app_image: ${{ env.IMAGE_ID }}:${{ github.event.workflow_run.head_branch}}
@@ -105,7 +105,7 @@ jobs:
           path: ./terraform
       - name: Unzip Cli
         working-directory: terraform
-        run: unzip workflow-cli.zip
+        run: unzip -qq workflow-cli.zip -d ./workflow-cli
       - name: Run
         working-directory: terragrunt/prod
         env:
@@ -128,7 +128,7 @@ jobs:
           path: ./tmp
       - name: Unzip Cli
         working-directory: workflow
-        run: unzip ./tmp/workflow-cli.zip -d ./workflow-cli
+        run: unzip -qq ./tmp/workflow-cli.zip -d ./workflow-cli
       - name: Keycloak sync
         run: ./bin/dev keycloak-sync
         working-directory: ./workflow-cli
