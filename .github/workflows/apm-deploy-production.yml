@@ -28,6 +28,7 @@ jobs:
         with:
           name: event-stream-processing
           path: event-stream-processing/event-stream-processing.zip
+          retention-days: 1
   buildWorkflow:
     name: Build Workflow
     runs-on: ubuntu-latest
@@ -47,6 +48,7 @@ jobs:
         with:
           name: workflow-cli
           path: workflow-cli/workflow-cli.zip
+          retention-days: 1
   plan:
     name: Terragrunt Plan
     needs: [buildLambda]
