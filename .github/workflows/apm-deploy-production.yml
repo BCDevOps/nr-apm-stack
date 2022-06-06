@@ -74,7 +74,7 @@ jobs:
         working-directory: ./terraform
         run: ls -l
       - name: Unzip ESP (Outer zip)
-        run: unzip ./event-stream-processing.zip -d ./terraform
+        run: unzip -qq event-stream-processing.zip -d ./terraform
       - name: Files2
         working-directory: ./terraform
         run: ls -l
