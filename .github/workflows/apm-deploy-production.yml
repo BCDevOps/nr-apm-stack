@@ -69,14 +69,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: event-stream-processing
-          path: ./
-      - name: Files0
-        run: md5sum event-stream-processing.zip
-      - name: Unzip ESP (Outer zip)
-        run: unzip -qq event-stream-processing.zip -d ./terraform
-      - name: Files2
-        working-directory: ./terraform
-        run: ls -l
+          path: ./terraform
       - name: Run
         working-directory: terragrunt/prod
         env:
@@ -104,11 +97,11 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: event-stream-processing
-          path: event-stream-processing.zip
+          path: ./terraform
       - uses: actions/download-artifact@v3
         with:
           name: workflow-cli
-          path: terraform/workflow-cli.zip
+          path: ./terraform
       - name: Unzip Cli
         working-directory: terraform
         run: unzip workflow-cli.zip
