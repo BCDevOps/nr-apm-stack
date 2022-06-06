@@ -69,14 +69,12 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: event-stream-processing
-          path: event-stream-processing.zip
+          path: ./
       - name: Files0
         working-directory: ./terraform
         run: ls -l
-      - uses: montudor/action-zip@v1
-        name: Unzip ESP (Outer zip)
-        with:
-          args: unzip -qq event-stream-processing.zip -d ./terraform
+      - name: Unzip ESP (Outer zip)
+        run: unzip -qq event-stream-processing.zip -d ./terraform
       - name: Files2
         working-directory: ./terraform
         run: ls -l
