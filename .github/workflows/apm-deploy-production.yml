@@ -69,11 +69,11 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: event-stream-processing
-          path: event-stream-processing-dbl.zip
+          path: event-stream-processing.zip
       - name: Files0
         working-directory: ./terraform
         run: ls -l
-      - name: Unzip ESP
+      - name: Unzip ESP (Outer zip)
         run: unzip -d terraform event-stream-processing.zip
       - name: Files2
         working-directory: ./terraform
