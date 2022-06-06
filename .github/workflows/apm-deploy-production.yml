@@ -51,7 +51,7 @@ jobs:
           retention-days: 1
 
   plan:
-    name: Terragrunt Plan
+    name: Terraform Plan
     needs: [buildLambda]
     runs-on: ubuntu-latest
     steps:
@@ -71,13 +71,13 @@ jobs:
         with:
           name: event-stream-processing
           path: ./terraform
-      - name: Terraform Plan (Review)
+      - name: Terraform Plan - Review before apply
         working-directory: terragrunt/prod
         env:
           app_image: ${{ env.IMAGE_ID }}:${{ github.event.workflow_run.head_branch}}
         run: terragrunt run-all plan --terragrunt-non-interactive
   apply:
-    name: Terragrunt Apply
+    name: Terraform Apply
     needs: [plan, buildWorkflow]
     runs-on: ubuntu-latest
     environment:
@@ -110,13 +110,11 @@ jobs:
         working-directory: terragrunt/prod
         env:
           app_image: ${{ env.IMAGE_ID }}:${{ github.event.workflow_run.head_branch}}
-        run: terragrunt run-all plan --terragrunt-non-interactive
+        run: terragrunt run-all apply --terragrunt-non-interactive
   keycloak:
     name: Keycloak Sync
     needs: [apply]
     runs-on: ubuntu-latest
-    environment:
-      name: production
     steps:
       - name: Use Node.js 16
         uses: actions/setup-node@v3
