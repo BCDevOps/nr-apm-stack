@@ -49,6 +49,7 @@ jobs:
           name: workflow-cli
           path: workflow-cli/workflow-cli.zip
           retention-days: 1
+
   plan:
     name: Terragrunt Plan
     needs: [buildLambda]
@@ -110,12 +111,31 @@ jobs:
         env:
           app_image: ${{ env.IMAGE_ID }}:${{ github.event.workflow_run.head_branch}}
         run: terragrunt run-all plan --terragrunt-non-interactive
-
-
-      # - run: npm ci
-      #   working-directory: ./workflow-cli
-      # - name: Download/Install Maxmind databases
-      #   run: ./bin/dev lambda-asset-download
-      #   working-directory: ./workflow-cli
-      #   env:
-      #     MAXMIND_LICENSE_KEY: ${{secrets.MAXMIND_LICENSE_KEY}}
+  keycloak:
+    name: Keycloak Sync
+    needs: [apply]
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - uses: actions/download-artifact@v3
+        with:
+          name: workflow-cli
+          path: ./tmp
+      - name: Unzip Cli
+        working-directory: workflow
+        run: unzip ./tmp/workflow-cli.zip -d ./workflow-cli
+      - name: Keycloak sync
+        run: ./bin/dev keycloak-sync
+        working-directory: ./workflow-cli
+        env:
+          KEYCLOAK_ADMIN_CLIENT_ID: ${{secrets.KEYCLOAK_ADMIN_CLIENT_ID}}
+          KEYCLOAK_ADMIN_CLIENT_SECRET: ${{secrets.KEYCLOAK_ADMIN_CLIENT_SECRET}}
+          KEYCLOAK_REALM: ${{secrets.KEYCLOAK_REALM}}
+          KEYCLOAK_TARGET_CLIENT_ID: https://apm.io.nrs.gov.bc.ca
+          KEYCLOAK_TARGET_CLIENT_URL: https://apm.io.nrs.gov.bc.ca
+          KEYCLOAK_URL: https://oidc.gov.bc.ca
