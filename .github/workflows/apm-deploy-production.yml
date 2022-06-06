@@ -128,10 +128,10 @@ jobs:
           name: workflow-cli
           path: ./tmp
       - name: Unzip Cli
-        run: unzip -qq ./tmp/workflow-cli.zip -d ./workflow-cli
+        run: unzip -qq ./tmp/workflow-cli.zip -d ./workflow-cli-dist
       - name: Keycloak sync
         run: ./bin/run keycloak-sync
-        working-directory: ./workflow-cli
+        working-directory: ./workflow-cli-dist
         env:
           KEYCLOAK_ADMIN_CLIENT_ID: ${{secrets.KEYCLOAK_ADMIN_CLIENT_ID}}
           KEYCLOAK_ADMIN_CLIENT_SECRET: ${{secrets.KEYCLOAK_ADMIN_CLIENT_SECRET}}
