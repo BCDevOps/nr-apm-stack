@@ -36,5 +36,6 @@ generate "inputs" {
   env = "${local.target_env}"
   pr = "2"
   suffix = "-dev-2"
+  prevent_data_destroy = false
 EOF
 }

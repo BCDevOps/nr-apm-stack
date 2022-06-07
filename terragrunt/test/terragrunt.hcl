@@ -33,5 +33,6 @@ generate "inputs" {
   pr = "0"
   suffix = "-test"
   custom_endpoint = "test-apm-io.nrs.gov.bc.ca"
+  prevent_data_destroy = false
 EOF
 }
