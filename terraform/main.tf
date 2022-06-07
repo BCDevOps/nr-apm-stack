@@ -116,11 +116,6 @@ variable "ultrawarm_node_instance_type" {
   default = "ultrawarm1.medium.elasticsearch"
 }
 
-variable "prevent_data_destroy" {
-  type = bool
-  default = true
-}
-
 provider "aws" {
   region = var.region
   assume_role {
@@ -270,7 +265,7 @@ resource "aws_opensearch_domain" "es" {
   #}
   lifecycle {
     ignore_changes = [ engine_version, advanced_options ]
-    prevent_destroy = var.prevent_data_destroy
+    prevent_destroy = true
   }
   domain_endpoint_options {
     enforce_https       = true
@@ -372,6 +367,9 @@ resource "aws_iam_policy" "iit_agents" {
 
 resource "aws_s3_bucket" "snapshots" {
   bucket = "nress${ var.suffix }-snapshot-${ data.aws_caller_identity.current.account_id }"
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_s3_bucket_acl" "snapshots" {
