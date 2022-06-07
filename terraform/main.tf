@@ -409,12 +409,12 @@ resource "aws_iam_role" "snapshot_role" {
         {
           Action = ["s3:ListBucket"]
           Effect = "Allow"
-          Resource = ["arn:aws:s3:::${aws_s3_bucket.snapshots.name}"]
+          Resource = ["arn:aws:s3:::${aws_s3_bucket.snapshots.id}"]
         },
         {
           Action = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
           Effect = "Allow"
-          Resource = ["arn:aws:s3:::${aws_s3_bucket.snapshots.name}/*"]
+          Resource = ["arn:aws:s3:::${aws_s3_bucket.snapshots.id}/*"]
         },
       ]
     })
