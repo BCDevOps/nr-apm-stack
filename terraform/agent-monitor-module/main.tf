@@ -8,7 +8,7 @@ terraform {
 }
 
 # Create a monitor
-resource "elasticsearch_opensearch_monitor" "fluentbit_agent" {
+resource "elasticsearch_opensearch_monitor" "agent_monitor" {
   body = <<EOF
 {
     "type": "monitor",
