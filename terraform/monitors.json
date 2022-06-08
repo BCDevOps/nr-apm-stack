@@ -1,0 +1,17 @@
+[
+  {
+    "name": "NRM - spaghettini - fluent-bit.0",
+    "server": "spaghettini",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "NRM - spaghettini - fluent-bit.0",
+    "server": "spaghettini",
+    "agent": "fluent-bit.1"
+  },
+  {
+    "name": "NRM - spaghettini - fluent-bit.0",
+    "server": "spaghettini",
+    "agent": "fluent-bit.2"
+  }
+]
