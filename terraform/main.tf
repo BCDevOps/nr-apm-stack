@@ -265,6 +265,7 @@ resource "aws_opensearch_domain" "es" {
   #}
   lifecycle {
     ignore_changes = [ engine_version, advanced_options ]
+    prevent_destroy = true
   }
   domain_endpoint_options {
     enforce_https       = true
@@ -363,6 +364,63 @@ resource "aws_iam_policy" "iit_agents" {
     ]
   })
 }
+
+resource "aws_s3_bucket" "snapshots" {
+  bucket = "nress${ var.suffix }-snapshot-${ data.aws_caller_identity.current.account_id }"
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "aws_s3_bucket_acl" "snapshots" {
+  bucket = aws_s3_bucket.snapshots.id
+  acl    = "private"
+}
+
+resource "aws_iam_role" "snapshot_role" {
+  name = "nress${ var.suffix }-opensearch-snapshot"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "opensearchservice.amazonaws.com"
+        }
+        Condition = {
+          StringEquals = {
+            "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+          },
+          ArnLike = {
+            "aws:SourceArn": "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/${local.es_domain_name}"
+          }
+        }
+      },
+    ]
+  })
+  inline_policy {
+    name = "opensearch_snapshot_policy"
+
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          Action = ["s3:ListBucket"]
+          Effect = "Allow"
+          Resource = ["arn:aws:s3:::${aws_s3_bucket.snapshots.id}"]
+        },
+        {
+          Action = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
+          Effect = "Allow"
+          Resource = ["arn:aws:s3:::${aws_s3_bucket.snapshots.id}/*"]
+        },
+      ]
+    })
+  }
+}
+
 /*
 resource "aws_s3_bucket" "lambda_code" {
   bucket = "nress${ var.suffix }-lambda-code-${ data.aws_caller_identity.current.account_id }"
