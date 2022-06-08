@@ -12,7 +12,7 @@ resource "elasticsearch_opensearch_monitor" "agent_monitor" {
   body = <<EOF
 {
     "type": "monitor",
-    "name": "${var.name}",
+    "name": "${var.agent_monitor.name}",
     "monitor_type": "query_level_monitor",
     "enabled": true,
     "schedule": {
@@ -48,14 +48,14 @@ resource "elasticsearch_opensearch_monitor" "agent_monitor" {
                                 {
                                     "term": {
                                         "host.hostname": {
-                                            "value": "${var.server}"
+                                            "value": "${var.agent_monitor.server}"
                                         }
                                     }
                                 },
                                 {
                                     "term": {
                                         "agent.name": {
-                                            "value": "${var.agent}"
+                                            "value": "${var.agent_monitor.agent}"
                                         }
                                     }
                                 },

@@ -616,6 +616,12 @@ module "topic" {
   depends_on = [aws_opensearch_domain.es]
 }
 
+module "agent-monitor" {
+  source = "./agent-monitor-module"
+  for_each = { for a in jsondecode(file("./agent-monitor-module")): a.name => a }
+  agent_monitor = each.value
+}
+
 resource "aws_iam_role" "opensearch_sns_role" {
   name = "opensearch_sns_${local.es_domain_name}"
 
