@@ -7,7 +7,25 @@ terraform {
   }
 }
 
-# Create a monitor
+# Create destination for agent monitors
+resource "elasticsearch_opensearch_destination" "agent_monitor_destination" {
+  body = <<EOF
+{
+  "type": "custom_webhook",
+  "name": "appinfra_incoming_webhook",
+  "custom_webhook": {
+    "header_params": {
+      "Content-Type": "application/json"
+    },
+    "scheme": "HTTPS",
+    "method" : "POST",
+    "url" : "${var.destination_url}"
+  }
+}
+EOF
+}
+
+# Create agent monitor
 resource "elasticsearch_opensearch_monitor" "agent_monitor" {
   body = <<EOF
 {
