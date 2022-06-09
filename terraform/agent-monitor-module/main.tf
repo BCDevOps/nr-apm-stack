@@ -25,6 +25,12 @@ resource "elasticsearch_opensearch_destination" "agent_monitor_destination" {
 EOF
 }
 
+output "destination_id" {
+  description = "The OpenSearch destination ID"
+  value = elasticsearch_opensearch_destination.agent_monitor_destination.id
+  sensitive = true
+}
+
 # Create agent monitor
 resource "elasticsearch_opensearch_monitor" "agent_monitor" {
   body = <<EOF
@@ -106,7 +112,7 @@ resource "elasticsearch_opensearch_monitor" "agent_monitor" {
             "actions": [
                 {
                     "name": "Notify Teams Channel",
-                    "destination_id": "nsd-wHoBONLpdKViDwH-",
+                    "destination_id": "${module.agent-monitor-module.destination_id}",
                     "message_template": {
                         "source": """{ "text": "Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue.
   - Trigger: {{ctx.trigger.name}}
