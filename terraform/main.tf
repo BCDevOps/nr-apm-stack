@@ -722,6 +722,13 @@ resource "elasticsearch_opensearch_roles_mapping" "all_access" {
   ]
 }
 
+resource "elasticsearch_opensearch_roles_mapping" "manage_snapshots" {
+  role_name     = "manage_snapshots"
+  backend_roles = [
+    aws_iam_role.snapshot_role.id
+  ]
+}
+
 module "topic" {
   source = "./topic-module"
   for_each = { for t in jsondecode(file("./topics.json")): t.name => t }
