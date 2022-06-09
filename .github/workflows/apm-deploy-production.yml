@@ -7,6 +7,7 @@ on:
 env:
   TF_VERSION: 0.15.4
   TG_VERSION: 0.37.1
+  TF_VAR_destination_url: ${{ secrets.TF_VAR_DESTINATION_URL }}
 
 jobs:
   buildLambda:
