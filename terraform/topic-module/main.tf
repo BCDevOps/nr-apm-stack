@@ -90,7 +90,6 @@ data "aws_iam_policy_document" "sqs-queue-policy" {
 
 resource "aws_sqs_queue" "sqs-queue" {
   count    = var.topic.sqsEndpoint ? 1 : 0
-  provider = "aws.sqs"
   name     = "${var.es_domain_name}-${var.topic.resourceId}"
   policy   = data.aws_iam_policy_document.sqs-queue-policy.json
 }
