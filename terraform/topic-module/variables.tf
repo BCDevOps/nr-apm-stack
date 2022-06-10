@@ -18,11 +18,6 @@ variable "aws_account_id" {
   type        = string
 }
 
-variable "aws_sns_role_id" {
-  description = "AWS SNS role arn"
-  type        = string
-}
-
 variable "es_domain_name" {
   description = "Domain name"
   type        = string
