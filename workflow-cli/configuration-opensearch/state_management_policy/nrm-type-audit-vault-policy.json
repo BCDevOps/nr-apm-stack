@@ -28,6 +28,27 @@
             }
           }
         ],
+        "transitions": [
+          {
+            "state_name": "warm",
+            "conditions": {
+              "min_index_age": "45d"
+            }
+          }
+        ]
+      },
+      {
+        "name": "warm",
+        "actions": [
+          {
+            "retry": {
+                "count": 5,
+                "backoff": "exponential",
+                "delay": "1h"
+            },
+            "warm_migration": {}
+          }
+        ],
         "transitions": []
       }
     ],
