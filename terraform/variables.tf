@@ -10,6 +10,12 @@ variable "env" {
   default = null
 }
 
+variable "pr" {
+   type = string
+   description = "Suffix appended to all managed resource names"
+   default = "0"
+ }
+
 variable "suffix" {
   type = string
   description = "Suffix appended to all managed resource names"

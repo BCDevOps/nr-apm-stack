@@ -595,6 +595,7 @@ module "topic" {
   aws_region_name = data.aws_region.current.name
   aws_account_id = data.aws_caller_identity.current.account_id
   aws_sns_role_id = aws_iam_role.opensearch_sns_role.id
+  es_domain_name = local.es_domain_name
   depends_on = [aws_opensearch_domain.es]
 }
 
