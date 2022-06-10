@@ -1,17 +1,267 @@
 [
   {
-    "name": "NRM - spaghettini - fluent-bit.0",
+    "name": "nrm_alternate_fluent-bit.0",
+    "server": "alternate",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_anomoly_fluent-bit.0",
+    "server": "anomoly",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_anomoly_fluent-bit.1",
+    "server": "anomoly",
+    "agent": "fluent-bit.1"
+  },
+  {
+    "name": "nrm_anomoly_fluent-bit.2",
+    "server": "anomoly",
+    "agent": "fluent-bit.2"
+  },
+  {
+    "name": "nrm_anomoly_fluent-bit.3",
+    "server": "anomoly",
+    "agent": "fluent-bit.3"
+  },
+  {
+    "name": "nrm_backup_fluent-bit.0",
+    "server": "backup",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_below_fluent-bit.0",
+    "server": "below",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_below_fluent-bit.1",
+    "server": "below",
+    "agent": "fluent-bit.1"
+  },
+  {
+    "name": "nrm_below_fluent-bit.2",
+    "server": "below",
+    "agent": "fluent-bit.2"
+  },
+  {
+    "name": "nrm_between_fluent-bit.0",
+    "server": "between",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_between_fluent-bit.1",
+    "server": "between",
+    "agent": "fluent-bit.1"
+  },
+  {
+    "name": "nrm_between_fluent-bit.2",
+    "server": "between",
+    "agent": "fluent-bit.2"
+  },
+  {
+    "name": "nrm_bottom_fluent-bit.0",
+    "server": "bottom",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_bottom_fluent-bit.1",
+    "server": "bottom",
+    "agent": "fluent-bit.1"
+  },
+  {
+    "name": "nrm_bottom_fluent-bit.2",
+    "server": "bottom",
+    "agent": "fluent-bit.2"
+  },
+  {
+    "name": "nrm_broker_fluent-bit.0",
+    "server": "broker",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_cocacola_fluent-bit.0",
+    "server": "cocacola",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_cocacola_fluent-bit.1",
+    "server": "cocacola",
+    "agent": "fluent-bit.1"
+  },
+  {
+    "name": "nrm_cocacola_fluent-bit.2",
+    "server": "cocacola",
+    "agent": "fluent-bit.2"
+  },
+  {
+    "name": "nrm_coincidence_fluent-bit.0",
+    "server": "coincidence",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_convert_fluent-bit.0",
+    "server": "convert",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_crest_fluent-bit.0",
+    "server": "crest",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_cyborg_fluent-bit.0",
+    "server": "cyborg",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_district_fluent-bit.0",
+    "server": "district",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_drpepper_fluent-bit.0",
+    "server": "drpepper",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_drpepper_fluent-bit.1",
+    "server": "drpepper",
+    "agent": "fluent-bit.1"
+  },
+  {
+    "name": "nrm_drpepper_fluent-bit.2",
+    "server": "drpepper",
+    "agent": "fluent-bit.2"
+  },
+  {
+    "name": "nrm_gumibears_fluent-bit.0",
+    "server": "gumibears",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_jujubes_fluent-bit.0",
+    "server": "jujubes",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_middle_fluent-bit.0",
+    "server": "middle",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_middle_fluent-bit.1",
+    "server": "middle",
+    "agent": "fluent-bit.1"
+  },
+  {
+    "name": "nrm_middle_fluent-bit.2",
+    "server": "middle",
+    "agent": "fluent-bit.2"
+  },
+  {
+    "name": "nrm_pinnacle_fluent-bit.0",
+    "server": "pinnacle",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_pinnacle_fluent-bit.1",
+    "server": "pinnacle",
+    "agent": "fluent-bit.1"
+  },
+  {
+    "name": "nrm_pinnacle_fluent-bit.2",
+    "server": "pinnacle",
+    "agent": "fluent-bit.2"
+  },
+  {
+    "name": "nrm_reform_fluent-bit.0",
+    "server": "reform",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_sector_fluent-bit.0",
+    "server": "sector",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_skittles_fluent-bit.0",
+    "server": "skittles",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_smarties_fluent-bit.0",
+    "server": "smarties",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_spaghettini_fluent-bit.0",
     "server": "spaghettini",
     "agent": "fluent-bit.0"
   },
   {
-    "name": "NRM - spaghettini - fluent-bit.0",
+    "name": "nrm_spaghettini_fluent-bit.1",
     "server": "spaghettini",
     "agent": "fluent-bit.1"
   },
   {
-    "name": "NRM - spaghettini - fluent-bit.0",
+    "name": "nrm_spaghettini_fluent-bit.2",
     "server": "spaghettini",
     "agent": "fluent-bit.2"
+  },
+  {
+    "name": "nrm_spare_fluent-bit.0",
+    "server": "spare",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_syncronicity_fluent-bit.0",
+    "server": "syncronicity",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_terrain_fluent-bit.0",
+    "server": "terrain",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_territory_fluent-bit.0",
+    "server": "territory",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_top_fluent-bit.0",
+    "server": "top",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_top_fluent-bit.1",
+    "server": "top",
+    "agent": "fluent-bit.1"
+  },
+  {
+    "name": "nrm_top_fluent-bit.2",
+    "server": "top",
+    "agent": "fluent-bit.2"
+  },
+  {
+    "name": "nrm_tract_fluent-bit.0",
+    "server": "tract",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_vermicelli_fluent-bit.0",
+    "server": "vermicelli",
+    "agent": "fluent-bit.0"
+  },
+  {
+    "name": "nrm_vermicelli_fluent-bit.1",
+    "server": "vermicelli",
+    "agent": "fluent-bit.1"
+  },
+  {
+    "name": "nrm_zone_fluent-bit.0",
+    "server": "zone",
+    "agent": "fluent-bit.0"
   }
 ]
