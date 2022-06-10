@@ -4,10 +4,6 @@ terraform {
       source = "hashicorp/aws"
       version = "4.16.0"
     }
-    elasticsearch = {
-      source = "phillbaker/elasticsearch"
-      version = "2.0.2"
-    }
   }
 }
 
@@ -46,6 +42,7 @@ resource "aws_sns_topic" "topic" {
 }
 EOF
 }
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 
@@ -96,3 +93,5 @@ resource "aws_sqs_queue" "sqs-queue" {
   policy   = data.aws_iam_policy_document.sqs-queue-policy.json
 }
 >>>>>>> feat: add topic sqs and Opensearch destinations
+=======
+>>>>>>> fix: remove unnecessary

@@ -602,12 +602,15 @@ module "topic" {
   aws_region_name = data.aws_region.current.name
   aws_account_id = data.aws_caller_identity.current.account_id
 <<<<<<< HEAD
+<<<<<<< HEAD
   es_domain_name = local.es_domain_name
 =======
   aws_sns_role_id = aws_iam_role.opensearch_sns_role.id
 <<<<<<< HEAD
 >>>>>>> feat: add topic sqs and Opensearch destinations
 =======
+=======
+>>>>>>> fix: remove unnecessary
   es_domain_name = local.es_domain_name
 >>>>>>> fix: missing
   depends_on = [aws_opensearch_domain.es]
