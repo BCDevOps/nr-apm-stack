@@ -11,109 +11,11 @@ terraform {
       source = "hashicorp/aws"
       version = "4.16.0"
     }
-    keycloak = {
-      source = "mrparkers/keycloak"
-      version = "3.8.1"
-    }
     elasticsearch = {
       source = "phillbaker/elasticsearch"
       version = "2.0.2"
     }
   }
-}
-
-variable "region" {
-  type = string
-  description = "AWS Region, where to deploy ELK cluster."
-  default = "ca-central-1"
-}
-
-variable "env" {
-  type = string
-  description = "Suffix appended to all managed resource names"
-  default = null
-}
-
-variable "pr" {
-  type = string
-  description = "Suffix appended to all managed resource names"
-  default = "0"
-}
-
-variable "suffix" {
-  type = string
-  description = "Suffix appended to all managed resource names"
-  default = "-dev-0"
-}
-
-variable "custom_endpoint" {
-  type = string
-  description = "Custom Endpoint"
-  default = null
-}
-
-variable "custom_endpoint_certificate_arn" {
-  type = string
-  description = "Custom Endpoint Certificate ARN"
-  default = null
-}
-
-variable "iit_lambda_code_bucket_key_version" {
-  type = string
-  description = "Lambda Code Package Version"
-  default = null
-}
-
-variable "target_aws_account_id" {
-  type = string
-  description = "target_aws_account_id"
-  default = null
-}
-
-variable "target_env" {
-  type = string
-  description = "target_env"
-  default = null
-}
-
-variable "master_node_instance_count" {
-  type = number
-  default = 0
-}
-
-variable "master_node_instance_type" {
-  type = string
-  default = "c6g.large.elasticsearch"
-}
-
-variable "data_node_instance_count" {
-  type = number
-  default = 2
-}
-
-variable "data_node_instance_type" {
-  type = string
-  default = "r6g.large.elasticsearch"
-}
-
-variable "data_node_volume_size" {
-  type = number
-  default = 20
-}
-
-variable "kinesis_shards" {
-  type = number
-  default = 2
-}
-
-variable "ultrawarm_node_instance_count" {
-  type = number
-  default = null
-}
-
-variable "ultrawarm_node_instance_type" {
-  type = string
-  default = "ultrawarm1.medium.elasticsearch"
 }
 
 provider "aws" {
@@ -180,43 +82,7 @@ data "aws_iam_policy_document" "access_policies" {
       "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/${local.es_domain_name}/*",
     ]
   }
-
-  # Service accounts that are allowed to consume elastic search API
-  /*
-  dynamic "statement" {
-    for_each = ["arn:aws:iam::774621113276:user/project-service-accounts/BCGOV_Project_User_elasticsearch_agent_tygsv5"]
-    iterator = principal
-    content {
-      effect = "Allow"
-      actions = [
-        "es:*",
-      ]
-      principals {
-        type        = "AWS"
-        identifiers = ["*"]
-      }
-      resources = [ principal.value ]
-    }
-  }
-  */
 }
-/*
-resource "aws_acm_certificate" "es_custom_endpoint" {
-  domain_name       = var.custom_endpoint
-  validation_method = "DNS"
-
-  count            = var.custom_endpoint == null ?   0 : 1
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_iam_service_linked_role" "es" {
-  aws_service_name = "es.amazonaws.com"
-  count            = var.custom_endpoint == null ?   0 : 1
-}
-*/
-
 resource "aws_cloudwatch_log_group" "es_application_logs" {
   name = "/aws/aes/domains/${ local.es_domain_name }-${ time_static.log_group_suffix.unix }/application-logs"
   retention_in_days = 90
@@ -320,7 +186,7 @@ resource "aws_opensearch_domain" "es" {
 }
 
 resource "aws_kinesis_stream" "iit_logs" {
-  name             = "nress${ var.suffix }-iit-logs"
+  name             = "${local.es_domain_name}-iit-logs"
   enforce_consumer_deletion = true
   shard_count      = var.kinesis_shards
   retention_period = 24
@@ -337,13 +203,13 @@ resource "aws_kinesis_stream" "iit_logs" {
 
   tags = {
     Environment = var.env
-    Instance = "nress${ var.suffix }"
+    Instance = local.es_domain_name
   }
 }
 
 # This policy needs to be attached to a SA role by the platform team
 resource "aws_iam_policy" "iit_agents" {
-  name        = "nress${ var.suffix }-nrm-agents"
+  name        = "${local.es_domain_name}-nrm-agents"
   path        = "/"
   description = ""
 
@@ -366,7 +232,7 @@ resource "aws_iam_policy" "iit_agents" {
 }
 
 resource "aws_s3_bucket" "snapshots" {
-  bucket = "nress${ var.suffix }-snapshot-${ data.aws_caller_identity.current.account_id }"
+  bucket = "${local.es_domain_name}-snapshot-${ data.aws_caller_identity.current.account_id }"
   lifecycle {
     prevent_destroy = true
   }
@@ -378,7 +244,7 @@ resource "aws_s3_bucket_acl" "snapshots" {
 }
 
 resource "aws_iam_role" "snapshot_role" {
-  name = "nress${ var.suffix }-opensearch-snapshot"
+  name = "${local.es_domain_name}-opensearch-snapshot"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -423,22 +289,22 @@ resource "aws_iam_role" "snapshot_role" {
 
 /*
 resource "aws_s3_bucket" "lambda_code" {
-  bucket = "nress${ var.suffix }-lambda-code-${ data.aws_caller_identity.current.account_id }"
+  bucket = "${local.es_domain_name}-lambda-code-${ data.aws_caller_identity.current.account_id }"
   acl    = "private"
   versioning {
     enabled = true
   }
   tags = {
     Environment = var.env
-    Instance = "nress${ var.suffix }"
+    Instance = local.es_domain_name
   }
 }
 */
 
 /*
 resource "aws_s3_bucket_object" "lambda_stream_processing_code" {
-  bucket = "nress${ var.suffix }-lambda-code-${ data.aws_caller_identity.current.account_id }"
-  key    = "nress${ var.suffix }/event-stream-processing.zip"
+  bucket = "${local.es_domain_name}-lambda-code-${ data.aws_caller_identity.current.account_id }"
+  key    = "${local.es_domain_name}/event-stream-processing.zip"
   source = "../event-stream-processing/dist/event-stream-processing.zip"
   etag = filemd5("../event-stream-processing/dist/event-stream-processing.zip")
 }
@@ -453,7 +319,7 @@ data "aws_s3_bucket_object" "lambda_stream_processing_code" {
 */
 
 resource "aws_iam_role" "lambda_iit_agents" {
-  name = "nress${ var.suffix }-lambda-iit-agents"
+  name = "${local.es_domain_name}-lambda-iit-agents"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -513,7 +379,7 @@ data "aws_lambda_layer_version" "maxmind_geoip_db" {
 }
 
 resource "aws_lambda_function" "lambda_iit_agents" {
-  function_name = "nress${ var.suffix }-iit-agents"
+  function_name = "${local.es_domain_name}-iit-agents"
   role          = aws_iam_role.lambda_iit_agents.arn
   runtime       = "nodejs14.x"
   handler       = "index.kinesisStreamHandler"
@@ -728,6 +594,7 @@ module "topic" {
   topic = each.value
   aws_region_name = data.aws_region.current.name
   aws_account_id = data.aws_caller_identity.current.account_id
+  aws_sns_role_id = aws_iam_role.opensearch_sns_role.id
   depends_on = [aws_opensearch_domain.es]
 }
 

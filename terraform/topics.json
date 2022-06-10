@@ -1,37 +1,30 @@
 [
   {
-    "name": "wf_priority",
-    "display": "WFPriority",
+    "display": "Wildfire Priority",
     "resourceId": "wf-priority"
   },
   {
-    "name": "wf_normal",
-    "display": "WF",
+    "display": "Wildfire",
     "resourceId": "wf-normal"
   },
   {
-    "name": "appdlvr_priority",
-    "display": "AppdlvrPriority",
+    "display": "Appdlvr Priority",
     "resourceId": "appdlvr-priority"
   },
   {
-    "name": "appdlvr_normal",
     "display": "Appdlvr",
     "resourceId": "appdlvr-normal"
   },
   {
-    "name": "midtier_priority",
-    "display": "MidtierPriority",
+    "display": "Midtier Priority",
     "resourceId": "midtier-priority"
   },
   {
-    "name": "midtier_normal",
     "display": "Midtier",
     "resourceId": "midtier-normal"
   },
   {
-    "name": "message_queue",
-    "display": "SQS",
+    "display": "Automation SQS",
     "resourceId": "message-queue"
   }
 ]
