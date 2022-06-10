@@ -1,30 +1,37 @@
 [
   {
     "display": "Wildfire Priority",
-    "resourceId": "wf-priority"
+    "resourceId": "wf-priority",
+    "sqsEndpoint": false
   },
   {
     "display": "Wildfire",
-    "resourceId": "wf-normal"
+    "resourceId": "wf-normal",
+    "sqsEndpoint": false
   },
   {
     "display": "Appdlvr Priority",
-    "resourceId": "appdlvr-priority"
+    "resourceId": "appdlvr-priority",
+    "sqsEndpoint": false
   },
   {
     "display": "Appdlvr",
-    "resourceId": "appdlvr-normal"
+    "resourceId": "appdlvr-normal",
+    "sqsEndpoint": false
   },
   {
     "display": "Midtier Priority",
-    "resourceId": "midtier-priority"
+    "resourceId": "midtier-priority",
+    "sqsEndpoint": false
   },
   {
     "display": "Midtier",
-    "resourceId": "midtier-normal"
+    "resourceId": "midtier-normal",
+    "sqsEndpoint": false
   },
   {
     "display": "Automation SQS",
-    "resourceId": "message-queue"
+    "resourceId": "message-queue",
+    "sqsEndpoint": true
   }
 ]

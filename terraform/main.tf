@@ -644,7 +644,7 @@ resource "aws_iam_role" "opensearch_sns_role" {
 }
 
 module "destination" {
-  source = "./opensearch-destination-module"
+  source = "./topic-destination-module"
   for_each = { for t in jsondecode(file("./topics.json")): t.resourceId => t }
   topic = each.value
   aws_region_name = data.aws_region.current.name

@@ -1,7 +1,6 @@
 variable "topic" {
   description = "Topic details"
   type        = object({
-    name = string
     display = string
     resourceId = string
     sqsEndpoint = bool
