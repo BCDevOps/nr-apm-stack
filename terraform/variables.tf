@@ -11,14 +11,20 @@ variable "env" {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fix: missing
 variable "pr" {
    type = string
    description = "Suffix appended to all managed resource names"
    default = "0"
  }
 
+<<<<<<< HEAD
 =======
 >>>>>>> feat: add topic sqs and Opensearch destinations
+=======
+>>>>>>> fix: missing
 variable "suffix" {
   type = string
   description = "Suffix appended to all managed resource names"

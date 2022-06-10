@@ -605,7 +605,11 @@ module "topic" {
   es_domain_name = local.es_domain_name
 =======
   aws_sns_role_id = aws_iam_role.opensearch_sns_role.id
+<<<<<<< HEAD
 >>>>>>> feat: add topic sqs and Opensearch destinations
+=======
+  es_domain_name = local.es_domain_name
+>>>>>>> fix: missing
   depends_on = [aws_opensearch_domain.es]
 }
 
