@@ -595,6 +595,33 @@ resource "elasticsearch_opensearch_roles_mapping" "manage_snapshots" {
   ]
 }
 
+module "agent-monitor" {
+  source = "./agent-monitor-module"
+  for_each = { for a in jsondecode(file("./monitors.json")): a.name => a }
+  agent_monitor = each.value
+  depends_on = [aws_opensearch_domain.es]
+  webhook_destination_id = elasticsearch_opensearch_destination.agent_monitor_destination.id
+  automation_destination_id = module.destination["message-queue"].destination_id
+}
+
+# Create destination for agent monitors
+resource "elasticsearch_opensearch_destination" "agent_monitor_destination" {
+  body = <<EOF
+{
+  "type": "custom_webhook",
+  "name": "appinfra_incoming_webhook",
+  "custom_webhook": {
+    "header_params": {
+      "Content-Type": "application/json"
+    },
+    "scheme": "HTTPS",
+    "method" : "POST",
+    "url" : "${var.destination_url}"
+  }
+}
+EOF
+}
+
 module "topic" {
   source = "./topic-module"
   for_each = { for t in jsondecode(file("./topics.json")): t.resourceId => t }

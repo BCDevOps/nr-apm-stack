@@ -91,3 +91,8 @@ variable "ultrawarm_node_instance_type" {
   type = string
   default = "ultrawarm1.medium.search"
 }
+
+variable "destination_url" {
+  type = string
+  sensitive = true
+}
