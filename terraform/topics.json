@@ -1,37 +1,37 @@
 [
   {
-    "name": "wf_priority",
-    "display": "WFPriority",
-    "resourceId": "wf-priority"
+    "display": "Wildfire Priority",
+    "resourceId": "wf-priority",
+    "sqsEndpoint": false
   },
   {
-    "name": "wf_normal",
-    "display": "WF",
-    "resourceId": "wf-normal"
+    "display": "Wildfire",
+    "resourceId": "wf-normal",
+    "sqsEndpoint": false
   },
   {
-    "name": "appdlvr_priority",
-    "display": "AppdlvrPriority",
-    "resourceId": "appdlvr-priority"
+    "display": "Appdlvr Priority",
+    "resourceId": "appdlvr-priority",
+    "sqsEndpoint": false
   },
   {
-    "name": "appdlvr_normal",
     "display": "Appdlvr",
-    "resourceId": "appdlvr-normal"
+    "resourceId": "appdlvr-normal",
+    "sqsEndpoint": false
   },
   {
-    "name": "midtier_priority",
-    "display": "MidtierPriority",
-    "resourceId": "midtier-priority"
+    "display": "Midtier Priority",
+    "resourceId": "midtier-priority",
+    "sqsEndpoint": false
   },
   {
-    "name": "midtier_normal",
     "display": "Midtier",
-    "resourceId": "midtier-normal"
+    "resourceId": "midtier-normal",
+    "sqsEndpoint": false
   },
   {
-    "name": "message_queue",
-    "display": "SQS",
-    "resourceId": "message-queue"
+    "display": "Automation SQS",
+    "resourceId": "message-queue",
+    "sqsEndpoint": true
   }
 ]

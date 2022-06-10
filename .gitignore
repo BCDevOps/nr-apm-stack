@@ -107,7 +107,7 @@ dist
 /**/.terraform
 *.tfstate
 *.tfstate.backup
-event-stream-processing/lib
+/event-stream-processing/lib
 *.local
 *.local.ps1
 .terragrunt-cache
@@ -118,3 +118,4 @@ terraform/.terraform.lock.hcl
 /event-stream-processing/asset/GeoLite2-City.mmdb
 /event-stream-processing/doc/
 /event-stream-processing/event-stream-processing.zip
+/terraform/event-stream-processing.zip
