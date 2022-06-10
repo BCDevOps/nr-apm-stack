@@ -590,7 +590,7 @@ resource "elasticsearch_opensearch_roles_mapping" "all_access" {
 
 module "topic" {
   source = "./topic-module"
-  for_each = { for t in jsondecode(file("./topics.json")): t.name => t }
+  for_each = { for t in jsondecode(file("./topics.json")): t.resourceId => t }
   topic = each.value
   aws_region_name = data.aws_region.current.name
   aws_account_id = data.aws_caller_identity.current.account_id
