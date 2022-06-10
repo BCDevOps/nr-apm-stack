@@ -15,6 +15,14 @@
     "sqsEndpoint": false
   },
   {
+    "display": "Wildfire",
+    "resourceId": "wf-normal"
+  },
+  {
+    "display": "Appdlvr Priority",
+    "resourceId": "appdlvr-priority"
+  },
+  {
     "display": "Appdlvr",
     "resourceId": "appdlvr-normal",
     "sqsEndpoint": false

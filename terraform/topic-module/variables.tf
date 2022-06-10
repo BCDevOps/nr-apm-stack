@@ -17,6 +17,14 @@ variable "aws_account_id" {
   type        = string
 }
 
+<<<<<<< HEAD
+=======
+variable "aws_sns_role_id" {
+  description = "AWS SNS role arn"
+  type        = string
+}
+
+>>>>>>> feat: add topic sqs and Opensearch destinations
 variable "es_domain_name" {
   description = "Domain name"
   type        = string
