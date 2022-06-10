@@ -10,12 +10,15 @@ variable "env" {
   default = null
 }
 
+<<<<<<< HEAD
 variable "pr" {
    type = string
    description = "Suffix appended to all managed resource names"
    default = "0"
  }
 
+=======
+>>>>>>> feat: add topic sqs and Opensearch destinations
 variable "suffix" {
   type = string
   description = "Suffix appended to all managed resource names"
