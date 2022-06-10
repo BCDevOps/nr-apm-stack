@@ -2,6 +2,8 @@ export AWS_REGION=ca-central-1
 
 export OS_URL=apm.io.nrs.gov.bc.ca
 export OS_DOMAIN=nress-prod
+# For snapshot setup
+export AWS_ACCOUNT_NUMBER=
 
 # Paste in the following from LZ login page
 # Note: You need to update the 'all_access' role to allow your AWS account to use it
