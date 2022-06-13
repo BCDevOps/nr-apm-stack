@@ -11,6 +11,7 @@
     "@aws-crypto/sha256-js": "^2.0.1",
     "@aws-sdk/client-elasticsearch-service": "^3.95.0",
     "@aws-sdk/credential-provider-node": "^3.95.0",
+    "@aws-sdk/client-sqs": "^3.109.0",
     "@aws-sdk/node-http-handler": "^3.94.0",
     "@aws-sdk/protocol-http": "^3.78.0",
     "@aws-sdk/signature-v4": "^3.78.0",
