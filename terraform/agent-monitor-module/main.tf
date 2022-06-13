@@ -90,11 +90,7 @@ resource "elasticsearch_opensearch_monitor" "agent_monitor" {
                     "name": "Notify Teams Channel",
                     "destination_id": "${var.webhook_destination_id}", 
                     "message_template": {
-                        "source": "{ \"text\": \"Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue.\n
-  - Trigger: {{ctx.trigger.name}}\n
-  - Severity: {{ctx.trigger.severity}}\n
-  - Period start: {{ctx.periodStart}}\n
-  - Period end: {{ctx.periodEnd}}\" }",
+                        "source": "{ \"text\": \"Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue.\n  - Trigger: {{ctx.trigger.name}}\n  - Severity: {{ctx.trigger.severity}}\n  - Period start: {{ctx.periodStart}}\n  - Period end: {{ctx.periodEnd}}\" }",
                         "lang" : "mustache"
                     },
                     "throttle_enabled": true,
