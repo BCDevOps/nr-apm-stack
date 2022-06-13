@@ -609,7 +609,7 @@ resource "elasticsearch_opensearch_destination" "agent_monitor_destination" {
   body = <<EOF
 {
   "type": "custom_webhook",
-  "name": "appinfra_incoming_webhook",
+  "name": "Appinfra Webhook",
   "custom_webhook": {
     "header_params": {
       "Content-Type": "application/json"
