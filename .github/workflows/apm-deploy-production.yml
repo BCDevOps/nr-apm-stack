@@ -71,6 +71,15 @@ jobs:
         with:
           name: event-stream-processing
           path: ./terraform
+      # Create tfvars file as an alternative to setting TF_VAR environment variable for Terraform Cloud 
+      # https://github.com/hashicorp/setup-terraform/pull/79
+      - name: Setup Terraform variable for agent monitor destination url
+        working-directory: ./terraform
+        id: vars
+        run: |-
+          cat > monitors.auto.tfvars <<EOF
+          agent_monitor_webhook_url = "${{ secrets.AGENT_MONITOR_WEBHOOK_URL }}"
+          EOF
       - name: Terraform Plan - Review before apply
         working-directory: terragrunt/prod
         env:
@@ -106,6 +115,15 @@ jobs:
       - name: Unzip Cli
         working-directory: terraform
         run: unzip -qq workflow-cli.zip -d ./workflow-cli
+      # Create tfvars file as an alternative to setting TF_VAR environment variable for Terraform Cloud 
+      # https://github.com/hashicorp/setup-terraform/pull/79
+      - name: Setup Terraform variable for agent monitor destination url
+        working-directory: ./terraform
+        id: vars
+        run: |-
+          cat > monitors.auto.tfvars <<EOF
+          agent_monitor_webhook_url = "${{ secrets.AGENT_MONITOR_WEBHOOK_URL }}"
+          EOF
       - name: Terraform Apply
         working-directory: terragrunt/prod
         env:
