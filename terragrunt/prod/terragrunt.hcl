@@ -35,7 +35,7 @@ generate "inputs" {
   iit_lambda_code_bucket_key_version = "m2WQ7ixHMkV7WZ8HDH0JeJNDFuiOGvzV"
   master_node_instance_count = 3
   master_node_instance_type = "c6g.large.search"
-  data_node_instance_count = 8
+  data_node_instance_count = 16
   data_node_instance_type = "r6g.large.search"
   data_node_volume_size = 350
   ultrawarm_node_instance_count = 2
