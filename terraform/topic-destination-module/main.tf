@@ -57,3 +57,10 @@ resource "aws_sqs_queue" "sqs-queue" {
   name     = "${var.es_domain_name}-${var.topic.resourceId}"
   policy   = data.aws_iam_policy_document.sqs-queue-policy.json
 }
+
+resource "aws_sns_topic_subscription" "sqs-queue-subscription" {
+  count    = var.topic.sqsEndpoint ? 1 : 0
+  topic_arn = var.aws_sns_topic_id
+  protocol  = "sqs"
+  endpoint  = aws_sqs_queue["sqs-queue"].id
+}
