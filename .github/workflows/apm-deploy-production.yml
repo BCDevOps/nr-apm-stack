@@ -78,7 +78,7 @@ jobs:
         id: vars
         run: |-
           cat > monitors.auto.tfvars <<EOF
-          destination_url = "${{ secrets.TF_VAR_DESTINATION_URL }}"
+          agent_monitor_webhook_url = "${{ secrets.TF_VAR_DESTINATION_URL }}"
           EOF
       - name: Terraform Plan - Review before apply
         working-directory: terragrunt/prod
@@ -122,7 +122,7 @@ jobs:
         id: vars
         run: |-
           cat > monitors.auto.tfvars <<EOF
-          destination_url = "${{ secrets.TF_VAR_DESTINATION_URL }}"
+          agent_monitor_webhook_url = "${{ secrets.TF_VAR_DESTINATION_URL }}"
           EOF
       - name: Terraform Apply
         working-directory: terragrunt/prod

@@ -616,7 +616,7 @@ resource "elasticsearch_opensearch_destination" "agent_monitor_destination" {
     },
     "scheme": "HTTPS",
     "method" : "POST",
-    "url" : "${var.destination_url}"
+    "url" : "${var.agent_monitor_webhook_url}"
   }
 }
 EOF
