@@ -90,11 +90,7 @@ resource "elasticsearch_opensearch_monitor" "agent_monitor" {
                     "name": "Notify Teams Channel",
                     "destination_id": "${var.webhook_destination_id}", 
                     "message_template": {
-                        "source": """{ "text": "Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue.
-  - Trigger: {{ctx.trigger.name}}
-  - Severity: {{ctx.trigger.severity}}
-  - Period start: {{ctx.periodStart}}
-  - Period end: {{ctx.periodEnd}}" }""",
+                        "source": "{ \"text\": \"Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue.\n  - Trigger: {{ctx.trigger.name}}\n  - Severity: {{ctx.trigger.severity}}\n  - Period start: {{ctx.periodStart}}\n  - Period end: {{ctx.periodEnd}}\" }",
                         "lang" : "mustache"
                     },
                     "throttle_enabled": true,
@@ -111,7 +107,7 @@ resource "elasticsearch_opensearch_monitor" "agent_monitor" {
                     "name": "Notify Automation Queue",
                     "destination_id": "${var.automation_destination_id}",
                     "message_template": {
-                        "source": """{ "type": "agent_down", "server": "${var.agent_monitor.server}", "agent": "${var.agent_monitor.agent}" }""",
+                        "source": "{ \"type\": \"agent_down\", \"server\": \"${var.agent_monitor.server}\", \"agent\": \"${var.agent_monitor.agent}\" }",
                         "lang" : "mustache"
                     },
                     "throttle_enabled": true,
