@@ -38,6 +38,8 @@ generate "inputs" {
   data_node_instance_count = 16
   data_node_instance_type = "r6g.large.search"
   data_node_volume_size = 350
+  ultrawarm_node_instance_count = 2
+  ultrawarm_node_instance_type = "ultrawarm1.medium.search"
   custom_endpoint = "apm.io.nrs.gov.bc.ca"
   custom_endpoint_certificate_arn = "arn:aws:acm:ca-central-1:578527843179:certificate/a03a0a1b-120b-43ab-ab9d-e1bc84c693c4"
   kinesis_shards = 3
