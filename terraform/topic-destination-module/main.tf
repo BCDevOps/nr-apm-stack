@@ -39,14 +39,14 @@ data "aws_iam_policy_document" "sqs-queue-policy" {
     ]
 
     resources = [
-      "arn:aws:sqs:${var.aws_region_name}:${var.aws_account_id}:${var.topic.resourceId}",
+      "arn:aws:sqs:${var.aws_region_name}:${var.aws_account_id}:${var.es_domain_name}-${var.topic.resourceId}",
     ]
 
     condition {
       test     = "ArnEquals"
       variable = "aws:SourceArn"
       values = [
-        "arn:aws:sns:${var.aws_region_name}:${var.aws_account_id}:${var.topic.resourceId}",
+        "arn:aws:sns:${var.aws_region_name}:${var.aws_account_id}:${var.es_domain_name}-${var.topic.resourceId}",
       ]
     }
   }
