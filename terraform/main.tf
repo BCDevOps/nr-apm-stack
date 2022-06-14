@@ -381,7 +381,7 @@ data "aws_lambda_layer_version" "maxmind_geoip_db" {
 resource "aws_lambda_function" "lambda_iit_agents" {
   function_name = "${local.es_domain_name}-iit-agents"
   role          = aws_iam_role.lambda_iit_agents.arn
-  runtime       = "nodejs14.x"
+  runtime       = "nodejs16.x"
   handler       = "index.kinesisStreamHandler"
   memory_size   = 1024
   timeout       = 60
