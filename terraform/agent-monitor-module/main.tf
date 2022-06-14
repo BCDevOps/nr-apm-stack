@@ -48,21 +48,24 @@ resource "elasticsearch_opensearch_monitor" "agent_monitor" {
                                 {
                                     "term": {
                                         "host.hostname": {
-                                            "value": "${var.agent_monitor.server}"
+                                            "value": "${var.agent_monitor.server}",
+                                            "boost" : 1.0
                                         }
                                     }
                                 },
                                 {
                                     "term": {
                                         "agent.name": {
-                                            "value": "${var.agent_monitor.agent}"
+                                            "value": "${var.agent_monitor.agent}",
+                                            "boost" : 1.0
                                         }
                                     }
                                 },
                                 {
                                     "term": {
                                         "event.dataset": {
-                                            "value": "process.info"
+                                            "value": "process.info",
+                                            "boost" : 1.0
                                         }
                                     }
                                 }
