@@ -75,5 +75,6 @@
     "moment-timezone": "^0.5.34",
     "reflect-metadata": "^0.1.13",
     "ua-parser-js": "^1.0.2"
-  }
+  },
+  "bundledDependencies": true
 }
