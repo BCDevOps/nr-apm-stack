@@ -62,5 +62,5 @@ resource "aws_sns_topic_subscription" "sqs-queue-subscription" {
   count    = var.topic.sqsEndpoint ? 1 : 0
   topic_arn = var.aws_sns_topic_id
   protocol  = "sqs"
-  endpoint  = aws_sqs_queue.sqs-queue[count.index].id
+  endpoint  = aws_sqs_queue.sqs-queue[count.index].arn
 }
