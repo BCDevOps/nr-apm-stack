@@ -30,6 +30,27 @@
         ],
         "transitions": [
           {
+            "state_name": "warm",
+            "conditions": {
+              "min_index_age": "10d"
+            }
+          }
+        ]
+      },
+      {
+        "name": "warm",
+        "actions": [
+          {
+            "retry": {
+                "count": 5,
+                "backoff": "exponential",
+                "delay": "1h"
+            },
+            "warm_migration": {}
+          }
+        ],
+        "transitions": [
+          {
             "state_name": "delete",
             "conditions": {
               "min_index_age": "28d"
