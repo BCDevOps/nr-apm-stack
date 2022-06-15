@@ -29,6 +29,7 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
+* [`workflow-cli automation-message`](#workflow-cli-automation-message)
 * [`workflow-cli help [COMMAND]`](#workflow-cli-help-command)
 * [`workflow-cli keycloak-sync`](#workflow-cli-keycloak-sync)
 * [`workflow-cli lambda-asset-download [FILE]`](#workflow-cli-lambda-asset-download-file)
@@ -43,6 +44,32 @@ USAGE
 * [`workflow-cli plugins:uninstall PLUGIN...`](#workflow-cli-pluginsuninstall-plugin-2)
 * [`workflow-cli plugins update`](#workflow-cli-plugins-update)
 * [`workflow-cli reindex`](#workflow-cli-reindex)
+* [`workflow-cli snapshot`](#workflow-cli-snapshot)
+
+## `workflow-cli automation-message`
+
+Automation message recieve tool
+
+```
+USAGE
+  $ workflow-cli automation-message -u <value> -d <value> --region <value> --accessId <value> --accessKey <value>
+    --accountNumber <value> [--arn <value>]
+
+FLAGS
+  -d, --domainName=<value>  (required) OpenSearch Domain
+  -u, --hostname=<value>    (required) OpenSearch url
+  --accessId=<value>        (required) AWS access key id
+  --accessKey=<value>       (required) AWS secret access key
+  --accountNumber=<value>   (required) AWS account number
+  --arn=<value>             AWS ARN
+  --region=<value>          (required) AWS region
+
+DESCRIPTION
+  Automation message recieve tool
+
+EXAMPLES
+  $ workflow-cli automation-message
+```
 
 ## `workflow-cli help [COMMAND]`
 
@@ -383,5 +410,30 @@ DESCRIPTION
 
 EXAMPLES
   $ workflow-cli reindex
+```
+
+## `workflow-cli snapshot`
+
+Snapshot setup tool
+
+```
+USAGE
+  $ workflow-cli snapshot -u <value> -d <value> --region <value> --accessId <value> --accessKey <value>
+    --accountNumber <value> [--arn <value>]
+
+FLAGS
+  -d, --domainName=<value>  (required) OpenSearch Domain
+  -u, --hostname=<value>    (required) OpenSearch url
+  --accessId=<value>        (required) AWS access key id
+  --accessKey=<value>       (required) AWS secret access key
+  --accountNumber=<value>   (required) AWS account number
+  --arn=<value>             AWS ARN
+  --region=<value>          (required) AWS region
+
+DESCRIPTION
+  Snapshot setup tool
+
+EXAMPLES
+  $ workflow-cli snapshot
 ```
 <!-- commandsstop -->
