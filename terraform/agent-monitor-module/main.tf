@@ -48,21 +48,24 @@ resource "elasticsearch_opensearch_monitor" "agent_monitor" {
                                 {
                                     "term": {
                                         "host.hostname": {
-                                            "value": "${var.agent_monitor.server}"
+                                            "value": "${var.agent_monitor.server}",
+                                            "boost": 1.0
                                         }
                                     }
                                 },
                                 {
                                     "term": {
                                         "agent.name": {
-                                            "value": "${var.agent_monitor.agent}"
+                                            "value": "${var.agent_monitor.agent}",
+                                            "boost": 1.0
                                         }
                                     }
                                 },
                                 {
                                     "term": {
                                         "event.dataset": {
-                                            "value": "process.info"
+                                            "value": "process.info",
+                                            "boost": 1.0
                                         }
                                     }
                                 }
@@ -76,7 +79,9 @@ resource "elasticsearch_opensearch_monitor" "agent_monitor" {
         }
     ],
     "triggers": [
-        {
+        { 
+          "query_level_trigger": {
+            "id": "${var.agent_monitor.query_level_trigger_id}",
             "name": "No logs from server ${var.agent_monitor.server}, agent ${var.agent_monitor.agent}",
             "severity": "1",
             "condition": {
@@ -87,8 +92,9 @@ resource "elasticsearch_opensearch_monitor" "agent_monitor" {
             },
             "actions": [
                 {
+                    "id": "${var.agent_monitor.teams_channel_action_id}",
                     "name": "Notify Teams Channel",
-                    "destination_id": "${var.webhook_destination_id}", 
+                    "destination_id": "${var.webhook_destination_id}",
                     "message_template": {
                         "source": "{ \"text\": \"Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue.\n  - Trigger: {{ctx.trigger.name}}\n  - Severity: {{ctx.trigger.severity}}\n  - Period start: {{ctx.periodStart}}\n  - Period end: {{ctx.periodEnd}}\" }",
                         "lang" : "mustache"
@@ -104,6 +110,7 @@ resource "elasticsearch_opensearch_monitor" "agent_monitor" {
                     }
                 },
                 {
+                    "id": "${var.agent_monitor.automation_queue_action_id}",
                     "name": "Notify Automation Queue",
                     "destination_id": "${var.automation_destination_id}",
                     "message_template": {
@@ -121,6 +128,7 @@ resource "elasticsearch_opensearch_monitor" "agent_monitor" {
                     }
                 }
             ]
+        }
         }
     ]
 }
