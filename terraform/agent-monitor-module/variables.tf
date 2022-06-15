@@ -3,6 +3,9 @@ variable "agent_monitor" {
     name = string
     server = string
     agent = string
+    query_level_trigger_id = string
+    teams_channel_action_id = string
+    automation_queue_action_id = string
   }) 
 }
 
