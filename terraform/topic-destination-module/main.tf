@@ -67,7 +67,6 @@ resource "aws_iam_policy" "sqs-queue-consumer-policy" {
             "Effect": "Allow",
             "Action": [
               "sqs:DeleteMessage",
-              "sqs:DeleteMessageBatch",
               "sqs:ReceiveMessage"
             ],
             "Resource": "arn:aws:sqs:${var.aws_region_name}:${var.aws_account_id}:${var.es_domain_name}-${var.topic.resourceId}"
