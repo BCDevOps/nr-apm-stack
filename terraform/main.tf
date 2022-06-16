@@ -623,12 +623,18 @@ resource "elasticsearch_opensearch_destination" "agent_monitor_destination" {
   "type": "custom_webhook",
   "name": "Appinfra Webhook",
   "custom_webhook": {
+    "path": null,
     "header_params": {
       "Content-Type": "application/json"
     },
+    "password": null,
     "scheme": "HTTPS",
     "method" : "POST",
-    "url" : "${var.agent_monitor_webhook_url}"
+    "port": -1,
+    "query_params": {},
+    "host": null,
+    "url" : "${var.agent_monitor_webhook_url}",
+    "username": null
   }
 }
 EOF
