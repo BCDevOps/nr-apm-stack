@@ -54,6 +54,7 @@ data "aws_iam_policy_document" "sqs-queue-policy" {
 
 # This policy needs to be attached to a SA role by the platform team
 resource "aws_iam_policy" "sqs-queue-consumer-policy" {
+  count       = var.topic.sqsEndpoint ? 1 : 0
   name        = "${var.es_domain_name}-${var.topic.resourceId}-sqs-consumer"
   path        = "/"
   description = ""
