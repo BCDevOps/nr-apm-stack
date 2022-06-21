@@ -16,7 +16,7 @@ export default class AwsSqsService extends AwsService {
   private client: SQSClient;
   constructor(settings: settings) {
     super();
-    this.client = new SQSClient({region: settings.region});
+    this.client = new SQSClient(this.configureClientProxy({region: settings.region}));
   }
 
   public async receiveMessage(queueUrl: string): Promise<string> {

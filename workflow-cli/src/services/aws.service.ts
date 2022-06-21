@@ -5,6 +5,7 @@ import {HttpRequest} from '@aws-sdk/protocol-http';
 import {defaultProvider} from '@aws-sdk/credential-provider-node';
 import {Sha256} from '@aws-crypto/sha256-js';
 import {SignatureV4} from '@aws-sdk/signature-v4';
+import {HttpsProxyAgent} from 'hpagent';
 
 export interface settings {
   hostname: string;
@@ -24,7 +25,7 @@ export default class AwsService {
    */
   public async assumeIdentity(settings: settings): Promise<void> {
     if (!this.identityAssumed && settings.arn) {
-      const stsClient1 = new STSClient({region: settings.region});
+      const stsClient1 = new STSClient(this.configureClientProxy({region: settings.region}));
       const stsAssumeRoleCommand = new AssumeRoleCommand({
         RoleArn: settings.arn,
         RoleSessionName: 'nrdk',
@@ -66,6 +67,17 @@ export default class AwsService {
         reject(err);
       });
     });
+  }
+
+  protected configureClientProxy(client: any): any {
+    if (process.env.HTTP_PROXY) {
+      const agent = new HttpsProxyAgent({proxy: process.env.HTTP_PROXY});
+      client.requestHandler = new NodeHttpHandler({
+        httpAgent: agent,
+        httpsAgent: agent,
+      });
+    }
+    return client;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
