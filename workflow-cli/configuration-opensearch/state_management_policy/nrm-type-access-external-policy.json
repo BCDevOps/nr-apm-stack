@@ -14,7 +14,7 @@
           {
             "state_name": "scaled",
             "conditions": {
-              "min_index_age": "7d"
+              "min_index_age": "4d"
             }
           }
         ]
