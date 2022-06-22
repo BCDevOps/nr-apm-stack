@@ -23,6 +23,11 @@
         "name": "force_merge",
         "actions": [
           {
+            "retry": {
+              "count": 10,
+              "backoff": "exponential",
+              "delay": "10m"
+            },
             "force_merge": {
               "max_num_segments": 1
             }
@@ -42,9 +47,9 @@
         "actions": [
           {
             "retry": {
-                "count": 5,
+                "count": 10,
                 "backoff": "exponential",
-                "delay": "1h"
+                "delay": "10m"
             },
             "warm_migration": {}
           }
