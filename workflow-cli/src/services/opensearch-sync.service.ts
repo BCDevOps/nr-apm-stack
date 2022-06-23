@@ -17,7 +17,7 @@ export interface settings {
 
 export default class OpenSearchSyncService extends AwsService {
   public async getDomain(settings: settings): Promise<any> {
-    const client = new ElasticsearchServiceClient({region: settings.region});
+    const client = new ElasticsearchServiceClient(this.configureClientProxy({region: settings.region}));
     return await this.waitForDomainStatusReady(client, settings.domainName);
   }
 
