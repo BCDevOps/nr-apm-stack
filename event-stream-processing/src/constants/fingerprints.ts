@@ -298,6 +298,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         docId: 'kinesis.eventID',
         index: 'nrm-metrics-<%=YYYY.MM.DD=%>',
         timestampGuard: 'PT10M',
+        urlExplode: true,
       },
     },
   },
