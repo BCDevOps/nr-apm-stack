@@ -26,6 +26,7 @@ export default class OpenSearchSnapshotService extends AwsService {
       }),
       headers: {
         'Content-Type': 'application/json',
+        'x-amz-server-side-encryption': 'AES256',
         'host': settings.hostname,
       },
       hostname: settings.hostname,
