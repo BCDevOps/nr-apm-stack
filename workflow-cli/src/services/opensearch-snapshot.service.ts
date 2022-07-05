@@ -22,11 +22,11 @@ export default class OpenSearchSnapshotService extends AwsService {
           bucket: `${settings.domainName}-snapshot-${settings.accountNumber}`,
           region: settings.region,
           role_arn: `arn:aws:iam::${settings.accountNumber}:role/${settings.domainName}-opensearch-snapshot`,
+          'server-side-encryption': true,
         },
       }),
       headers: {
         'Content-Type': 'application/json',
-        'x-amz-server-side-encryption': 'AES256',
         'host': settings.hostname,
       },
       hostname: settings.hostname,
