@@ -42,7 +42,7 @@ export default class Snapshot extends Command {
       let hours = date_ob.getHours();
       let minutes = date_ob.getMinutes();
       let seconds = date_ob.getSeconds();
-      return year + "." + month + "." + date + "t" + hours + ":" + minutes + ":" + seconds + "pst";
+      return year + "." + month + "." + date + "t" + hours + ":" + minutes + ":" + seconds;
     };
     const timeStamp = getTimeStamp();
     const service = new OpenSearchSnapshotService();
