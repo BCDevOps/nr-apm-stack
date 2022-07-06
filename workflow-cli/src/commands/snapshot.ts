@@ -2,11 +2,24 @@ import {Command, Flags} from '@oclif/core';
 import OpenSearchSnapshotService from '../services/opensearch-snapshot.service';
 
 export default class Snapshot extends Command {
-  static description = 'Snapshot setup tool';
+  static description = 'Snapshot setup and creation tool';
 
   static examples = [
     '<%= config.bin %> <%= command.id %>',
   ];
+
+  static args = [
+    {
+      name: 'setup',
+      required: false,
+      description: 'set up snapshot',
+    },
+    {
+      name: 'create',
+      required: false,
+      description: 'create snapshot',
+    },
+  ]
 
   static flags = {
     hostname: Flags.string({char: 'u', description: 'OpenSearch url', env: 'OS_URL', required: true}),
@@ -19,10 +32,26 @@ export default class Snapshot extends Command {
   };
 
   public async run(): Promise<void> {
+    const {args} = this.parse(Snapshot);
     const {flags} = await this.parse(Snapshot);
-
+    const getTimeStamp = function () {
+      let date_ob = new Date();
+      let date = ("0" + date_ob.getDate()).slice(-2);
+      let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+      let year = date_ob.getFullYear();
+      let hours = date_ob.getHours();
+      let minutes = date_ob.getMinutes();
+      let seconds = date_ob.getSeconds();
+      return year + "." + month + "." + date + "t" + hours + ":" + minutes + ":" + seconds + "pst";
+    };
+    const timeStamp = getTimeStamp();
     const service = new OpenSearchSnapshotService();
     await service.assumeIdentity(flags);
-    await service.setupSnapshot(flags);
+    if (args.setup) {
+      await service.setupSnapshot(flags);
+    };
+    if (args.create) {
+      await service.createSnapshot(flags, timeStamp);
+    };
   }
 }

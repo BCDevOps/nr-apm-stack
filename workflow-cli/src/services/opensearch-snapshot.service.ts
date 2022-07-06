@@ -30,12 +30,28 @@ export default class OpenSearchSnapshotService extends AwsService {
         'host': settings.hostname,
       },
       hostname: settings.hostname,
-      path: `/_snapshot/s3-backup`,
+      path: `/_snapshot/${settings.domainName}-snapshot-${settings.accountNumber}`,
     })
       .then((res) => this.waitAndReturnResponseBody(res))
       .then((res) => {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         console.log(`[${res.statusCode}] Snapshot setup`);
       });
-  }
+  };
+  public async createSnapshot(settings: settings, timeStamp: string): Promise<any> {
+    await this.executeSignedHttpRequest({
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'host': settings.hostname,
+      },
+      hostname: settings.hostname,
+      path: `/_snapshot/${settings.domainName}-snapshot-${settings.accountNumber}/${timeStamp}`,
+    })
+      .then((res) => this.waitAndReturnResponseBody(res))
+      .then((res) => {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        console.log(`[${res.statusCode}] Snapshot created`);
+      });
+  };
 }
