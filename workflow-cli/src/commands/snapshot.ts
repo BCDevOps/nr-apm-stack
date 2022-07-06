@@ -19,7 +19,7 @@ export default class Snapshot extends Command {
       required: false,
       description: 'create snapshot',
     },
-  ]
+  ];
 
   static flags = {
     hostname: Flags.string({char: 'u', description: 'OpenSearch url', env: 'OS_URL', required: true}),
@@ -34,24 +34,24 @@ export default class Snapshot extends Command {
   public async run(): Promise<void> {
     const {args} = this.parse(Snapshot);
     const {flags} = await this.parse(Snapshot);
-    const getTimeStamp = function () {
-      let date_ob = new Date();
-      let date = ("0" + date_ob.getDate()).slice(-2);
-      let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-      let year = date_ob.getFullYear();
-      let hours = date_ob.getHours();
-      let minutes = date_ob.getMinutes();
-      let seconds = date_ob.getSeconds();
-      return year + "." + month + "." + date + "t" + hours + ":" + minutes + ":" + seconds;
+    const getTimeStamp = function() {
+      const date = new Date();
+      const day = ('0' + date.getDate()).slice(-2);
+      const month = ('0' + (date.getMonth() + 1)).slice(-2);
+      const year = date.getFullYear();
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const seconds = date.getSeconds();
+      return `${year}.${month}.${day}t${hours}.${minutes}.${seconds}`;
     };
     const timeStamp = getTimeStamp();
     const service = new OpenSearchSnapshotService();
     await service.assumeIdentity(flags);
     if (args.setup) {
       await service.setupSnapshot(flags);
-    };
+    }
     if (args.create) {
       await service.createSnapshot(flags, timeStamp);
-    };
+    }
   }
 }
