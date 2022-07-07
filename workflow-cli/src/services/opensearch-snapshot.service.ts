@@ -59,12 +59,12 @@ export default class OpenSearchSnapshotService extends AwsService {
 
   private getTimeStamp(): string {
     const date = new Date();
-    const day = `0${String(date.getDate()).slice(-2)}`;
-    const month = `0${String(date.getMonth()+1).slice(-2)}`;
-    const year = `${String(date.getFullYear())}`;
-    const hours = `${String(date.getHours())}`;
-    const minutes = `${String(date.getMinutes())}`;
-    const seconds = `${String(date.getSeconds())}`;
-    return `${year}.${month}.${day}t${hours}.${minutes}.${seconds}`;
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear().toString();
+    const hours = date.getUTCHours().toString().padStart(2, '0');
+    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+    const seconds = date.getUTCSeconds().toString().padStart(2, '0');
+    return `${year}.${month}.${day}t${hours}.${minutes}.${seconds}z`;
   }
 }
