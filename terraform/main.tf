@@ -451,7 +451,7 @@ export AWS_REGION=ca-central-1
 export OS_URL=apm.io.nrs.gov.bc.ca
 export OS_DOMAIN=nress-prod
 ./workflow-cli/bin/run opensearch-sync
-./workflow_cli/bin/run snapshot 
+./workflow_cli/bin/run snapshot setup
 EOF
   environment = {
     AWS_ASSUME_ROLE = local.iam_role_arn
