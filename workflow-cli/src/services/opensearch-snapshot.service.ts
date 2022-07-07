@@ -30,7 +30,7 @@ export default class OpenSearchSnapshotService extends AwsService {
         'host': settings.hostname,
       },
       hostname: settings.hostname,
-      path: `/_snapshot/${settings.domainName}-snapshot-${settings.accountNumber}`,
+      path: `/_snapshot/s3-backup`,
     })
       .then((res) => this.waitAndReturnResponseBody(res))
       .then((res) => {
@@ -48,7 +48,7 @@ export default class OpenSearchSnapshotService extends AwsService {
         'host': settings.hostname,
       },
       hostname: settings.hostname,
-      path: `/_snapshot/${settings.domainName}-snapshot-${settings.accountNumber}/${timeStamp}`,
+      path: `/_snapshot/s3-backup/${timeStamp}`,
     })
       .then((res) => this.waitAndReturnResponseBody(res))
       .then((res) => {
