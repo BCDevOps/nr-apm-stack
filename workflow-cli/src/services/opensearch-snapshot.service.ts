@@ -66,5 +66,5 @@ export default class OpenSearchSnapshotService extends AwsService {
     const minutes = `${String(date.getMinutes())}`;
     const seconds = `${String(date.getSeconds())}`;
     return `${year}.${month}.${day}t${hours}.${minutes}.${seconds}`;
-  };
+  }
 }
