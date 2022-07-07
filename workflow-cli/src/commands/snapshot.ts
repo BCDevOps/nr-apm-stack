@@ -32,7 +32,7 @@ export default class Snapshot extends Command {
   };
 
   public async run(): Promise<void> {
-    const {args} = this.parse(Snapshot);
+    const {args} = await this.parse(Snapshot);
     const {flags} = await this.parse(Snapshot);
     const getTimeStamp = function(): string {
       const date = new Date();
