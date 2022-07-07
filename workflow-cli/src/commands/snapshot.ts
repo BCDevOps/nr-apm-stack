@@ -35,13 +35,12 @@ export default class Snapshot extends Command {
     const {args} = await this.parse(Snapshot);
     const {flags} = await this.parse(Snapshot);
     const service = new OpenSearchSnapshotService();
-    const timeStamp = service.getTimeStamp();
     await service.assumeIdentity(flags);
     if (args.setup) {
       await service.setupSnapshot(flags);
     }
     if (args.create) {
-      await service.createSnapshot(flags, timeStamp);
+      await service.createSnapshot(flags);
     }
   }
 }

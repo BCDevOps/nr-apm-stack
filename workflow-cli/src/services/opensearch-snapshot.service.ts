@@ -39,7 +39,7 @@ export default class OpenSearchSnapshotService extends AwsService {
       });
   }
 
-  public async createSnapshot(settings: settings, timeStamp: string): Promise<any> {
+  public async createSnapshot(settings: settings): Promise<any> {
     await this.executeSignedHttpRequest({
       method: 'PUT',
       headers: {
@@ -47,7 +47,7 @@ export default class OpenSearchSnapshotService extends AwsService {
         'host': settings.hostname,
       },
       hostname: settings.hostname,
-      path: `/_snapshot/${settings.domainName}-snapshot-${settings.accountNumber}/${timeStamp}`,
+      path: `/_snapshot/${settings.domainName}-snapshot-${settings.accountNumber}/${this.getTimeStamp()}`,
     })
       .then((res) => this.waitAndReturnResponseBody(res))
       .then((res) => {
@@ -56,7 +56,7 @@ export default class OpenSearchSnapshotService extends AwsService {
       });
   }
 
-  public getTimeStamp(): string {
+  private getTimeStamp(): string {
     const date = new Date();
     const day = `0${String(date.getDate()).slice(-2)}`;
     const month = `0${String(date.getMonth()+1).slice(-2)}`;
