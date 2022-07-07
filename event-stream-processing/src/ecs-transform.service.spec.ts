@@ -93,8 +93,7 @@ describe('EcsTransformService', () => {
     expect(mockParsers[0].apply).toBeCalledTimes(7);
     expect(logger.log).toBeCalledWith('Received 2 records');
     expect(logger.log).toBeCalledWith('PARSE_ERROR:bob org host service /path:20 fingerprint : hi');
-    expect(logger.log).toBeCalledWith('Rejected 1 records');
-    expect(rVal.length).toBe(1);
-    expect(rVal[0].data.host.hostname).toBe('host');
+    expect(rVal.documents.length).toBe(1);
+    expect(rVal.documents[0].data.host.hostname).toBe('host');
   });
 });

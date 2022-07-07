@@ -2,11 +2,18 @@ import {Context, KinesisStreamEvent} from 'aws-lambda';
 import {EcsTransformService} from './ecs-transform.service';
 import {KinesisStreamService} from './kinesis-stream.service';
 import {OpenSearchService} from './open-search.service';
+import {OsDocument} from './types/os-document';
 import {LoggerService} from './util/logger.service';
+import {buildOsDocumentPipeline} from './util/pipeline.util';
 
 describe('KinesisStreamService', () => {
   it('transforms and then sends data', async () => {
-    const docs = ['docs', 'docs', 'docs!'];
+    const docs = buildOsDocumentPipeline();
+    docs.documents = [
+      'one' as unknown as OsDocument,
+      'two' as unknown as OsDocument,
+      'three' as unknown as OsDocument,
+    ];
     const etService = {
       transform: jest.fn().mockReturnValue(docs),
     } as unknown as EcsTransformService;
@@ -14,7 +21,12 @@ describe('KinesisStreamService', () => {
       bulk: jest.fn().mockReturnValue({
         then: jest.fn().mockImplementation((cb) => {
           cb({
-            errors: ['err'],
+            documents: [
+              'one' as unknown as OsDocument,
+              'two' as unknown as OsDocument,
+              'three' as unknown as OsDocument,
+            ],
+            failures: ['hi'],
           });
         }),
       }),

@@ -1,6 +1,6 @@
 import {injectable} from 'inversify';
-import {OpenSearchService, OpenSearchBulkResult} from './open-search.service';
-import {OsDocument} from './types/os-document';
+import {OpenSearchService} from './open-search.service';
+import {OsDocument, OsDocumentPipeline} from './types/os-document';
 
 @injectable()
 /**
@@ -12,9 +12,9 @@ export class OpenSearchDummyService implements OpenSearchService {
    * @param documents The documents that would have been uploaded
    * @returns The result containing info about the documents that would have been uploaded
    */
-  bulk(documents: OsDocument[]): Promise<OpenSearchBulkResult> {
+  async bulk(pipeline: OsDocumentPipeline): Promise<OsDocumentPipeline> {
     // Refactor OsDocument to return fewer fields in result
-    const compactDocs = documents.map((document) => ({
+    const compactDocs = pipeline.documents.map((document) => ({
       fingerprint: document.fingerprint.name,
       id: document.id,
       index: document.index,
@@ -22,9 +22,8 @@ export class OpenSearchDummyService implements OpenSearchService {
     }));
 
     return Promise.resolve({
-      success: true,
-      errors: [],
-      result: compactDocs,
+      documents: compactDocs as unknown as OsDocument[],
+      failures: pipeline.failures,
     });
   }
 }

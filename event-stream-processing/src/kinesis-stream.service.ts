@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import {Context, KinesisStreamEvent} from 'aws-lambda';
 import {injectable, inject} from 'inversify';
-import {OpenSearchBulkResult, OpenSearchService} from './open-search.service';
+import {OpenSearchService} from './open-search.service';
 import {TYPES} from './inversify.types';
 import {LoggerService} from './util/logger.service';
 import {EcsTransformService} from './ecs-transform.service';
-import {PipelineTuple} from './types/os-document';
+import {OsDocumentPipeline} from './types/os-document';
 
 @injectable()
 /**
@@ -31,15 +31,14 @@ export class KinesisStreamService {
    * @param context The lambda context
    * @returns A promise to wait on
    */
-  public async handle(event: KinesisStreamEvent, context: Context): Promise<PipelineTuple> {
+  public async handle(event: KinesisStreamEvent, context: Context): Promise<OsDocumentPipeline> {
     this.logger.log(`Transforming ${event.Records.length} kinesis records to ES documents`);
-    const tuple = this.ecsTransformService.transform(event);
-    this.logger.log(`Submitting ${tuple.documents.length} documents to ES`);
-    return this.openSearch.bulk(tuple).then((tuple) => {
-      this.logger.log(`${tuple.documents.length - tuple.failures.length} documents added`);
-      this.logger.log(`${tuple.failures.length} documents failed`);
-      return tuple;
-    });
+    const pipeline = this.ecsTransformService.transform(event);
+    this.logger.log(`Submitting ${pipeline.documents.length} documents to ES`);
+    const sentPipeline = await this.openSearch.bulk(pipeline);
+    this.logger.log(`${sentPipeline.documents.length - sentPipeline.failures.length} documents added`);
+    this.logger.log(`${sentPipeline.failures.length} documents failed`);
+    return sentPipeline;
   }
   /* eslint-enable @typescript-eslint/no-unused-vars */
 }

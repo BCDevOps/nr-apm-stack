@@ -6,10 +6,10 @@ import {TYPES} from './inversify.types';
 import {LoggerService} from './util/logger.service';
 import {GenericError} from './util/generic.error';
 // eslint-disable-next-line max-len
-import {KinesisStreamRecordProcessingFailure, OsDocument, OsDocumentProcessingFailure, PipelineObject, PipelineTuple} from './types/os-document';
+import {KinesisStreamRecordProcessingFailure, OsDocument, OsDocumentProcessingFailure, OsDocumentPipeline} from './types/os-document';
 import {KinesisStreamRecordMapperService} from './shared/kinesis-stream-record-mapper.service';
 import {ParserError} from './util/parser.error';
-import {partitionToTuple} from './util/pipelineTuple.util';
+import {buildOsDocumentPipeline, partitionObjectInPipeline} from './util/pipeline.util';
 
 @injectable()
 /**
@@ -37,16 +37,16 @@ export class EcsTransformService {
    * @param event
    * @returns
    */
-  public transform(event: KinesisStreamEvent): PipelineTuple {
+  public transform(event: KinesisStreamEvent): OsDocumentPipeline {
     if (event.Records) {
       this.logger.log(`Received ${event.Records.length} records`);
-      return this.process(this.transformDecode(event));
+      return this.process(this.decode(event));
     }
 
     return {documents: [], failures: []};
   }
 
-  private transformDecode(event: KinesisStreamEvent): PipelineTuple {
+  private decode(event: KinesisStreamEvent): OsDocumentPipeline {
     return event.Records
       .map((record) => {
         try {
@@ -58,11 +58,11 @@ export class EcsTransformService {
           );
         }
       })
-      .reduce(partitionToTuple, {documents: [], failures: []});
+      .reduce(partitionObjectInPipeline, buildOsDocumentPipeline());
   }
 
-  private process(tuple: PipelineTuple): PipelineTuple {
-    return tuple.documents.map((document) => {
+  private process(pipeline: OsDocumentPipeline): OsDocumentPipeline {
+    return pipeline.documents.map((document) => {
       if (document instanceof KinesisStreamRecordProcessingFailure) {
         return document;
       }
@@ -88,7 +88,7 @@ export class EcsTransformService {
         );
       }
     })
-      .reduce(partitionToTuple, {documents: [], failures: tuple.failures});
+      .reduce(partitionObjectInPipeline, buildOsDocumentPipeline(pipeline));
   }
 
   /**

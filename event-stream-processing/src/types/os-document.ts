@@ -40,7 +40,7 @@ export class PipelineProcessingFailure<T> {
 export class OsDocumentProcessingFailure extends PipelineProcessingFailure<OsDocument> {}
 export class KinesisStreamRecordProcessingFailure extends PipelineProcessingFailure<KinesisStreamRecord> {}
 export type PipelineObject = OsDocument|OsDocumentProcessingFailure|KinesisStreamRecordProcessingFailure;
-export interface PipelineTuple {
+export interface OsDocumentPipeline {
   documents: OsDocument[];
   failures: Array<OsDocumentProcessingFailure|KinesisStreamRecordProcessingFailure>;
 }

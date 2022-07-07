@@ -1,11 +1,11 @@
 import {injectable, inject} from 'inversify';
 import {URL} from 'url';
 import {TYPES} from './inversify.types';
-import {OpenSearchBulkResult, OpenSearchService} from './open-search.service';
-import {OsDocument, OsDocumentProcessingFailure, PipelineObject, PipelineTuple} from './types/os-document';
+import {OpenSearchService} from './open-search.service';
+import {OsDocument, OsDocumentProcessingFailure, OsDocumentPipeline} from './types/os-document';
 import {AwsHttpClientService} from './util/aws-http-client.service';
 import {LoggerService} from './util/logger.service';
-import {partitionToTuple} from './util/pipelineTuple.util';
+import {partitionObjectInPipeline, buildOsDocumentPipeline} from './util/pipeline.util';
 
 @injectable()
 /**
@@ -20,15 +20,15 @@ export class OpenSearchPostService implements OpenSearchService {
   ) {}
 
   /**
-   * Upload a bulk set of documents
-   * @param tuple The documents to upload
+   * Upload a bulk set of documents from the pipeline
+   * @param pipeline The pipeline with documents to upload
    */
-  async bulk(tuple: PipelineTuple): Promise<PipelineTuple> {
+  async bulk(pipeline: OsDocumentPipeline): Promise<OsDocumentPipeline> {
     const index = new Map<string, OsDocument>();
     const filterPath = 'took,errors,items.*.error,items.*._id';
     let body = '';
     // Ensure documents have id and index
-    const readyTuple = tuple.documents
+    const readyPipeline = pipeline.documents
       .map((document) => {
         if (document.id === null) {
           return this.createProcessingFailure('ES_ERROR', document, 'Document with no id');
@@ -38,8 +38,8 @@ export class OpenSearchPostService implements OpenSearchService {
         }
         return document;
       })
-      .reduce(partitionToTuple, {documents: [], failures: tuple.failures});
-    for (const document of readyTuple.documents) {
+      .reduce(partitionObjectInPipeline, buildOsDocumentPipeline(pipeline));
+    for (const document of readyPipeline.documents) {
       if (document.id === null || document.index === null) {
         // Will never happen
         continue;
@@ -64,7 +64,7 @@ export class OpenSearchPostService implements OpenSearchService {
     this.logger.debug('ES_REQUEST_BODY:', body);
     this.logger.debug('ES_REQUEST_QUERY:', query);
     if (body.length === 0) {
-      return Promise.resolve(readyTuple);
+      return Promise.resolve(readyPipeline);
     }
     return await this.awsHttpClient.executeSignedHttpRequest({
       hostname: this.url.hostname,
@@ -86,8 +86,8 @@ export class OpenSearchPostService implements OpenSearchService {
           return {
             documents: [],
             failures: [
-              ...readyTuple.documents.map((doc) => this.createProcessingFailure('ES_NETWORK', doc, 'Network down?')),
-              ...readyTuple.failures],
+              ...readyPipeline.documents.map((doc) => this.createProcessingFailure('ES_NETWORK', doc, 'Network down?')),
+              ...readyPipeline.failures],
           };
         }
         const body = JSON.parse(value.body);
@@ -101,7 +101,7 @@ export class OpenSearchPostService implements OpenSearchService {
               const message = (typeof meta.error.type === 'string' ? meta.error.type as string : 'Unknown') +
                 `: ${typeof meta.error.reason === 'string' ? meta.error.reason as string : 'Unknown'}`;
 
-              readyTuple.failures.push(this.createProcessingFailure('ES_DOCERROR', document, message));
+              readyPipeline.failures.push(this.createProcessingFailure('ES_DOCERROR', document, message));
               index.delete(meta._id);
             } else {
               this.logger.log('ES_ERROR_DOC_NOT_FOUND ' + JSON.stringify(item));
@@ -110,7 +110,7 @@ export class OpenSearchPostService implements OpenSearchService {
         }
         return {
           documents: Array.from(index.values()),
-          failures: readyTuple.failures,
+          failures: readyPipeline.failures,
         };
       });
   }
