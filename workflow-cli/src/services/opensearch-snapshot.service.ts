@@ -35,7 +35,7 @@ export default class OpenSearchSnapshotService extends AwsService {
       .then((res) => this.waitAndReturnResponseBody(res))
       .then((res) => {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        console.log(`[${res.statusCode}] Snapshot setup`);
+        console.log(`[${res.statusCode}] Setup started`);
       });
   }
 
@@ -53,7 +53,7 @@ export default class OpenSearchSnapshotService extends AwsService {
       .then((res) => this.waitAndReturnResponseBody(res))
       .then((res) => {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        console.log(`[${res.statusCode}] Snapshot service started`);
+        console.log(`[${res.statusCode}] Snapshot started`);
       });
   }
 
