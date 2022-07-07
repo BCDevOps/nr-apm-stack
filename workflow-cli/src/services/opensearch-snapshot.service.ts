@@ -14,7 +14,7 @@ export interface settings {
 
 export default class OpenSearchSnapshotService extends AwsService {
   public async setupSnapshot(settings: settings): Promise<any> {
-    await this.executeSignedHttpRequest({
+    return this.executeSignedHttpRequest({
       method: 'PUT',
       body: JSON.stringify({
         type: 's3',
