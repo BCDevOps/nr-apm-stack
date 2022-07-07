@@ -1,4 +1,4 @@
-import {OsDocument} from './types/os-document';
+import {OsDocument, PipelineObject, PipelineTuple} from './types/os-document';
 export interface ResultItem {
   _id: string,
   error?: any
@@ -19,7 +19,7 @@ export interface OpenSearchBulkResult {
 export interface OpenSearchService {
   /**
    * Upload a bulk set of documents
-   * @param documents The documents to upload
+   * @param tuple The documents to upload
    */
-  bulk(documents: OsDocument[]): Promise<OpenSearchBulkResult>;
+  bulk(tuple: PipelineTuple): Promise<PipelineTuple>;
 }

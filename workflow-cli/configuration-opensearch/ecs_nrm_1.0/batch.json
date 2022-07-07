@@ -1,0 +1,29 @@
+{
+  "_meta": {
+    "documentation": "https://apps.nrs.gov.bc.ca/int/confluence/x/PqJvBQ",
+    "version": "1.0"
+  },
+  "template": {
+    "mappings": {
+      "properties": {
+        "batch": {
+          "properties": {
+            "success": {
+              "type": "integer"
+            },
+            "success_percent": {
+              "scaling_factor": 1000,
+              "type": "scaled_float"
+            },
+            "failure": {
+              "type": "integer"
+            },
+            "count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    }
+  }
+}

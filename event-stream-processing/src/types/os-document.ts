@@ -32,5 +32,15 @@ export interface OsDocument {
   type: string;
   data: OsDocumentData;
   dataExtractedTimestamp?: string;
-  error: any;
+}
+
+export class PipelineProcessingFailure<T> {
+  constructor(public source: T, public message: string) {}
+}
+export class OsDocumentProcessingFailure extends PipelineProcessingFailure<OsDocument> {}
+export class KinesisStreamRecordProcessingFailure extends PipelineProcessingFailure<KinesisStreamRecord> {}
+export type PipelineObject = OsDocument|OsDocumentProcessingFailure|KinesisStreamRecordProcessingFailure;
+export interface PipelineTuple {
+  documents: OsDocument[];
+  failures: Array<OsDocumentProcessingFailure|KinesisStreamRecordProcessingFailure>;
 }

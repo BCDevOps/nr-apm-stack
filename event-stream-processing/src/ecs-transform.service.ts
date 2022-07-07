@@ -5,9 +5,11 @@ import {Parser} from './types/parser';
 import {TYPES} from './inversify.types';
 import {LoggerService} from './util/logger.service';
 import {GenericError} from './util/generic.error';
-import {OsDocument} from './types/os-document';
+// eslint-disable-next-line max-len
+import {KinesisStreamRecordProcessingFailure, OsDocument, OsDocumentProcessingFailure, PipelineObject, PipelineTuple} from './types/os-document';
 import {KinesisStreamRecordMapperService} from './shared/kinesis-stream-record-mapper.service';
 import {ParserError} from './util/parser.error';
+import {partitionToTuple} from './util/pipelineTuple.util';
 
 @injectable()
 /**
@@ -35,46 +37,58 @@ export class EcsTransformService {
    * @param event
    * @returns
    */
-  public transform(event: KinesisStreamEvent): OsDocument[] {
+  public transform(event: KinesisStreamEvent): PipelineTuple {
     if (event.Records) {
-      let badDocs = 0;
       this.logger.log(`Received ${event.Records.length} records`);
-
-      const docs = event.Records
-        .map((record) => {
-          try {
-            return this.ksrMapper.toOpensearchDocument(record);
-          } catch (e: unknown) {
-            badDocs++;
-          }
-        })
-        .filter((document): document is OsDocument => document !== undefined)
-        .map((document) => {
-          try {
-            return this.parseDocumentData(document);
-          } catch (error: unknown) {
-            const parser: string = error instanceof ParserError ? error.parser : 'unknown';
-            const message: string = error instanceof ParserError || error instanceof GenericError ?
-              error.message : '';
-            const team: string = document.data.organization?.id ? document.data.organization.id : 'unknown';
-            const hostName: string = document.data.host?.hostname ? document.data.host?.hostname : '';
-            const serviceName: string = document.data.service?.name ? document.data.service?.name : '';
-            const sequence: string = document.data.event?.sequence ? document.data.event?.sequence : '';
-            const path: string = document.data.log?.file?.path ? document.data.log?.file?.path : '';
-            // eslint-disable-next-line max-len
-            this.logger.log(`PARSE_ERROR:${parser} ${team} ${hostName} ${serviceName} ${path}:${sequence} ${document.fingerprint.name} : ${message}`);
-            badDocs++;
-            return undefined;
-          }
-        })
-        .filter((document): document is OsDocument => document !== undefined);
-
-      if (badDocs > 0) {
-        this.logger.log(`Rejected ${badDocs} records`);
-      }
-      return docs;
+      return this.process(this.transformDecode(event));
     }
-    return [];
+
+    return {documents: [], failures: []};
+  }
+
+  private transformDecode(event: KinesisStreamEvent): PipelineTuple {
+    return event.Records
+      .map((record) => {
+        try {
+          return this.ksrMapper.toOpensearchDocument(record);
+        } catch (e: unknown) {
+          return new KinesisStreamRecordProcessingFailure(
+            record,
+            'DECODE_ERROR',
+          );
+        }
+      })
+      .reduce(partitionToTuple, {documents: [], failures: []});
+  }
+
+  private process(tuple: PipelineTuple): PipelineTuple {
+    return tuple.documents.map((document) => {
+      if (document instanceof KinesisStreamRecordProcessingFailure) {
+        return document;
+      }
+      try {
+        return this.parseDocumentData(document);
+      } catch (error: unknown) {
+        const parser: string = error instanceof ParserError ? error.parser : 'unknown';
+        const message: string = error instanceof ParserError || error instanceof GenericError ?
+          error.message : '';
+        const team: string = document.data.organization?.id ? document.data.organization.id : 'unknown';
+        const hostName: string = document.data.host?.hostname ? document.data.host?.hostname : '';
+        const serviceName: string = document.data.service?.name ? document.data.service?.name : '';
+        const sequence: string = document.data.event?.sequence ? document.data.event?.sequence : '';
+        const path: string = document.data.log?.file?.path ? document.data.log?.file?.path : '';
+        // eslint-disable-next-line max-len
+        // document.error = `PARSE_ERROR:${parser} ${team} ${hostName} ${serviceName} ${path}:${sequence} ${document.fingerprint.name} : ${message}`;
+        // eslint-disable-next-line max-len
+        this.logger.log(`PARSE_ERROR:${parser} ${team} ${hostName} ${serviceName} ${path}:${sequence} ${document.fingerprint.name} : ${message}`);
+        return new OsDocumentProcessingFailure(
+          document,
+          // eslint-disable-next-line max-len
+          `PARSE_ERROR:${parser} ${team} ${hostName} ${serviceName} ${path}:${sequence} ${document.fingerprint.name} : ${message}`,
+        );
+      }
+    })
+      .reduce(partitionToTuple, {documents: [], failures: tuple.failures});
   }
 
   /**

@@ -29,7 +29,6 @@ export class KinesisStreamRecordMapperService {
       type: '_doc',
       data,
       record,
-      error: null,
     };
   }
 

@@ -34,6 +34,6 @@
   ],
   "version": 3,
   "_meta": {
-    "description": "NRM Service Metrics indexes"
+    "description": "NRM Service Metrics indices"
   }
 }
