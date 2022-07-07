@@ -38,6 +38,7 @@ export default class OpenSearchSnapshotService extends AwsService {
         console.log(`[${res.statusCode}] Snapshot setup`);
       });
   }
+
   public async createSnapshot(settings: settings, timeStamp: string): Promise<any> {
     await this.executeSignedHttpRequest({
       method: 'PUT',
