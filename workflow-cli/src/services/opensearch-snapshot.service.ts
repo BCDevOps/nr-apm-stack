@@ -40,14 +40,15 @@ export default class OpenSearchSnapshotService extends AwsService {
   }
 
   public async createSnapshot(settings: settings): Promise<any> {
-    await this.executeSignedHttpRequest({
+    const timeStamp = this.getTimeStamp();
+    return this.executeSignedHttpRequest({
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'host': settings.hostname,
       },
       hostname: settings.hostname,
-      path: `/_snapshot/${settings.domainName}-snapshot-${settings.accountNumber}/${this.getTimeStamp()}`,
+      path: `/_snapshot/${settings.domainName}-snapshot-${settings.accountNumber}/${timeStamp}`,
     })
       .then((res) => this.waitAndReturnResponseBody(res))
       .then((res) => {
