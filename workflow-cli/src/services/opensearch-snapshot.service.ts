@@ -19,9 +19,9 @@ export default class OpenSearchSnapshotService extends AwsService {
       body: JSON.stringify({
         type: 's3',
         settings: {
-          bucket: `${settings.domainName}-snapshot-${settings.accountNumber}`,
-          region: settings.region,
-          role_arn: `arn:aws:iam::${settings.accountNumber}:role/${settings.domainName}-opensearch-snapshot`,
+          'bucket': `${settings.domainName}-snapshot-${settings.accountNumber}`,
+          'region': settings.region,
+          'role_arn': `arn:aws:iam::${settings.accountNumber}:role/${settings.domainName}-opensearch-snapshot`,
           'server-side-encryption': true,
         },
       }),
@@ -37,7 +37,7 @@ export default class OpenSearchSnapshotService extends AwsService {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         console.log(`[${res.statusCode}] Snapshot setup`);
       });
-  };
+  }
   public async createSnapshot(settings: settings, timeStamp: string): Promise<any> {
     await this.executeSignedHttpRequest({
       method: 'PUT',
@@ -53,5 +53,5 @@ export default class OpenSearchSnapshotService extends AwsService {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         console.log(`[${res.statusCode}] Snapshot created`);
       });
-  };
+  }
 }

@@ -34,7 +34,7 @@ export default class Snapshot extends Command {
   public async run(): Promise<void> {
     const {args} = this.parse(Snapshot);
     const {flags} = await this.parse(Snapshot);
-    const getTimeStamp = function() {
+    const getTimeStamp = function(): string {
       const date = new Date();
       const day = `0${String(date.getDate()).slice(-2)}`;
       const month = `0${String(date.getMonth()+1).slice(-2)}`;
