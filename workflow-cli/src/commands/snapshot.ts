@@ -34,18 +34,8 @@ export default class Snapshot extends Command {
   public async run(): Promise<void> {
     const {args} = await this.parse(Snapshot);
     const {flags} = await this.parse(Snapshot);
-    const getTimeStamp = function(): string {
-      const date = new Date();
-      const day = `0${String(date.getDate()).slice(-2)}`;
-      const month = `0${String(date.getMonth()+1).slice(-2)}`;
-      const year = `${String(date.getFullYear())}`;
-      const hours = `${String(date.getHours())}`;
-      const minutes = `${String(date.getMinutes())}`;
-      const seconds = `${String(date.getSeconds())}`;
-      return `${year}.${month}.${day}t${hours}.${minutes}.${seconds}`;
-    };
-    const timeStamp = getTimeStamp();
     const service = new OpenSearchSnapshotService();
+    const timeStamp = service.getTimeStamp();
     await service.assumeIdentity(flags);
     if (args.setup) {
       await service.setupSnapshot(flags);

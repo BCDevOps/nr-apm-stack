@@ -52,7 +52,18 @@ export default class OpenSearchSnapshotService extends AwsService {
       .then((res) => this.waitAndReturnResponseBody(res))
       .then((res) => {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        console.log(`[${res.statusCode}] Snapshot created`);
+        console.log(`[${res.statusCode}] Snapshot service started`);
       });
   }
+
+  public getTimeStamp(): string {
+    const date = new Date();
+    const day = `0${String(date.getDate()).slice(-2)}`;
+    const month = `0${String(date.getMonth()+1).slice(-2)}`;
+    const year = `${String(date.getFullYear())}`;
+    const hours = `${String(date.getHours())}`;
+    const minutes = `${String(date.getMinutes())}`;
+    const seconds = `${String(date.getSeconds())}`;
+    return `${year}.${month}.${day}t${hours}.${minutes}.${seconds}`;
+  };
 }
