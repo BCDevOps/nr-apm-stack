@@ -53,7 +53,7 @@ export default class OpenSearchSnapshotService extends AwsService {
       .then((res) => this.waitAndReturnResponseBody(res))
       .then((res) => {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        console.log(`[${res.statusCode}] Snapshot started`);
+        console.log(`PUT _snapshot/s3-backup/${timeStamp}\n[${res.statusCode}] Snapshot started`);
       });
   }
 
