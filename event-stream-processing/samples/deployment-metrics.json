@@ -5,13 +5,13 @@
 
   "event": {
     "kind": "event",
-    "category": ["configuration"],
-    "type": ["installation"],
+    "category": "configuration",
+    "type": "installation",
     "outcome": "success",
     "dataset": "ansible",
     "duration": 123456,
-    "end": "2019-07-23T08:55:02.166Z",
-    "start": "2019-07-23T08:55:02.166Z",
+    "end": "2022-06-23T08:55:02.166Z",
+    "start": "2022-06-23T08:55:02.166Z",
     "url": "https://jenkins-url/jobs/4"
   },
 
@@ -31,5 +31,5 @@
     "name": "my-application",
     "version": "1.2.3"
   },
-  "@timestamp": "2019-07-23T09:00:09.895Z"
+  "@timestamp": "2022-06-23T09:00:09.895Z"
 }

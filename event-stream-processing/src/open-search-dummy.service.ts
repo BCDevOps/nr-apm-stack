@@ -9,7 +9,7 @@ import {OsDocument, OsDocumentPipeline} from './types/os-document';
 export class OpenSearchDummyService implements OpenSearchService {
   /**
    * Echo back the documents for localhost testing
-   * @param documents The documents that would have been uploaded
+   * @param pipeline The pipeline containing documents that would have been uploaded
    * @returns The result containing info about the documents that would have been uploaded
    */
   async bulk(pipeline: OsDocumentPipeline): Promise<OsDocumentPipeline> {

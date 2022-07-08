@@ -14,8 +14,9 @@ export function partitionObjectInPipeline(
 }
 
 export function buildOsDocumentPipeline(pipeline?: OsDocumentPipeline): OsDocumentPipeline {
-  return {
-    documents: [],
-    failures: pipeline ? pipeline.failures : [],
-  };
+  const rVal = new OsDocumentPipeline();
+  if (pipeline?.failures) {
+    rVal.failures = pipeline.failures;
+  }
+  return rVal;
 }

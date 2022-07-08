@@ -22,11 +22,11 @@ docker run --rm -p 3000:3000 esp
 The simpliest way is to just use a curl command. Switch to the samples directory and run:
 
 ```
-curl -s -X POST -H "Content-Type: application/json" -d @metric-cpu.json localhost:3000
+curl -s -X POST -H "Content-Type: application/json" -d @samples/deployment-metrics.json localhost:3000
 ```
 or
 ```
-curl -s -X POST -H "Content-Type: application/json" -d @metric-cpu.json "http://localhost:3000?print=true"
+curl -s -X POST -H "Content-Type: application/json" -d @samples/deployment-metrics.json "http://localhost:3000?print=true"
 ```
 
 ### Sending Test Data - fluentbit

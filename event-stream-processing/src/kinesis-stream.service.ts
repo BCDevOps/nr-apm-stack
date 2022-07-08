@@ -32,12 +32,18 @@ export class KinesisStreamService {
    * @returns A promise to wait on
    */
   public async handle(event: KinesisStreamEvent, context: Context): Promise<OsDocumentPipeline> {
-    this.logger.log(`Transforming ${event.Records.length} kinesis records to ES documents`);
-    const pipeline = this.ecsTransformService.transform(event);
-    this.logger.log(`Submitting ${pipeline.documents.length} documents to ES`);
-    const sentPipeline = await this.openSearch.bulk(pipeline);
-    this.logger.log(`${sentPipeline.documents.length - sentPipeline.failures.length} documents added`);
-    this.logger.log(`${sentPipeline.failures.length} documents failed`);
+    const recordCount = event.Records.length;
+    this.logger.log(`Transforming ${recordCount} kinesis records to OS documents`);
+    // Extract records from Kinesis event to documents and process according to fingerprint & meta instructions
+    const transformedPipeline = this.ecsTransformService.transform(event);
+    const transformedDocumentCount = transformedPipeline.documents.length;
+    this.logger.log(`Submitting ${transformedDocumentCount} documents to OS`);
+    // Bulk send documents
+    const sentPipeline = await this.openSearch.bulk(transformedPipeline);
+    // const recievedRecords = sentPipeline.documents.length;
+    const failedDocumentCount = sentPipeline.failures.length;
+    this.logger.log(`${recordCount - failedDocumentCount} documents added`);
+    this.logger.log(`${failedDocumentCount} documents failed`);
     return sentPipeline;
   }
   /* eslint-enable @typescript-eslint/no-unused-vars */
