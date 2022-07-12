@@ -1,11 +1,16 @@
 import {
-  KinesisStreamRecordProcessingFailure, OsDocumentProcessingFailure, PipelineObject, OsDocumentPipeline,
+  KinesisStreamRecordDecodeFailure,
+  OsDocumentProcessingFailure,
+  OsDocumentCommitFailure,
+  PipelineObject,
+  OsDocumentPipeline,
 } from '../types/os-document';
 
 export function partitionObjectInPipeline(
   tuple: OsDocumentPipeline, pipelineObject: PipelineObject): OsDocumentPipeline {
-  if (pipelineObject instanceof OsDocumentProcessingFailure ||
-    pipelineObject instanceof KinesisStreamRecordProcessingFailure) {
+  if (pipelineObject instanceof KinesisStreamRecordDecodeFailure ||
+    pipelineObject instanceof OsDocumentProcessingFailure ||
+    pipelineObject instanceof OsDocumentCommitFailure) {
     tuple.failures.push(pipelineObject);
   } else {
     tuple.documents.push(pipelineObject);

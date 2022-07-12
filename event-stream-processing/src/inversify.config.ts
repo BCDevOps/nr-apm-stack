@@ -3,6 +3,7 @@ import {TYPES} from './inversify.types';
 
 // Services
 import {AwsHttpClientService} from './util/aws-http-client.service';
+import {BatchSummaryService} from './batch-summary.service';
 import {DateAndTimeService} from './shared/date-and-time.service';
 import {EcsTransformService} from './ecs-transform.service';
 import {FieldExtractorService} from './shared/field-extractor.service';
@@ -70,6 +71,7 @@ function create(): Container {
   myContainer.bind<DateAndTimeService>(TYPES.DateAndTimeService).to(DateAndTimeService);
   myContainer.bind<RegexService>(TYPES.RegexService).to(RegexService);
   myContainer.bind<SubsetService>(TYPES.SubsetService).to(SubsetService);
+  myContainer.bind<BatchSummaryService>(TYPES.BatchSummaryService).to(BatchSummaryService);
 
   // Stage: PreInit
   myContainer.bind<Parser>(TYPES.PreInitParser).to(KeyAsPathParser);

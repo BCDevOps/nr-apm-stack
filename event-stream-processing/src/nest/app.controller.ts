@@ -14,7 +14,7 @@ export class AppController {
   /**
    * Handle data received as a mock Kinesis event.
    */
-  handleData(@Body() data: OsDocumentData, @Query('print') print: string): Promise<OsDocumentPipeline> {
+  handleData(@Body() data: OsDocumentData, @Query('print') print: string): Promise<void> {
     return this.appService.handleKinesisEvent(data, print === 'true');
   }
 }

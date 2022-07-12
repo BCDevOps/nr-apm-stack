@@ -5,7 +5,7 @@ import {OpenSearchService} from './open-search.service';
 import {TYPES} from './inversify.types';
 import {LoggerService} from './util/logger.service';
 import {EcsTransformService} from './ecs-transform.service';
-import {OsDocumentPipeline} from './types/os-document';
+import {BatchSummaryService} from './batch-summary.service';
 
 @injectable()
 /**
@@ -21,6 +21,7 @@ export class KinesisStreamService {
   constructor(
     @inject(TYPES.EcsTransformService) private ecsTransformService: EcsTransformService,
     @inject(TYPES.OpenSearchService) private openSearch: OpenSearchService,
+    @inject(TYPES.BatchSummaryService) private batchSummary: BatchSummaryService,
     @inject(TYPES.LoggerService) private logger: LoggerService,
   ) {}
 
@@ -31,20 +32,31 @@ export class KinesisStreamService {
    * @param context The lambda context
    * @returns A promise to wait on
    */
-  public async handle(event: KinesisStreamEvent, context: Context): Promise<OsDocumentPipeline> {
-    const recordCount = event.Records.length;
-    this.logger.log(`Transforming ${recordCount} kinesis records to OS documents`);
+  public async handle(event: KinesisStreamEvent, context: Context): Promise<void> {
+    const receivedCount = event.Records.length;
+    this.logger.debug(`Transforming ${receivedCount} kinesis records to OS documents`);
     // Extract records from Kinesis event to documents and process according to fingerprint & meta instructions
     const transformedPipeline = this.ecsTransformService.transform(event);
-    const transformedDocumentCount = transformedPipeline.documents.length;
-    this.logger.log(`Submitting ${transformedDocumentCount} documents to OS`);
+    const processedCount = transformedPipeline.documents.length;
+    this.logger.debug(`Submitting ${processedCount} documents to OS`);
     // Bulk send documents
     const sentPipeline = await this.openSearch.bulk(transformedPipeline);
     // const recievedRecords = sentPipeline.documents.length;
-    const failedDocumentCount = sentPipeline.failures.length;
-    this.logger.log(`${recordCount - failedDocumentCount} documents added`);
-    this.logger.log(`${failedDocumentCount} documents failed`);
-    return sentPipeline;
+    const committedCount = sentPipeline.documents.length;
+    const failedCount = sentPipeline.failures.length;
+    this.logger.debug(`${committedCount} documents added`);
+    this.logger.debug(`${failedCount} documents failed`);
+    this.batchSummary.logSummary(sentPipeline);
+
+    return Promise<void>.resolve();
+    /*
+    if (failedCount === 0) {
+      // Return success
+      return Promise<void>.resolve();
+    } else {
+      // Return partial success
+      return Promise<void>.reject(this.batchSummary.buildErrorResponse(sentPipeline));
+    }*/
   }
   /* eslint-enable @typescript-eslint/no-unused-vars */
 }

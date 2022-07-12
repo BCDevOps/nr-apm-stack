@@ -318,6 +318,22 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       },
     },
   },
+  {
+    name: FingerprintCategory.PIPELINE,
+    fingerprint: {
+      event: {
+        kind: 'metric',
+        dataset: 'pipeline.batch',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        docId: 'kinesis.eventID',
+        index: 'nrm-pipeline-opensearch-<%=YYYY.MM.DD=%>',
+        timestampGuard: 'PT10M',
+      },
+    },
+  },
   // Unknown should be last
   FINGERPRINT_UNKNOWN,
 ];

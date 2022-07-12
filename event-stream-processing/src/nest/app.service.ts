@@ -13,7 +13,7 @@ export class AppService {
    * @param print If true, print the data to the console
    * @returns Promise with the result
    */
-  handleKinesisEvent(@Body() data: OsDocumentData, print: boolean): Promise<OsDocumentPipeline> {
+  handleKinesisEvent(@Body() data: OsDocumentData, print: boolean): Promise<void> {
     return myContainer.get<KinesisStreamWrapperService>(TYPES.KinesisStreamWrapperService)
       .handleData(data, print);
   }

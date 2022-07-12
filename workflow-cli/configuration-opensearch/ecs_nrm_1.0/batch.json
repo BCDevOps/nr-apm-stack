@@ -8,17 +8,32 @@
       "properties": {
         "batch": {
           "properties": {
-            "success": {
+            "received": {
               "type": "integer"
             },
-            "success_percent": {
+            "decoded": {
+              "type": "integer"
+            },
+            "decode_failed": {
+              "type": "integer"
+            },
+            "processed": {
+              "type": "integer"
+            },
+            "process_failed": {
+              "type": "integer"
+            },
+            "committed": {
+              "type": "integer"
+            },
+            "commit_failed": {
+              "type": "integer"
+            },
+            "commit_percent": {
               "scaling_factor": 1000,
               "type": "scaled_float"
             },
-            "failure": {
-              "type": "integer"
-            },
-            "count": {
+            "failed": {
               "type": "integer"
             }
           }

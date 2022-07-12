@@ -2,7 +2,8 @@ import {injectable, inject} from 'inversify';
 import {URL} from 'url';
 import {TYPES} from './inversify.types';
 import {OpenSearchService} from './open-search.service';
-import {OsDocument, OsDocumentProcessingFailure, OsDocumentPipeline} from './types/os-document';
+// eslint-disable-next-line max-len
+import {OsDocument, OsDocumentCommitFailure, OsDocumentPipeline, OsDocumentProcessingFailure} from './types/os-document';
 import {AwsHttpClientService} from './util/aws-http-client.service';
 import {LoggerService} from './util/logger.service';
 import {partitionObjectInPipeline, buildOsDocumentPipeline} from './util/pipeline.util';
@@ -86,7 +87,7 @@ export class OpenSearchPostService implements OpenSearchService {
           return {
             documents: [],
             failures: [
-              ...readyPipeline.documents.map((doc) => this.createProcessingFailure('ES_NETWORK', doc, 'Network down?')),
+              ...readyPipeline.documents.map((doc) => this.createCommitFailure('ES_NETWORK', doc, 'Network down?')),
               ...readyPipeline.failures],
           };
         }
@@ -101,7 +102,7 @@ export class OpenSearchPostService implements OpenSearchService {
               const message = (typeof meta.error.type === 'string' ? meta.error.type as string : 'Unknown') +
                 `: ${typeof meta.error.reason === 'string' ? meta.error.reason as string : 'Unknown'}`;
 
-              readyPipeline.failures.push(this.createProcessingFailure('ES_DOCERROR', document, message));
+              readyPipeline.failures.push(this.createCommitFailure('ES_DOCERROR', document, message));
               index.delete(meta._id);
             } else {
               this.logger.log('ES_ERROR_DOC_NOT_FOUND ' + JSON.stringify(item));
@@ -115,16 +116,27 @@ export class OpenSearchPostService implements OpenSearchService {
       });
   }
 
-  private createProcessingFailure(type: string, document: OsDocument, message: string): OsDocumentProcessingFailure {
+  private createErrorMessage(type: string, document: OsDocument, message: string): string {
     const team: string = document.data.organization?.id ? document.data.organization.id : 'unknown';
     const hostName: string = document.data.host?.hostname ? document.data.host?.hostname as string : '';
     const serviceName: string = document.data.service?.name ? document.data.service?.name : '';
     const sequence: string = document.data.event?.sequence ? document.data.event?.sequence : '';
     const path: string = document.data.log?.file?.path ? document.data.log?.file?.path : '';
     // eslint-disable-next-line max-len
-    const docErrorMsg = `${type} ${team} ${hostName} ${serviceName} ${path}:${sequence} ${document.fingerprint.name} : ${message}`;
+    return `${type} ${team} ${hostName} ${serviceName} ${path}:${sequence} ${document.fingerprint.name} : ${message}`;
+  }
+
+  private createProcessingFailure(type: string, document: OsDocument, message: string): OsDocumentCommitFailure {
+    const docErrorMsg = this.createErrorMessage(type, document, message);
     this.logger.debug(docErrorMsg);
     this.logger.debug('ES_ERROR ' + JSON.stringify(document.data));
     return new OsDocumentProcessingFailure(document, docErrorMsg);
+  }
+
+  private createCommitFailure(type: string, document: OsDocument, message: string): OsDocumentCommitFailure {
+    const docErrorMsg = this.createErrorMessage(type, document, message);
+    this.logger.debug(docErrorMsg);
+    this.logger.debug('ES_ERROR ' + JSON.stringify(document.data));
+    return new OsDocumentCommitFailure(document, docErrorMsg);
   }
 }

@@ -1,7 +1,7 @@
 import {injectable, inject, tagged} from 'inversify';
 import {TYPES} from './inversify.types';
 import {KinesisStreamService} from './kinesis-stream.service';
-import {OsDocumentData, OsDocumentPipeline} from './types/os-document';
+import {OsDocumentData} from './types/os-document';
 import {Context, KinesisStreamEvent, KinesisStreamRecord} from 'aws-lambda';
 import {LoggerService} from './util/logger.service';
 
@@ -24,7 +24,7 @@ export class KinesisStreamWrapperService {
    * @param data The data to wrap
    * @returns Promise with the result
    */
-  async handleData(data: OsDocumentData, print: boolean): Promise<OsDocumentPipeline> {
+  async handleData(data: OsDocumentData, print: boolean): Promise<void> {
     const event: KinesisStreamEvent = {
       Records: [this.wrapDataIntoRecord(data)],
     };

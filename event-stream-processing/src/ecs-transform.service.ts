@@ -6,7 +6,7 @@ import {TYPES} from './inversify.types';
 import {LoggerService} from './util/logger.service';
 import {GenericError} from './util/generic.error';
 // eslint-disable-next-line max-len
-import {KinesisStreamRecordProcessingFailure, OsDocument, OsDocumentProcessingFailure, OsDocumentPipeline} from './types/os-document';
+import {OsDocument, KinesisStreamRecordDecodeFailure, OsDocumentProcessingFailure, OsDocumentPipeline} from './types/os-document';
 import {KinesisStreamRecordMapperService} from './shared/kinesis-stream-record-mapper.service';
 import {ParserError} from './util/parser.error';
 import {buildOsDocumentPipeline, partitionObjectInPipeline} from './util/pipeline.util';
@@ -47,13 +47,13 @@ export class EcsTransformService {
     return new OsDocumentPipeline();
   }
 
-  private decode(event: KinesisStreamEvent): Array<OsDocument|KinesisStreamRecordProcessingFailure> {
+  private decode(event: KinesisStreamEvent): Array<OsDocument|KinesisStreamRecordDecodeFailure> {
     return event.Records
       .map((record) => {
         try {
           return this.ksrMapper.toOpensearchDocument(record);
         } catch (e: unknown) {
-          return new KinesisStreamRecordProcessingFailure(
+          return new KinesisStreamRecordDecodeFailure(
             record,
             'DECODE_ERROR',
           );
@@ -61,10 +61,10 @@ export class EcsTransformService {
       });
   }
 
-  private process(pipelineArray: Array<OsDocument|KinesisStreamRecordProcessingFailure>): OsDocumentPipeline {
+  private process(pipelineArray: Array<OsDocument|KinesisStreamRecordDecodeFailure>): OsDocumentPipeline {
     return pipelineArray
       .map((document) => {
-        if (document instanceof KinesisStreamRecordProcessingFailure) {
+        if (document instanceof KinesisStreamRecordDecodeFailure) {
           return document;
         }
         try {
