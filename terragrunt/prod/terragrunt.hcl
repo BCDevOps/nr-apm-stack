@@ -42,7 +42,7 @@ generate "inputs" {
   ultrawarm_node_instance_type = "ultrawarm1.medium.search"
   custom_endpoint = "apm.io.nrs.gov.bc.ca"
   custom_endpoint_certificate_arn = "arn:aws:acm:ca-central-1:578527843179:certificate/a03a0a1b-120b-43ab-ab9d-e1bc84c693c4"
-  kinesis_shards = 3
+  kinesis_shards = 4
 EOF
 }
 
