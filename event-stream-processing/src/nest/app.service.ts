@@ -3,7 +3,7 @@ import {Body, Injectable} from '@nestjs/common';
 import {myContainer} from '../inversify.config';
 import {TYPES} from '../inversify.types';
 import {KinesisStreamWrapperService} from '../kinesis-stream-wrapper.service';
-import {OsDocumentData, OsDocumentPipeline} from '../types/os-document';
+import {OsDocumentData} from '../types/os-document';
 
 @Injectable()
 export class AppService {

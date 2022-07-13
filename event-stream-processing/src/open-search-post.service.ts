@@ -3,22 +3,23 @@ import {URL} from 'url';
 import {TYPES} from './inversify.types';
 import {OpenSearchService} from './open-search.service';
 // eslint-disable-next-line max-len
-import {OsDocument, OsDocumentCommitFailure, OsDocumentPipeline, OsDocumentProcessingFailure} from './types/os-document';
+import {OsDocument, OsDocumentCommitFailure, OsDocumentPipeline} from './types/os-document';
 import {AwsHttpClientService} from './util/aws-http-client.service';
 import {LoggerService} from './util/logger.service';
-import {partitionObjectInPipeline, buildOsDocumentPipeline} from './util/pipeline.util';
 
 @injectable()
 /**
  * Service to post bulk data to OpenSearch
  */
-export class OpenSearchPostService implements OpenSearchService {
+export class OpenSearchPostService extends OpenSearchService {
   private url: URL = new URL(process.env.ES_URL || 'http://localhost');
 
   constructor(
     @inject(TYPES.AwsHttpClientService) private awsHttpClient: AwsHttpClientService,
-    @inject(TYPES.LoggerService) private logger: LoggerService,
-  ) {}
+    @inject(TYPES.LoggerService) logger: LoggerService,
+  ) {
+    super(logger);
+  }
 
   /**
    * Upload a bulk set of documents from the pipeline
@@ -29,20 +30,10 @@ export class OpenSearchPostService implements OpenSearchService {
     const filterPath = 'took,errors,items.*.error,items.*._id';
     let body = '';
     // Ensure documents have id and index
-    const readyPipeline = pipeline.documents
-      .map((document) => {
-        if (document.id === null) {
-          return this.createProcessingFailure('ES_ERROR', document, 'Document with no id');
-        }
-        if (document.index === null) {
-          return this.createProcessingFailure('ES_ERROR', document, 'Document with no index');
-        }
-        return document;
-      })
-      .reduce(partitionObjectInPipeline, buildOsDocumentPipeline(pipeline));
+    const readyPipeline = this.preflightCheck(pipeline);
     for (const document of readyPipeline.documents) {
       if (document.id === null || document.index === null) {
-        // Will never happen
+        // This should never happen because of the preflight check
         continue;
       }
       index.set(document.id, document);
@@ -61,7 +52,7 @@ export class OpenSearchPostService implements OpenSearchService {
     if (filterPath.length > 0) {
       query.filter_path = filterPath;
     }
-    this.logger.log(`${index.size} documents being posted to ES`);
+    this.logger.debug(`${index.size} documents being posted to OS`);
     this.logger.debug('ES_REQUEST_BODY:', body);
     this.logger.debug('ES_REQUEST_QUERY:', query);
     if (body.length === 0) {
@@ -83,7 +74,7 @@ export class OpenSearchPostService implements OpenSearchService {
       .then((value: any) => {
         if (value.statusCode !== 200) {
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          this.logger.log(`ES_RESPONSE_STATUS_CODE ${value.statusCode }`);
+          this.logger.log(`ES_RESPONSE_STATUS_CODE ${value.statusCode}`);
           return {
             documents: [],
             failures: [
@@ -114,23 +105,6 @@ export class OpenSearchPostService implements OpenSearchService {
           failures: readyPipeline.failures,
         };
       });
-  }
-
-  private createErrorMessage(type: string, document: OsDocument, message: string): string {
-    const team: string = document.data.organization?.id ? document.data.organization.id : 'unknown';
-    const hostName: string = document.data.host?.hostname ? document.data.host?.hostname as string : '';
-    const serviceName: string = document.data.service?.name ? document.data.service?.name : '';
-    const sequence: string = document.data.event?.sequence ? document.data.event?.sequence : '';
-    const path: string = document.data.log?.file?.path ? document.data.log?.file?.path : '';
-    // eslint-disable-next-line max-len
-    return `${type} ${team} ${hostName} ${serviceName} ${path}:${sequence} ${document.fingerprint.name} : ${message}`;
-  }
-
-  private createProcessingFailure(type: string, document: OsDocument, message: string): OsDocumentCommitFailure {
-    const docErrorMsg = this.createErrorMessage(type, document, message);
-    this.logger.debug(docErrorMsg);
-    this.logger.debug('ES_ERROR ' + JSON.stringify(document.data));
-    return new OsDocumentProcessingFailure(document, docErrorMsg);
   }
 
   private createCommitFailure(type: string, document: OsDocument, message: string): OsDocumentCommitFailure {

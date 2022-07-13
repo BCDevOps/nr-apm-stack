@@ -1,7 +1,7 @@
 /* eslint-disable new-cap */
 import {Body, Controller, Post, Query} from '@nestjs/common';
 import {AppService} from './app.service';
-import {OsDocumentData, OsDocumentPipeline} from '../types/os-document';
+import {OsDocumentData} from '../types/os-document';
 
 @Controller()
 /**

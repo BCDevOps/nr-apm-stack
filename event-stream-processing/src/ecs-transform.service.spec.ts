@@ -34,7 +34,7 @@ describe('EcsTransformService', () => {
     expect(ksrMapper.toFingerprintedDocument).toBeCalledTimes(1);
     expect(mockParsers[0].matches).toBeCalledTimes(6);
     expect(mockParsers[0].apply).toBeCalledTimes(6);
-    expect(logger.log).toBeCalledWith('Received 1 records');
+    expect(logger.debug).toBeCalledWith('Received 1 records');
   });
 
   it('rejects and continues processing data', () => {
@@ -91,8 +91,8 @@ describe('EcsTransformService', () => {
     expect(ksrMapper.toFingerprintedDocument).toBeCalledTimes(1);
     expect(mockParsers[0].matches).toBeCalledTimes(7);
     expect(mockParsers[0].apply).toBeCalledTimes(7);
-    expect(logger.log).toBeCalledWith('Received 2 records');
-    expect(logger.log).toBeCalledWith('PARSE_ERROR:bob org host service /path:20 fingerprint : hi');
+    expect(logger.debug).toBeCalledWith('Received 2 records');
+    expect(logger.debug).toBeCalledWith('PARSE_ERROR:bob org host service /path:20 fingerprint : hi');
     expect(rVal.documents.length).toBe(1);
     expect(rVal.documents[0].data.host.hostname).toBe('host');
   });

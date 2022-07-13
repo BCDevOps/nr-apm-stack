@@ -39,7 +39,7 @@ export class EcsTransformService {
    */
   public transform(event: KinesisStreamEvent): OsDocumentPipeline {
     if (event.Records) {
-      this.logger.log(`Received ${event.Records.length} records`);
+      this.logger.debug(`Received ${event.Records.length} records`);
       return this.process(this.decode(event));
     }
 
@@ -79,7 +79,7 @@ export class EcsTransformService {
           const sequence: string = document.data.event?.sequence ? document.data.event?.sequence : '';
           const path: string = document.data.log?.file?.path ? document.data.log?.file?.path : '';
           // eslint-disable-next-line max-len
-          this.logger.log(`PARSE_ERROR:${parser} ${team} ${hostName} ${serviceName} ${path}:${sequence} ${document.fingerprint.name} : ${message}`);
+          this.logger.debug(`PARSE_ERROR:${parser} ${team} ${hostName} ${serviceName} ${path}:${sequence} ${document.fingerprint.name} : ${message}`);
           return new OsDocumentProcessingFailure(
             document,
             // eslint-disable-next-line max-len

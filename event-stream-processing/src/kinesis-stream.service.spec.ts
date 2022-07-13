@@ -33,6 +33,7 @@ describe('KinesisStreamService', () => {
     } as unknown as OpenSearchService;
     const batchService = {
       logSummary: jest.fn(),
+      logMessages: jest.fn(),
     } as unknown as BatchSummaryService;
     const logger = {
       log: jest.fn(),
@@ -56,6 +57,7 @@ describe('KinesisStreamService', () => {
     expect(osService.bulk).toBeCalledTimes(1);
     expect(osService.bulk).toBeCalledWith(docs);
     expect(batchService.logSummary).toBeCalledTimes(1);
+    expect(batchService.logMessages).toBeCalledTimes(1);
     expect(logger.debug).toBeCalledTimes(4);
     expect(logger.debug).toBeCalledWith('Transforming 0 kinesis records to OS documents');
     expect(logger.debug).toBeCalledWith('Submitting 3 documents to OS');

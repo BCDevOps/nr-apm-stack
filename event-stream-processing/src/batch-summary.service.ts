@@ -53,6 +53,20 @@ export class BatchSummaryService {
   }
 
   /**
+   * Summarizes the errors as a JSON object and log.
+   * @param pipeline The pipeline with processed documents
+   */
+  public logMessages(pipeline: OsDocumentPipeline) {
+    if (pipeline.failures.length === 0) {
+      return;
+    }
+    const errorMessages = {
+      errors: pipeline.failures.map((pipelineObject) => pipelineObject.message),
+    };
+    this.logger.log(JSON.stringify(errorMessages));
+  }
+
+  /**
    * Builds an error response if the  the logs as a JSON object.
    * @param pipeline The pipeline with processed documents
    * @returns An object contianing the failed record ids or null if no errors occurred.

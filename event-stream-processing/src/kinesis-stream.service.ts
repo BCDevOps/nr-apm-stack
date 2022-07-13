@@ -47,16 +47,9 @@ export class KinesisStreamService {
     this.logger.debug(`${committedCount} documents added`);
     this.logger.debug(`${failedCount} documents failed`);
     this.batchSummary.logSummary(sentPipeline);
+    this.batchSummary.logMessages(sentPipeline);
 
     return Promise<void>.resolve();
-    /*
-    if (failedCount === 0) {
-      // Return success
-      return Promise<void>.resolve();
-    } else {
-      // Return partial success
-      return Promise<void>.reject(this.batchSummary.buildErrorResponse(sentPipeline));
-    }*/
   }
   /* eslint-enable @typescript-eslint/no-unused-vars */
 }
