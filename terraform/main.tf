@@ -183,6 +183,7 @@ resource "aws_opensearch_domain" "es" {
   node_to_node_encryption {
     enabled = true
   }
+
   access_policies = data.aws_iam_policy_document.access_policies.json
   log_publishing_options {
     cloudwatch_log_group_arn = aws_cloudwatch_log_group.es_application_logs.arn # "arn:aws:logs:${data.aws_region.current.name}:${ data.aws_caller_identity.current.account_id }:log-group:/aws/aes/domains/${ local.es_domain_name }/application-logs"
@@ -297,6 +298,17 @@ resource "aws_iam_role" "snapshot_role" {
       ]
     })
   }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "s3_bucket_encrypted" {
+  bucket = aws_s3_bucket.snapshots.id
+
+  rule {
+    apply_server_side_encryption_by_default {      
+      sse_algorithm     = "AES256"
+    }
+    bucket_key_enabled = true
+  }  
 }
 
 /*
@@ -439,6 +451,7 @@ export AWS_REGION=ca-central-1
 export OS_URL=apm.io.nrs.gov.bc.ca
 export OS_DOMAIN=nress-prod
 ./workflow-cli/bin/run opensearch-sync
+./workflow_cli/bin/run snapshot setup
 EOF
   environment = {
     AWS_ASSUME_ROLE = local.iam_role_arn

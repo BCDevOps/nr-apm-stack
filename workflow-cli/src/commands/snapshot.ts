@@ -1,11 +1,24 @@
 import {Command, Flags} from '@oclif/core';
 import OpenSearchSnapshotService from '../services/opensearch-snapshot.service';
 
+const ACTION_SETUP = 'setup';
+const ACTION_CREATE = 'create';
+
 export default class Snapshot extends Command {
-  static description = 'Snapshot setup tool';
+  static description = 'Snapshot setup and creation tool';
 
   static examples = [
     '<%= config.bin %> <%= command.id %>',
+  ];
+
+  static args = [
+    {
+      name: 'action',
+      required: true,
+      description: 'Snapshot action',
+      default: ACTION_CREATE,
+      options: [ACTION_SETUP, ACTION_CREATE],
+    },
   ];
 
   static flags = {
@@ -19,10 +32,16 @@ export default class Snapshot extends Command {
   };
 
   public async run(): Promise<void> {
+    const {args} = await this.parse(Snapshot);
     const {flags} = await this.parse(Snapshot);
-
     const service = new OpenSearchSnapshotService();
     await service.assumeIdentity(flags);
-    await service.setupSnapshot(flags);
+    if (args.action === ACTION_SETUP) {
+      await service.setupSnapshot(flags);
+    } else if (args.action === ACTION_CREATE) {
+      await service.createSnapshot(flags);
+    } else {
+      throw new Error('Illegal action');
+    }
   }
 }
