@@ -30,10 +30,7 @@ export class KinesisStreamWrapperService {
     };
     // unused so any value will work
     const context: Context = {} as Context;
-    const kss = await this.kinesisStreamService.handle(event, context);
-    if (print) {
-      this.logger.log(JSON.stringify(kss, null, '  '));
-    }
+    const kss = await this.kinesisStreamService.handle(event, context, print);
     return kss;
   }
 

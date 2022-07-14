@@ -32,7 +32,7 @@ export class KinesisStreamService {
    * @param context The lambda context
    * @returns A promise to wait on
    */
-  public async handle(event: KinesisStreamEvent, context: Context): Promise<void> {
+  public async handle(event: KinesisStreamEvent, context: Context, print = false): Promise<void> {
     const receivedCount = event.Records.length;
     this.logger.debug(`Transforming ${receivedCount} kinesis records to OS documents`);
     // Extract records from Kinesis event to documents and process according to fingerprint & meta instructions
@@ -47,6 +47,9 @@ export class KinesisStreamService {
     this.logger.debug(`${committedCount} documents added`);
     this.logger.debug(`${failedCount} documents failed`);
     this.batchSummary.logSummary(sentPipeline);
+    if (print) {
+      this.batchSummary.logDocuments(sentPipeline);
+    }
     this.batchSummary.logMessages(sentPipeline);
 
     return Promise<void>.resolve();

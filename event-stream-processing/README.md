@@ -10,12 +10,7 @@ npm run start
 
 The root (/) will respond with the processed JSON. If for some reason you can't see the response (using fluentbit), you can have it print by setting the query parameter 'print' to be 'true' (?print=true).
 
-The provided dockerfile is capable of running the server as well
-
-```
-docker build -t esp .
-docker run --rm -p 3000:3000 esp
-```
+The Dockerfile is capable of running the server as well
 
 ### Sending Test Data - curl
 
@@ -32,3 +27,19 @@ curl -s -X POST -H "Content-Type: application/json" -d @samples/deployment-metri
 ### Sending Test Data - fluentbit
 
 Fluentbit can also send data to an http endpoint. In the samples directory, `metrics-docker.sh` will run fluentbit in a container and send data to the local endpoint. The lambda must first be running. If the lambda is not running in a container there will a networking issue.
+
+## Testing with Funbucks
+
+These instructions assume you are using podman. Run the following to build the local lambda image.
+
+```
+./podman-build.sh
+```
+
+Next, start the local lambda listening on the podman machine's port 3000. If you are not running podman on Linux, this may be the podman machine's port (not your machine's port).
+
+```
+./podman-run.sh
+```
+
+Finally, start up a fluentbit server using podman with a rendered funbucks configuration. See the Funbucks repository for how to do that.

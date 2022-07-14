@@ -94,6 +94,10 @@ function stats.standardDeviation( t )
 
   result = math.sqrt(sum / (count-1))
 
+  if result ~= result then
+    result = nil
+  end
+
   return result
 end
 

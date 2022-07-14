@@ -53,6 +53,17 @@ export class BatchSummaryService {
   }
 
   /**
+   * Log the sent objects as a JSON object.
+   * @param pipeline The pipeline with processed documents
+   */
+  public logDocuments(pipeline: OsDocumentPipeline) {
+    if (pipeline.documents.length === 0) {
+      return;
+    }
+    this.logger.log(JSON.stringify(pipeline.documents));
+  }
+
+  /**
    * Summarizes the errors as a JSON object and log.
    * @param pipeline The pipeline with processed documents
    */
