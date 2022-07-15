@@ -304,11 +304,11 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "s3_bucket_encrypt
   bucket = aws_s3_bucket.snapshots.id
 
   rule {
-    apply_server_side_encryption_by_default {      
+    apply_server_side_encryption_by_default {
       sse_algorithm     = "AES256"
     }
     bucket_key_enabled = true
-  }  
+  }
 }
 
 /*
@@ -451,7 +451,7 @@ export AWS_REGION=ca-central-1
 export OS_URL=apm.io.nrs.gov.bc.ca
 export OS_DOMAIN=nress-prod
 ./workflow-cli/bin/run opensearch-sync
-./workflow_cli/bin/run snapshot setup
+./workflow-cli/bin/run snapshot setup
 EOF
   environment = {
     AWS_ASSUME_ROLE = local.iam_role_arn
