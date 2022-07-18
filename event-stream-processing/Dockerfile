@@ -3,7 +3,7 @@ WORKDIR /usr/src/app
 COPY . /usr/src/app
 
 RUN npm ci
-RUN npm i -g @nestjs/cli
+RUN npm i --location=global @nestjs/cli
 
 EXPOSE 3000
 

@@ -1,8 +1,6 @@
 /* eslint-disable new-cap */
 import {Body, Controller, Post, Query} from '@nestjs/common';
 import {AppService} from './app.service';
-import {OsDocumentData} from '../types/os-document';
-import {OpenSearchBulkResult} from '../open-search.service';
 
 @Controller()
 /**
@@ -15,7 +13,10 @@ export class AppController {
   /**
    * Handle data received as a mock Kinesis event.
    */
-  handleData(@Body() data: OsDocumentData, @Query('print') print: string): Promise<OpenSearchBulkResult> {
-    return this.appService.handleKinesisEvent(data, print === 'true');
+  async handleData(@Body() bodyData: unknown, @Query('print') print: string): Promise<void> {
+    const dataArr = bodyData instanceof Array ? bodyData : [bodyData];
+
+    await Promise.all(dataArr.map((data) => this.appService.handleKinesisEvent(data, print === 'true')));
+    return;
   }
 }

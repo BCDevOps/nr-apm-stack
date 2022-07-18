@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import {Context, KinesisStreamEvent} from 'aws-lambda';
 import {injectable, inject} from 'inversify';
-import {OpenSearchBulkResult, OpenSearchService} from './open-search.service';
+import {OpenSearchService} from './open-search.service';
 import {TYPES} from './inversify.types';
 import {LoggerService} from './util/logger.service';
 import {EcsTransformService} from './ecs-transform.service';
+import {BatchSummaryService} from './batch-summary.service';
 
 @injectable()
 /**
@@ -20,6 +21,7 @@ export class KinesisStreamService {
   constructor(
     @inject(TYPES.EcsTransformService) private ecsTransformService: EcsTransformService,
     @inject(TYPES.OpenSearchService) private openSearch: OpenSearchService,
+    @inject(TYPES.BatchSummaryService) private batchSummary: BatchSummaryService,
     @inject(TYPES.LoggerService) private logger: LoggerService,
   ) {}
 
@@ -30,15 +32,27 @@ export class KinesisStreamService {
    * @param context The lambda context
    * @returns A promise to wait on
    */
-  public async handle(event: KinesisStreamEvent, context: Context): Promise<OpenSearchBulkResult> {
-    this.logger.log(`Transforming ${event.Records.length} kinesis records to ES documents`);
-    const docs = this.ecsTransformService.transform(event);
-    this.logger.log(`Submitting ${docs.length} documents to ES`);
-    return this.openSearch.bulk(docs).then((value) => {
-      this.logger.log(`${docs.length - value.errors.length} documents added`);
-      this.logger.log(`${value.errors.length} documents failed`);
-      return value;
-    });
+  public async handle(event: KinesisStreamEvent, context: Context, print = false): Promise<void> {
+    const receivedCount = event.Records.length;
+    this.logger.debug(`Transforming ${receivedCount} kinesis records to OS documents`);
+    // Extract records from Kinesis event to documents and process according to fingerprint & meta instructions
+    const transformedPipeline = this.ecsTransformService.transform(event);
+    const processedCount = transformedPipeline.documents.length;
+    this.logger.debug(`Submitting ${processedCount} documents to OS`);
+    // Bulk send documents
+    const sentPipeline = await this.openSearch.bulk(transformedPipeline);
+    // const recievedRecords = sentPipeline.documents.length;
+    const committedCount = sentPipeline.documents.length;
+    const failedCount = sentPipeline.failures.length;
+    this.logger.debug(`${committedCount} documents added`);
+    this.logger.debug(`${failedCount} documents failed`);
+    this.batchSummary.logSummary(sentPipeline);
+    if (print) {
+      this.batchSummary.logDocuments(sentPipeline);
+    }
+    this.batchSummary.logMessages(sentPipeline);
+
+    return Promise<void>.resolve();
   }
   /* eslint-enable @typescript-eslint/no-unused-vars */
 }

@@ -1,0 +1,44 @@
+{
+  "_meta": {
+    "documentation": "https://apps.nrs.gov.bc.ca/int/confluence/x/PqJvBQ",
+    "version": "1.0"
+  },
+  "template": {
+    "mappings": {
+      "properties": {
+        "batch": {
+          "properties": {
+            "received": {
+              "type": "integer"
+            },
+            "decoded": {
+              "type": "integer"
+            },
+            "decode_failed": {
+              "type": "integer"
+            },
+            "processed": {
+              "type": "integer"
+            },
+            "process_failed": {
+              "type": "integer"
+            },
+            "committed": {
+              "type": "integer"
+            },
+            "commit_failed": {
+              "type": "integer"
+            },
+            "commit_percent": {
+              "scaling_factor": 1000,
+              "type": "scaled_float"
+            },
+            "failed": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,8 +1,9 @@
 import {injectable, inject} from 'inversify';
 import {URL} from 'url';
 import {TYPES} from './inversify.types';
-import {OpenSearchBulkResult, OpenSearchService} from './open-search.service';
-import {OsDocument} from './types/os-document';
+import {OpenSearchService} from './open-search.service';
+// eslint-disable-next-line max-len
+import {OsDocument, OsDocumentCommitFailure, OsDocumentPipeline} from './types/os-document';
 import {AwsHttpClientService} from './util/aws-http-client.service';
 import {LoggerService} from './util/logger.service';
 
@@ -10,45 +11,38 @@ import {LoggerService} from './util/logger.service';
 /**
  * Service to post bulk data to OpenSearch
  */
-export class OpenSearchPostService implements OpenSearchService {
+export class OpenSearchPostService extends OpenSearchService {
   private url: URL = new URL(process.env.ES_URL || 'http://localhost');
 
   constructor(
     @inject(TYPES.AwsHttpClientService) private awsHttpClient: AwsHttpClientService,
-    @inject(TYPES.LoggerService) private logger: LoggerService,
-  ) {}
+    @inject(TYPES.LoggerService) logger: LoggerService,
+  ) {
+    super(logger);
+  }
 
   /**
-   * Upload a bulk set of documents
-   * @param documents The documents to upload
+   * Upload a bulk set of documents from the pipeline
+   * @param pipeline The pipeline with documents to upload
    */
-  async bulk(documents: OsDocument[]): Promise<OpenSearchBulkResult> {
+  async bulk(pipeline: OsDocumentPipeline): Promise<OsDocumentPipeline> {
     const index = new Map<string, OsDocument>();
     const filterPath = 'took,errors,items.*.error,items.*._id';
     let body = '';
-    const parsingErrors: OsDocument[] = [];
-    for (const document of documents) {
-      if (document.id === null) {
-        this.logDocError('ES_ERROR', document, 'Document with no id');
-        parsingErrors.push(document);
-        continue;
-      }
-      if (document.index === null) {
-        this.logDocError('ES_ERROR', document, 'Document with no index');
-        parsingErrors.push(document);
+    // Ensure documents have id and index
+    const readyPipeline = this.preflightCheck(pipeline);
+    for (const document of readyPipeline.documents) {
+      if (document.id === null || document.index === null) {
+        // This should never happen because of the preflight check
         continue;
       }
       index.set(document.id, document);
-      if (!document.error) {
-        body += `{"index":{"_index": "${document.index}", "_type": "${document.type}"`;
-        if (document.id) {
-          body += `, "_id":"${document.id}"`;
-        }
-        body += `}}\n`;
-        body += JSON.stringify(document.data)+'\n';
-      } else {
-        parsingErrors.push(document);
+      body += `{"index":{"_index": "${document.index}", "_type": "${document.type}"`;
+      if (document.id) {
+        body += `, "_id":"${document.id}"`;
       }
+      body += `}}\n`;
+      body += JSON.stringify(document.data)+'\n';
     }
     const query: {
       refresh: string;
@@ -58,12 +52,11 @@ export class OpenSearchPostService implements OpenSearchService {
     if (filterPath.length > 0) {
       query.filter_path = filterPath;
     }
-    this.logger.log(`${index.size} documents being posted to ES`);
-    this.logger.log(`${parsingErrors.length} documents with parsing error and not posted to ES`);
+    this.logger.debug(`${index.size} documents being posted to OS`);
     this.logger.debug('ES_REQUEST_BODY:', body);
     this.logger.debug('ES_REQUEST_QUERY:', query);
     if (body.length === 0) {
-      return Promise.resolve({success: true, errors: []});
+      return Promise.resolve(readyPipeline);
     }
     return await this.awsHttpClient.executeSignedHttpRequest({
       hostname: this.url.hostname,
@@ -81,46 +74,43 @@ export class OpenSearchPostService implements OpenSearchService {
       .then((value: any) => {
         if (value.statusCode !== 200) {
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          this.logger.log(`ES_RESPONSE_STATUS_CODE ${value.statusCode }`);
-          return {success: false, errors: documents};
+          this.logger.log(`ES_RESPONSE_STATUS_CODE ${value.statusCode}`);
+          return {
+            documents: [],
+            failures: [
+              ...readyPipeline.documents.map((doc) => this.createCommitFailure('ES_NETWORK', doc, 'Network down?')),
+              ...readyPipeline.failures],
+          };
         }
         const body = JSON.parse(value.body);
         const bodyItems: any[] = body.items;
-        const errors: any[] = [];
         this.logger.debug('ES_RESPONSE_BODY:', value.body);
-        if (parsingErrors.length > 0 ) {
-          for (const doc of parsingErrors) {
-            errors.push(doc);
-          }
-        }
         for (const item of bodyItems) {
           const meta = item.create || item.index;
           if (meta.error) {
             const document = index.get(meta._id);
             if (document) {
-              document.error = meta.error;
               const message = (typeof meta.error.type === 'string' ? meta.error.type as string : 'Unknown') +
                 `: ${typeof meta.error.reason === 'string' ? meta.error.reason as string : 'Unknown'}`;
 
-              this.logDocError('ES_DOCERROR', document, message);
-              errors.push(document);
+              readyPipeline.failures.push(this.createCommitFailure('ES_DOCERROR', document, message));
+              index.delete(meta._id);
             } else {
               this.logger.log('ES_ERROR_DOC_NOT_FOUND ' + JSON.stringify(item));
             }
           }
         }
-        return {success: errors.length === 0, errors: errors};
+        return {
+          documents: Array.from(index.values()),
+          failures: readyPipeline.failures,
+        };
       });
   }
 
-  private logDocError(type: string, document: OsDocument, message: string) {
-    const team: string = document.data.organization?.id ? document.data.organization.id : 'unknown';
-    const hostName: string = document.data.host?.hostname ? document.data.host?.hostname as string : '';
-    const serviceName: string = document.data.service?.name ? document.data.service?.name : '';
-    const sequence: string = document.data.event?.sequence ? document.data.event?.sequence : '';
-    const path: string = document.data.log?.file?.path ? document.data.log?.file?.path : '';
-    // eslint-disable-next-line max-len
-    this.logger.log(`${type} ${team} ${hostName} ${serviceName} ${path}:${sequence} ${document.fingerprint.name} : ${message}`);
+  private createCommitFailure(type: string, document: OsDocument, message: string): OsDocumentCommitFailure {
+    const docErrorMsg = this.createErrorMessage(type, document, message);
+    this.logger.debug(docErrorMsg);
     this.logger.debug('ES_ERROR ' + JSON.stringify(document.data));
+    return new OsDocumentCommitFailure(document, docErrorMsg);
   }
 }

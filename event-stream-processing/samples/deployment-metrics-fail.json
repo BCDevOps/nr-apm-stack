@@ -3,18 +3,6 @@
     "version": "1.12.0"
   },
 
-  "event": {
-    "kind": "event",
-    "category": "configuration",
-    "type": "installation",
-    "outcome": "success",
-    "dataset": "ansible",
-    "duration": 123456,
-    "end": "2022-06-23T08:55:02.166Z",
-    "start": "2022-06-23T08:55:02.166Z",
-    "url": "https://jenkins-url/jobs/4"
-  },
-
   "labels": {
     "project": "my-project"
   },

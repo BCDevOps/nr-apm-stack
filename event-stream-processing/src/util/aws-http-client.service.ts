@@ -36,10 +36,11 @@ export class AwsHttpClientService {
         throw new GenericError('Error calling AWS endpoint', error);
       });
   }
+
   waitAndReturnResponseBody(res: { response: HttpResponse; }): Promise<{ statusCode: number; body: string; }> {
     /* eslint-disable @typescript-eslint/no-unsafe-call */
     return new Promise((resolve, reject) => {
-      this.logger.log(`Received ${res.response.statusCode} from ES`);
+      this.logger.debug(`Received ${res.response.statusCode} from OS`);
       const incomingMessage = res.response.body;
       let body = '';
       incomingMessage.on('data', (chunk: any) => {

@@ -8,6 +8,7 @@ export enum FingerprintCategory {
   TOMCAT_CATALINA_LOGS = 'TOMCAT_CATALINA_LOGS',
   VAULT_AUDIT_LOGS = 'VAULT_AUDIT_LOGS',
   METRICS = 'METRICS',
+  PIPELINE = 'PIPELINE',
   UNKNOWN = 'UNKNOWN',
 }
 
@@ -32,5 +33,18 @@ export interface OsDocument {
   type: string;
   data: OsDocumentData;
   dataExtractedTimestamp?: string;
-  error: any;
+}
+
+export class PipelineProcessingFailure<T> {
+  constructor(public source: T, public message: string) {}
+}
+
+export class KinesisStreamRecordDecodeFailure extends PipelineProcessingFailure<KinesisStreamRecord> {}
+export class OsDocumentProcessingFailure extends PipelineProcessingFailure<OsDocument> {}
+export class OsDocumentCommitFailure extends PipelineProcessingFailure<OsDocument> {}
+// eslint-disable-next-line max-len
+export type PipelineObject = OsDocument|KinesisStreamRecordDecodeFailure|OsDocumentProcessingFailure|OsDocumentCommitFailure;
+export class OsDocumentPipeline {
+  documents: OsDocument[] = [];
+  failures: Array<KinesisStreamRecordDecodeFailure|OsDocumentProcessingFailure|OsDocumentCommitFailure> = [];
 }

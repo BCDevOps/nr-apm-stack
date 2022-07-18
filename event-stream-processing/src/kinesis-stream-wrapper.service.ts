@@ -3,7 +3,6 @@ import {TYPES} from './inversify.types';
 import {KinesisStreamService} from './kinesis-stream.service';
 import {OsDocumentData} from './types/os-document';
 import {Context, KinesisStreamEvent, KinesisStreamRecord} from 'aws-lambda';
-import {OpenSearchBulkResult} from './open-search.service';
 import {LoggerService} from './util/logger.service';
 
 @injectable()
@@ -25,16 +24,13 @@ export class KinesisStreamWrapperService {
    * @param data The data to wrap
    * @returns Promise with the result
    */
-  async handleData(data: OsDocumentData, print: boolean): Promise<OpenSearchBulkResult> {
+  async handleData(data: OsDocumentData, print: boolean): Promise<void> {
     const event: KinesisStreamEvent = {
       Records: [this.wrapDataIntoRecord(data)],
     };
     // unused so any value will work
     const context: Context = {} as Context;
-    const kss = await this.kinesisStreamService.handle(event, context);
-    if (print) {
-      this.logger.log(JSON.stringify(kss, null, '  '));
-    }
+    const kss = await this.kinesisStreamService.handle(event, context, print);
     return kss;
   }
 

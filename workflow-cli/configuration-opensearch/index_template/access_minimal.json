@@ -28,6 +28,6 @@
   ],
   "version": 3,
   "_meta": {
-    "description": "NRM Access external indexes"
+    "description": "NRM Access external indices"
   }
 }

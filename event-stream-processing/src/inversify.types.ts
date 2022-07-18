@@ -1,5 +1,6 @@
 export const TYPES = {
   AwsHttpClientService: Symbol.for('AwsHttpClientService'),
+  BatchSummaryService: Symbol.for('BatchSummaryService'),
   DateAndTimeService: Symbol.for('DateAndTimeService'),
   EcsTransformService: Symbol.for('EcsTransformService'),
   FieldExtractorService: Symbol.for('FieldExtractorService'),
