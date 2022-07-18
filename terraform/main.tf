@@ -450,6 +450,7 @@ export PATH=/tmp/node/bin:$PATH
 export AWS_REGION=ca-central-1
 export OS_URL=apm.io.nrs.gov.bc.ca
 export OS_DOMAIN=nress-prod
+export AWS_ACCOUNT_NUMBER=${data.aws_caller_identity.current.account_id}
 ./workflow-cli/bin/run opensearch-sync
 ./workflow-cli/bin/run snapshot setup
 EOF
