@@ -28,6 +28,7 @@ provider "aws" {
 locals {
   es_domain_name =  "nress${var.suffix}"
   iam_service_accounts = ["arn:aws:iam::774621113276:user/project-service-accounts/BCGOV_Project_User_elasticsearch_agent_tygsv5"]
+  dlq_stream_name = "${var.es_domain_name}-dlq-stream"
 }
 
 # Retrieve the security groups
@@ -244,103 +245,22 @@ resource "aws_iam_policy" "iit_agents" {
   })
 }
 
-resource "aws_s3_bucket" "snapshots" {
-  bucket = "${local.es_domain_name}-snapshot-${ data.aws_caller_identity.current.account_id }"
-  lifecycle {
-    prevent_destroy = true
-  }
+module "dlq" {
+  source = "./dead-letter-module"
+  aws_region_name = data.aws_region.current.name
+  aws_account_id = data.aws_caller_identity.current.account_id
+  es_domain_name = local.es_domain_name
+  dlq_stream_name = local.dlq_stream_name
+  depends_on = [aws_opensearch_domain.es]
 }
 
-resource "aws_s3_bucket_acl" "snapshots" {
-  bucket = aws_s3_bucket.snapshots.id
-  acl    = "private"
+module "snapshot" {
+  source = "./s3-snapshot-module"
+  aws_region_name = data.aws_region.current.name
+  aws_account_id = data.aws_caller_identity.current.account_id
+  es_domain_name = local.es_domain_name
+  depends_on = [aws_opensearch_domain.es]
 }
-
-resource "aws_iam_role" "snapshot_role" {
-  name = "${local.es_domain_name}-opensearch-snapshot"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Sid    = ""
-        Principal = {
-          Service = "opensearchservice.amazonaws.com"
-        }
-        Condition = {
-          StringEquals = {
-            "aws:SourceAccount" = data.aws_caller_identity.current.account_id
-          },
-          ArnLike = {
-            "aws:SourceArn": "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/${local.es_domain_name}"
-          }
-        }
-      },
-    ]
-  })
-  inline_policy {
-    name = "opensearch_snapshot_policy"
-
-    policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Action = ["s3:ListBucket"]
-          Effect = "Allow"
-          Resource = ["arn:aws:s3:::${aws_s3_bucket.snapshots.id}"]
-        },
-        {
-          Action = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
-          Effect = "Allow"
-          Resource = ["arn:aws:s3:::${aws_s3_bucket.snapshots.id}/*"]
-        },
-      ]
-    })
-  }
-}
-
-resource "aws_s3_bucket_server_side_encryption_configuration" "s3_bucket_encrypted" {
-  bucket = aws_s3_bucket.snapshots.id
-
-  rule {
-    apply_server_side_encryption_by_default {
-      sse_algorithm     = "AES256"
-    }
-    bucket_key_enabled = true
-  }
-}
-
-/*
-resource "aws_s3_bucket" "lambda_code" {
-  bucket = "${local.es_domain_name}-lambda-code-${ data.aws_caller_identity.current.account_id }"
-  acl    = "private"
-  versioning {
-    enabled = true
-  }
-  tags = {
-    Environment = var.env
-    Instance = local.es_domain_name
-  }
-}
-*/
-
-/*
-resource "aws_s3_bucket_object" "lambda_stream_processing_code" {
-  bucket = "${local.es_domain_name}-lambda-code-${ data.aws_caller_identity.current.account_id }"
-  key    = "${local.es_domain_name}/event-stream-processing.zip"
-  source = "../event-stream-processing/dist/event-stream-processing.zip"
-  etag = filemd5("../event-stream-processing/dist/event-stream-processing.zip")
-}
-*/
-
-/*
-data "aws_s3_bucket_object" "lambda_stream_processing_code" {
-  bucket = "nress-lambda-code-${var.env}-148a62ab607aead4cf48e909528347df"
-  key    = "nress-${var.env}-event-stream-processing.zip"
-  version_id = var.iit_lambda_code_bucket_key_version
-}
-*/
 
 resource "aws_iam_role" "lambda_iit_agents" {
   name = "${local.es_domain_name}-lambda-iit-agents"
@@ -421,6 +341,7 @@ resource "aws_lambda_function" "lambda_iit_agents" {
       "ES_URL"  = "https://${aws_opensearch_domain.es.endpoint}"
       "MAXMIND_DB_DIR"  = "/opt/nodejs/asset"
       "LOG_LEVEL" = "info"
+      "DLQ_STREAM_NAME" = local.dlq_stream_name
     }
   }
 }
@@ -617,7 +538,7 @@ resource "elasticsearch_opensearch_roles_mapping" "all_access" {
 resource "elasticsearch_opensearch_roles_mapping" "manage_snapshots" {
   role_name     = "manage_snapshots"
   backend_roles = [
-    aws_iam_role.snapshot_role.id
+    module.snapshot.iam_snapshot_role_id
   ]
 }
 
@@ -663,6 +584,8 @@ module "topic" {
   es_domain_name = local.es_domain_name
   depends_on = [aws_opensearch_domain.es]
 }
+
+# Alert destination setup
 
 resource "aws_iam_role" "opensearch_sns_role" {
   name = "opensearch_sns_${local.es_domain_name}"
