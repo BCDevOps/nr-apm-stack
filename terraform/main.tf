@@ -26,13 +26,13 @@ provider "aws" {
 locals {
   es_domain_name =  "nress${var.suffix}"
   iam_service_accounts = ["arn:aws:iam::774621113276:user/project-service-accounts/BCGOV_Project_User_elasticsearch_agent_tygsv5"]
-  dlq_stream_name = "${var.es_domain_name}-dlq-stream"
 }
 
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 locals {
+  dlq_stream_name = "${local.es_domain_name}-dlq-stream"
   caller_assumed_role = split("/", data.aws_caller_identity.current.arn)[1]
 }
 
@@ -302,7 +302,7 @@ resource "aws_iam_role_policy" "lambda_iit_agents_access_to_kinesis" {
                 "kinesis:PutRecord"
             ],
             "Resource": [
-              module.dql.kinesis_firehose_dlq_arn
+              module.dlq.kinesis_firehose_dlq_arn
             ]
         }
     ]
