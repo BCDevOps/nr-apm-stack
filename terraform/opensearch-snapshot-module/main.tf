@@ -39,7 +39,7 @@ resource "aws_lambda_function" "create_opensearch_snapshot" {
   # path.module in the filename.
   filename      = "create_opensearch_snapshot.zip"
   function_name = "create_opensearch_snapshot"
-  role          = aws_iam_role.iam_for_snapshot_lambda.arn
+  role          = aws_iam_role.create_opensearch_snapshot.arn
   handler       = "index.js"
 
   # The filebase64sha256() function is available in Terraform 0.11.12 and later
