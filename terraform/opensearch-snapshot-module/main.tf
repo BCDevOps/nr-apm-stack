@@ -1,21 +1,37 @@
-resource "aws_iam_role" "opensearch_snapshot_role" {
-  name = "opensearch_snapshot_role"
-
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "lambda.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
-    }
-  ]
+resource "aws_iam_role" "create_opensearch_snapshot" {
+  name = "create_opensearch_snapshot"
+  assume_role_policy = aws_iam_role_policy.create_opensearch_snapshot
 }
-EOF
+
+resource "aws_iam_role_policy" "create_opensearch_snapshot" {
+  name = "create_opensearch_snapshot"
+  role = aws_iam_role.create_opensearch_snapshot.id
+  policy = aws_iam_policy_document.create_opensearch_snapshot.json
+}
+
+# AWS Policy Generator:
+# https://awspolicygen.s3.amazonaws.com/policygen.html
+data "aws_iam_policy_document" "create_opensearch_snapshot" {
+  statement {
+    sid = "CreateCloudWatchLogEvents"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    resources = [
+      "*",
+    ]
+  }
+  statement {
+    sid = "CreateOpenSearchSnapshot"
+    actions = [
+      "es:ESHttpPut"
+    ]
+    resources = [
+      "*",
+    ]
+  }
 }
 
 resource "aws_lambda_function" "create_opensearch_snapshot" {
@@ -33,7 +49,7 @@ resource "aws_lambda_function" "create_opensearch_snapshot" {
 
   runtime = "nodejs16.x"
 
-  layers = [aws_lambda_layer_version.example.arn]
+  layers = [aws_lambda_layer_version.workflow_cli.arn]
 }
 
 resource "aws_lambda_layer_version" "workflow_cli" {

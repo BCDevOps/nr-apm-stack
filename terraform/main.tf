@@ -654,6 +654,11 @@ resource "elasticsearch_opensearch_destination" "agent_monitor_destination" {
 EOF
 }
 
+# Create resources for creating OpenSearch snapshots
+module "opensearch-snapshot-policy" {
+  source = "./opensearch-snapshot-module"
+}
+
 module "topic" {
   source = "./topic-module"
   for_each = { for t in jsondecode(file("./topics.json")): t.resourceId => t }
