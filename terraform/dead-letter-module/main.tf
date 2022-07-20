@@ -22,24 +22,6 @@ resource "aws_kinesis_firehose_delivery_stream" "s3_dlq_stream" {
     # https://docs.aws.amazon.com/firehose/latest/dev/dynamic-partitioning.html
     buffer_size = 64
     compression_format = "GZIP"
-
-    processing_configuration {
-      enabled = "true"
-
-      # Multi-record deaggregation processor example
-      processors {
-        type = "RecordDeAggregation"
-        parameters {
-          parameter_name  = "SubRecordType"
-          parameter_value = "JSON"
-        }
-      }
-
-      # New line delimiter processor example
-      processors {
-        type = "AppendDelimiterToRecord"
-      }
-    }
   }
 }
 resource "aws_iam_role" "firehose_role" {
