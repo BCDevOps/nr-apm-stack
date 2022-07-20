@@ -42,7 +42,7 @@ resource "aws_kinesis_firehose_delivery_stream" "s3_dlq_stream" {
   }
 }
 resource "aws_iam_role" "firehose_role" {
-  name = "firehose_role"
+  name = "${es_domain_name}-firehose-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
