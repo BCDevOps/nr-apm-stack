@@ -81,8 +81,8 @@ resource "aws_iam_role" "firehose_role" {
             "s3:PutObject"
           ]
           Resource = [
-            "arn:aws:s3:${var.aws_region_name}:${var.aws_account_id}:${aws_s3_bucket.dlq.id}",
-            "arn:aws:s3:${var.aws_region_name}:${var.aws_account_id}:${aws_s3_bucket.dlq.id}/*"
+            "arn:aws:s3:::${aws_s3_bucket.dlq.id}",
+            "arn:aws:s3:::${aws_s3_bucket.dlq.id}/*"
           ]
         },
         {
