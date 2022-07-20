@@ -6,7 +6,6 @@ import {KinesisStreamRecord} from 'aws-lambda';
 jest.mock('@aws-sdk/client-firehose');
 
 describe('DeadLetterQueueService', () => {
-
   beforeAll(() => {
     jest.spyOn(TextEncoder.prototype, 'encode').mockImplementation(() => new Uint8Array());
   });
@@ -18,7 +17,7 @@ describe('DeadLetterQueueService', () => {
   afterEach(() => {
     jest.mocked(FirehoseClient).mockClear();
     jest.mocked(PutRecordBatchCommand).mockClear();
-  })
+  });
 
   it('does not send if no failures', async () => {
     const service = new DeadLetterQueueService();
@@ -30,6 +29,7 @@ describe('DeadLetterQueueService', () => {
     expect(PutRecordBatchCommand).toHaveBeenCalledTimes(0);
 
     const mockFirehoseClientInstance = jest.mocked(FirehoseClient).mock.instances[0];
+    // eslint-disable-next-line jest/unbound-method
     const mockSend = mockFirehoseClientInstance.send;
     expect(mockSend).toHaveBeenCalledTimes(0);
   });
@@ -45,6 +45,7 @@ describe('DeadLetterQueueService', () => {
     expect(PutRecordBatchCommand).toHaveBeenCalledTimes(1);
 
     const mockFirehoseClientInstance = jest.mocked(FirehoseClient).mock.instances[0];
+    // eslint-disable-next-line jest/unbound-method
     const mockSend = mockFirehoseClientInstance.send;
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(TextEncoder.prototype.encode).toBeCalledTimes(1);
