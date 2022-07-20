@@ -1,13 +1,17 @@
-import {injectable} from 'inversify';
+import {inject, injectable} from 'inversify';
 import {OsDocumentPipeline} from './types/os-document';
 import {FirehoseClient, PutRecordBatchCommand, PutRecordBatchCommandInput} from '@aws-sdk/client-firehose';
-
+import {TYPES} from './inversify.types';
+import {LoggerService} from './util/logger.service';
 
 @injectable()
 /**
  * Service to persist data unable to be sent to OpenSearch
  */
 export class DeadLetterQueueService {
+  constructor(
+    @inject(TYPES.LoggerService) private logger: LoggerService,
+  ) {}
   private enc = new TextEncoder();
   private client = new FirehoseClient({region: process.env.AWS_DEFAULT_REGION || 'ca-central-1'});
 
@@ -23,11 +27,13 @@ export class DeadLetterQueueService {
         };
       }),
     };
+    this.logger.log(`DLQ_PUTRECORD_BATCH: ${pipeline.failures.length} records`);
     const command = new PutRecordBatchCommand(params);
     try {
       await this.client.send(command);
     } catch (error) {
       // error handling.
+      this.logger.log('DLQ_ERROR: ' + JSON.stringify(error));
     } finally {
       // finally.
     }

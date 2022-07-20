@@ -2,6 +2,7 @@ import {DeadLetterQueueService} from './dead-letter-queue.service';
 import {KinesisStreamRecordDecodeFailure, OsDocumentPipeline} from './types/os-document';
 import {FirehoseClient, PutRecordBatchCommand} from '@aws-sdk/client-firehose';
 import {KinesisStreamRecord} from 'aws-lambda';
+import {LoggerService} from './util/logger.service';
 
 jest.mock('@aws-sdk/client-firehose');
 
@@ -20,7 +21,11 @@ describe('DeadLetterQueueService', () => {
   });
 
   it('does not send if no failures', async () => {
-    const service = new DeadLetterQueueService();
+    const logger = {
+      log: jest.fn(),
+      debug: jest.fn(),
+    } as LoggerService;
+    const service = new DeadLetterQueueService(logger);
     const pipeline = new OsDocumentPipeline();
 
     await service.send(pipeline);
@@ -35,7 +40,11 @@ describe('DeadLetterQueueService', () => {
   });
 
   it('sends failures', async () => {
-    const service = new DeadLetterQueueService();
+    const logger = {
+      log: jest.fn(),
+      debug: jest.fn(),
+    } as LoggerService;
+    const service = new DeadLetterQueueService(logger);
     const pipeline = new OsDocumentPipeline();
     pipeline.failures = [new KinesisStreamRecordDecodeFailure('steam' as unknown as KinesisStreamRecord, 'woo')];
 
