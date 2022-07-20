@@ -17,7 +17,7 @@ data "aws_iam_policy_document" "opensearch_snapshot_assume_role_policy" {
 resource "aws_iam_role_policy" "opensearch_snapshot" {
   name = "opensearch_snapshot"
   role = aws_iam_role.opensearch_snapshot.id
-  policy = aws_iam_policy_document.opensearch_snapshot.json
+  policy = data.aws_iam_policy_document.opensearch_snapshot.json
 }
 
 # AWS Policy Generator:
@@ -52,11 +52,6 @@ resource "aws_lambda_function" "opensearch_snapshot" {
   function_name = "opensearch_snapshot"
   role          = aws_iam_role.opensearch_snapshot.arn
   handler       = "index.js"
-
-  # The filebase64sha256() function is available in Terraform 0.11.12 and later
-  # For Terraform 0.11.11 and earlier, use the base64sha256() function and the file() function:
-  # source_code_hash = "${base64sha256(file("lambda_function_payload.zip"))}"
-  source_code_hash = filebase64sha256("opensearch_snapshot.zip")
 
   runtime = "nodejs16.x"
 
