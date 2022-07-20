@@ -9,7 +9,7 @@ data "aws_iam_policy_document" "opensearch_snapshot_assume_role_policy" {
 
     principals {
       type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
+      identifiers = ["lambda.amazonaws.com"]
     }
   }
 }
@@ -63,4 +63,11 @@ resource "aws_lambda_layer_version" "workflow_cli" {
   layer_name = "workflow_cli"
 
   compatible_runtimes = ["nodejs16.x"]
+}
+
+data "archive_file" "opensearch_snapshot_handler" {
+  type = "zip"
+
+  source_dir  = "${path.module}/index.js"
+  output_path = "${path.module}/opensearch_snapshot.zip"
 }
