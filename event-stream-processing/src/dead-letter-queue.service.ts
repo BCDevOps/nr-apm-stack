@@ -27,10 +27,10 @@ export class DeadLetterQueueService {
         };
       }),
     };
-    this.logger.log(`DLQ_PUTRECORD_BATCH: ${pipeline.failures.length} records`);
     const command = new PutRecordBatchCommand(params);
     try {
-      await this.client.send(command);
+      const response = await this.client.send(command);
+      this.logger.log('DLQ_RESP: ' + JSON.stringify(response));
     } catch (error) {
       // error handling.
       this.logger.log('DLQ_ERROR: ' + JSON.stringify(error));
