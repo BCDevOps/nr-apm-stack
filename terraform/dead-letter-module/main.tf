@@ -17,6 +17,7 @@ resource "aws_kinesis_firehose_delivery_stream" "s3_dlq_stream" {
     bucket_arn = aws_s3_bucket.dlq.arn
 
     prefix              = "year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/hour=!{timestamp:HH}/"
+    error_output_prefix = "errors/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/hour=!{timestamp:HH}/!{firehose:error-output-type}/"
 
     # https://docs.aws.amazon.com/firehose/latest/dev/dynamic-partitioning.html
     buffer_size = 64
