@@ -1,9 +1,9 @@
-resource "aws_iam_role" "create_opensearch_snapshot" {
-  name = "create_opensearch_snapshot"
-  assume_role_policy = aws_iam_policy_document.create_opensearch_snapshot_assume_role_policy.json
+resource "aws_iam_role" "opensearch_snapshot" {
+  name = "opensearch_snapshot"
+  assume_role_policy = data.aws_iam_policy_document.opensearch_snapshot_assume_role_policy.json
 }
 
-data "aws_iam_policy_document" "create_opensearch_snapshot_assume_role_policy" {
+data "aws_iam_policy_document" "opensearch_snapshot_assume_role_policy" {
   statement {
     actions = ["sts:AssumeRole"]
 
@@ -14,15 +14,15 @@ data "aws_iam_policy_document" "create_opensearch_snapshot_assume_role_policy" {
   }
 }
 
-resource "aws_iam_role_policy" "create_opensearch_snapshot" {
-  name = "create_opensearch_snapshot"
-  role = aws_iam_role.create_opensearch_snapshot.id
-  policy = aws_iam_policy_document.create_opensearch_snapshot.json
+resource "aws_iam_role_policy" "opensearch_snapshot" {
+  name = "opensearch_snapshot"
+  role = aws_iam_role.opensearch_snapshot.id
+  policy = aws_iam_policy_document.opensearch_snapshot.json
 }
 
 # AWS Policy Generator:
 # https://awspolicygen.s3.amazonaws.com/policygen.html
-data "aws_iam_policy_document" "create_opensearch_snapshot" {
+data "aws_iam_policy_document" "opensearch_snapshot" {
   statement {
     sid = "CreateCloudWatchLogEvents"
     actions = [
@@ -45,18 +45,18 @@ data "aws_iam_policy_document" "create_opensearch_snapshot" {
   }
 }
 
-resource "aws_lambda_function" "create_opensearch_snapshot" {
+resource "aws_lambda_function" "opensearch_snapshot" {
   # If the file is not in the current working directory you will need to include a 
   # path.module in the filename.
-  filename      = "create_opensearch_snapshot.zip"
-  function_name = "create_opensearch_snapshot"
-  role          = aws_iam_role.create_opensearch_snapshot.arn
+  filename      = "opensearch_snapshot.zip"
+  function_name = "opensearch_snapshot"
+  role          = aws_iam_role.opensearch_snapshot.arn
   handler       = "index.js"
 
   # The filebase64sha256() function is available in Terraform 0.11.12 and later
   # For Terraform 0.11.11 and earlier, use the base64sha256() function and the file() function:
   # source_code_hash = "${base64sha256(file("lambda_function_payload.zip"))}"
-  source_code_hash = filebase64sha256("create_opensearch_snapshot.zip")
+  source_code_hash = filebase64sha256("opensearch_snapshot.zip")
 
   runtime = "nodejs16.x"
 
