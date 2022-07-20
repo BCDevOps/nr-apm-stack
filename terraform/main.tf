@@ -297,9 +297,11 @@ resource "aws_iam_role_policy" "lambda_iit_agents_access_to_kinesis" {
           "Resource": "*"
       },
       {
+          "Sid": "VisualEditor2",
             "Effect": "Allow",
             "Action": [
-                "kinesis:PutRecord"
+                "firehose:PutRecord",
+                "firehose:PutRecordBatch",
             ],
             "Resource": [
               module.dlq.kinesis_firehose_dlq_arn
