@@ -7,12 +7,13 @@ terraform {
   }
 }
 
+# Stream
 resource "aws_kinesis_firehose_delivery_stream" "s3_dlq_stream" {
   name        = var.dlq_stream_name
   destination = "extended_s3"
 
   extended_s3_configuration {
-    role_arn   = aws_iam_role.s3_dql_role.arn
+    role_arn   = aws_iam_role.firehose_role.arn
     bucket_arn = aws_s3_bucket.dlq.arn
 
     prefix              = "year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/hour=!{timestamp:HH}/"
@@ -40,18 +41,9 @@ resource "aws_kinesis_firehose_delivery_stream" "s3_dlq_stream" {
     }
   }
 }
+resource "aws_iam_role" "firehose_role" {
+  name = "firehose_role"
 
-resource "aws_s3_bucket" "dlq" {
-  bucket = "${var.es_domain_name}-dlq-${ var.aws_account_id }"
-}
-
-resource "aws_s3_bucket_acl" "dlq" {
-  bucket = aws_s3_bucket.dlq.id
-  acl    = "private"
-}
-
-resource "aws_iam_role" "s3_dql_role" {
-  name = "${var.es_domain_name}-opensearch-dlq"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -67,31 +59,56 @@ resource "aws_iam_role" "s3_dql_role" {
             "aws:SourceAccount" = var.aws_account_id
           },
           ArnLike = {
-            "aws:SourceArn": var.lambda_iit_agents_arn
+            "aws:SourceArn": "arn:aws:kinesis:${var.aws_region_name}:${var.aws_account_id}:stream/${var.dlq_stream_name}"
           }
         }
       },
     ]
   })
   inline_policy {
-    name = "opensearch_dlq_policy"
+    name = "kinesis-s3-inline-policy"
     policy = jsonencode({
       Version = "2012-10-17"
       Statement = [
         {
-          Action = ["s3:ListBucket"]
-          Effect = "Allow"
-          Resource = ["arn:aws:s3:::${aws_s3_bucket.dlq.id}"]
+          Effect = "Allow",
+          Action = [
+            "s3:AbortMultipartUpload",
+            "s3:GetBucketLocation",
+            "s3:GetObject",
+            "s3:ListBucket",
+            "s3:ListBucketMultipartUploads",
+            "s3:PutObject"
+          ]
+          Resource = [
+            "arn:aws:s3:${var.aws_region_name}:${var.aws_account_id}:${aws_s3_bucket.dlq.id}",
+            "arn:aws:s3:${var.aws_region_name}:${var.aws_account_id}:${aws_s3_bucket.dlq.id}/*"
+          ]
         },
         {
-          Action = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
           Effect = "Allow"
-          Resource = ["arn:aws:s3:::${aws_s3_bucket.dlq.id}/*"]
-        },
+          Action = [
+            "kinesis:DescribeStream",
+            "kinesis:GetShardIterator",
+            "kinesis:GetRecords",
+            "kinesis:ListShards"
+          ]
+          Resource = "arn:aws:kinesis:${var.aws_region_name}:${var.aws_account_id}:stream/${var.dlq_stream_name}"
+        }
       ]
     })
-   }
- }
+  }
+}
+
+# s3 Bucket
+resource "aws_s3_bucket" "dlq" {
+  bucket = "${var.es_domain_name}-dlq-${ var.aws_account_id }"
+}
+
+resource "aws_s3_bucket_acl" "dlq" {
+  bucket = aws_s3_bucket.dlq.id
+  acl    = "private"
+}
 
  resource "aws_s3_bucket_server_side_encryption_configuration" "s3_dlq_bucket_encrypted" {
    bucket = aws_s3_bucket.dlq.id
@@ -103,4 +120,3 @@ resource "aws_iam_role" "s3_dql_role" {
      bucket_key_enabled = true
    }
  }
-

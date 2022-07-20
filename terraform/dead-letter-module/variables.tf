@@ -14,11 +14,6 @@ variable "es_domain_name" {
   type        = string
 }
 
-variable "lambda_iit_agents_arn" {
-  description = "Agents that can push to dl"
-  type        = string
-}
-
 variable "dlq_stream_name" {
   description = "Name of the DLQ"
   type        = string

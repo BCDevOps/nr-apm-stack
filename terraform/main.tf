@@ -3,8 +3,6 @@
 # * https://medium.com/neiman-marcus-tech/building-a-secure-aws-managed-elasticsearch-cluster-using-terraform-ea876f79d297
 # * https://github.com/BCDevOps/terraform-octk-aws-sea-network-info/blob/master/main.tf
 
-# Space tygsv5-dev
-
 terraform {
   required_providers {
     aws = {
@@ -31,15 +29,6 @@ locals {
   dlq_stream_name = "${var.es_domain_name}-dlq-stream"
 }
 
-# Retrieve the security groups
-/*
-data "aws_security_groups" "web" {
-  filter {
-    name   = "tag:Name"
-    values = ["Web_sg"]
-  }
-}
-*/
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
@@ -246,20 +235,18 @@ resource "aws_iam_policy" "iit_agents" {
 }
 
 module "dlq" {
-  source = "./dead-letter-module"
-  aws_region_name = data.aws_region.current.name
-  aws_account_id = data.aws_caller_identity.current.account_id
-  es_domain_name = local.es_domain_name
-  dlq_stream_name = local.dlq_stream_name
-  depends_on = [aws_opensearch_domain.es]
+  source                = "./dead-letter-module"
+  aws_region_name       = data.aws_region.current.name
+  aws_account_id        = data.aws_caller_identity.current.account_id
+  es_domain_name        = local.es_domain_name
+  dlq_stream_name       = local.dlq_stream_name
 }
 
 module "snapshot" {
-  source = "./s3-snapshot-module"
+  source          = "./s3-snapshot-module"
   aws_region_name = data.aws_region.current.name
-  aws_account_id = data.aws_caller_identity.current.account_id
-  es_domain_name = local.es_domain_name
-  depends_on = [aws_opensearch_domain.es]
+  aws_account_id  = data.aws_caller_identity.current.account_id
+  es_domain_name  = local.es_domain_name
 }
 
 resource "aws_iam_role" "lambda_iit_agents" {
@@ -308,7 +295,16 @@ resource "aws_iam_role_policy" "lambda_iit_agents_access_to_kinesis" {
               "kinesis:ListShards"
           ],
           "Resource": "*"
-      }
+      },
+      {
+            "Effect": "Allow",
+            "Action": [
+                "kinesis:PutRecord"
+            ],
+            "Resource": [
+              module.dql.kinesis_firehose_dlq_arn
+            ]
+        }
     ]
   })
 }
