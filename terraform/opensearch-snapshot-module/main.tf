@@ -1,6 +1,17 @@
 resource "aws_iam_role" "create_opensearch_snapshot" {
   name = "create_opensearch_snapshot"
-  assume_role_policy = aws_iam_role_policy.create_opensearch_snapshot
+  assume_role_policy = aws_iam_policy_document.create_opensearch_snapshot_assume_role_policy.json
+}
+
+data "aws_iam_policy_document" "create_opensearch_snapshot_assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+  }
 }
 
 resource "aws_iam_role_policy" "create_opensearch_snapshot" {
