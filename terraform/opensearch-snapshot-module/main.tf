@@ -48,10 +48,10 @@ data "aws_iam_policy_document" "opensearch_snapshot" {
 resource "aws_lambda_function" "opensearch_snapshot" {
   # If the file is not in the current working directory you will need to include a 
   # path.module in the filename.
-  filename      = "opensearch_snapshot.zip"
-  function_name = "opensearch_snapshot"
+  filename      = "${path.module}/handler/opensearch-snapshot.zip"
+  function_name = "opensearch-snapshot"
   role          = aws_iam_role.opensearch_snapshot.arn
-  handler       = "index.js"
+  handler       = "index.handler"
 
   runtime = "nodejs16.x"
 
@@ -60,7 +60,7 @@ resource "aws_lambda_function" "opensearch_snapshot" {
 
 resource "aws_lambda_layer_version" "workflow_cli" {
   filename   = "workflow-cli.zip"
-  layer_name = "workflow_cli"
+  layer_name = "workflow-cli"
 
   compatible_runtimes = ["nodejs16.x"]
 }
@@ -68,6 +68,6 @@ resource "aws_lambda_layer_version" "workflow_cli" {
 data "archive_file" "opensearch_snapshot_handler" {
   type = "zip"
 
-  source_dir  = "${path.module}/index.js"
-  output_path = "${path.module}/opensearch_snapshot.zip"
+  source_dir  = "${path.module}/handler/"
+  output_path = "${path.module}/handler/opensearch-snapshot.zip"
 }
