@@ -40,9 +40,6 @@ resource "aws_iam_role" "firehose_role" {
         Condition = {
           StringEquals = {
             "aws:SourceAccount" = var.aws_account_id
-          },
-          ArnLike = {
-            "aws:SourceArn": "arn:aws:kinesis:${var.aws_region_name}:${var.aws_account_id}:stream/${var.dlq_stream_name}"
           }
         }
       },
