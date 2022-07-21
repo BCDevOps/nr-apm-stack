@@ -1,6 +1,6 @@
 # Create main IAM snapshot role
 resource "aws_iam_role" "opensearch_snapshot_role" {
-  name = "opensearch_snapshot_role"
+  name = "opensearch_snapshot_role_${var.es_domain_name}"
   assume_role_policy = data.aws_iam_policy_document.opensearch_snapshot_assume_role_policy.json
 }
 
@@ -17,7 +17,7 @@ data "aws_iam_policy_document" "opensearch_snapshot_assume_role_policy" {
 
 # Create OpenSearch snapshot role
 resource "elasticsearch_opensearch_role" "opensearch_snapshot_creator" {
-  role_name   = "opensearch_snapshot_creator"
+  role_name   = "opensearch_snapshot_creator_${var.es_domain_name}"
   description = "Snapshot creator role"
 
   cluster_permissions = ["cluster:admin/snapshot/create"]
@@ -36,7 +36,7 @@ resource "aws_lambda_function" "opensearch_snapshot_lambda_function" {
   # If the file is not in the current working directory you will need to include a 
   # path.module in the filename.
   filename      = "${path.module}/handler/opensearch-snapshot.zip"
-  function_name = "opensearch-snapshot"
+  function_name = "opensearch_snapshot_lambda_function_${var.es_domain_name}"
   role          = aws_iam_role.opensearch_snapshot_role.arn
   handler       = "index.handler"
 
@@ -52,7 +52,7 @@ resource "aws_iam_role_policy_attachment" "opensearch_snapshot_basic_execution" 
 
 resource "aws_lambda_layer_version" "workflow_cli" {
   filename   = "workflow-cli.zip"
-  layer_name = "workflow-cli"
+  layer_name = "workflow_cli_${var.es_domain_name}"
 
   compatible_runtimes = ["nodejs16.x"]
 }
