@@ -26,14 +26,16 @@ export class DeadLetterQueueService {
         DeliveryStreamName: process.env.DLQ_STREAM_NAME,
         Records: chunk.map((pipelineObject) => {
           return {
-            Data: this.enc.encode(JSON.stringify(pipelineObject) + "\n"),
+            Data: this.enc.encode(JSON.stringify(pipelineObject) + '\n'),
           };
         }),
       };
       const command = new PutRecordBatchCommand(input);
       try {
         const response = await this.client.send(command);
-        if (response.$metadata.httpStatusCode !== 200 || response.FailedPutCount === undefined || response.FailedPutCount > 0) {
+        if (response.$metadata.httpStatusCode !== 200 ||
+          response.FailedPutCount === undefined ||
+          response.FailedPutCount > 0) {
           this.logger.log('DLQ_RESP_ERROR: ' + JSON.stringify(response));
         }
       } catch (error) {
