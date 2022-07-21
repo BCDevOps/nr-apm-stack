@@ -44,6 +44,7 @@ describe('KinesisStreamService', () => {
       etService,
       osService,
       batchService,
+      undefined,
       logger,
     );
     const fakeEvent = {Records: []} as KinesisStreamEvent;

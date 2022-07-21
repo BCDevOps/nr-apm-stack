@@ -2,6 +2,7 @@ export const TYPES = {
   AwsHttpClientService: Symbol.for('AwsHttpClientService'),
   BatchSummaryService: Symbol.for('BatchSummaryService'),
   DateAndTimeService: Symbol.for('DateAndTimeService'),
+  DeadLetterQueueService: Symbol.for('DeadLetterQueueService'),
   EcsTransformService: Symbol.for('EcsTransformService'),
   FieldExtractorService: Symbol.for('FieldExtractorService'),
   GeoIpService: Symbol.for('GeoIpService'),

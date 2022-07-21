@@ -1,42 +1,46 @@
-import {injectable} from 'inversify';
-import {OsDocument} from './types/os-document';
+import {inject, injectable} from 'inversify';
+import {OsDocumentPipeline} from './types/os-document';
 import {FirehoseClient, PutRecordBatchCommand, PutRecordBatchCommandInput} from '@aws-sdk/client-firehose';
-
+import {TYPES} from './inversify.types';
+import {LoggerService} from './util/logger.service';
 
 @injectable()
 /**
  * Service to persist data unable to be sent to OpenSearch
  */
 export class DeadLetterQueueService {
+  constructor(
+    @inject(TYPES.LoggerService) private logger: LoggerService,
+  ) {}
   private enc = new TextEncoder();
   private client = new FirehoseClient({region: process.env.AWS_DEFAULT_REGION || 'ca-central-1'});
 
-  public async queueData(document: OsDocument, error: string) {
-    const recordAsSent = Buffer.from(document.record.kinesis.data, 'base64').toString('utf8');
-    const recordAsProcessed = JSON.stringify(document.data);
-    // a client can be shared by different commands.
-
-    const params: PutRecordBatchCommandInput = {
-      DeliveryStreamName: undefined,
-      Records: [
-        {
-          Data: this.enc.encode(JSON.stringify({
-            recordAsSent,
-            recordAsProcessed,
-            error,
-          })),
-        },
-      ],
-    };
-    const command = new PutRecordBatchCommand(params);
-    // async/await.
-    try {
-      await this.client.send(command);
-      // process data.
-    } catch (error) {
-      // error handling.
-    } finally {
-      // finally.
+  public async send({failures}: OsDocumentPipeline) {
+    if (failures.length === 0) {
+      return;
+    }
+    const chunkSize = 50;
+    for (let i = 0; i < failures.length; i += chunkSize) {
+      const chunk = failures.slice(i, i + chunkSize);
+      const input: PutRecordBatchCommandInput = {
+        DeliveryStreamName: process.env.DLQ_STREAM_NAME,
+        Records: chunk.map((pipelineObject) => {
+          return {
+            Data: this.enc.encode(JSON.stringify(pipelineObject) + '\n'),
+          };
+        }),
+      };
+      const command = new PutRecordBatchCommand(input);
+      try {
+        const response = await this.client.send(command);
+        if (response.$metadata.httpStatusCode !== 200 ||
+          response.FailedPutCount === undefined ||
+          response.FailedPutCount > 0) {
+          this.logger.log('DLQ_RESP_ERROR: ' + JSON.stringify(response));
+        }
+      } catch (error) {
+        this.logger.log('DLQ_ERROR: ' + JSON.stringify(error));
+      }
     }
   }
 }

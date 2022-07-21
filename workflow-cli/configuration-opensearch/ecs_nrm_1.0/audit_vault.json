@@ -89,6 +89,10 @@
               "ignore_above": 1024,
               "type": "keyword"
             },
+            "mount_accessor": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
             "namespace": {
               "properties": {
                 "id": {
@@ -132,6 +136,10 @@
         "response": {
           "properties": {
             "mount_type": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "mount_accessor": {
               "ignore_above": 1024,
               "type": "keyword"
             },

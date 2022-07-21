@@ -1,6 +1,3 @@
-# [Environment]::SetEnvironmentVariable("TERRAGRUNT_DOWNLOAD", "C:\.terragrunt-cache")
-# npx @bcgov/bcdk cloud aws-login --space=tygsv5-prod --output=~/.aws/credentials.prod.ps1; . ~/.aws/credentials.prod.ps1; . ..\..\.env.prod.local.ps1
-
 terraform {
     source = "../..//terraform"
 }

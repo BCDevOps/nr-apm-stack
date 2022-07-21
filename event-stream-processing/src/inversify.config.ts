@@ -45,6 +45,7 @@ import {TimestampGuardParser} from './parsers/timestamp-guard.parser';
 import {TomcatParser} from './parsers/tomcat.parser';
 import {UserAgentParser} from './parsers/user-agent.parser';
 import {UrlExplodeParser} from './parsers/url-explode.parser';
+import {DeadLetterQueueService} from './dead-letter-queue.service';
 
 /**
  * Create the container
@@ -72,6 +73,8 @@ function create(): Container {
   myContainer.bind<RegexService>(TYPES.RegexService).to(RegexService);
   myContainer.bind<SubsetService>(TYPES.SubsetService).to(SubsetService);
   myContainer.bind<BatchSummaryService>(TYPES.BatchSummaryService).to(BatchSummaryService);
+  myContainer.bind<DeadLetterQueueService>(TYPES.DeadLetterQueueService)
+    .to(DeadLetterQueueService).whenNoAncestorTagged('localhost', true);
 
   // Stage: PreInit
   myContainer.bind<Parser>(TYPES.PreInitParser).to(KeyAsPathParser);
