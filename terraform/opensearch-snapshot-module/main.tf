@@ -1,5 +1,6 @@
-resource "aws_iam_role" "opensearch_snapshot" {
-  name = "opensearch_snapshot"
+# Create main IAM snapshot role
+resource "aws_iam_role" "opensearch_snapshot_role" {
+  name = "opensearch_snapshot_role"
   assume_role_policy = data.aws_iam_policy_document.opensearch_snapshot_assume_role_policy.json
 }
 
@@ -14,48 +15,39 @@ data "aws_iam_policy_document" "opensearch_snapshot_assume_role_policy" {
   }
 }
 
-resource "aws_iam_role_policy" "opensearch_snapshot" {
-  name = "opensearch_snapshot"
-  role = aws_iam_role.opensearch_snapshot.id
-  policy = data.aws_iam_policy_document.opensearch_snapshot.json
+# Create OpenSearch snapshot role
+resource "elasticsearch_opensearch_role" "opensearch_snapshot_creator" {
+  role_name   = "opensearch_snapshot_creator"
+  description = "Snapshot creator role"
+
+  cluster_permissions = ["cluster:admin/snapshot/create"]
 }
 
-# AWS Policy Generator:
-# https://awspolicygen.s3.amazonaws.com/policygen.html
-data "aws_iam_policy_document" "opensearch_snapshot" {
-  statement {
-    sid = "CreateCloudWatchLogEvents"
-    actions = [
-      "logs:CreateLogGroup",
-      "logs:CreateLogStream",
-      "logs:PutLogEvents"
-    ]
-    resources = [
-      "*",
-    ]
-  }
-  statement {
-    sid = "CreateOpenSearchSnapshot"
-    actions = [
-      "es:ESHttpPut"
-    ]
-    resources = [
-      "*",
-    ]
-  }
+# Map OpenSearch snapshot role to IAM snapshot role
+resource "elasticsearch_opensearch_roles_mapping" "opensearch_snapshot_mapper" {
+  role_name     = elasticsearch_opensearch_role.opensearch_snapshot_creator.id
+  description   = "Map AWS IAM roles to OpenSearch role"
+  backend_roles = [
+    aws_iam_role.opensearch_snapshot_role.arn
+  ]
 }
 
-resource "aws_lambda_function" "opensearch_snapshot" {
+resource "aws_lambda_function" "opensearch_snapshot_lambda_function" {
   # If the file is not in the current working directory you will need to include a 
   # path.module in the filename.
   filename      = "${path.module}/handler/opensearch-snapshot.zip"
   function_name = "opensearch-snapshot"
-  role          = aws_iam_role.opensearch_snapshot.arn
+  role          = aws_iam_role.opensearch_snapshot_role.arn
   handler       = "index.handler"
 
   runtime = "nodejs16.x"
 
   layers = [aws_lambda_layer_version.workflow_cli.arn]
+}
+
+resource "aws_iam_role_policy_attachment" "opensearch_snapshot_basic_execution" {
+  role       = aws_iam_role.opensearch_snapshot.id
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 resource "aws_lambda_layer_version" "workflow_cli" {
@@ -70,4 +62,25 @@ data "archive_file" "opensearch_snapshot_handler" {
 
   source_dir  = "${path.module}/handler/"
   output_path = "${path.module}/handler/opensearch-snapshot.zip"
+}
+
+# Schedule snapshot creation
+resource "aws_cloudwatch_event_rule" "opensearch_snapshot_daily" {
+  name                = "opensearch_snapshot_daily"
+  description         = "Daily OpenSearch Snapshot"
+  schedule_expression = "rate(1 day)"
+}
+
+resource "aws_cloudwatch_event_target" "opensearch_snapshot_daily" {
+  rule      = "${aws_cloudwatch_event_rule.opensearch_snapshot_daily}"
+  target_id = "opensearch_snapshot_daily"
+  arn       = "${aws_lambda_function.opensearch_snapshot_lambda_function.arn}"
+}
+
+resource "aws_lambda_permission" "opensearch_snapshot_allow_cloudwatch_execution" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = "${aws_lambda_function.opensearch_snapshot_lambda_function}"
+  principal     = "events.amazonaws.com"
+  source_arn    = "${aws_cloudwatch_event_rule.opensearch_snapshot_daily.arn}"
 }

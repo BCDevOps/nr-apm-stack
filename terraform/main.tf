@@ -654,9 +654,10 @@ resource "elasticsearch_opensearch_destination" "agent_monitor_destination" {
 EOF
 }
 
-# Create resources for creating OpenSearch snapshots
-module "opensearch-snapshot-policy" {
+# Create resources for OpenSearch snapshots
+module "opensearch-snapshots" {
   source = "./opensearch-snapshot-module"
+  depends_on = [aws_opensearch_domain.es]
 }
 
 module "topic" {
