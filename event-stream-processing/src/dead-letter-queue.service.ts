@@ -30,12 +30,11 @@ export class DeadLetterQueueService {
     const command = new PutRecordBatchCommand(params);
     try {
       const response = await this.client.send(command);
-      this.logger.log('DLQ_RESP: ' + JSON.stringify(response));
+      if (response.$metadata.httpStatusCode !== 200 || !response.FailedPutCount || response.FailedPutCount > 0) {
+        this.logger.log('DLQ_RESP_ERROR: ' + JSON.stringify(response));
+      }
     } catch (error) {
-      // error handling.
       this.logger.log('DLQ_ERROR: ' + JSON.stringify(error));
-    } finally {
-      // finally.
     }
   }
 }

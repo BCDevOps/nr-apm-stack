@@ -16,12 +16,11 @@ resource "aws_kinesis_firehose_delivery_stream" "s3_dlq_stream" {
     role_arn   = aws_iam_role.firehose_role.arn
     bucket_arn = aws_s3_bucket.dlq.arn
 
-    prefix              = "year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/hour=!{timestamp:HH}/"
-    error_output_prefix = "errors/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/hour=!{timestamp:HH}/!{firehose:error-output-type}/"
-
-    # https://docs.aws.amazon.com/firehose/latest/dev/dynamic-partitioning.html
-    buffer_size = 64
-    compression_format = "GZIP"
+    cloudwatch_logging_options {
+      enabled = true
+      log_group_name = "/aws/kinesisfirehose/${var.dlq_stream_name}"
+      log_stream_name = "DestinationDelivery"
+    }
   }
 }
 resource "aws_iam_role" "firehose_role" {
@@ -66,14 +65,13 @@ resource "aws_iam_role" "firehose_role" {
           ]
         },
         {
-          Effect = "Allow"
-          Action = [
-            "kinesis:DescribeStream",
-            "kinesis:GetShardIterator",
-            "kinesis:GetRecords",
-            "kinesis:ListShards"
-          ]
-          Resource = "arn:aws:kinesis:${var.aws_region_name}:${var.aws_account_id}:stream/${var.dlq_stream_name}"
+           Effect = "Allow",
+           Action = [
+               "logs:PutLogEvents"
+           ],
+           Resource = [
+               "arn:aws:logs:${var.aws_region_name}:${var.aws_account_id}:log-group:/aws/kinesisfirehose/${var.dlq_stream_name}:log-stream:DestinationDelivery"
+           ]
         }
       ]
     })
@@ -90,13 +88,13 @@ resource "aws_s3_bucket_acl" "dlq" {
   acl    = "private"
 }
 
- resource "aws_s3_bucket_server_side_encryption_configuration" "s3_dlq_bucket_encrypted" {
-   bucket = aws_s3_bucket.dlq.id
+#  resource "aws_s3_bucket_server_side_encryption_configuration" "s3_dlq_bucket_encrypted" {
+#    bucket = aws_s3_bucket.dlq.id
 
-   rule {
-     apply_server_side_encryption_by_default {
-       sse_algorithm     = "AES256"
-     }
-     bucket_key_enabled = true
-   }
- }
+#    rule {
+#      apply_server_side_encryption_by_default {
+#        sse_algorithm     = "AES256"
+#      }
+#      bucket_key_enabled = true
+#    }
+#  }
