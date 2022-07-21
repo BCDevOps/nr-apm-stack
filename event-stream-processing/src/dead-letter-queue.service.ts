@@ -15,26 +15,30 @@ export class DeadLetterQueueService {
   private enc = new TextEncoder();
   private client = new FirehoseClient({region: process.env.AWS_DEFAULT_REGION || 'ca-central-1'});
 
-  public async send(pipeline: OsDocumentPipeline) {
-    if (pipeline.failures.length === 0) {
+  public async send({failures}: OsDocumentPipeline) {
+    if (failures.length === 0) {
       return;
     }
-    const params: PutRecordBatchCommandInput = {
-      DeliveryStreamName: process.env.DLQ_STREAM_NAME,
-      Records: pipeline.failures.map((pipelineObject) => {
-        return {
-          Data: this.enc.encode(JSON.stringify(pipelineObject)),
-        };
-      }),
-    };
-    const command = new PutRecordBatchCommand(params);
-    try {
-      const response = await this.client.send(command);
-      if (response.$metadata.httpStatusCode !== 200 || response.FailedPutCount === undefined || response.FailedPutCount > 0) {
-        this.logger.log('DLQ_RESP_ERROR: ' + JSON.stringify(response));
+    const chunkSize = 50;
+    for (let i = 0; i < failures.length; i += chunkSize) {
+      const chunk = failures.slice(i, i + chunkSize);
+      const input: PutRecordBatchCommandInput = {
+        DeliveryStreamName: process.env.DLQ_STREAM_NAME,
+        Records: chunk.map((pipelineObject) => {
+          return {
+            Data: this.enc.encode(JSON.stringify(pipelineObject) + "\n"),
+          };
+        }),
+      };
+      const command = new PutRecordBatchCommand(input);
+      try {
+        const response = await this.client.send(command);
+        if (response.$metadata.httpStatusCode !== 200 || response.FailedPutCount === undefined || response.FailedPutCount > 0) {
+          this.logger.log('DLQ_RESP_ERROR: ' + JSON.stringify(response));
+        }
+      } catch (error) {
+        this.logger.log('DLQ_ERROR: ' + JSON.stringify(error));
       }
-    } catch (error) {
-      this.logger.log('DLQ_ERROR: ' + JSON.stringify(error));
     }
   }
 }
