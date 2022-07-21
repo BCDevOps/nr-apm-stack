@@ -36,12 +36,7 @@ resource "aws_iam_role" "firehose_role" {
         Principal = {
           Service = "firehose.amazonaws.com"
         }
-        Condition = {
-          StringEquals = {
-            "aws:SourceAccount" = var.aws_account_id
-          }
-        }
-      },
+      }
     ]
   })
   inline_policy {
@@ -49,6 +44,18 @@ resource "aws_iam_role" "firehose_role" {
     policy = jsonencode({
       Version = "2012-10-17"
       Statement = [
+        {
+          Sid = "",
+          Effect = "Allow",
+          Action = [
+            "glue:GetTable",
+            "glue:GetTableVersion",
+            "glue:GetTableVersions"
+          ],
+          Resource = [
+            "arn:aws:glue:${var.aws_region_name}:${var.aws_account_id}:catalog"
+          ]
+        },
         {
           Effect = "Allow",
           Action = [
@@ -65,13 +72,13 @@ resource "aws_iam_role" "firehose_role" {
           ]
         },
         {
-           Effect = "Allow",
-           Action = [
-               "logs:PutLogEvents"
-           ],
-           Resource = [
-               "arn:aws:logs:${var.aws_region_name}:${var.aws_account_id}:log-group:/aws/kinesisfirehose/${var.dlq_stream_name}:log-stream:DestinationDelivery"
-           ]
+          Effect = "Allow",
+          Action = [
+            "logs:PutLogEvents"
+          ],
+          Resource = [
+            "arn:aws:logs:${var.aws_region_name}:${var.aws_account_id}:log-group:/aws/kinesisfirehose/${var.dlq_stream_name}:log-stream:DestinationDelivery"
+          ]
         }
       ]
     })
@@ -86,6 +93,18 @@ resource "aws_s3_bucket" "dlq" {
 resource "aws_s3_bucket_acl" "dlq" {
   bucket = aws_s3_bucket.dlq.id
   acl    = "private"
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "dlq" {
+  bucket = aws_s3_bucket.dlq.id
+  rule {
+    id = "rule-1"
+    filter {}
+    expiration {
+      days = 7
+    }
+    status = "Enabled"
+  }
 }
 
 #  resource "aws_s3_bucket_server_side_encryption_configuration" "s3_dlq_bucket_encrypted" {
