@@ -658,6 +658,7 @@ EOF
 module "opensearch-snapshots" {
   source = "./opensearch-snapshot-module"
   depends_on = [aws_opensearch_domain.es]
+  es_domain_name = local.es_domain_name
 }
 
 module "topic" {

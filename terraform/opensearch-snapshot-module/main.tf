@@ -55,7 +55,7 @@ resource "aws_lambda_function" "opensearch_snapshot_lambda_function" {
 }
 
 resource "aws_iam_role_policy_attachment" "opensearch_snapshot_basic_execution" {
-  role       = aws_iam_role.opensearch_snapshot.id
+  role       = aws_iam_role.opensearch_snapshot_role.id
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
