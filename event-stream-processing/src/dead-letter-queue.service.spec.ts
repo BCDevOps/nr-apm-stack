@@ -58,6 +58,6 @@ describe('DeadLetterQueueService', () => {
     const mockSend = mockFirehoseClientInstance.send;
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(TextEncoder.prototype.encode).toBeCalledTimes(1);
-    expect(TextEncoder.prototype.encode).toBeCalledWith('{"source":"steam","message":"woo"}');
+    expect(TextEncoder.prototype.encode).toBeCalledWith('{"source":"steam","message":"woo"}\n');
   });
 });
