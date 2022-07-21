@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    elasticsearch = {
+      source = "phillbaker/elasticsearch"
+      version = "2.0.2"
+    }
+  }
+}
+
 # Create main IAM snapshot role
 resource "aws_iam_role" "opensearch_snapshot_role" {
   name = "opensearch_snapshot_role_${var.es_domain_name}"
