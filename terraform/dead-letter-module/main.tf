@@ -40,7 +40,7 @@ resource "aws_iam_role" "firehose_role" {
     ]
   })
   inline_policy {
-    name = "kinesis-s3-inline-policy"
+    name = "${var.es_domain_name}-firehose-inline-policy"
     policy = jsonencode({
       Version = "2012-10-17"
       Statement = [
