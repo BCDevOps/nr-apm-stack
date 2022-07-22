@@ -148,6 +148,10 @@
               "index": false,
               "type": "keyword"
             },
+            "warnings": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
 
             "wrap_info": {
               "properties": {
