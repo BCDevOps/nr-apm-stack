@@ -81,7 +81,7 @@ resource "aws_cloudwatch_event_rule" "opensearch_snapshot_daily" {
 }
 
 resource "aws_cloudwatch_event_target" "opensearch_snapshot_daily" {
-  rule      = "${aws_cloudwatch_event_rule.opensearch_snapshot_daily}"
+  rule      = "${aws_cloudwatch_event_rule.opensearch_snapshot_daily.name}"
   target_id = "opensearch_snapshot_daily"
   arn       = "${aws_lambda_function.opensearch_snapshot_lambda_function.arn}"
 }
@@ -89,7 +89,7 @@ resource "aws_cloudwatch_event_target" "opensearch_snapshot_daily" {
 resource "aws_lambda_permission" "opensearch_snapshot_allow_cloudwatch_execution" {
   statement_id  = "AllowExecutionFromCloudWatch"
   action        = "lambda:InvokeFunction"
-  function_name = "${aws_lambda_function.opensearch_snapshot_lambda_function}"
+  function_name = "${aws_lambda_function.opensearch_snapshot_lambda_function.function_name}"
   principal     = "events.amazonaws.com"
   source_arn    = "${aws_cloudwatch_event_rule.opensearch_snapshot_daily.arn}"
 }
