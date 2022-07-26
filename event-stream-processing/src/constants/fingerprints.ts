@@ -64,6 +64,33 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
   },
   {
+    name: FingerprintCategory.WSO2_ACCESS_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
+        dataset: 'wso2.access',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: '@timestamp,host.name,event.squence,event.original',
+        docId: 'labels.project,service.name,event.squence,event.hash',
+        index: 'nrm-access-internal-<%=YYYY.MM.DD=%>',
+        timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
+        timestampGuard: 'P1Y',
+        wso2AccessLog: true,
+        appClassification: true,
+        environmentStandardize: true,
+        urlExplode: true,
+        httpStatusOutcome: true,
+        threatPhp: true,
+        userAgent: true,
+        keyAsPath: true,
+      },
+    },
+  },
+  {
     name: FingerprintCategory.TOMCAT_ACCESS_LOGS,
     fingerprint: {
       event: {
@@ -144,6 +171,29 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         kind: 'event',
         category: 'web',
         dataset: 'application.log',
+      },
+      service: {
+        name: 'knox',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: 'host.hostname,basename(log.file.path),event.sequence,@timestamp',
+        docId: 'basename(log.file.path),event.sequence,event.hash',
+        index: 'nrm-app-generic-<%=YYYY.MM.DD=%>',
+        timestampGuard: 'P14D',
+        environmentStandardize: true,
+        keyAsPath: true,
+      },
+    },
+  },
+  {
+    name: FingerprintCategory.APP_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
+        dataset: 'wso2.carbon',
       },
       service: {
         name: 'knox',

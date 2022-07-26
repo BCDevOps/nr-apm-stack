@@ -45,6 +45,7 @@ import {TimestampGuardParser} from './parsers/timestamp-guard.parser';
 import {TomcatParser} from './parsers/tomcat.parser';
 import {UserAgentParser} from './parsers/user-agent.parser';
 import {UrlExplodeParser} from './parsers/url-explode.parser';
+import {Wso2AccessParser} from './parsers/wso2access.parser';
 
 /**
  * Create the container
@@ -81,6 +82,7 @@ function create(): Container {
 
   // Stage: PreParse
   myContainer.bind<Parser>(TYPES.PreParser).to(ApacheParser);
+  myContainer.bind<Parser>(TYPES.PreParser).to(Wso2AccessParser);
   myContainer.bind<Parser>(TYPES.PreParser).to(TomcatParser);
   myContainer.bind<Parser>(TYPES.PreParser).to(RenameParser);
 
