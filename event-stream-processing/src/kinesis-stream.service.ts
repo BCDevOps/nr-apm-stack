@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import {Context, KinesisStreamEvent} from 'aws-lambda';
-import {injectable, inject} from 'inversify';
+import {injectable, inject, optional} from 'inversify';
 import {OpenSearchService} from './open-search.service';
 import {TYPES} from './inversify.types';
 import {LoggerService} from './util/logger.service';
 import {EcsTransformService} from './ecs-transform.service';
 import {BatchSummaryService} from './batch-summary.service';
+import {DeadLetterQueueService} from './dead-letter-queue.service';
 
 @injectable()
 /**
@@ -22,6 +23,7 @@ export class KinesisStreamService {
     @inject(TYPES.EcsTransformService) private ecsTransformService: EcsTransformService,
     @inject(TYPES.OpenSearchService) private openSearch: OpenSearchService,
     @inject(TYPES.BatchSummaryService) private batchSummary: BatchSummaryService,
+    @inject(TYPES.DeadLetterQueueService) @optional() private deadLetterQueue: DeadLetterQueueService | undefined,
     @inject(TYPES.LoggerService) private logger: LoggerService,
   ) {}
 
@@ -51,6 +53,10 @@ export class KinesisStreamService {
       this.batchSummary.logDocuments(sentPipeline);
     }
     this.batchSummary.logMessages(sentPipeline);
+
+    if (this.deadLetterQueue && failedCount > 0) {
+      await this.deadLetterQueue.send(sentPipeline);
+    }
 
     return Promise<void>.resolve();
   }

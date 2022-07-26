@@ -1,6 +1,3 @@
-# [Environment]::SetEnvironmentVariable("TERRAGRUNT_DOWNLOAD", "C:\.terragrunt-cache")
-# npx @bcgov/bcdk cloud aws-login --space=tygsv5-prod --output=~/.aws/credentials.prod.ps1; . ~/.aws/credentials.prod.ps1; . ..\..\.env.prod.local.ps1
-
 terraform {
     source = "../..//terraform"
 }
@@ -42,7 +39,7 @@ generate "inputs" {
   ultrawarm_node_instance_type = "ultrawarm1.medium.search"
   custom_endpoint = "apm.io.nrs.gov.bc.ca"
   custom_endpoint_certificate_arn = "arn:aws:acm:ca-central-1:578527843179:certificate/a03a0a1b-120b-43ab-ab9d-e1bc84c693c4"
-  kinesis_shards = 4
+  kinesis_shards = 5
 EOF
 }
 

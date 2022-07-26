@@ -11,8 +11,6 @@ import {KinesisStreamRecordDecodeFailure, OsDocumentCommitFailure, OsDocumentPip
  *
  */
 export class BatchSummaryService {
-  private enc = new TextEncoder();
-
   constructor(
     @inject(TYPES.LoggerService) private logger: LoggerService,
   ) {}
@@ -78,7 +76,7 @@ export class BatchSummaryService {
   }
 
   /**
-   * Builds an error response if the  the logs as a JSON object.
+   * Builds an error response for Kinesis.
    * @param pipeline The pipeline with processed documents
    * @returns An object contianing the failed record ids or null if no errors occurred.
    * SQSBatchResponse has the same interface as a Kinesis batch response.
