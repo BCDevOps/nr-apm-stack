@@ -280,6 +280,14 @@
     "automation_queue_action_id": "07e0034820f91a9bf466"
   },
   {
+    "name": "nrm_refactor_fluent-bit.0",
+    "server": "refactor",
+    "agent": "fluent-bit.0",
+    "query_level_trigger_id": "2891edb9f45f69e62b56",
+    "teams_channel_action_id": "0ecc5ffd73fa766b439e",
+    "automation_queue_action_id": "e3d53bfd4f3111880c4b"
+  },
+  {
     "name": "nrm_reform_fluent-bit.0",
     "server": "reform",
     "agent": "fluent-bit.0",
@@ -398,6 +406,14 @@
     "query_level_trigger_id": "f63b8e07d06a2d03a45a",
     "teams_channel_action_id": "820475b0626118633cc2",
     "automation_queue_action_id": "29a5739d8106af04c575"
+  },
+  {
+    "name": "nrm_translate_fluent-bit.0",
+    "server": "translate",
+    "agent": "fluent-bit.0",
+    "query_level_trigger_id": "8e81e4c441d77f980cea",
+    "teams_channel_action_id": "68a60b32ce9c42e33b7c",
+    "automation_queue_action_id": "6c91445074accd4aafb3"
   },
   {
     "name": "nrm_vermicelli_fluent-bit.0",
