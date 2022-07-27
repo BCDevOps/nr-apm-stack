@@ -37,7 +37,7 @@
           {
             "state_name": "force_merge",
             "conditions": {
-              "min_index_age": "56d"
+              "min_index_age": "36d"
             }
           }
         ]
@@ -60,7 +60,7 @@
           {
             "state_name": "warm",
             "conditions": {
-              "min_index_age": "60d"
+              "min_index_age": "40d"
             }
           }
         ]
