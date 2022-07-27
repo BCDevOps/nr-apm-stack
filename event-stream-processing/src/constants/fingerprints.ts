@@ -196,7 +196,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         dataset: 'wso2.carbon',
       },
       service: {
-        name: 'knox',
+        name: 'api-manager',
       },
     },
     dataDefaults: {
