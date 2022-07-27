@@ -8,7 +8,8 @@ import lodash from 'lodash';
 
 /* eslint-disable max-len,camelcase,@typescript-eslint/no-unsafe-call */
 const regex_wso2_v1 = /[^ ]+ (?<source__ip>.+[^ ]+) .+- \[(?<extract_timestamp>[^\]]+)\] "(?<extract_httpRequest>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__response__bytes>(-?|\d+)) "(?<http__request__referrer>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)"$/;
-const regex_wso2_v2 = /^(?<source__ip>([^ ]+))(.+[^ ]+) - (-?|[^ ]+) \[(?<extract_timestamp>[^\]]+)\] "(?<extract_httpRequest>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__response__bytes>(-?|\d+)) "(?<http__request__referrer>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)"$/;
+const regex_wso2_v2 = /^(?<source__ip>([^ ]+)) [^ ]+ - (-?|[^ ]+) \[(?<extract_timestamp>[^\]]+)\] "(?<extract_httpRequest>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__response__bytes>(-?|\d+)) "(?<http__request__referrer>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)"$/;
+const regex_wso2_v3=/^(?<source__ip>([^ ]+)) - (-?|[^ ]+) \[(?<extract_timestamp>[^\]]+)\] "(?<extract_httpRequest>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__response__bytes>(-?|\d+)) "(?<http__request__referrer>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)"$/;
 /* eslint-enable max-len */
 
 /**
@@ -44,7 +45,8 @@ export class Wso2AccessParser implements Parser {
    * @param document The document to modify
    */
   apply(document: OsDocument): void {
-    const extractedFields = this.regexService.applyRegex(document, 'event.original', [regex_wso2_v1, regex_wso2_v2]);
+    const extractedFields = this.regexService.applyRegex(document, 'event.original', [regex_wso2_v1,
+      regex_wso2_v2, regex_wso2_v3]);
 
     if (!lodash.isNil(extractedFields.httpRequest)) {
       const value = extractedFields.httpRequest;
