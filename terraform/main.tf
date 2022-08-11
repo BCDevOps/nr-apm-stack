@@ -424,7 +424,11 @@ resource "elasticsearch_opensearch_role" "nrm_read_all" {
     "cluster:admin/opendistro/reports/definition/list",
     "cluster:admin/opendistro/reports/instance/list",
     "cluster:admin/opendistro/reports/instance/get",
-    "cluster:admin/opendistro/reports/menu/download"
+    "cluster:admin/opendistro/reports/menu/download",
+    "cluster:admin/opensearch/observability/create",
+    "cluster:admin/opensearch/observability/update",
+    "cluster:admin/opensearch/observability/delete",
+    "cluster:admin/opensearch/observability/get"
   ]
   index_permissions {
     index_patterns  = ["iitd-*", "iit-*", "nrm-*"]
@@ -436,6 +440,11 @@ resource "elasticsearch_opensearch_role" "nrm_read_all" {
     index_patterns  = [".kibana_*"]
     allowed_actions = ["kibana_all_read"]
   }
+  index_permissions {
+    index_patterns  = [".opensearch-observability"]
+    allowed_actions = ["write", "read", "search"]
+  }
+
   tenant_permissions {
     tenant_patterns = ["*"]
     allowed_actions = ["kibana_all_read"]
@@ -469,7 +478,11 @@ resource "elasticsearch_opensearch_role" "nrm_security" {
     "cluster:admin/opendistro/reports/definition/list",
     "cluster:admin/opendistro/reports/instance/list",
     "cluster:admin/opendistro/reports/instance/get",
-    "cluster:admin/opendistro/reports/menu/download"
+    "cluster:admin/opendistro/reports/menu/download",
+    "cluster:admin/opensearch/observability/create",
+    "cluster:admin/opensearch/observability/update",
+    "cluster:admin/opensearch/observability/delete",
+    "cluster:admin/opensearch/observability/get"
   ]
   index_permissions {
     index_patterns  = ["iitd-*", "iit-*", "nrm-*"]
@@ -478,6 +491,10 @@ resource "elasticsearch_opensearch_role" "nrm_security" {
   index_permissions {
     index_patterns  = [".kibana_*"]
     allowed_actions = ["kibana_all_read"]
+  }
+  index_permissions {
+    index_patterns  = [".opensearch-observability"]
+    allowed_actions = ["write", "read", "search"]
   }
   tenant_permissions {
     tenant_patterns = ["infraops"]
