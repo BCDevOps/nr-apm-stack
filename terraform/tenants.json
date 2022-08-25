@@ -30,5 +30,21 @@
       "tenant_patterns": ["PPM"],
       "allowed_actions": ["kibana_all_write"]
     }
+  },
+  {
+    "role_name": "fingerprint-write-all",
+    "description": "Fingerprint Tenant",
+    "tenant_permissions": {
+      "tenant_patterns": ["Fingerprint"],
+      "allowed_actions": ["kibana_all_write"]
+    }
+  },
+  {
+    "role_name": "saber-write-all",
+    "description": "SABER Tenant",
+    "tenant_permissions": {
+      "tenant_patterns": ["SABER"],
+      "allowed_actions": ["kibana_all_write"]
+    }
   }
 ]
