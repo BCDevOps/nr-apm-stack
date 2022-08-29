@@ -114,7 +114,7 @@ resource "elasticsearch_opensearch_monitor" "agent_monitor" {
                     "name": "Notify Automation Queue",
                     "destination_id": "${var.automation_destination_id}",
                     "message_template": {
-                        "source": "{ \"type\": \"agent_down\", \"server\": \"${var.agent_monitor.server}\", \"agent\": \"${var.agent_monitor.agent}\", \"PeriodStart\": \"{{ctx.periodStart}} \", \"PeriodEnd\": \"{{ctx.periodEnd}} \" }",
+                        "source": "{ \"type\": \"agent_down\", \"server\": \"${var.agent_monitor.server}\", \"agent\": \"${var.agent_monitor.agent}\", \"periodStart\": \"{{ctx.periodStart}} \", \"periodEnd\": \"{{ctx.periodEnd}} \" }",
                         "lang" : "mustache"
                     },
                     "throttle_enabled": true,
