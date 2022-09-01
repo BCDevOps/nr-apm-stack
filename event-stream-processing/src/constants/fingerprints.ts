@@ -41,7 +41,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
   },
   {
-    name: FingerprintCategory.APACHE_ACCESS_LOGS,
+    name: FingerprintCategory.HTTP_ACCESS_LOGS,
     fingerprint: {
       event: {
         kind: 'event',
@@ -51,14 +51,37 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: '@timestamp,host.name,event.squence,event.original',
-        docId: 'labels.project,service.name,event.squence,event.hash',
+        hash: '@timestamp,host.name,event.sequence,event.original',
+        docId: 'labels.project,service.name,event.sequence,event.hash',
         index: 'nrm-access-external-<%=YYYY.MM.DD=%>',
         environmentStandardize: true,
         geoIp: true,
         httpStatusOutcome: true,
         rename: 'labels.azp:source.user.id',
         timestampGuard: 'P1Y',
+        userAgent: true,
+      },
+    },
+  },
+  {
+    name: FingerprintCategory.HTTP_ACCESS_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
+        dataset: 'generic.access',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: '@timestamp,host.name,event.sequence,event.original',
+        docId: 'labels.project,service.name,event.sequence,event.hash',
+        index: 'nrm-access-external-<%=YYYY.MM.DD=%>',
+        environmentStandardize: true,
+        geoIp: true,
+        httpStatusOutcome: true,
+        timestampGuard: 'P1Y',
+        urlExplode: true,
         userAgent: true,
       },
     },
@@ -74,8 +97,8 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
     dataDefaults: {
       '@metadata': {
-        hash: '@timestamp,host.name,event.squence,event.original',
-        docId: 'labels.project,service.name,event.squence,event.hash',
+        hash: '@timestamp,host.name,event.sequence,event.original',
+        docId: 'labels.project,service.name,event.sequence,event.hash',
         index: 'nrm-access-internal-<%=YYYY.MM.DD=%>',
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
         timestampGuard: 'P1Y',
