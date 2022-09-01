@@ -46,5 +46,13 @@
       "tenant_patterns": ["SABER"],
       "allowed_actions": ["kibana_all_write"]
     }
+  },
+  {
+    "role_name": "epsilon-write-all",
+    "description": "EPSILON Tenant",
+    "tenant_permissions": {
+      "tenant_patterns": ["EPSILON"],
+      "allowed_actions": ["kibana_all_write"]
+    }
   }
 ]
