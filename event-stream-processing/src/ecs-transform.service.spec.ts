@@ -30,11 +30,11 @@ describe('EcsTransformService', () => {
 
     service.transform({Records: [{} as KinesisStreamRecord]});
 
-    expect(ksrMapper.toOpensearchDocument).toBeCalledTimes(1);
-    expect(ksrMapper.toFingerprintedDocument).toBeCalledTimes(1);
-    expect(mockParsers[0].matches).toBeCalledTimes(6);
-    expect(mockParsers[0].apply).toBeCalledTimes(6);
-    expect(logger.debug).toBeCalledWith('Received 1 records');
+    expect(ksrMapper.toOpensearchDocument).toHaveBeenCalledTimes(1);
+    expect(ksrMapper.toFingerprintedDocument).toHaveBeenCalledTimes(1);
+    expect(mockParsers[0].matches).toHaveBeenCalledTimes(6);
+    expect(mockParsers[0].apply).toHaveBeenCalledTimes(6);
+    expect(logger.debug).toHaveBeenCalledWith('Received 1 records');
   });
 
   it('rejects and continues processing data', () => {
@@ -87,12 +87,12 @@ describe('EcsTransformService', () => {
 
     const rVal = service.transform({Records: [{awsRegion: 'fail'} as KinesisStreamRecord, {} as KinesisStreamRecord]});
 
-    expect(ksrMapper.toOpensearchDocument).toBeCalledTimes(2);
-    expect(ksrMapper.toFingerprintedDocument).toBeCalledTimes(1);
-    expect(mockParsers[0].matches).toBeCalledTimes(7);
-    expect(mockParsers[0].apply).toBeCalledTimes(7);
-    expect(logger.debug).toBeCalledWith('Received 2 records');
-    expect(logger.debug).toBeCalledWith('PARSE_ERROR:bob org host service /path:20 fingerprint : hi');
+    expect(ksrMapper.toOpensearchDocument).toHaveBeenCalledTimes(2);
+    expect(ksrMapper.toFingerprintedDocument).toHaveBeenCalledTimes(1);
+    expect(mockParsers[0].matches).toHaveBeenCalledTimes(7);
+    expect(mockParsers[0].apply).toHaveBeenCalledTimes(7);
+    expect(logger.debug).toHaveBeenCalledWith('Received 2 records');
+    expect(logger.debug).toHaveBeenCalledWith('PARSE_ERROR:bob org host service /path:20 fingerprint : hi');
     expect(rVal.documents.length).toBe(1);
     expect(rVal.documents[0].data.host.hostname).toBe('host');
   });

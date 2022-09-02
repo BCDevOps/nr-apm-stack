@@ -18,8 +18,8 @@ describe('DocumentIdParser', () => {
       data: {'event': {'id': 'bob'}, 'hash': '12345', '@metadata': {docId: 'event.id,hash'}},
     } as unknown as OsDocument;
     parser.apply(document);
-    expect(service.fieldStringToArray).toBeCalledTimes(1);
-    expect(service.fieldStringToArray).toBeCalledWith('event.id,hash', document);
+    expect(service.fieldStringToArray).toHaveBeenCalledTimes(1);
+    expect(service.fieldStringToArray).toHaveBeenCalledWith('event.id,hash', document);
     expect(document.id).toEqual('bob:12345');
   });
 });

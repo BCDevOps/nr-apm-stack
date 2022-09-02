@@ -11,6 +11,7 @@ describe('KinesisParser', () => {
     expect(parser.matches()).toBe(true);
   });
 
+
   it('sets kinesis related fields', () => {
     const dateTimeService = {
       now: jest.fn(() => {
@@ -39,10 +40,45 @@ describe('KinesisParser', () => {
       },
       kinesis: {
         eventID: 'endofdino',
+      },
+    });
+  });
+
+  it('sets kinesis related fields (debug)', () => {
+    const dateTimeService = {
+      now: jest.fn(() => {
+        return dateTimeService;
+      }),
+      toISOString: jest.fn(() => {
+        return 'date';
+      }),
+    } as unknown as DateAndTimeService;
+    const parser = new KinesisParser(dateTimeService);
+    const document = {
+      record: {
+        eventID: 'endofdino',
+        kinesis: {
+          partitionKey: 'best',
+          sequenceNumber: '1234',
+          approximateArrivalTimestamp: 'cretaous',
+        },
+      },
+      data: {
+        '@metadata': {kinesis: 'debug'},
+      },
+    } as unknown as OsDocument;
+    parser.apply(document);
+    expect(document.data).toEqual({
+      'event': {
+        ingested: 'date',
+      },
+      'kinesis': {
+        eventID: 'endofdino',
         partitionKey: 'best',
         sequenceNumber: '1234',
         approximateArrivalTimestamp: 'cretaous',
       },
+      '@metadata': {kinesis: 'debug'},
     });
   });
 });

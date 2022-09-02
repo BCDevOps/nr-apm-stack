@@ -28,8 +28,8 @@ describe('GeoIpParser', () => {
     } as unknown as OsDocument;
     parser.apply(document);
 
-    expect(service.lookup).toBeCalledTimes(1);
-    expect(service.lookup).toBeCalledWith('source_blah');
+    expect(service.lookup).toHaveBeenCalledTimes(1);
+    expect(service.lookup).toHaveBeenCalledWith('source_blah');
 
     expect(document.data).toEqual({
       '@metadata': {geoIp: true},

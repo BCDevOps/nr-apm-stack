@@ -19,7 +19,7 @@ describe('ApacheParser', () => {
 
     parser.apply(testDoc);
 
-    expect(service.applyRegex).toBeCalledWith(testDoc, 'event.original', expect.any(Array));
-    expect(service.applyRegex).toBeCalledTimes(1);
+    expect(service.applyRegex).toHaveBeenCalledWith(testDoc, 'event.original', expect.any(Array));
+    expect(service.applyRegex).toHaveBeenCalledTimes(1);
   });
 });
