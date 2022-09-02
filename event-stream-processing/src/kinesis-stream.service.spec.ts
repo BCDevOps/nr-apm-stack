@@ -52,17 +52,17 @@ describe('KinesisStreamService', () => {
 
     await ks.handle(fakeEvent, fakeContext);
 
-    expect(etService.transform).toBeCalledTimes(1);
-    expect(etService.transform).toBeCalledWith(fakeEvent);
+    expect(etService.transform).toHaveBeenCalledTimes(1);
+    expect(etService.transform).toHaveBeenCalledWith(fakeEvent);
 
-    expect(osService.bulk).toBeCalledTimes(1);
-    expect(osService.bulk).toBeCalledWith(docs);
-    expect(batchService.logSummary).toBeCalledTimes(1);
-    expect(batchService.logMessages).toBeCalledTimes(1);
-    expect(logger.debug).toBeCalledTimes(4);
-    expect(logger.debug).toBeCalledWith('Transforming 0 kinesis records to OS documents');
-    expect(logger.debug).toBeCalledWith('Submitting 3 documents to OS');
-    expect(logger.debug).toBeCalledWith('2 documents added');
-    expect(logger.debug).toBeCalledWith('1 documents failed');
+    expect(osService.bulk).toHaveBeenCalledTimes(1);
+    expect(osService.bulk).toHaveBeenCalledWith(docs);
+    expect(batchService.logSummary).toHaveBeenCalledTimes(1);
+    expect(batchService.logMessages).toHaveBeenCalledTimes(1);
+    expect(logger.debug).toHaveBeenCalledTimes(4);
+    expect(logger.debug).toHaveBeenCalledWith('Transforming 0 kinesis records to OS documents');
+    expect(logger.debug).toHaveBeenCalledWith('Submitting 3 documents to OS');
+    expect(logger.debug).toHaveBeenCalledWith('2 documents added');
+    expect(logger.debug).toHaveBeenCalledWith('1 documents failed');
   });
 });
