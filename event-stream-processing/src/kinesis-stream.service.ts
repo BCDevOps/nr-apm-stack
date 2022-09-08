@@ -58,7 +58,7 @@ export class KinesisStreamService {
       await this.deadLetterQueue.send(sentPipeline);
     }
 
-    return Promise<void>.resolve();
+    return (Promise<void>).resolve();
   }
   /* eslint-enable @typescript-eslint/no-unused-vars */
 }

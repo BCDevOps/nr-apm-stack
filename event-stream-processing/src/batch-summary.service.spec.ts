@@ -15,9 +15,9 @@ describe('BatchSummaryService', () => {
     const emptyPipeline = new OsDocumentPipeline();
 
     bs.logSummary(emptyPipeline);
-    expect(logger.log).toBeCalledTimes(1);
+    expect(logger.log).toHaveBeenCalledTimes(1);
     // eslint-disable-next-line max-len
-    expect(logger.log).toBeCalledWith('{"received":0,"decoded":0,"decode_failed":0,"processed":0,"process_failed":0,"committed":0,"commit_failed":0,"failed":0}');
+    expect(logger.log).toHaveBeenCalledWith('{"received":0,"decoded":0,"decode_failed":0,"processed":0,"process_failed":0,"committed":0,"commit_failed":0,"failed":0}');
   });
 
   it('summarizes pipeline', () => {
@@ -39,8 +39,8 @@ describe('BatchSummaryService', () => {
     ];
 
     bs.logSummary(pipeline);
-    expect(logger.log).toBeCalledTimes(1);
+    expect(logger.log).toHaveBeenCalledTimes(1);
     // eslint-disable-next-line max-len
-    expect(logger.log).toBeCalledWith('{"received":7,"decoded":5,"decode_failed":2,"processed":4,"process_failed":1,"committed":2,"commit_failed":2,"failed":5}');
+    expect(logger.log).toHaveBeenCalledWith('{"received":7,"decoded":5,"decode_failed":2,"processed":4,"process_failed":1,"committed":2,"commit_failed":2,"failed":5}');
   });
 });

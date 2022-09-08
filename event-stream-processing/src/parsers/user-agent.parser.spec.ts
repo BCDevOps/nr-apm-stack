@@ -92,7 +92,7 @@ describe('UserAgentParser', () => {
       original: 'Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)'}},
     } as unknown as OsDocument;
     parser.apply(document);
-    expect(jest.mocked(UAParser)).toBeCalledTimes(1);
+    expect(jest.mocked(UAParser)).toHaveBeenCalledTimes(1);
     expect(document.data).toEqual({
       user_agent: {
         original: 'Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)',

@@ -57,7 +57,7 @@ describe('DeadLetterQueueService', () => {
     // eslint-disable-next-line jest/unbound-method
     const mockSend = mockFirehoseClientInstance.send;
     expect(mockSend).toHaveBeenCalledTimes(1);
-    expect(TextEncoder.prototype.encode).toBeCalledTimes(1);
-    expect(TextEncoder.prototype.encode).toBeCalledWith('{"source":"steam","message":"woo"}\n');
+    expect(TextEncoder.prototype.encode).toHaveBeenCalledTimes(1);
+    expect(TextEncoder.prototype.encode).toHaveBeenCalledWith('{"source":"steam","message":"woo"}\n');
   });
 });
