@@ -24,10 +24,6 @@ or
 curl -s -X POST -H "Content-Type: application/json" -d @samples/deployment-metrics.json "http://localhost:3000?print=true"
 ```
 
-### Sending Test Data - fluentbit
-
-Fluentbit can also send data to an http endpoint. In the samples directory, `metrics-docker.sh` will run fluentbit in a container and send data to the local endpoint. The lambda must first be running. If the lambda is not running in a container there will a networking issue.
-
 ## Testing with Funbucks
 
 These instructions assume you are using podman. Run the following to build the local lambda image.

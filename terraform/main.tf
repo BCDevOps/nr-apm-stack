@@ -601,7 +601,7 @@ module "topic" {
 }
 
 # Alert destination setup
-
+# Ideally, it there would be a condition on this but AWS was alternating between an internal account and ours.
 resource "aws_iam_role" "opensearch_sns_role" {
   name = "opensearch_sns_${local.es_domain_name}"
 
@@ -616,14 +616,6 @@ resource "aws_iam_role" "opensearch_sns_role" {
         Sid    = ""
         Principal = {
           Service = "es.amazonaws.com"
-        }
-        Condition = {
-          StringEquals = {
-            "aws:SourceAccount" = data.aws_caller_identity.current.account_id
-          },
-          ArnLike = {
-            "aws:SourceArn": "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/${local.es_domain_name}"
-          }
         }
       },
     ]
