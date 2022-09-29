@@ -41,6 +41,7 @@
     "ecs_host_1.12",
     "ecs_package_1.12",
     "ecs_service_1.12",
+    "ecs_tracing_1.12",
     "ecs_user_1.12",
     "ecs_nrm_base_1.0",
     "ecs_nrm_kinesis_1.0"
