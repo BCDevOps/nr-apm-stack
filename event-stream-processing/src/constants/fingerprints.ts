@@ -299,18 +299,19 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
   },
   {
-    name: FingerprintCategory.METRICS,
+    name: FingerprintCategory.BROKER_AUDIT_LOGS,
     fingerprint: {
       event: {
         kind: 'event',
-        dataset: 'intention',
+        dataset: 'broker.audit',
       },
     },
     dataDefaults: {
       '@metadata': {
         docId: 'kinesis.eventID',
-        index: 'nrm-intention-<%=YYYY.MM.DD=%>',
+        index: 'nrm-audit-broker-<%=YYYY.MM.DD=%>',
         environmentStandardize: true,
+        geoIp: true,
         timestampGuard: 'PT60M',
       },
     },

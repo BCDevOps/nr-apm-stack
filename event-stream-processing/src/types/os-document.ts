@@ -3,6 +3,7 @@ import {KinesisStreamRecord} from 'aws-lambda';
 export enum FingerprintCategory {
   APACHE_ACCESS_LOGS = 'APACHE_ACCESS_LOGS',
   APP_LOGS = 'APP_LOGS',
+  BROKER_AUDIT_LOGS = 'BROKER_AUDIT_LOGS',
   HTTP_ACCESS_LOGS = 'HTTP_ACCESS_LOGS',
   METRICS = 'METRICS',
   PIPELINE = 'PIPELINE',

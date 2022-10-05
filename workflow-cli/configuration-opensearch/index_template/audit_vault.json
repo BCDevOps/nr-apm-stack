@@ -4,6 +4,7 @@
   ],
   "template": {
     "aliases": {
+      "nrm-audit": {},
       "nrm-audit-vault": {}
     },
     "settings": {

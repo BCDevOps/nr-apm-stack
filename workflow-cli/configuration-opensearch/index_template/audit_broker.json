@@ -1,10 +1,11 @@
 {
   "index_patterns": [
-    "nrm-intention-*"
+    "nrm-audit-broker-*"
   ],
   "template": {
     "aliases": {
-      "nrm-intention": {}
+      "nrm-audit": {},
+      "nrm-audit-broker": {}
     },
     "settings": {
       "number_of_shards": 1,
@@ -16,10 +17,6 @@
         "labels": {
           "type": "object",
           "properties": {
-            "deploy": {
-              "ignore_above": 1024,
-              "type": "keyword"
-            },
             "build": {
               "ignore_above": 1024,
               "type": "keyword"
@@ -33,14 +30,12 @@
   "composed_of": [
     "ecs_agent_1.12",
     "ecs_base_1.12",
-    "ecs_cloud_1.12",
-    "ecs_container_1.12",
     "ecs_ecs_1.12",
     "ecs_event_1.12",
-    "ecs_log_1.12",
     "ecs_host_1.12",
     "ecs_package_1.12",
     "ecs_service_1.12",
+    "ecs_source_1.12",
     "ecs_tracing_1.12",
     "ecs_user_1.12",
     "ecs_nrm_base_1.0",
@@ -48,6 +43,6 @@
   ],
   "version": 3,
   "_meta": {
-    "description": "NRM Intention indices"
+    "description": "NRM audit broker indices"
   }
 }
