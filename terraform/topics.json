@@ -33,5 +33,10 @@
     "display": "Automation SQS",
     "resourceId": "message-queue",
     "sqsEndpoint": true
+  },
+  {
+    "display": "WSO2 Alert",
+    "resourceId": "WSO2-Alert",
+    "sqsEndpoint": false
   }
 ]
