@@ -1,0 +1,69 @@
+{
+    "policy": {
+        "policy_id": "nrm-type-audit-broker-policy",
+        "description": "NRM audit broker policy",
+        "last_updated_time": 1655401448684,
+        "schema_version": 1,
+        "error_notification": null,
+        "default_state": "initial",
+        "states": [
+            {
+                "name": "initial",
+                "actions": [],
+                "transitions": [
+                    {
+                        "state_name": "force_merge",
+                        "conditions": {
+                            "min_index_age": "2d"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "force_merge",
+                "actions": [
+                    {
+                        "retry": {
+                          "count": 10,
+                          "backoff": "exponential",
+                          "delay": "10m"
+                        },
+                        "force_merge": {
+                            "max_num_segments": 1
+                        }
+                    }
+                ],
+                "transitions": [
+                    {
+                        "state_name": "warm",
+                        "conditions": {
+                            "min_index_age": "10d"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "warm",
+                "actions": [
+                    {
+                        "retry": {
+                            "count": 10,
+                            "backoff": "exponential",
+                            "delay": "10m"
+                        },
+                        "warm_migration": {}
+                    }
+                ],
+                "transitions": []
+            }
+        ],
+        "ism_template": [
+            {
+            "index_patterns": [
+                "nrm-audit-broker-*"
+              ],
+              "priority": 0
+            }
+        ]
+    }
+}

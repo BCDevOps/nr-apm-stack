@@ -1,0 +1,48 @@
+{
+  "index_patterns": [
+    "nrm-audit-broker-*"
+  ],
+  "template": {
+    "aliases": {
+      "nrm-audit": {},
+      "nrm-audit-broker": {}
+    },
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 1
+    },
+    "mappings": {
+      "dynamic": "strict",
+      "properties": {
+        "labels": {
+          "type": "object",
+          "properties": {
+            "build": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            }
+          }
+        }
+      }
+    }
+  },
+  "priority": 300,
+  "composed_of": [
+    "ecs_agent_1.12",
+    "ecs_base_1.12",
+    "ecs_ecs_1.12",
+    "ecs_event_1.12",
+    "ecs_host_1.12",
+    "ecs_package_1.12",
+    "ecs_service_1.12",
+    "ecs_source_1.12",
+    "ecs_tracing_1.12",
+    "ecs_user_1.12",
+    "ecs_nrm_base_1.0",
+    "ecs_nrm_kinesis_1.0"
+  ],
+  "version": 3,
+  "_meta": {
+    "description": "NRM audit broker indices"
+  }
+}
