@@ -566,6 +566,14 @@ module "agent-monitor" {
   automation_destination_id = module.destination["message-queue"].destination_id
 }
 
+module "app-monitor" {
+  source = "./app-monitor-module"
+  for_each = { for a in jsondecode(file("./app-alert.json")): a.name => a }
+  app_monitor = each.value
+  depends_on = [aws_opensearch_domain.es]
+  automation_destination_id = module.destination["wso2-alert"].destination_id
+}
+
 # Create destination for agent monitors
 resource "elasticsearch_opensearch_destination" "agent_monitor_destination" {
   body = <<EOF

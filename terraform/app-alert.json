@@ -1,0 +1,16 @@
+[
+{
+    "server": "translate",
+    "app": "wso2",
+    "query_level_trigger_id": "o0ddmv1v11sk15gi2g0s",
+    "automation_queue_action_id": "rvsc62s45z5xojtwteex",
+    "errormsg": "Payload"
+},
+{
+    "server": "refactor",
+    "app": "wso2",
+    "query_level_trigger_id": "dc90afzhzp5bxnf1ofle",
+    "automation_queue_action_id": "hikk65rsyjr7g92ugbnt",
+    "errormsg": "Payload"
+}
+]

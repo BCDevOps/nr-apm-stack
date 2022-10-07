@@ -36,7 +36,7 @@
   },
   {
     "display": "WSO2 Alert",
-    "resourceId": "WSO2-Alert",
+    "resourceId": "wso2-alert",
     "sqsEndpoint": false
   }
 ]
