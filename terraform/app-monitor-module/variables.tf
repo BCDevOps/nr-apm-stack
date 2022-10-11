@@ -1,5 +1,6 @@
 variable "app_monitor" {
   type = object({
+    name =string
     server = string
     app = string
     query_level_trigger_id = string

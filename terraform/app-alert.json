@@ -1,5 +1,6 @@
 [
 {
+    "name": "wso2-translate-monitor-payload",
     "server": "translate",
     "app": "wso2",
     "query_level_trigger_id": "o0ddmv1v11sk15gi2g0s",
@@ -7,6 +8,7 @@
     "errormsg": "Payload"
 },
 {
+    "name": "wso2-refactor-monitor-payload",
     "server": "refactor",
     "app": "wso2",
     "query_level_trigger_id": "dc90afzhzp5bxnf1ofle",

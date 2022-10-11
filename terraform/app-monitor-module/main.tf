@@ -12,7 +12,7 @@ resource "elasticsearch_opensearch_monitor" "app_monitor" {
   body = <<EOF
 {
     "type": "monitor",
-    "name": "${var.app_monitor.app}-${var.app_monitor.server}-monitor-${var.app_monitor.errormsg}",
+    "name": "${var.app_monitor.name}",
     "monitor_type": "query_level_monitor",
     "enabled": true,
     "schedule": {
