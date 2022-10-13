@@ -1,6 +1,4 @@
-app-monitors:
-   - monitor:
-      name: wso2-translate-monitor-payload
+   -  name: wso2-translate-monitor-payload
       index : nrm-app-generic-* 
       query_level_trigger_id: o0ddmv1v11sk15gi2g0s
       automation_queue_action_id: rvsc62s45z5xojtwteex
@@ -57,8 +55,7 @@ app-monitors:
                },
                "aggregations": {}
              '
-   - monitor:
-      name: wso2-refactor-monitor-payload
+   -  name: wso2-refactor-monitor-payload
       index : nrm-app-generic-*  
       query_level_trigger_id: dc90afzhzp5bxnf1ofle
       automation_queue_action_id: hikk65rsyjr7g92ugbnt

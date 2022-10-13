@@ -568,7 +568,7 @@ module "agent-monitor" {
 
 module "app-monitor" {
   source = "./app-monitor-module"
-  for_each = yamldecode(file("./app-alert.yaml"))["app-monitors"]
+  for_each = { for a in yamldecode(file("./app-alert.yaml")): a.name =>a }
   app_monitor = each.value
   depends_on = [aws_opensearch_domain.es]
   automation_destination_id = module.destination[each.value.queue_name].destination_id
