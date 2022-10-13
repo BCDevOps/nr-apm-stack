@@ -5,7 +5,7 @@ variable "app_monitor" {
     query_level_trigger_id = string
     automation_queue_action_id = string
     interval = number
-    severity = number    
+    severity = string    
     queue_name = string
     throttle = number
     trigger_source = string
