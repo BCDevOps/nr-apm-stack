@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-# Create app alert monitor
+# Create app alert monitor elasticsearch_opensearch_monitor
 resource "elasticsearch_opensearch_monitor" "app_monitor" {
   body = <<EOF
 {
@@ -17,7 +17,7 @@ resource "elasticsearch_opensearch_monitor" "app_monitor" {
     "enabled": true,
     "schedule": {
         "period": {
-            "interval": 5,
+            "interval": ${var.app_monitor.interval},
             "unit": "MINUTES"
         }
     },
@@ -25,64 +25,10 @@ resource "elasticsearch_opensearch_monitor" "app_monitor" {
         {
          "search": {
             "indices": [
-               "nrm-app-generic-*"
+               "${var.app_monitor.index}"
             ],
             "query": {
-               "size": 0,
-               "query": {
-                  "bool": {
-                     "must": [
-                        {
-                           "match": {
-                              "message": {
-                                 "query": "${var.app_monitor.errormsg}",
-                                 "operator": "OR",
-                                 "prefix_length": 0,
-                                 "max_expansions": 50,
-                                 "fuzzy_transpositions": true,
-                                 "lenient": false,
-                                 "zero_terms_query": "NONE",
-                                 "auto_generate_synonyms_phrase_query": true,
-                                 "boost": 1
-                              }
-                           }
-                        }
-                     ],
-                     "filter": [
-                        {
-                           "range": {
-                              "@timestamp": {
-                                 "from": "{{period_end}}||-5m",
-                                 "to": "{{period_end}}",
-                                 "include_lower": true,
-                                 "include_upper": true,
-                                 "format": "epoch_millis",
-                                 "boost": 1
-                              }
-                           }
-                        },
-                        {
-                           "term": {
-                              "host.hostname": {
-                                 "value": "${var.app_monitor.server}",
-                                 "boost": 1
-                              }
-                           }
-                        },
-                        {
-                           "term": {
-                              "labels.project": {
-                                 "value": "${var.app_monitor.app}",
-                                 "boost": 1
-                              }
-                           }
-                        }
-                     ],
-                     "adjust_pure_negative": true,
-                     "boost": 1
-                  }
-               },
-               "aggregations": {}
+               ${var.app_monitor.queryblock}
             }
          }
       }
@@ -91,11 +37,11 @@ resource "elasticsearch_opensearch_monitor" "app_monitor" {
         {
           "query_level_trigger": {
             "id": "${var.app_monitor.query_level_trigger_id}",
-            "name": "Error logs from server ${var.app_monitor.server}, application ${var.app_monitor.app} - ${var.app_monitor.errormsg}",
-            "severity": "1",
+            "name": "Alert from monitor ${var.app_monitor.name}",
+            "severity": "${var.app_monitor.severity}",
             "condition": {
                 "script": {
-                    "source": "ctx.results[0].hits.total.value > 0",
+                    "source": "${var.app_monitor.trigger_source}",
                     "lang": "painless"
                 }
             },
@@ -110,7 +56,7 @@ resource "elasticsearch_opensearch_monitor" "app_monitor" {
                     },
                     "throttle_enabled": true,
                     "throttle": {
-                        "value": 60,
+                        "value": ${var.app_monitor.throttle},
                         "unit": "MINUTES"
                     },
                     "subject_template": {

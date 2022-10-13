@@ -1,11 +1,15 @@
 variable "app_monitor" {
   type = object({
-    name =string
-    server = string
-    app = string
+    name = string
+    index = string   
     query_level_trigger_id = string
     automation_queue_action_id = string
-    errormsg = string
+    interval = number
+    severity = string    
+    queue_name = string
+    throttle = number
+    trigger_source = string
+    queryblock = string
   }) 
 }
 

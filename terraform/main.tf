@@ -568,10 +568,10 @@ module "agent-monitor" {
 
 module "app-monitor" {
   source = "./app-monitor-module"
-  for_each = { for a in jsondecode(file("./app-alert.json")): a.name => a }
+  for_each = yamldecode(file("./app-alert.yaml"))["app-monitors"]
   app_monitor = each.value
   depends_on = [aws_opensearch_domain.es]
-  automation_destination_id = module.destination["wso2-alert"].destination_id
+  automation_destination_id = module.destination[each.value.queue_name].destination_id
 }
 
 # Create destination for agent monitors
