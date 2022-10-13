@@ -1,12 +1,12 @@
    -  name: wso2-translate-monitor-payload
-      index : nrm-app-generic-* 
+      index: nrm-app-generic-* 
       query_level_trigger_id: o0ddmv1v11sk15gi2g0s
       automation_queue_action_id: rvsc62s45z5xojtwteex
       interval: 5
-      severity : '1'
-      queue_name : wso2-alert
+      severity: 1
+      queue_name: wso2-alert
       throttle: 60
-      trigger_source : ctx.results[0].hits.total.value > 0
+      trigger_source: ctx.results[0].hits.total.value > 0
       queryblock: '   
               "size": 0,
                "query": {
@@ -56,14 +56,14 @@
                "aggregations": {}
              '
    -  name: wso2-refactor-monitor-payload
-      index : nrm-app-generic-*  
+      index: nrm-app-generic-*  
       query_level_trigger_id: dc90afzhzp5bxnf1ofle
       automation_queue_action_id: hikk65rsyjr7g92ugbnt
       interval: 5
-      everity : '1'
-      queue_name : wso2-alert
+      everity: 1
+      queue_name: wso2-alert
       throttle: 60
-      trigger_source : ctx.results[0].hits.total.value > 0
+      trigger_source: ctx.results[0].hits.total.value > 0
       queryblock: '   
               "size": 0,
                "query": {
