@@ -21,7 +21,7 @@
     "ecs_ecs_1.12",
     "ecs_event_1.12",
     "ecs_http_1.12",
-    "ecs_service_1.12",
+    "ecs_service_8.4",
     "ecs_source_1.12",
     "ecs_url_1.12",
     "ecs_nrm_base_1.0"
