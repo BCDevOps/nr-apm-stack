@@ -23,15 +23,16 @@ export default class OpenSearchSyncService extends AwsService {
 
   public async syncComponentTemplates(settings: settings): Promise<any> {
     await Promise.all([
-      this.syncEcsComponentTemplates(settings),
+      this.syncEcsComponentTemplates(settings, '1.12'),
+      this.syncEcsComponentTemplates(settings, '8.4'),
       this.syncNrmEcsComponentTemplates(settings),
     ]);
 
     await this.syncIndexTemplates(settings);
   }
 
-  public async syncEcsComponentTemplates(settings: settings): Promise<any> {
-    const componentDir = path.resolve(__dirname, '../../configuration-opensearch/ecs_1.12');
+  public async syncEcsComponentTemplates(settings: settings, version: string): Promise<any> {
+    const componentDir = path.resolve(__dirname, `../../configuration-opensearch/ecs_${version}`);
     for (const filePath of fs.readdirSync(componentDir)) {
       if (!filePath.endsWith('.json')) {
         continue;
@@ -53,12 +54,12 @@ export default class OpenSearchSyncService extends AwsService {
           'host': settings.hostname,
         },
         hostname: settings.hostname,
-        path: `/_component_template/ecs_${basename}_1.12`,
+        path: `/_component_template/ecs_${basename}_${version}`,
       })
         .then((res) => this.waitAndReturnResponseBody(res))
         .then((res) => {
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          console.log(`[${res.statusCode}] Component Template Loaded - ecs_${basename}_1.12`);
+          console.log(`[${res.statusCode}] Component Template Loaded - ecs_${basename}_${version}`);
         });
     }
   }
