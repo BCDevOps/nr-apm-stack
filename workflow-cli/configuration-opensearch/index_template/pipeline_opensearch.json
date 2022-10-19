@@ -20,7 +20,7 @@
     "ecs_base_1.12",
     "ecs_ecs_1.12",
     "ecs_event_1.12",
-    "ecs_service_1.12",
+    "ecs_service_8.4",
     "ecs_nrm_base_1.0",
     "ecs_nrm_batch_1.0",
     "ecs_nrm_kinesis_1.0"

@@ -34,7 +34,7 @@
     "ecs_event_1.12",
     "ecs_host_1.12",
     "ecs_package_1.12",
-    "ecs_service_1.12",
+    "ecs_service_8.4",
     "ecs_source_1.12",
     "ecs_tracing_1.12",
     "ecs_user_agent_1.12",
