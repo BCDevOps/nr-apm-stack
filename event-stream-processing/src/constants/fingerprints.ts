@@ -276,6 +276,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         geoIp: true,
         index: 'nrm-audit-vault-<%=YYYY.MM=%>',
         timestampGuard: 'P14D',
+        keyAsPath: true,
       },
     },
   },
