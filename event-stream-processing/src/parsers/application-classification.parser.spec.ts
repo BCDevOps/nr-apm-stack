@@ -4,7 +4,7 @@ import {RegexService} from '../shared/regex.service';
 
 describe('ParserApplicationClasification', () => {
   it('app - sitesandtrailsbc.ca', () => {
-    const parser = new ApplicationClassificationParser({} as unknown as RegexService);
+    const parser = new ApplicationClassificationParser();
     const document = {
       data: {url: {domain: 'www.del.sitesandtrailsbc.ca', path: '/resources/REC2164/siteimages/images.properties.txt'}},
     } as unknown as OsDocument;
@@ -14,11 +14,21 @@ describe('ParserApplicationClasification', () => {
   });
 
   it('app - clp-cgi', () => {
-    const parser = new ApplicationClassificationParser({} as unknown as RegexService);
+    const parser = new ApplicationClassificationParser();
     const document = {
       data: {url: {domain: '142.34.120.12', path: '/clp-cgi/accessDenied.cgi'}},
     } as unknown as OsDocument;
     parser.apply(document);
     expect(document.data).toHaveProperty('service.target.name', 'clp-cgi');
+  });
+
+  it('app - pub site', () => {
+    const parser = new ApplicationClassificationParser();
+    const document = {
+      data: {url: {domain: '142.34.120.12', path: '/pub/geoserver/ilrr/wms'}},
+    } as unknown as OsDocument;
+    parser.apply(document);
+    expect(document.data).toHaveProperty('service.target.name', 'wms');
+    expect(document.data).toHaveProperty('labels.project', 'ilrr');
   });
 });
