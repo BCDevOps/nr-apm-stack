@@ -1,13 +1,18 @@
 
 import {injectable} from 'inversify';
 import {Parser} from '../types/parser';
+import {inject} from 'inversify';
 import lodash from 'lodash';
+import {TYPES} from '../inversify.types';
 import {knownDomains} from '../constants/known-domains';
 import * as querystring from 'querystring';
 import {OsDocument} from '../types/os-document';
+import {RegexService} from '../shared/regex.service';
 
-// eslint-disable-next-line max-len
-const knownAppContextRegex = /^(?<url__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata))(\/((geoserver)|(pls)))?)\/(?<labels__project>[^\/]*).*$/m;
+/* eslint-disable max-len,camelcase,@typescript-eslint/no-unsafe-call */
+const knownAppContextRegex_v1 = /^(?<url__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata)))((\/((geoserver)|(pls)))?)(\/(?<labels__project>[^\/]*)?)((\/\S*)?)\/(?<service__target__name>[^\/]*)$/;
+const knownAppContextRegex_v2 = /^(?<url__context>(\/((geoserver)|(pls)))?)(\/(?<labels__project>[^\/]*)?)((\/[^\/].*)?)\/(?<service__target__name>[^\/]*)$/;
+/* eslint-enable max-len */
 
 @injectable()
 /**
@@ -16,6 +21,10 @@ const knownAppContextRegex = /^(?<url__context>\/((int)|(ext)|(pub)|(gov)|(datas
  * Tag: Annotation
  */
 export class ApplicationClassificationParser implements Parser {
+  constructor(
+    @inject(TYPES.RegexService) private regexService: RegexService,
+  ) {}
+
   /**
    * Returns true if the document has a url.path and url.domain.
    * @param document The document to match against
@@ -38,30 +47,30 @@ export class ApplicationClassificationParser implements Parser {
 
     for (const knownDomain of knownDomains) {
       if ((knownDomain.regex).test(urlDomain.toLowerCase())) {
-        lodash.set(document.data, 'service.name', knownDomain.app);
+        lodash.set(document.data, 'service.target.name', knownDomain.app);
       }
     }
 
-    if (lodash.isNil(lodash.get(document.data, 'service.name'))) {
-      const m = knownAppContextRegex.exec(urlPath);
-      if (m !== null && m.groups) {
-        for (const groupName of Object.keys(m.groups)) {
-          const fieldName = groupName.replace('__', '.');
-          const groupValue = m.groups[groupName].toLowerCase();
-          lodash.set(document.data, fieldName, groupValue);
+    if (lodash.isNil(lodash.get(document.data, 'service.target.name'))) {
+      const extractedFields = this.regexService.applyRegex(document, 'url.path', [knownAppContextRegex_v1,
+        knownAppContextRegex_v2]);
+
+      if (lodash.isNil(extractedFields.service__target__name)) {
+        if (!lodash.isNil(extractedFields.labels__project)) {
+          lodash.set(document.data, 'service.target.name', extractedFields.labels__project.toLowerCase());
         }
       }
     }
-    if (lodash.isNil(lodash.get(document.data, 'service.name')) && urlPath.startsWith('/clp-cgi')) {
-      lodash.set(document.data, 'service.name', 'clp-cgi');
+    if (lodash.isNil(lodash.get(document.data, 'service.target.name')) && urlPath.startsWith('/clp-cgi')) {
+      lodash.set(document.data, 'service.target.name', 'clp-cgi');
     }
     // https://www.oracle-and-apex.com/apex-url-format/
-    if (lodash.get(document.data, 'service.name') === 'apex') {
+    if (lodash.get(document.data, 'service.target.name') === 'apex') {
       const qs = lodash.get(document.data, 'url.query');
       if (qs) {
         const qsmap = querystring.parse(qs);
         if (qsmap.p) {
-          lodash.set(document.data, 'service.name', 'apex-'+(qsmap.p as string).split(':')[0]);
+          lodash.set(document.data, 'service.target.name', 'apex-'+(qsmap.p as string).split(':')[0]);
         }
       }
     }
