@@ -61,11 +61,12 @@ export class ApplicationClassificationParser implements Parser {
         }
       }
     }
-    if (lodash.isNil(lodash.get(document.data, 'service.target.name')) && urlPath.startsWith('/clp-cgi')) {
+    if (urlPath.startsWith('/clp-cgi')) {
       lodash.set(document.data, 'service.target.name', 'clp-cgi');
     }
     // https://www.oracle-and-apex.com/apex-url-format/
-    if (lodash.get(document.data, 'service.target.name') === 'apex') {
+    if (lodash.get(document.data, 'service.target.name') === 'apex' ||
+    lodash.get(document.data, 'labels.project') === 'apex') {
       const qs = lodash.get(document.data, 'url.query');
       if (qs) {
         const qsmap = querystring.parse(qs);
