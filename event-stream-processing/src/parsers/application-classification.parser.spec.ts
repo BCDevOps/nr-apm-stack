@@ -1,6 +1,5 @@
 import {ApplicationClassificationParser} from './application-classification.parser';
 import {OsDocument} from '../types/os-document';
-import {RegexService} from '../shared/regex.service';
 
 describe('ParserApplicationClasification', () => {
   it('app - sitesandtrailsbc.ca', () => {
@@ -29,6 +28,5 @@ describe('ParserApplicationClasification', () => {
     } as unknown as OsDocument;
     parser.apply(document);
     expect(document.data).toHaveProperty('service.target.name', 'wms');
-    expect(document.data).toHaveProperty('labels.project', 'ilrr');
   });
 });
