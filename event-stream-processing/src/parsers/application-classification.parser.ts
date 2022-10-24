@@ -7,8 +7,8 @@ import * as querystring from 'querystring';
 import {OsDocument} from '../types/os-document';
 
 /* eslint-disable max-len,camelcase,@typescript-eslint/no-unsafe-call */
-const knownAppContextRegex_v1 = /^(?<url__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata)))((\/((geoserver)|(pls)))?)((\/[^\/].*)?)\/(?<service__target__name>[^\/]*)$/;
-const knownAppContextRegex_v2 = /^(?<url__context>(\/((geoserver)|(pls)))?)((\/[^\/].*)?)\/(?<service__target__name>[^\/]*)$/;
+const knownAppContextRegex_v1 = /^(?<url__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata)))((\/((geoserver)|(pls)))?)(\/(?<labels__project>[^\/]*)?)((\/\S*)?)\/(?<service__target__name>[^\/\.]*)((\/[^\/].*)?)$/;
+const knownAppContextRegex_v2 = /^(?<url__context>(\/((geoserver)|(pls)))?)(\/(?<labels__project>[^\/]*)?)((\/[^\/].*)?)\/(?<service__target__name>[^\/\.]*)((\/[^\/].*)?)$/;
 /* eslint-enable max-len */
 
 @injectable()
@@ -61,18 +61,5 @@ export class ApplicationClassificationParser implements Parser {
         }
       }
     }
-
-    // https://www.oracle-and-apex.com/apex-url-format/
-    /* eslint-disable max-len,camelcase,@typescript-eslint/no-unsafe-call */
-    if (lodash.get(document.data, 'service.target.name') === 'apex' ) {
-      const qs = lodash.get(document.data, 'url.query');
-      if (qs) {
-        const qsmap = querystring.parse(qs);
-        if (qsmap.p) {
-          lodash.set(document.data, 'service.target.name', 'apex-'+(qsmap.p as string).split(':')[0]);
-        }
-      }
-    }
-    /* eslint-enable max-len */
   }
 }
