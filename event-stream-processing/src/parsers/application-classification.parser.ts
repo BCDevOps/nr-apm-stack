@@ -7,8 +7,10 @@ import * as querystring from 'querystring';
 import {OsDocument} from '../types/os-document';
 
 /* eslint-disable max-len,camelcase,@typescript-eslint/no-unsafe-call */
-const knownAppContextRegex_v1 = /^(?<url__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata)))((\/((geoserver)|(pls)))?)(\/(?<labels__project>[^\/]*)?)((\/\S*)?)\/(?<service__target__name>[^\/\.]*)((\/[^\/].*)?)$/;
-const knownAppContextRegex_v2 = /^(?<url__context>(\/((geoserver)|(pls)))?)(\/(?<labels__project>[^\/]*)?)((\/[^\/].*)?)\/(?<service__target__name>[^\/\.]*)((\/[^\/].*)?)$/;
+const knownAppContextRegex_v1 = /^(?<url__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata)))\/(?<labels__target_project>geoserver)(\/.\S*)\/((?<service__target__name>[^\/\.]*))((\/[^\/].*)?)$/;
+const knownAppContextRegex_v2 = /^(?<url__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata)))((\/((geoserver)|(pls)))?)(\/(?<labels__target_project>[^\/-]*)?)((\/\S*)?)$/;
+const knownAppContextRegex_v3 = /^(?<url__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata)))((\/((geoserver)|(pls)))?)(\/(?<labels__target_project>[^\/]*)?)((\/\S*)?)$/;
+const knownAppContextRegex_v4 = /^(?<url__context>(\/((geoserver)|(pls)))?)(\/(?<labels__target_project>[^\/]*)?)((\/\S*)?)$/;
 /* eslint-enable max-len */
 
 @injectable()
@@ -47,9 +49,9 @@ export class ApplicationClassificationParser implements Parser {
     if (lodash.isNil(lodash.get(document.data, 'service.target.name')) && urlPath.startsWith('/clp-cgi')) {
       lodash.set(document.data, 'service.target.name', 'clp-cgi');
     }
-
+    /* eslint-disable max-len,camelcase,@typescript-eslint/no-unsafe-call */
     if (lodash.isNil(lodash.get(document.data, 'service.target.name'))) {
-      for (const regex of [knownAppContextRegex_v1, knownAppContextRegex_v2]) {
+      for (const regex of [knownAppContextRegex_v1, knownAppContextRegex_v2, knownAppContextRegex_v3, knownAppContextRegex_v4]) {
         const m = regex.exec(urlPath);
         if (m !== null && m.groups) {
           for (const groupName of Object.keys(m.groups)) {
@@ -60,6 +62,17 @@ export class ApplicationClassificationParser implements Parser {
           break;
         }
       }
+      if (lodash.isNil(lodash.get(document.data, 'service.target.name'))) {
+        if (!lodash.isNil(lodash.get(document.data, 'labels.target_project'))) {
+          const fieldValue=lodash.get(document.data, 'labels.target_project');
+          lodash.set(document.data, 'service.target.name', fieldValue);
+          const firstdash=fieldValue.indexOf('-');
+          if (firstdash>0) {
+            lodash.set(document.data, 'labels.target_project', fieldValue.substring(0, firstdash));
+          }
+        }
+      }
     }
   }
+  /* eslint-enable max-len */
 }
