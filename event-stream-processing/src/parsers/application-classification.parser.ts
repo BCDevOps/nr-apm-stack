@@ -8,9 +8,8 @@ import {OsDocument} from '../types/os-document';
 
 /* eslint-disable max-len,camelcase,@typescript-eslint/no-unsafe-call */
 const knownAppContextRegex_v1 = /^(?<url__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata)))\/(?<labels__target_project>geoserver)(\/.\S*)\/((?<service__target__name>[^\/\.]*))((\/[^\/].*)?)$/;
-const knownAppContextRegex_v2 = /^(?<url__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata)))((\/((geoserver)|(pls)))?)(\/(?<labels__target_project>[^\/-]*)?)((\/\S*)?)$/;
-const knownAppContextRegex_v3 = /^(?<url__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata)))((\/((geoserver)|(pls)))?)(\/(?<labels__target_project>[^\/]*)?)((\/\S*)?)$/;
-const knownAppContextRegex_v4 = /^(?<url__context>(\/((geoserver)|(pls)))?)(\/(?<labels__target_project>[^\/]*)?)((\/\S*)?)$/;
+const knownAppContextRegex_v2 = /^(?<url__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata)))((\/((geoserver)|(pls)))?)(\/(?<labels__target_project>[^\/]*)?)((\/\S*)?)$/;
+const knownAppContextRegex_v3 = /^(?<url__context>(\/((geoserver)|(pls)))?)(\/(?<labels__target_project>[^\/]*)?)((\/\S*)?)$/;
 /* eslint-enable max-len */
 
 @injectable()
@@ -51,7 +50,7 @@ export class ApplicationClassificationParser implements Parser {
     }
     /* eslint-disable max-len,camelcase,@typescript-eslint/no-unsafe-call */
     if (lodash.isNil(lodash.get(document.data, 'service.target.name'))) {
-      for (const regex of [knownAppContextRegex_v1, knownAppContextRegex_v2, knownAppContextRegex_v3, knownAppContextRegex_v4]) {
+      for (const regex of [knownAppContextRegex_v1, knownAppContextRegex_v2, knownAppContextRegex_v3]) {
         const m = regex.exec(urlPath);
         if (m !== null && m.groups) {
           for (const groupName of Object.keys(m.groups)) {
