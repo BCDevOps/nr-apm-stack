@@ -12,15 +12,6 @@ describe('ParserApplicationClasification', () => {
     expect(document.data).toHaveProperty('service.target.name', 'sitesandtrailsbc');
   });
 
-  it('app - clp-cgi', () => {
-    const parser = new ApplicationClassificationParser();
-    const document = {
-      data: {url: {domain: '142.34.120.12', path: '/clp-cgi/accessDenied.cgi'}},
-    } as unknown as OsDocument;
-    parser.apply(document);
-    expect(document.data).toHaveProperty('service.target.name', 'clp-cgi');
-  });
-
   it('test geoserver', () => {
     const parser = new ApplicationClassificationParser();
     const document = {

@@ -3,7 +3,6 @@ import {injectable} from 'inversify';
 import {Parser} from '../types/parser';
 import lodash from 'lodash';
 import {knownDomains} from '../constants/known-domains';
-import * as querystring from 'querystring';
 import {OsDocument} from '../types/os-document';
 
 /* eslint-disable max-len,camelcase,@typescript-eslint/no-unsafe-call */
@@ -45,9 +44,6 @@ export class ApplicationClassificationParser implements Parser {
       }
     }
 
-    if (lodash.isNil(lodash.get(document.data, 'service.target.name')) && urlPath.startsWith('/clp-cgi')) {
-      lodash.set(document.data, 'service.target.name', 'clp-cgi');
-    }
     /* eslint-disable max-len,camelcase,@typescript-eslint/no-unsafe-call */
     if (lodash.isNil(lodash.get(document.data, 'service.target.name'))) {
       for (const regex of [knownAppContextRegex_v1, knownAppContextRegex_v2, knownAppContextRegex_v3]) {
