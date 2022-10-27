@@ -12,6 +12,9 @@ export class FieldExtractorService {
         if (docPath.startsWith('basename(')) {
           const filePath = lodash.get(document.data, docPath.substring(9, docPath.length - 1), '');
           return path.basename(filePath);
+        } else if (docPath === 'kinesis.eventID') {
+          // Grab from record as the kinesis fields may not be set
+          return document.record.eventID;
         }
         return lodash.get(document.data, docPath, '');
       });

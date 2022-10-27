@@ -38,9 +38,6 @@ describe('KinesisParser', () => {
       event: {
         ingested: 'date',
       },
-      kinesis: {
-        eventID: 'endofdino',
-      },
     });
   });
 
