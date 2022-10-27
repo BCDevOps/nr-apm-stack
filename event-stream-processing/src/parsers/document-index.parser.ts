@@ -25,11 +25,15 @@ export class DocumentIndexParser implements Parser {
    */
   apply(document: OsDocument): void {
     let indexName: string = lodash.get(document.data, '@metadata.index');
+    const indexPreprodQualifier: string = lodash.get(document.data, '@metadata.indexPreprodQualifier');
     if (!indexName) {
       throw new ParserError('Could not map event to an index', this.constructor.name);
     }
     indexName = this.applyTimestampSubstitution(document, indexName);
     indexName = this.applyDataFieldSubstitution(document, indexName);
+    if (indexPreprodQualifier) {
+      indexName = this.applyPreprodQualifier(document, indexName);
+    }
     document.index = indexName;
   }
   private applyTimestampSubstitution(document: OsDocument, index: string): string {
@@ -57,5 +61,14 @@ export class DocumentIndexParser implements Parser {
       }
       throw new ParserError(`Unexpected formatting: ${match}`, this.constructor.name);
     });
+  }
+
+  private applyPreprodQualifier(document: OsDocument, index: string): string {
+    if (lodash.get(document.data, 'service.environment') === 'production') {
+      return index;
+    } else {
+      const offset = index.lastIndexOf('-');
+      return offset > 0 ? `${index.substring(0, offset)}-preprod${index.substring(offset)}` : index;
+    }
   }
 }

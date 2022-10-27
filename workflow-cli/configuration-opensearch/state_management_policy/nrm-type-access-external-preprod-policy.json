@@ -1,0 +1,41 @@
+{
+  "policy": {
+    "policy_id": "nrm-type-access-external-preprod-policy",
+    "description": "NRM access external preprod policy",
+    "schema_version": 1,
+    "last_updated_time": 1628803063474,
+    "error_notification": null,
+    "default_state": "initial",
+    "states": [
+      {
+        "name": "initial",
+        "actions": [],
+        "transitions": [
+          {
+            "state_name": "delete",
+            "conditions": {
+              "min_index_age": "10d"
+            }
+          }
+        ]
+      },
+      {
+        "name": "delete",
+        "actions": [
+          {
+            "delete": {}
+          }
+        ],
+        "transitions": []
+      }
+    ],
+    "ism_template": [
+      {
+        "index_patterns": [
+          "nrm-access-external-preprod*"
+        ],
+        "priority": 10
+      }
+    ]
+  }
+}
