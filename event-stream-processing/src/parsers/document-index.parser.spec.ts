@@ -67,6 +67,22 @@ describe('IndexNameParser', () => {
     parser.apply(document);
     expect(document).toHaveProperty('index', 'nrm-logs-dude-access-2021.05.01');
   });
+
+  it('adds index with preprod qualifier', () => {
+    const parser = new DocumentIndexParser();
+    const document = {
+      data: {
+        '@timestamp': '2021-05-01T18:47:40.314-07:00',
+        '@metadata': {
+          index: 'nrm-logs-access-<%=YYYY.MM.DD=%>',
+          indexPreprodQualifier: true,
+        },
+      },
+    } as unknown as OsDocument;
+    parser.apply(document);
+    expect(document).toHaveProperty('index', 'nrm-logs-access-preprod-2021.05.01');
+  });
+
   it('throws error with undefined field substitution', () => {
     const parser = new DocumentIndexParser();
     const document = {

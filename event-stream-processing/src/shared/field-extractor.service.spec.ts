@@ -16,4 +16,21 @@ describe('FieldExtractorService', () => {
       'value',
     ]);
   });
+
+  it('extract kinesis fields', () => {
+    const fez = new FieldExtractorService();
+
+    const res = fez.fieldStringToArray('kinesis.eventID,key', {
+      record: {
+        eventID: 'kid',
+      },
+      data: {
+        key: 'value',
+      },
+    } as unknown as OsDocument);
+    expect(res).toEqual([
+      'kid',
+      'value',
+    ]);
+  });
 });
