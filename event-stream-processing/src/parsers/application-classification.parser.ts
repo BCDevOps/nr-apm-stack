@@ -1,7 +1,7 @@
 
 import {injectable} from 'inversify';
-import {Parser} from '../types/parser';
 import lodash from 'lodash';
+import {Parser} from '../types/parser';
 import {knownDomains} from '../constants/known-domains';
 import {OsDocument} from '../types/os-document';
 
@@ -51,20 +51,21 @@ export class ApplicationClassificationParser implements Parser {
         if (m !== null && m.groups) {
           for (const groupName of Object.keys(m.groups)) {
             const fieldName = groupName.replace(/__/g, '.');
-            const groupValue = m.groups[groupName].toLowerCase();
-            lodash.set(document.data, fieldName, groupValue);
+            const groupValue = m.groups[groupName];
+            if (groupValue) {
+              lodash.set(document.data, fieldName, groupValue.toLowerCase());
+            }
           }
           break;
         }
       }
-      if (lodash.isNil(lodash.get(document.data, 'service.target.name'))) {
-        if (!lodash.isNil(lodash.get(document.data, 'labels.target_project'))) {
-          const fieldValue=lodash.get(document.data, 'labels.target_project');
-          lodash.set(document.data, 'service.target.name', fieldValue);
-          const firstdash=fieldValue.indexOf('-');
-          if (firstdash>0) {
-            lodash.set(document.data, 'labels.target_project', fieldValue.substring(0, firstdash));
-          }
+      if (lodash.isNil(lodash.get(document.data, 'service.target.name')) &&
+        lodash.isString(lodash.get(document.data, 'labels.target_project'))) {
+        const fieldValue = lodash.get(document.data, 'labels.target_project');
+        lodash.set(document.data, 'service.target.name', fieldValue);
+        const firstdash = fieldValue.indexOf('-');
+        if (firstdash > 0) {
+          lodash.set(document.data, 'labels.target_project', fieldValue.substring(0, firstdash));
         }
       }
     }
