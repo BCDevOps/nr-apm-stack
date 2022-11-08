@@ -168,6 +168,14 @@
     "automation_queue_action_id": "cf5f184d23b45b57151e"
   },
   {
+    "name": "nrm_cyborg_fluent-bit.0",
+    "server": "cyborg",
+    "agent": "fluent-bit.0",
+    "query_level_trigger_id": "58ec631f3a762f8b81d9",
+    "teams_channel_action_id": "21602e310aeeeb95ded2",
+    "automation_queue_action_id": "3b1fbc70fc1d4c3bddb5"
+  },
+  {
     "name": "nrm_district_fluent-bit.0",
     "server": "district",
     "agent": "fluent-bit.0",
@@ -286,6 +294,14 @@
     "query_level_trigger_id": "a9b4186e66dd22eea15a",
     "teams_channel_action_id": "087afe3a79a6a77837d3",
     "automation_queue_action_id": "55f9208e666b08008f02"
+  },
+  {
+    "name": "nrm_shout_fluent-bit.0",
+    "server": "shout",
+    "agent": "fluent-bit.0",
+    "query_level_trigger_id": "3e4ef9cb932ee3faf145",
+    "teams_channel_action_id": "440b6f6ba02ce85d241f",
+    "automation_queue_action_id": "b4813a1f9c36786f61dd"
   },
   {
     "name": "nrm_skittles_fluent-bit.0",
@@ -414,6 +430,14 @@
     "query_level_trigger_id": "c70cd2dd2c55db4be60a",
     "teams_channel_action_id": "182b0d78f68b8d9ae8da",
     "automation_queue_action_id": "402452d55fbbdbbac42b"
+  },
+  {
+    "name": "nrm_whisper_fluent-bit.0",
+    "server": "whisper",
+    "agent": "fluent-bit.0",
+    "query_level_trigger_id": "34cd072ba2504721fc0f",
+    "teams_channel_action_id": "dfa9258c275eba093756",
+    "automation_queue_action_id": "1ebec622f3d228a63b2b"
   },
   {
     "name": "nrm_zone_fluent-bit.0",
