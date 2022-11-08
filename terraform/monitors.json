@@ -168,14 +168,6 @@
     "automation_queue_action_id": "cf5f184d23b45b57151e"
   },
   {
-    "name": "nrm_cyborg_fluent-bit.0",
-    "server": "cyborg",
-    "agent": "fluent-bit.0",
-    "query_level_trigger_id": "58ec631f3a762f8b81d9",
-    "teams_channel_action_id": "21602e310aeeeb95ded2",
-    "automation_queue_action_id": "3b1fbc70fc1d4c3bddb5"
-  },
-  {
     "name": "nrm_district_fluent-bit.0",
     "server": "district",
     "agent": "fluent-bit.0",
