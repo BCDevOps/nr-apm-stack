@@ -11,17 +11,6 @@ terraform {
   }
 }
 
-resource "elasticsearch_opensearch_destination" "destination" {
-  body = jsonencode({
-    type = "sns"
-    name = "${var.topic.display} SNS"
-    sns = {
-      role_arn = var.aws_sns_role_id
-      topic_arn = var.aws_sns_topic_id
-    }
-  })
-}
-
 data "aws_iam_policy_document" "sqs-queue-policy" {
   policy_id = "arn:aws:sqs:${var.aws_region_name}:${var.aws_account_id}:${var.es_domain_name}-${var.topic.resourceId}/SQSDefaultPolicy"
 
