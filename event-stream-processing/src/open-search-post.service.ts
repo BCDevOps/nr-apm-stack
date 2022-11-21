@@ -37,7 +37,7 @@ export class OpenSearchPostService extends OpenSearchService {
         continue;
       }
       index.set(document.id, document);
-      body += `{"index":{"_index": "${document.index}", "_type": "${document.type}"`;
+      body += `{"index":{"_index": "${document.index}"`;
       if (document.id) {
         body += `, "_id":"${document.id}"`;
       }
