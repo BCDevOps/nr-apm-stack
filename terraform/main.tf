@@ -571,7 +571,6 @@ module "app-monitor" {
   for_each = { for a in yamldecode(file("./app-alert.yaml")): a.name =>a }
   app_monitor = each.value
   depends_on = [aws_opensearch_domain.es]
-  automation_destination_id = each.value.destination_id
 }
 
 module "topic" {
