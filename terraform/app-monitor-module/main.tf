@@ -49,7 +49,7 @@ resource "elasticsearch_opensearch_monitor" "app_monitor" {
                 {
                     "id": "${var.app_monitor.automation_queue_action_id}",
                     "name": "Notify Email Alert",
-                    "destination_id": "${var.automation_destination_id}",
+                    "destination_id": "${var.app_monitor.destination_id}",
                     "message_template": {
                         "source": "Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue.\n  - Trigger: {{ctx.trigger.name}}\n  - Severity: {{ctx.trigger.severity}}\n  - Period start: {{ctx.periodStart}}\n  - Period end: {{ctx.periodEnd}}",
                         "lang" : "mustache"

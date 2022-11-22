@@ -562,8 +562,8 @@ module "agent-monitor" {
   for_each = { for a in jsondecode(file("./monitors.json")): a.name => a }
   agent_monitor = each.value
   depends_on = [aws_opensearch_domain.es]
-  webhook_destination_id = elasticsearch_opensearch_destination.agent_monitor_destination.id
-  automation_destination_id = module.destination["message-queue"].destination_id
+  webhook_destination_id = "031jXoEBrs4PMVtpxqUP"
+  automation_destination_id = "JOSvT4EBMZyC3ZT-Xubu"
 }
 
 module "app-monitor" {
@@ -571,31 +571,6 @@ module "app-monitor" {
   for_each = { for a in yamldecode(file("./app-alert.yaml")): a.name =>a }
   app_monitor = each.value
   depends_on = [aws_opensearch_domain.es]
-  automation_destination_id = module.destination[each.value.queue_name].destination_id
-}
-
-# Create destination for agent monitors
-resource "elasticsearch_opensearch_destination" "agent_monitor_destination" {
-  body = <<EOF
-{
-  "type": "custom_webhook",
-  "name": "Appinfra Webhook",
-  "custom_webhook": {
-    "path": null,
-    "header_params": {
-      "Content-Type": "application/json"
-    },
-    "password": null,
-    "scheme": "HTTPS",
-    "method" : "POST",
-    "port": -1,
-    "query_params": {},
-    "host": null,
-    "url" : "${var.agent_monitor_webhook_url}",
-    "username": null
-  }
-}
-EOF
 }
 
 module "topic" {
