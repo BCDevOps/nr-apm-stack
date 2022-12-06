@@ -22,6 +22,7 @@
     "ecs_ecs_8.4",
     "ecs_event_8.4",
     "ecs_host_8.4",
+    "ecs_group_8.4",
     "ecs_log_8.4",
     "ecs_service_8.4",
     "ecs_source_8.4",
