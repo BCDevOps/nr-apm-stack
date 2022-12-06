@@ -48,11 +48,27 @@
             },
             "metadata": {
               "properties": {
+                "email": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "guid": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "name": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
                 "role": {
                   "ignore_above": 1024,
                   "type": "keyword"
                 },
                 "role_name": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "username": {
                   "ignore_above": 1024,
                   "type": "keyword"
                 }
@@ -210,11 +226,27 @@
                 },
                 "metadata": {
                   "properties": {
+                    "email": {
+                      "ignore_above": 1024,
+                      "type": "keyword"
+                    },
+                    "guid": {
+                      "ignore_above": 1024,
+                      "type": "keyword"
+                    },
+                    "name": {
+                      "ignore_above": 1024,
+                      "type": "keyword"
+                    },
                     "role": {
                       "ignore_above": 1024,
                       "type": "keyword"
                     },
                     "role_name": {
+                      "ignore_above": 1024,
+                      "type": "keyword"
+                    },
+                    "username": {
                       "ignore_above": 1024,
                       "type": "keyword"
                     }
