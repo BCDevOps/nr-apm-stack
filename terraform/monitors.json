@@ -200,6 +200,14 @@
     "automation_queue_action_id": "3e617c3154f72cfde5a2"
   },
   {
+    "name": "nrm_gimlet_fluent-bit.0",
+    "server": "gimlet",
+    "agent": "fluent-bit.0",
+    "query_level_trigger_id": "9a2a70ecec6541109d9a",
+    "teams_channel_action_id": "5a57b739710921f4691c",
+    "automation_queue_action_id": "59762a2d85df2d4ad1ad"
+  },
+  {
     "name": "nrm_gumibears_fluent-bit.0",
     "server": "gumibears",
     "agent": "fluent-bit.0",
@@ -238,6 +246,14 @@
     "query_level_trigger_id": "bc10dba00923ab41e141",
     "teams_channel_action_id": "dc99e4f27a27ca99054a",
     "automation_queue_action_id": "da7df2cb96c40a618c8d"
+  },
+  {
+    "name": "nrm_mojito_fluent-bit.0",
+    "server": "mojito",
+    "agent": "fluent-bit.0",
+    "query_level_trigger_id": "41fef008c90013273481",
+    "teams_channel_action_id": "51b4ef707e75ab34220c",
+    "automation_queue_action_id": "c36e5ed80113b8852101"
   },
   {
     "name": "nrm_pinnacle_fluent-bit.0",
