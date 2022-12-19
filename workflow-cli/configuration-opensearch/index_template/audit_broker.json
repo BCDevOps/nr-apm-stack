@@ -19,6 +19,23 @@
             "client_token": {
               "ignore_above": 1024,
               "type": "keyword"
+            },
+            "exp": {
+              "type": "long"
+            },
+            "iat": {
+              "type": "long"
+            },
+            "nbf": {
+              "type": "long"
+            },
+            "jti": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "sub": {
+              "ignore_above": 1024,
+              "type": "keyword"
             }
           }
         },
