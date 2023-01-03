@@ -19,6 +19,10 @@
             "environment_alias": {
               "ignore_above": 1024,
               "type": "keyword"
+            },
+            "server_group": {
+              "ignore_above": 1024,
+              "type": "keyword"
             }
           }
         }
