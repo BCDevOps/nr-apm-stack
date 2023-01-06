@@ -23,11 +23,20 @@
             "exp": {
               "type": "long"
             },
+            "exp_timestamp": {
+              "type": "date"
+            },
             "iat": {
               "type": "long"
             },
+            "iat_timestamp": {
+              "type": "date"
+            },
             "nbf": {
               "type": "long"
+            },
+            "nbf_timestamp": {
+              "type": "date"
             },
             "jti": {
               "ignore_above": 1024,
