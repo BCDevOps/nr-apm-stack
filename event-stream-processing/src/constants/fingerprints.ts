@@ -17,14 +17,14 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       event: {
         kind: 'event',
         category: 'web',
-        dataset: 'apache.access',
+        dataset: 'apache.access.internal',
       },
     },
     dataDefaults: {
       '@metadata': {
         hash: 'host.hostname,basename(log.file.path),event.sequence,event.original',
         docId: 'basename(log.file.path),event.sequence,event.hash',
-        index: 'nrm-access-external-<%=YYYY.MM.DD=%>',
+        index: 'nrm-access-internal-<%=YYYY.MM.DD=%>',
         indexPreprodQualifier: true,
         timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
         timestampGuard: 'P8D',
