@@ -17,6 +17,36 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       event: {
         kind: 'event',
         category: 'web',
+        dataset: 'apache.access',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: 'host.hostname,basename(log.file.path),event.sequence,event.original',
+        docId: 'basename(log.file.path),event.sequence,event.hash',
+        index: 'nrm-access-external-<%=YYYY.MM.DD=%>',
+        indexPreprodQualifier: true,
+        timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
+        timestampGuard: 'P8D',
+        apacheAccessLog: true,
+        appClassification: true,
+        deslash: true,
+        environmentStandardize: true,
+        urlExplode: true,
+        geoIp: true,
+        httpStatusOutcome: true,
+        threatPhp: true,
+        userAgent: true,
+        keyAsPath: true,
+      },
+    },
+  },
+  {
+    name: FingerprintCategory.APACHE_ACCESS_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
         dataset: 'apache.access.internal',
       },
     },
