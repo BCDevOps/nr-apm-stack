@@ -573,6 +573,13 @@ module "app-monitor" {
   depends_on = [aws_opensearch_domain.es]
 }
 
+module "jwt-token-monitor" {
+  source = "./jwt-token-monitor-module"
+  for_each = { for a in jsondecode(file("./jwt-token-monitors.json")): a.name =>a }
+  jwt_token_monitor = each.value
+  depends_on = [aws_opensearch_domain.es]
+}
+
 module "topic" {
   source = "./topic-module"
   for_each = { for t in jsondecode(file("./topics.json")): t.resourceId => t }
