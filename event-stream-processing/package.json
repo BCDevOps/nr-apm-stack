@@ -76,24 +76,5 @@
     "reflect-metadata": "^0.1.13",
     "ua-parser-js": "^1.0.32"
   },
-  "bundledDependencies": true,
-  "bundleDependencies": [
-    "@aws-crypto/sha256-js",
-    "@aws-sdk/client-firehose",
-    "@aws-sdk/credential-provider-node",
-    "@aws-sdk/node-http-handler",
-    "@aws-sdk/protocol-http",
-    "@aws-sdk/signature-v4",
-    "@nestjs/common",
-    "@nestjs/core",
-    "@nestjs/platform-express",
-    "clean-deep",
-    "inversify",
-    "lodash",
-    "maxmind",
-    "moment",
-    "moment-timezone",
-    "reflect-metadata",
-    "ua-parser-js"
-  ]
+  "bundledDependencies": true
 }

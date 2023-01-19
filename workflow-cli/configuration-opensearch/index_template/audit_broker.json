@@ -68,6 +68,7 @@
   "composed_of": [
     "ecs_agent_8.4",
     "ecs_base_8.4",
+    "ecs_cloud_8.4",
     "ecs_ecs_8.4",
     "ecs_event_8.4",
     "ecs_host_8.4",

@@ -397,7 +397,7 @@ resource "elasticsearch_opensearch_role" "iit_logs_writer" {
   cluster_permissions = ["indices:data/write/bulk","indices:admin/create", "create_index"]
 
   index_permissions {
-    index_patterns  = ["iitd-*", "iit-*", "nrm-*"]
+    index_patterns  = ["iitd-*", "iit-*", "nrm-*", "otel-*"]
     allowed_actions = ["indices:data/write/bulk","indices:data/write/index","indices:data/write/bulk*","create_index"]
   }
   depends_on = [aws_opensearch_domain.es]
@@ -431,7 +431,7 @@ resource "elasticsearch_opensearch_role" "nrm_read_all" {
     "cluster:admin/opensearch/observability/get"
   ]
   index_permissions {
-    index_patterns  = ["iitd-*", "iit-*", "nrm-*"]
+    index_patterns  = ["iitd-*", "iit-*", "nrm-*", "otel-*"]
     allowed_actions = ["read", "indices:admin/resolve/index", "indices:data/read/get", "indices:monitor/settings/get"]
     masked_fields = ["source.ip", "client.ip"]
     field_level_security = ["~event.original", "~http.request.line"]
@@ -485,7 +485,7 @@ resource "elasticsearch_opensearch_role" "nrm_security" {
     "cluster:admin/opensearch/observability/get"
   ]
   index_permissions {
-    index_patterns  = ["iitd-*", "iit-*", "nrm-*"]
+    index_patterns  = ["iitd-*", "iit-*", "nrm-*", "otel-*"]
     allowed_actions = ["read", "indices:admin/resolve/index", "indices:data/read/get", "indices:monitor/settings/get"]
   }
   index_permissions {
