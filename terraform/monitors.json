@@ -416,6 +416,14 @@
     "automation_queue_action_id": "29a5739d8106af04c575"
   },
   {
+    "name": "nrm_transform_fluent-bit.0",
+    "server": "transform",
+    "agent": "fluent-bit.0",
+    "query_level_trigger_id": "ea61e4d691c6a88ba531",
+    "teams_channel_action_id": "77e01c26e82601bb038b",
+    "automation_queue_action_id": "4f614f6509b1502f7dd9"
+  },
+  {
     "name": "nrm_translate_fluent-bit.0",
     "server": "translate",
     "agent": "fluent-bit.0",
@@ -438,6 +446,14 @@
     "query_level_trigger_id": "c70cd2dd2c55db4be60a",
     "teams_channel_action_id": "182b0d78f68b8d9ae8da",
     "automation_queue_action_id": "402452d55fbbdbbac42b"
+  },
+  {
+    "name": "nrm_volatile_fluent-bit.0",
+    "server": "volatile",
+    "agent": "fluent-bit.0",
+    "query_level_trigger_id": "3b469fb290ea3683bb7f",
+    "teams_channel_action_id": "14793a7d01aee79687ae",
+    "automation_queue_action_id": "a968c3014dcd51b33f3a"
   },
   {
     "name": "nrm_whisper_fluent-bit.0",
