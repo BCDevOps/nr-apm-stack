@@ -29,7 +29,6 @@ export default class Indicesusage extends Command {
     arn: Flags.string({description: 'AWS ARN', env: 'AWS_ASSUME_ROLE'}),
     indicesname: Flags.string({description: 'indices name', env: 'AWS_ASSUME_ROLE', required: true}),
     fieldname: Flags.string({description: 'field name', env: 'AWS_ASSUME_ROLE', required: true}),
-    fieldvalue: Flags.string({description: 'field value', env: 'AWS_ASSUME_ROLE', required: true}),
   };
 
   public async run(): Promise<void> {
