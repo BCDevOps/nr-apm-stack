@@ -436,4 +436,34 @@ DESCRIPTION
 EXAMPLES
   $ workflow-cli snapshot
 ```
+
+## `workflow-cli indicesusage`
+
+Indices usage export tool
+
+```
+USAGE
+  $ workflow-cli indicesusage -u <value> -d <value> --region <value> --accessId <value> --accessKey <value> 
+    --accountNumber <value> [--arn <value>]
+    --indicesname <value> 
+    --fieldname <value>
+
+FLAGS
+  -d, --domainName=<value>  (required) OpenSearch Domain
+  -u, --hostname=<value>    (required) OpenSearch url
+  --accessId=<value>        (required) AWS access key id
+  --accessKey=<value>       (required) AWS secret access key
+  --accountNumber=<value>   (required) AWS account number
+  --arn=<value>             AWS ARN
+  --region=<value>          (required) AWS region
+  --indicesname <value>     (required) Index or indices list
+  --fieldname <value>       (required) field name
+
+DESCRIPTION
+  Indices usage export tool
+
+EXAMPLES
+  $ workflow-cli indicesusage --indicesname nrm-metrics-2023.01.27 --fieldname organization.name
+  $ workflow-cli indicesusage --indicesname nrm-metrics-2023.01.27,nrm-metrics-2023.01.26,nrm-metrics-2023.01.28 --fieldname organization.name
+```
 <!-- commandsstop -->
