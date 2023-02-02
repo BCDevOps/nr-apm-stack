@@ -20,7 +20,7 @@ $ npm install -g workflow-cli
 $ workflow-cli COMMAND
 running command...
 $ workflow-cli (--version)
-workflow-cli/1.0.0 darwin-x64 node-v17.8.0
+workflow-cli/1.0.0 darwin-x64 node-v16.17.1
 $ workflow-cli --help [COMMAND]
 USAGE
   $ workflow-cli COMMAND
@@ -30,9 +30,10 @@ USAGE
 # Commands
 <!-- commands -->
 * [`workflow-cli automation-message`](#workflow-cli-automation-message)
-* [`workflow-cli help [COMMAND]`](#workflow-cli-help-command)
+* [`workflow-cli help [COMMANDS]`](#workflow-cli-help-commands)
 * [`workflow-cli keycloak-sync`](#workflow-cli-keycloak-sync)
 * [`workflow-cli lambda-asset-download [FILE]`](#workflow-cli-lambda-asset-download-file)
+* [`workflow-cli opensearch-index-usage ACTION`](#workflow-cli-opensearch-index-usage-action)
 * [`workflow-cli opensearch-sync`](#workflow-cli-opensearch-sync)
 * [`workflow-cli plugins`](#workflow-cli-plugins)
 * [`workflow-cli plugins:install PLUGIN...`](#workflow-cli-pluginsinstall-plugin)
@@ -44,7 +45,7 @@ USAGE
 * [`workflow-cli plugins:uninstall PLUGIN...`](#workflow-cli-pluginsuninstall-plugin-2)
 * [`workflow-cli plugins update`](#workflow-cli-plugins-update)
 * [`workflow-cli reindex`](#workflow-cli-reindex)
-* [`workflow-cli snapshot`](#workflow-cli-snapshot)
+* [`workflow-cli snapshot ACTION`](#workflow-cli-snapshot-action)
 
 ## `workflow-cli automation-message`
 
@@ -71,16 +72,16 @@ EXAMPLES
   $ workflow-cli automation-message
 ```
 
-## `workflow-cli help [COMMAND]`
+## `workflow-cli help [COMMANDS]`
 
 Display help for workflow-cli.
 
 ```
 USAGE
-  $ workflow-cli help [COMMAND] [-n]
+  $ workflow-cli help [COMMANDS] [-n]
 
 ARGUMENTS
-  COMMAND  Command to show help for.
+  COMMANDS  Command to show help for.
 
 FLAGS
   -n, --nested-commands  Include all nested commands in the output.
@@ -89,7 +90,7 @@ DESCRIPTION
   Display help for workflow-cli.
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.1.12/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.2.2/src/commands/help.ts)_
 
 ## `workflow-cli keycloak-sync`
 
@@ -131,6 +132,36 @@ DESCRIPTION
 
 EXAMPLES
   $ workflow-cli lambda-asset-download
+```
+
+## `workflow-cli opensearch-index-usage ACTION`
+
+Index usage generator tool
+
+```
+USAGE
+  $ workflow-cli opensearch-index-usage [ACTION] -u <value> -d <value> --region <value> --accessId <value> --accessKey
+    <value> --accountNumber <value> --indicesname <value> --fieldname <value> [--arn <value>]
+
+ARGUMENTS
+  ACTION  [default: _search] Search indices usage
+
+FLAGS
+  -d, --domainName=<value>  (required) OpenSearch Domain
+  -u, --hostname=<value>    (required) OpenSearch url
+  --accessId=<value>        (required) AWS access key id
+  --accessKey=<value>       (required) AWS secret access key
+  --accountNumber=<value>   (required) AWS account number
+  --arn=<value>             AWS ARN
+  --fieldname=<value>       (required) [default: organization.id] field name
+  --indicesname=<value>     (required) indices name
+  --region=<value>          (required) AWS region
+
+DESCRIPTION
+  Index usage generator tool
+
+EXAMPLES
+  $ workflow-cli opensearch-index-usage
 ```
 
 ## `workflow-cli opensearch-sync`
@@ -175,7 +206,7 @@ EXAMPLES
   $ workflow-cli plugins
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.1.0/src/commands/plugins/index.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.3.0/src/commands/plugins/index.ts)_
 
 ## `workflow-cli plugins:install PLUGIN...`
 
@@ -195,7 +226,6 @@ FLAGS
 
 DESCRIPTION
   Installs a plugin into the CLI.
-
   Can be installed from npm or a git url.
 
   Installation of a user-installed plugin will override a core plugin.
@@ -203,6 +233,7 @@ DESCRIPTION
   e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
   will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
   the CLI without the need to patch and update the whole CLI.
+
 
 ALIASES
   $ workflow-cli plugins add
@@ -230,6 +261,9 @@ FLAGS
   -h, --help     Show CLI help.
   -v, --verbose
 
+GLOBAL FLAGS
+  --json  Format output as json.
+
 DESCRIPTION
   Displays installation properties of a plugin.
 
@@ -255,7 +289,6 @@ FLAGS
 
 DESCRIPTION
   Installs a plugin into the CLI.
-
   Can be installed from npm or a git url.
 
   Installation of a user-installed plugin will override a core plugin.
@@ -263,6 +296,7 @@ DESCRIPTION
   e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
   will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
   the CLI without the need to patch and update the whole CLI.
+
 
 ALIASES
   $ workflow-cli plugins add
@@ -292,11 +326,11 @@ FLAGS
 
 DESCRIPTION
   Links a plugin into the CLI for development.
-
   Installation of a linked plugin will override a user-installed or core plugin.
 
   e.g. If you have a user-installed or core plugin that has a 'hello' command, installing a linked plugin with a 'hello'
   command will override the user-installed or core plugin implementation. This is useful for development work.
+
 
 EXAMPLES
   $ workflow-cli plugins:link myplugin
@@ -412,14 +446,17 @@ EXAMPLES
   $ workflow-cli reindex
 ```
 
-## `workflow-cli snapshot`
+## `workflow-cli snapshot ACTION`
 
-Snapshot setup tool
+Snapshot setup and creation tool
 
 ```
 USAGE
-  $ workflow-cli snapshot -u <value> -d <value> --region <value> --accessId <value> --accessKey <value>
-    --accountNumber <value> [--arn <value>]
+  $ workflow-cli snapshot [ACTION] -u <value> -d <value> --region <value> --accessId <value> --accessKey
+    <value> --accountNumber <value> [--arn <value>]
+
+ARGUMENTS
+  ACTION  (setup|create) [default: create] Snapshot action
 
 FLAGS
   -d, --domainName=<value>  (required) OpenSearch Domain
@@ -431,39 +468,9 @@ FLAGS
   --region=<value>          (required) AWS region
 
 DESCRIPTION
-  Snapshot setup tool
+  Snapshot setup and creation tool
 
 EXAMPLES
   $ workflow-cli snapshot
-```
-
-## `workflow-cli indicesusage`
-
-Indices usage export tool
-
-```
-USAGE
-  $ workflow-cli indicesusage -u <value> -d <value> --region <value> --accessId <value> --accessKey <value> 
-    --accountNumber <value> [--arn <value>]
-    --indicesname <value> 
-    --fieldname <value>
-
-FLAGS
-  -d, --domainName=<value>  (required) OpenSearch Domain
-  -u, --hostname=<value>    (required) OpenSearch url
-  --accessId=<value>        (required) AWS access key id
-  --accessKey=<value>       (required) AWS secret access key
-  --accountNumber=<value>   (required) AWS account number
-  --arn=<value>             AWS ARN
-  --region=<value>          (required) AWS region
-  --indicesname <value>     (required) Index or indices list
-  --fieldname <value>       (required) field name
-
-DESCRIPTION
-  Indices usage export tool
-
-EXAMPLES
-  $ workflow-cli indicesusage --indicesname nrm-metrics-2023.01.27 --fieldname organization.name
-  $ workflow-cli indicesusage --indicesname nrm-metrics-2023.01.27,nrm-metrics-2023.01.26,nrm-metrics-2023.01.28 --fieldname organization.name
 ```
 <!-- commandsstop -->
