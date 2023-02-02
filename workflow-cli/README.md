@@ -136,7 +136,7 @@ EXAMPLES
 
 ## `workflow-cli opensearch-index-usage ACTION`
 
-Snapshot setup and creation tool
+Index usage generator tool
 
 ```
 USAGE
@@ -153,12 +153,12 @@ FLAGS
   --accessKey=<value>       (required) AWS secret access key
   --accountNumber=<value>   (required) AWS account number
   --arn=<value>             AWS ARN
-  --fieldname=<value>       (required) field name
+  --fieldname=<value>       (required) [default: organization.id] field name
   --indicesname=<value>     (required) indices name
   --region=<value>          (required) AWS region
 
 DESCRIPTION
-  Snapshot setup and creation tool
+  Index usage generator tool
 
 EXAMPLES
   $ workflow-cli opensearch-index-usage
