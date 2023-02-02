@@ -119,3 +119,4 @@ terraform/.terraform.lock.hcl
 /event-stream-processing/doc/
 /event-stream-processing/event-stream-processing.zip
 /terraform/event-stream-processing.zip
+workflow-cli/indicesusage*.csv
