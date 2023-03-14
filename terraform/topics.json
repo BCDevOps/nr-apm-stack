@@ -38,5 +38,15 @@
     "display": "WSO2 Alert",
     "resourceId": "wso2-alert",
     "sqsEndpoint": false
+  },
+  {
+    "display": "OneTeam Priority",
+    "resourceId": "oneteam-priority",
+    "sqsEndpoint": false
+  },
+  {
+    "display": "OneTeam",
+    "resourceId": "oneteam-normal",
+    "sqsEndpoint": false
   }
 ]
