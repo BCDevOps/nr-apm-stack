@@ -67,7 +67,18 @@ resource "elasticsearch_opensearch_monitor" "app_monitor" {
             ]
         }
         }
-    ]
+    ],
+    "data_sources": {
+        "alerts_history_index": ".opendistro-alerting-alert-history-write",
+        "alerts_history_index_pattern": "<.opendistro-alerting-alert-history-{now/d}-1>",
+        "alerts_index": ".opendistro-alerting-alerts",
+        "findings_enabled": false,
+        "findings_index": ".opensearch-alerting-finding-history-write",
+        "findings_index_pattern": "<.opensearch-alerting-finding-history-{now/d}-1>",
+        "query_index": ".opensearch-alerting-queries",
+        "query_index_mappings_by_type": {}
+    },
+    "owner": "alerting"
 }
 EOF
 }
