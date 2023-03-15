@@ -575,8 +575,9 @@ module "app-monitor" {
 
 module "jwt-token-monitor" {
   source = "./jwt-token-monitor-module"
-  for_each = { for a in jsondecode(file("./jwt-token-monitors.json")): a.name =>a }
+  for_each = { for a in jsondecode(file("./jwt-token-monitors.json")): a.name => a }
   jwt_token_monitor = each.value
+  destination_id = module.topic["${each.value.topic_key}"].topic_id
   depends_on = [aws_opensearch_domain.es]
 }
 

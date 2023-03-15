@@ -1,10 +1,9 @@
 [
-   {
-    "name": "jwt_token_expiry_appdlvr",
-    "auth_sub": "nrids.applicationdelivery@gov.bc.ca",
+  {
+    "name": "all_jwt_tokens",
     "bucket_level_trigger_id": "46dc295aec6f80377dc8",
     "severity": "1",
     "action_id": "ed85dd1ba642f5d4dc53",
-    "destination_id": "gHOvT4EBOQbXKB7XXi3q"
+    "topic_key": "oneteam-priority"
   }
 ]

@@ -59,14 +59,6 @@ resource "elasticsearch_opensearch_monitor" "jwt_token_monitor" {
                                  "boost": 1
                               }
                            }
-                        },
-                        {
-                           "term": {
-                              "auth.sub": {
-                                 "value": "${var.jwt_token_monitor.auth_sub}",
-                                 "boost": 1
-                              }
-                           }
                         }
                      ],
                      "filter": [
@@ -140,7 +132,7 @@ resource "elasticsearch_opensearch_monitor" "jwt_token_monitor" {
                {
                   "id": "${var.jwt_token_monitor.action_id}",
                   "name": "Notify product team of expiring or expired JWT tokens",
-                  "destination_id": "${var.jwt_token_monitor.destination_id}",
+                  "destination_id": "${var.destination_id}",
                   "message_template": {
                      "source": "The following JWT tokens are expiring or expired:\n{{#ctx.newAlerts}}\n  - client_id,jti: {{bucket_keys}}\n{{/ctx.newAlerts}}\n{{#ctx.dedupedAlerts}}\n  - client_id,jti: {{bucket_keys}}\n{{/ctx.dedupedAlerts}}",
                      "lang": "mustache"
