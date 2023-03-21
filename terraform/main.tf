@@ -416,6 +416,15 @@ resource "elasticsearch_opensearch_role" "nrm_read_all" {
   description = "NRM read role"
   cluster_permissions = [
     "cluster_composite_ops",
+    "cluster:monitor/health",
+    "cluster:monitor/state",
+    "cluster:admin/opendistro/ad/detectors/get",
+    "cluster:admin/opendistro/ad/detector/search",
+    "cluster:admin/opendistro/ad/result/search",
+    "cluster:admin/opendistro/ad/tasks/search",
+    "cluster:admin/opendistro/ism/managedindex/explain",
+    "cluster:admin/opendistro/ism/policy/get",
+    "cluster:admin/opendistro/ism/policy/search",
     "cluster:admin/opendistro/reports/definition/create",
     "cluster:admin/opendistro/reports/definition/update",
     "cluster:admin/opendistro/reports/definition/on_demand",
@@ -425,24 +434,50 @@ resource "elasticsearch_opensearch_role" "nrm_read_all" {
     "cluster:admin/opendistro/reports/instance/list",
     "cluster:admin/opendistro/reports/instance/get",
     "cluster:admin/opendistro/reports/menu/download",
+    "cluster:admin/opendistro/rollup/search",
+    "cluster:admin/opendistro/transform/get_transforms",
     "cluster:admin/opensearch/observability/create",
     "cluster:admin/opensearch/observability/update",
     "cluster:admin/opensearch/observability/delete",
-    "cluster:admin/opensearch/observability/get"
+    "cluster:admin/opensearch/observability/get",
+    "cluster:admin/opensearch/snapshot_management/policy/search",
+    "cluster:admin/repository/get",
+    "cluster:admin/snapshot/get",
+    "indices:admin/index_template/get"
   ]
   index_permissions {
     index_patterns  = ["iitd-*", "iit-*", "nrm-*", "otel-*"]
-    allowed_actions = ["read", "indices:admin/resolve/index", "indices:data/read/get", "indices:monitor/settings/get"]
+    allowed_actions = [
+      "read",
+      "indices:admin/resolve/index",
+      "indices:admin/mappings/get",
+      "indices:data/read/get",
+      "indices:data/read/search",
+      "indices:data/read/search*",
+      "indices:data/read/search/template",
+      "indices:monitor/settings/get",
+      "search"
+    ]
     masked_fields = ["source.ip", "client.ip"]
     field_level_security = ["~event.original", "~http.request.line"]
   }
   index_permissions {
     index_patterns  = [".kibana_*"]
-    allowed_actions = ["kibana_all_read"]
+    allowed_actions = ["kibana_all_read", "read"]
   }
   index_permissions {
     index_patterns  = [".opensearch-observability"]
     allowed_actions = ["write", "read", "search"]
+  }
+  index_permissions {
+    index_patterns  = ["*"]
+    allowed_actions = [
+      "indices:admin/aliases/get",
+      "indices:admin/data_stream/get",
+      "indices:admin/get",
+      "indices:monitor/settings/get",
+      "indices:monitor/stats"
+    ]
   }
 
   tenant_permissions {
@@ -470,6 +505,15 @@ resource "elasticsearch_opensearch_role" "nrm_security" {
   description = "NRM security role"
   cluster_permissions = [
     "cluster_composite_ops",
+    "cluster:monitor/health",
+    "cluster:monitor/state",
+    "cluster:admin/opendistro/ad/detectors/get",
+    "cluster:admin/opendistro/ad/detector/search",
+    "cluster:admin/opendistro/ad/result/search",
+    "cluster:admin/opendistro/ad/tasks/search",
+    "cluster:admin/opendistro/ism/managedindex/explain",
+    "cluster:admin/opendistro/ism/policy/get",
+    "cluster:admin/opendistro/ism/policy/search",
     "cluster:admin/opendistro/reports/definition/create",
     "cluster:admin/opendistro/reports/definition/update",
     "cluster:admin/opendistro/reports/definition/on_demand",
@@ -479,25 +523,51 @@ resource "elasticsearch_opensearch_role" "nrm_security" {
     "cluster:admin/opendistro/reports/instance/list",
     "cluster:admin/opendistro/reports/instance/get",
     "cluster:admin/opendistro/reports/menu/download",
+    "cluster:admin/opendistro/rollup/search",
+    "cluster:admin/opendistro/transform/get_transforms",
     "cluster:admin/opensearch/observability/create",
     "cluster:admin/opensearch/observability/update",
     "cluster:admin/opensearch/observability/delete",
-    "cluster:admin/opensearch/observability/get"
+    "cluster:admin/opensearch/observability/get",
+    "cluster:admin/opensearch/snapshot_management/policy/search",
+    "cluster:admin/repository/get",
+    "cluster:admin/snapshot/get",
+    "indices:admin/index_template/get"
   ]
   index_permissions {
     index_patterns  = ["iitd-*", "iit-*", "nrm-*", "otel-*"]
-    allowed_actions = ["read", "indices:admin/resolve/index", "indices:data/read/get", "indices:monitor/settings/get"]
+    allowed_actions = [
+      "read",
+      "indices:admin/resolve/index",
+      "indices:admin/mappings/get",
+      "indices:data/read/get",
+      "indices:data/read/search",
+      "indices:data/read/search*",
+      "indices:data/read/search/template",
+      "indices:monitor/settings/get",
+      "search"
+    ]
   }
   index_permissions {
     index_patterns  = [".kibana_*"]
-    allowed_actions = ["kibana_all_read"]
+    allowed_actions = ["kibana_all_read", "read"]
   }
   index_permissions {
     index_patterns  = [".opensearch-observability"]
     allowed_actions = ["write", "read", "search"]
   }
+  index_permissions {
+    index_patterns  = ["*"]
+    allowed_actions = [
+      "indices:admin/aliases/get",
+      "indices:admin/data_stream/get",
+      "indices:admin/get",
+      "indices:monitor/settings/get",
+      "indices:monitor/stats"
+    ]
+  }
   tenant_permissions {
-    tenant_patterns = ["infraops"]
+    tenant_patterns = ["*"]
     allowed_actions = ["kibana_all_read"]
   }
   depends_on = [aws_opensearch_domain.es]
