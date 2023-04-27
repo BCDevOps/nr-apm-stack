@@ -230,6 +230,32 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         dataset: 'application.log',
       },
       service: {
+        name: 'fmeserver',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: 'host.hostname,basename(log.file.path),event.sequence,@timestamp',
+        docId: 'basename(log.file.path),event.sequence,event.hash',
+        index: 'nrm-app-generic-<%=YYYY.MM.DD=%>',
+        timestampField: '@timestamp',
+        timestampFormat: 'ddd-DD-MMM-YYYY-h:mm:ss.SSS-a',
+        timestampTimezone: 'America/Vancouver',
+        timestampGuard: 'P14D',
+        environmentStandardize: true,
+        keyAsPath: true,
+      },
+    },
+  },
+  {
+    name: FingerprintCategory.APP_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
+        dataset: 'application.log',
+      },
+      service: {
         name: 'knox',
       },
     },
