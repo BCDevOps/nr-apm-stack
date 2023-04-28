@@ -4,6 +4,6 @@
     "bucket_level_trigger_id": "46dc295aec6f80377dc8",
     "severity": "1",
     "action_id": "ed85dd1ba642f5d4dc53",
-    "topic_key": "oneteam-priority"
+    "destination_id": "oneteam-priority"
   }
 ]
