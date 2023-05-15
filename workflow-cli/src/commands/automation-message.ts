@@ -16,6 +16,11 @@ export default class AutomationMessage extends Command {
     accessKey: Flags.string({description: 'AWS secret access key', env: 'AWS_SECRET_ACCESS_KEY', required: true}),
     accountNumber: Flags.string({description: 'AWS account number', env: 'AWS_ACCOUNT_NUMBER', required: true}),
     arn: Flags.string({description: 'AWS ARN', env: 'AWS_ASSUME_ROLE'}),
+    maxBatches: Flags.integer({
+      description: 'Number of times to request batch of messages',
+      env: 'AWS_SQS_MAX_BATCH_COUNT',
+      min: 1, max: 100, default: 10}),
+    dryRun: Flags.boolean({description: 'Disable deletion of messages', env: 'AWS_SQS_DRY_RUN', default: false}),
   };
 
   public async run(): Promise<void> {
@@ -25,7 +30,7 @@ export default class AutomationMessage extends Command {
 
     const service = new AwsSqsService(flags);
     await service.assumeIdentity(flags);
-    const message = await service.receiveMessage(queueUrl);
-    console.log(message);
+    const message = await service.receiveBatches(queueUrl, flags.batches, flags.dryRun);
+    console.log(JSON.stringify(message));
   }
 }

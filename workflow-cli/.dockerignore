@@ -1,0 +1,7 @@
+/coverage
+/node_modules
+Dockerfile
+
+/*.sh
+/*.csv
+/*.zip

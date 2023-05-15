@@ -31,7 +31,6 @@ USAGE
 <!-- commands -->
 * [`workflow-cli automation-message`](#workflow-cli-automation-message)
 * [`workflow-cli help [COMMANDS]`](#workflow-cli-help-commands)
-* [`workflow-cli keycloak-sync`](#workflow-cli-keycloak-sync)
 * [`workflow-cli lambda-asset-download [FILE]`](#workflow-cli-lambda-asset-download-file)
 * [`workflow-cli opensearch-index-usage ACTION`](#workflow-cli-opensearch-index-usage-action)
 * [`workflow-cli opensearch-sync`](#workflow-cli-opensearch-sync)
@@ -54,7 +53,7 @@ Automation message recieve tool
 ```
 USAGE
   $ workflow-cli automation-message -u <value> -d <value> --region <value> --accessId <value> --accessKey <value>
-    --accountNumber <value> [--arn <value>]
+    --accountNumber <value> [--arn <value>] [--maxBatches <value>] [--dryRun]
 
 FLAGS
   -d, --domainName=<value>  (required) OpenSearch Domain
@@ -63,6 +62,8 @@ FLAGS
   --accessKey=<value>       (required) AWS secret access key
   --accountNumber=<value>   (required) AWS account number
   --arn=<value>             AWS ARN
+  --dryRun                  Disable deletion of messages
+  --maxBatches=<value>      [default: 10] Number of times to request batch of messages
   --region=<value>          (required) AWS region
 
 DESCRIPTION
@@ -90,31 +91,7 @@ DESCRIPTION
   Display help for workflow-cli.
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.2.2/src/commands/help.ts)_
-
-## `workflow-cli keycloak-sync`
-
-Sync keycloak client details
-
-```
-USAGE
-  $ workflow-cli keycloak-sync --adminId <value> --adminSecret <value> --realm <value> --targetId <value>
-    --targetUrl <value> --url <value>
-
-FLAGS
-  --adminId=<value>      (required) Keycloak client id
-  --adminSecret=<value>  (required) Keycloak client secret
-  --realm=<value>        (required) Keycloak realm
-  --targetId=<value>     (required) Target client id
-  --targetUrl=<value>    (required) Target client url
-  --url=<value>          (required) Keycloak url
-
-DESCRIPTION
-  Sync keycloak client details
-
-EXAMPLES
-  $ workflow-cli keycloak-sync
-```
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.2.9/src/commands/help.ts)_
 
 ## `workflow-cli lambda-asset-download [FILE]`
 
@@ -140,8 +117,8 @@ Index usage generator tool
 
 ```
 USAGE
-  $ workflow-cli opensearch-index-usage [ACTION] -u <value> -d <value> --region <value> --accessId <value> --accessKey
-    <value> --accountNumber <value> --indicesname <value> --fieldname <value> [--arn <value>]
+  $ workflow-cli opensearch-index-usage ACTION -u <value> -d <value> --region <value> --accessId <value> --accessKey <value>
+    --accountNumber <value> --indicesname <value> --fieldname <value> [--arn <value>]
 
 ARGUMENTS
   ACTION  [default: _search] Search indices usage
@@ -206,7 +183,7 @@ EXAMPLES
   $ workflow-cli plugins
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.3.0/src/commands/plugins/index.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v3.0.1/src/commands/plugins/index.ts)_
 
 ## `workflow-cli plugins:install PLUGIN...`
 
@@ -452,8 +429,8 @@ Snapshot setup and creation tool
 
 ```
 USAGE
-  $ workflow-cli snapshot [ACTION] -u <value> -d <value> --region <value> --accessId <value> --accessKey
-    <value> --accountNumber <value> [--arn <value>]
+  $ workflow-cli snapshot ACTION -u <value> -d <value> --region <value> --accessId <value> --accessKey <value>
+    --accountNumber <value> [--arn <value>]
 
 ARGUMENTS
   ACTION  (setup|create) [default: create] Snapshot action
