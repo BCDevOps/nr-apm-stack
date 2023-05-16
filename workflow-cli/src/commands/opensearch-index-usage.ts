@@ -1,4 +1,4 @@
-import {Command, Flags} from '@oclif/core';
+import {Args, Command, Flags} from '@oclif/core';
 import OpenSearchIndicesUsageService from '../services/opensearch-indicesusage.service';
 
 const ACTION_SEARCH = '_search';
@@ -10,14 +10,14 @@ export default class OpensearchIndexUsage extends Command {
     '<%= config.bin %> <%= command.id %>',
   ];
 
-  static args = [
-    {
+  static args = {
+    action: Args.string({
       name: 'action',
       required: true,
       description: 'Search indices usage',
       default: ACTION_SEARCH,
-    },
-  ];
+    }),
+  };
 
   static flags = {
     hostname: Flags.string({char: 'u', description: 'OpenSearch url', env: 'OS_URL', required: true}),

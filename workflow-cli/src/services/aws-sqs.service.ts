@@ -19,7 +19,19 @@ export default class AwsSqsService extends AwsService {
     this.client = new SQSClient(this.configureClientProxy({region: settings.region}));
   }
 
-  public async receiveMessage(queueUrl: string): Promise<string> {
+  public async receiveBatches(queueUrl: string, maxBatches: number, dryRun: boolean): Promise<any[]> {
+    const batchedMessages: any[] = [];
+    for (let i = 0; i < maxBatches; i++) {
+      const messages = await this.receiveMessage(queueUrl, dryRun);
+      if (messages.length === 0) {
+        break;
+      }
+      batchedMessages.push(...messages);
+    }
+    return batchedMessages;
+  }
+
+  public async receiveMessage(queueUrl: string, dryRun: boolean): Promise<any[]> {
     const cmd = new ReceiveMessageCommand({
       QueueUrl: queueUrl,
       MaxNumberOfMessages: 10,
@@ -34,17 +46,19 @@ export default class AwsSqsService extends AwsService {
         const bodyContent = JSON.parse(message.Body);
         messageArray.push(JSON.parse(bodyContent.Message));
       }
-      const batchEntries: DeleteMessageBatchRequestEntry[] = sqsMessage.Messages
-        .map((m) => m.ReceiptHandle)
-        .filter((m): m is string => !!m)
-        .map((m, index) => ({Id: index.toString(), ReceiptHandle: m}));
-      if (batchEntries.length > 0) {
-        await this.client.send(new DeleteMessageBatchCommand({
-          QueueUrl: queueUrl,
-          Entries: batchEntries,
-        }));
+      if (!dryRun) {
+        const batchEntries: DeleteMessageBatchRequestEntry[] = sqsMessage.Messages
+          .map((m) => m.ReceiptHandle)
+          .filter((m): m is string => !!m)
+          .map((m, index) => ({Id: index.toString(), ReceiptHandle: m}));
+        if (batchEntries.length > 0) {
+          await this.client.send(new DeleteMessageBatchCommand({
+            QueueUrl: queueUrl,
+            Entries: batchEntries,
+          }));
+        }
       }
     }
-    return JSON.stringify(messageArray);
+    return messageArray;
   }
 }

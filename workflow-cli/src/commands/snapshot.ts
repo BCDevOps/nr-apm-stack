@@ -1,4 +1,4 @@
-import {Command, Flags} from '@oclif/core';
+import {Args, Command, Flags} from '@oclif/core';
 import OpenSearchSnapshotService from '../services/opensearch-snapshot.service';
 
 const ACTION_SETUP = 'setup';
@@ -11,15 +11,15 @@ export default class Snapshot extends Command {
     '<%= config.bin %> <%= command.id %>',
   ];
 
-  static args = [
-    {
+  static args = {
+    action: Args.string({
       name: 'action',
       required: true,
       description: 'Snapshot action',
       default: ACTION_CREATE,
       options: [ACTION_SETUP, ACTION_CREATE],
-    },
-  ];
+    }),
+  };
 
   static flags = {
     hostname: Flags.string({char: 'u', description: 'OpenSearch url', env: 'OS_URL', required: true}),
