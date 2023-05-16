@@ -372,6 +372,7 @@ export OS_DOMAIN=nress-prod
 export AWS_ACCOUNT_NUMBER=${data.aws_caller_identity.current.account_id}
 ./workflow-cli/bin/run opensearch-sync
 ./workflow-cli/bin/run snapshot setup
+./workflow-cli/bin/run opensearch-notify-oneteam-priority
 EOF
   environment = {
     AWS_ASSUME_ROLE = local.iam_role_arn
