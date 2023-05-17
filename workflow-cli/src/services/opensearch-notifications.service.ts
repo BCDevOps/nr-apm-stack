@@ -19,14 +19,14 @@ export interface settings {
 export default class OpenSearchNotificationsService extends AwsService {
   public async createSnsChannel(settings: settings): Promise<any> {
     return this.executeSignedHttpRequest({
-      method: 'PUT',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'host': settings.hostname,
       },
       hostname: settings.hostname,
       path: `/_plugins/_notifications/configs/`,
-      body: {
+      body: JSON.stringify({
         "config_id": `${settings.configId}`,
         "name": `${settings.configIdName}`,
         "config": {
@@ -39,7 +39,7 @@ export default class OpenSearchNotificationsService extends AwsService {
             "role_arn": `arn:aws:iam::${settings.accountNumber}:role/${settings.configRoleArnId}`,
           },
         },
-      },
+      }),
     })
       .then((res) => this.waitAndReturnResponseBody(res))
       .then((res) => {
