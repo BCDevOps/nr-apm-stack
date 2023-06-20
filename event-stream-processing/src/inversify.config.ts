@@ -88,8 +88,8 @@ function create(): Container {
   myContainer.bind<Parser>(TYPES.PreParser).to(ApacheParser);
   myContainer.bind<Parser>(TYPES.PreParser).to(Wso2AccessParser);
   myContainer.bind<Parser>(TYPES.PreParser).to(TomcatParser);
-  myContainer.bind<Parser>(TYPES.PreParser).to(RenameParser);
   myContainer.bind<Parser>(TYPES.PreParser).to(IISParser);
+  myContainer.bind<Parser>(TYPES.PreParser).to(RenameParser);
 
   // Stage: Parse
   myContainer.bind<Parser>(TYPES.Parser).to(DeslashParser);
