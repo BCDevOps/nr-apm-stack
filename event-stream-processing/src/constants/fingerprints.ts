@@ -72,6 +72,68 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
   },
   {
+    name: FingerprintCategory.WIN_IIS_ACCESS_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
+        dataset: 'iis.access',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: 'host.hostname,basename(log.file.path),event.sequence,event.original',
+        docId: 'basename(log.file.path),event.sequence,event.hash',
+        index: 'nrm-access-external-<%=YYYY.MM.DD=%>',
+        indexPreprodQualifier: true,
+        timestampFormat: 'YYYY-MM-DD HH:mm:ss.SSS',
+        timestampTimezone: 'America/Vancouver',
+        timestampGuard: 'P14D',
+        iisAccessLog: true,
+        appClassification: true,
+        deslash: true,
+        environmentStandardize: true,
+        urlExplode: true,
+        geoIp: true,
+        httpStatusOutcome: true,
+        threatPhp: true,
+        userAgent: true,
+        keyAsPath: true,
+      },
+    },
+  },
+  {
+    name: FingerprintCategory.WIN_IIS_ACCESS_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
+        dataset: 'iis.access.internal',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: 'host.hostname,basename(log.file.path),event.sequence,event.original',
+        docId: 'basename(log.file.path),event.sequence,event.hash',
+        index: 'nrm-access-internal-<%=YYYY.MM.DD=%>',
+        indexPreprodQualifier: true,
+        timestampFormat: 'YYYY-MM-DD HH:mm:ss.SSS',
+        timestampTimezone: 'America/Vancouver',
+        timestampGuard: 'P14D',
+        iisAccessLog: true,
+        appClassification: true,
+        deslash: true,
+        environmentStandardize: true,
+        urlExplode: true,
+        geoIp: true,
+        httpStatusOutcome: true,
+        threatPhp: true,
+        userAgent: true,
+        keyAsPath: true,
+      },
+    },
+  },
+  {
     name: FingerprintCategory.HTTP_ACCESS_LOGS,
     fingerprint: {
       event: {

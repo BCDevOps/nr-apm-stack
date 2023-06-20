@@ -46,6 +46,7 @@ import {TomcatParser} from './parsers/tomcat.parser';
 import {UserAgentParser} from './parsers/user-agent.parser';
 import {UrlExplodeParser} from './parsers/url-explode.parser';
 import {Wso2AccessParser} from './parsers/wso2access.parser';
+import {IISParser} from './parsers/IIS.parser';
 import {DeadLetterQueueService} from './dead-letter-queue.service';
 
 /**
@@ -88,6 +89,7 @@ function create(): Container {
   myContainer.bind<Parser>(TYPES.PreParser).to(Wso2AccessParser);
   myContainer.bind<Parser>(TYPES.PreParser).to(TomcatParser);
   myContainer.bind<Parser>(TYPES.PreParser).to(RenameParser);
+  myContainer.bind<Parser>(TYPES.PreParser).to(IISParser);
 
   // Stage: Parse
   myContainer.bind<Parser>(TYPES.Parser).to(DeslashParser);
