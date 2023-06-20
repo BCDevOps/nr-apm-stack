@@ -14,7 +14,6 @@ const WIN_IIS_ACCESS_LOG_EVENT_SIGNATURE = Object.freeze({
 });
 
 /* eslint-disable max-len,camelcase,@typescript-eslint/no-unsafe-call */
-//const regex_IIS_standard01 = /^(?<extract_timestamp>\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2})\s((\S+)\s){2}(?<source__ip>(\S+))\s(?<http__request__method>(\S+))\s(?<url__full>(\S+))\s(?<url__query>(\S+))\s(?<url__port>(\S+))\s(?<url__username>(\S+))\s(?<client__ip>(\S+))\s(?<extract_httpVersion>(\S+))\s(?<user_agent__original>(\S+))\s(\S+)\s(?<http__request__referrer>(\S+))\s(?<server__address>(\S+))\s(?<http__response__status_code>(-?|\d+))\s((\S+)\s)((\S+)\s)(?<http__request__bytes>(-?|\d+))\s(?<http__response__bytes>(-?|\d+))\s(?<event__duration>(-?|\d+))\s$/;
 const regex01=/^(?<extract_timestamp>\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2})\s((\S+)\s){2}(?<source__ip>(\S+))\s(?<http__request__method>(\S+))\s(?<url__full>(\S+))\s(\S+)\s(?<url__port>(\S+))\s(-|\S+)\s(?<client__ip>(-|\S+))\s(?<extract_httpVersion>(\S+))\s(?<user_agent__original>(\S+))\s((\S+)\s){2}(?<server__address>(\S+))\s(?<http__response__status_code>(-|\d+))\s((-|\d+)\s){2}(?<http__request__bytes>(-|\d+))\s(?<http__response__bytes>(-|\d+))\s(?<event__duration>(-|\d+)).?$/;
 /* eslint-enable max-len */
 
@@ -25,27 +24,7 @@ describe('RegexService', () => {
     log: jest.fn(),
     debug: jest.fn(),
   } as LoggerService;
-/*
-  it('test regex', ()=>{
-    const parser = new RegexService(logger);
-    // eslint-disable-next-line max-len
-    const document = {data: JSON.parse(JSON.stringify({...WIN_IIS_ACCESS_LOG_EVENT_SIGNATURE, 'event.original': '2023-06-05 00:02:54 GET requestURLlink 192.10.2.3 commentshere'}))} as unknown as OsDocument;
-    const metaFields = parser.applyRegex(document, 'event.original', regexArr);
-    // eslint-disable-next-line max-len
-    //expect(metaFields.servicename).toBe('GET');
-    //expect(metaFields.servername).toBe('requestURLlink');
-    //expect(metaFields).toHaveProperty('httpRequest', 'GET requestURLlink');
-    expect(document.dataExtractedTimestamp).toBe('2023-06-05 00:02:54');
-    expect(document.data).toHaveProperty('source.ip', '192.10.2.3');
-    //expect(document.data).toHaveProperty('source.ip');
-    //expect(metaFields).toHaveProperty('httpVersion', 'HTTP/1.1');
-    //expect(document.data).toHaveProperty('http.version', '1.1');
-    //expect(document.data).toHaveProperty('event.duration', '62');
-    //expect(document.data).toHaveProperty('source.ip', '142.34.2.162');
-    //expect(document.data).toHaveProperty('http.request.method', 'GET');
-    //expect(document.data).toHaveProperty('http.response.status_code', '401') 
-  });
-  */
+
   it('parses suspicious entry - 001', () => {
     const parser = new RegexService(logger);
     // eslint-disable-next-line max-len
@@ -89,60 +68,4 @@ describe('RegexService', () => {
     expect(document.data).toHaveProperty('http.response.bytes', '156');
     expect(document.data).toHaveProperty('event.duration', '140');
   });
-/*
-  it('parses suspicious entry - 002', () => {
-    const parser = new RegexService(logger);
-    // eslint-disable-next-line max-len
-    const document = {data: JSON.parse(JSON.stringify({...WIN_IIS_ACCESS_LOG_EVENT_SIGNATURE, 'event.original': 'v1.0 20120211 "http://142.34.120.21:80" "64.114.237.115" [25/May/2021:15:51:47 -0700] "GET /cgi-bin/count.cgi HTTP/1.1" 302 369 bytes 1043 bytes "-" "() { _; } >_[$($())] { echo Content-Type: text/plain ; echo ; echo \\"bash_cve_2014_6278 Output : $((10+12))\\"; }" 1 ms, "-" "-"'}))} as unknown as OsDocument;
-    const metaFields = parser.applyRegex(document, 'event.original', regexArr);
-    expect(metaFields).toHaveProperty('httpRequest', 'GET /cgi-bin/count.cgi HTTP/1.1');
-    expect(document.dataExtractedTimestamp).toBe('25/May/2021:15:51:47 -0700');
-    expect(document.data).not.toHaveProperty('http.request.referrer');
-    // eslint-disable-next-line max-len
-    expect(document.data).toHaveProperty('user_agent.original', '() { _; } >_[$($())] { echo Content-Type: text/plain ; echo ; echo \\"bash_cve_2014_6278 Output : $((10+12))\\"; }');
-    expect(document.data).toHaveProperty('event.duration', '1');
-  });
-
-  it('parses Apache standard format', () => {
-    const parser = new RegexService(logger);
-    // eslint-disable-next-line max-len
-    const document = {data: JSON.parse(JSON.stringify({...WIN_IIS_ACCESS_LOG_EVENT_SIGNATURE, 'event.original': '5.217.73.168 - - [05/Jun/2020:00:06:57 -0700] "GET /pub/eirs/viewDocumentDetail.do?fromStatic=true&repository=BDP&documentId=6612 HTTP/1.1" 200 277 "-" "AHC/2.1" 192'}))} as unknown as OsDocument;
-    const metaFields = parser.applyRegex(document, 'event.original', regexArr);
-    // eslint-disable-next-line max-len
-    expect(metaFields).toHaveProperty('httpRequest', 'GET /pub/eirs/viewDocumentDetail.do?fromStatic=true&repository=BDP&documentId=6612 HTTP/1.1');
-    expect(document.dataExtractedTimestamp).toBe('05/Jun/2020:00:06:57 -0700');
-    expect(document.data).toHaveProperty('source.ip', '5.217.73.168');
-    expect(document.data).toHaveProperty('http.response.status_code', '200');
-    expect(document.data).toHaveProperty('http.response.bytes', '277');
-    expect(document.data).not.toHaveProperty('http.request.referrer');
-    expect(document.data).toHaveProperty('user_agent.original', 'AHC/2.1');
-    expect(document.data).toHaveProperty('event.duration');
-  });
-
-  it('parses Apache standard format - 2', () => {
-    const parser = new RegexService(logger);
-    // eslint-disable-next-line max-len
-    const document = {data: JSON.parse(JSON.stringify({...WIN_IIS_ACCESS_LOG_EVENT_SIGNATURE, 'event.original': '66.183.191.120 - - [05/Jun/2020:07:23:23 -0700] "GET /ext/raad3/map?execution=e1s1&_eventId=agreed HTTP/1.1" 302 - "https://apps.nrs.gov.bc.ca/ext/raad3/map?execution=e1s1" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0" 24'}))} as unknown as OsDocument;
-    const metaFields = parser.applyRegex(document, 'event.original', regexArr);
-    expect(document.data).not.toHaveProperty('user.name');
-    expect(document.data).toHaveProperty('source.ip', '66.183.191.120');
-    expect(metaFields).toHaveProperty('httpRequest', 'GET /ext/raad3/map?execution=e1s1&_eventId=agreed HTTP/1.1');
-    expect(document.data).not.toHaveProperty('http.response.bytes');
-    expect(document.data).toHaveProperty('http.response.status_code', '302');
-    // eslint-disable-next-line max-len
-    expect(document.data).toHaveProperty('http.request.referrer', 'https://apps.nrs.gov.bc.ca/ext/raad3/map?execution=e1s1');
-    // eslint-disable-next-line max-len
-    expect(document.data).toHaveProperty('user_agent.original', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0');
-    expect(document.data).toHaveProperty('event.duration');
-    expect(document.dataExtractedTimestamp).toBe('05/Jun/2020:07:23:23 -0700');
-  });
-
-  it('keeps dash - 3', () => {
-    const parser = new RegexService(logger);
-    // eslint-disable-next-line max-len
-    const document = {data: JSON.parse(JSON.stringify({...WIN_IIS_ACCESS_LOG_EVENT_SIGNATURE, 'event.original': '66.183.191.120 - - [05/Jun/2020:07:23:23 -0700] "GET /ext/raad3/map?execution=e1s1&_eventId=agreed HTTP/1.1" 302 - "https://apps.nrs.gov.bc.ca/ext/raad3/map?execution=e1s1" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0" 24'}))} as unknown as OsDocument;
-    parser.applyRegex(document, 'event.original', regexArr, false);
-    expect(document.data).toHaveProperty('user.name', '-');
-  });
-  */
 });
