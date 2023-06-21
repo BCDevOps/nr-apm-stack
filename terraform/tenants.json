@@ -54,5 +54,13 @@
       "tenant_patterns": ["EPSILON"],
       "allowed_actions": ["kibana_all_write"]
     }
+  },
+  {
+    "role_name": "las-write-all",
+    "description": "Land Act Systems Tenant",
+    "tenant_permissions": {
+      "tenant_patterns": ["Land_Act_Systems"],
+      "allowed_actions": ["kibana_all_write"]
+    }
   }
 ]
