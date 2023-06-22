@@ -1,0 +1,49 @@
+{
+  "event": {
+    "category": "web",
+    "dataset": "generic.access",
+    "duration": 0,
+    "kind": "event"
+  },
+  "ecs": {
+    "version": "8.4.0"
+  },
+  "host": {
+    "architecture": "x64",
+    "hostname": "NH501441",
+    "os": {
+      "type": "linux",
+      "version": "5.10.16.3-microsoft-standard-WSL2"
+    }
+  },
+  "http": {
+    "request": {
+      "method": "GET"
+    },
+    "version": "1.1",
+    "response": {
+      "status_code": 204,
+      "bytes": 0
+    }
+  },
+  "labels": {
+    "project": "nr-broker"
+  },
+  "@metadata": {
+    "index": "nrm-test-broker-access-external"
+  },
+  "service": {
+    "name": "nr-broker-backend",
+    "environment": "unknown"
+  },
+  "source": {
+    "ip": "::ffff:127.0.0.1"
+  },
+  "@timestamp": "2023-06-22T21:50:24.043Z",
+  "url": {
+    "original": "http://localhost:3000/v1/health/ping"
+  },
+  "user_agent": {
+    "original": "axios/1.3.2"
+  }
+}
