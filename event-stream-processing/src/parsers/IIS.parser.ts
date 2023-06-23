@@ -7,7 +7,7 @@ import {RegexService} from '../shared/regex.service';
 import lodash from 'lodash';
 
 /* eslint-disable max-len,camelcase,@typescript-eslint/no-unsafe-call */
-const regex_IIS_standard01=/^(?<extract_timestamp>\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2})\s((\S+)\s){2}(?<server__ip>(\S+))\s(?<http__request__method>(\S+))\s(?<url__full>(\S+))\s(\S+)\s(?<url__port>(\S+))\s(?<user__name>(\S+))\s(?<source__ip>(-|\S+))\s(?<extract_httpVersion>(\S+))\s(?<user_agent__original>(\S+))\s((\S+)\s){2}(?<server__address>(\S+))\s(?<http__response__status_code>(-|\d+))\s((-|\d+)\s){2}(?<http__request__bytes>(-|\d+))\s(?<http__response__bytes>(-|\d+))\s(?<event__duration>(-|\d+)).?$/;
+const regex_IIS_standard01=/^(?<extract_timestamp>\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2})\s((\S+)\s){3}(?<http__request__method>(\S+))\s(?<url__full>(\S+))\s(\S+)\s(?<url__port>(\S+))\s(?<user__name>(\S+))\s(?<source__ip>(-|\S+))\s(?<extract_httpVersion>(\S+))\s(?<user_agent__original>(\S+))\s((\S+)\s){2}(?<url__domain>(\S+))\s(?<http__response__status_code>(-|\d+))\s((-|\d+)\s){2}(?<http__request__bytes>(-|\d+))\s(?<http__response__bytes>(-|\d+))\s(?<event__duration>(-|\d+)).?$/;
 
 /* eslint-enable max-len */
 
