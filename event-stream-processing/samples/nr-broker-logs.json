@@ -30,9 +30,6 @@
   "labels": {
     "project": "nr-broker"
   },
-  "@metadata": {
-    "index": "nrm-test-broker-access-external"
-  },
   "service": {
     "name": "nr-broker-backend",
     "environment": "unknown"
