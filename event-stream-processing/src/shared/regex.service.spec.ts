@@ -18,11 +18,11 @@ const APACHE_ACCESS_LOG_EVENT_SIGNATURE = Object.freeze({
 const regex_v1 = /^(?<labels__format>v1\.0) (?<service__version>[^ ]+) "(?<url__scheme>[^:]+):\/\/(?<url__domain>[^:]+):(?<url__port>\d+)" "(?<source__ip>[^"]+)" \[(?<extract_timestamp>[^\]]+)\] "(?<extract_httpRequest>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__request__bytes>(-?|\d+)) bytes (?<http__response__bytes>(-?|\d+)) bytes "(?<http__request__referrer>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)" (?<event__duration>\d+) ms, "(?<tls__version_protocol>[^"]+)" "(?<tls__cipher>[^"]+)"$/;
 const regex_apache_standard01 = /^(?<source__ip>[^ ]+) ([^ ]+) (?<user__name>[^ ]+) \[(?<extract_timestamp>[^\]]+)\] "(?<extract_httpRequest>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__response__bytes>(-?|\d+)) "(?<http__request__referrer>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)" (?<event__duration>(-?|\d+))$/;
 const regex_apache_standard02 = /^(?<source__ip>[^ ]+) ([^ ]+) (?<user__name>[^ ]+) \[(?<extract_timestamp>[^\]]+)\] "(?<extract_httpRequest>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__response__bytes>(-?|\d+)) "(?<http__request__referrer>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)"$/;
-const regex_IIS_stanard01=/^(?<extract_timestamp>\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2})\s((\S+)\s){3}(?<http__request__method>(\S+))\s(?<url__full>(\S+))\s(\S+)\s(?<url__port>(\S+))\s(?<user__name>(\S+))\s(?<source__ip>(-|\S+))\s(?<extract_httpVersion>(\S+))\s(?<user_agent__original>(\S+))\s((\S+)\s){2}(?<url__domain>(\S+))\s(?<http__response__status_code>(-|\d+))\s((-|\d+)\s){2}(?<http__request__bytes>(-|\d+))\s(?<http__response__bytes>(-|\d+))\s(?<event__duration>(-|\d+)).?$/;
+const regex_IIS_standard01=/^(?<extract_timestamp>\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2})\s((\S+)\s){3}(?<http__request__method>(\S+))\s(?<url__path>(\S+))\s(\S+)\s(?<url__port>(\S+))\s(?<user__name>(\S+))\s(?<source__ip>(-|\S+))\s(?<extract_httpVersion>(\S+))\s(?<user_agent__original>(\S+))\s((\S+)\s){2}(?<url__domain>(\S+))\s(?<http__response__status_code>(-|\d+))\s((-|\d+)\s){2}(?<http__request__bytes>(-|\d+))\s(?<http__response__bytes>(-|\d+))\s(?<event__duration>(-|\d+)).?$/;
 
 /* eslint-enable max-len */
 
-const regexArr = [regex_v1, regex_apache_standard01, regex_apache_standard02, regex_IIS_stanard01];
+const regexArr = [regex_v1, regex_apache_standard01, regex_apache_standard02, regex_IIS_standard01];
 
 describe('RegexService', () => {
   const logger = {
@@ -105,7 +105,7 @@ describe('RegexService', () => {
     expect(document.dataExtractedTimestamp).toBe('2023-06-05 00:59:47');
     expect(document.data).toHaveProperty('http.request.method', 'GET');
     // eslint-disable-next-line max-len
-    expect(document.data).toHaveProperty('url.full', '/ftp/HTH/external/!publish/Web/publications/CPRT-Admin-Manual.pdf');
+    expect(document.data).toHaveProperty('url.path', '/ftp/HTH/external/!publish/Web/publications/CPRT-Admin-Manual.pdf');
     expect(document.data).toHaveProperty('url.port', '443');
     expect(metaFields.httpVersion).toBe('HTTP/1.1');
     // eslint-disable-next-line max-len
@@ -124,7 +124,7 @@ describe('RegexService', () => {
     expect(document.dataExtractedTimestamp).toBe('2023-06-05 01:33:04');
     expect(document.data).toHaveProperty('http.request.method', 'GET');
     // eslint-disable-next-line max-len
-    expect(document.data).toHaveProperty('url.full', '/');
+    expect(document.data).toHaveProperty('url.path', '/');
     expect(document.data).toHaveProperty('url.port', '443');
     expect(document.data).toHaveProperty('source.ip', '65.49.20.69');
     expect(metaFields.httpVersion).toBe('HTTP/1.1');
@@ -145,7 +145,7 @@ describe('RegexService', () => {
     expect(document.dataExtractedTimestamp).toBe('2023-06-22 00:00:21');
     expect(document.data).toHaveProperty('http.request.method', 'GET');
     // eslint-disable-next-line max-len
-    expect(document.data).toHaveProperty('url.full', '/hva/ecas/techdesign/Images/Interior_Log_Trans1.png');
+    expect(document.data).toHaveProperty('url.path', '/hva/ecas/techdesign/Images/Interior_Log_Trans1.png');
     expect(document.data).toHaveProperty('url.port', '443');
     expect(document.data).toHaveProperty('user.name', 'IDIR\JSCOTT');
     expect(document.data).toHaveProperty('source.ip', '142.29.73.172');
