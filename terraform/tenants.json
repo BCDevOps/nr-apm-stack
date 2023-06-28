@@ -62,5 +62,13 @@
       "tenant_patterns": ["Land_Act_Systems"],
       "allowed_actions": ["kibana_all_write"]
     }
+  },
+  {
+    "role_name": "cirras-write-all",
+    "description": "CIRRAS Tenant",
+    "tenant_permissions": {
+      "tenant_patterns": ["CIRRAS"],
+      "allowed_actions": ["kibana_all_write"]
+    }
   }
 ]
