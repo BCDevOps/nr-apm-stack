@@ -101,7 +101,19 @@
               "ignore_above": 1024,
               "type": "keyword"
             },
+            "mount_point": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
             "mount_type": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "mount_class": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "mount_running_version": {
               "ignore_above": 1024,
               "type": "keyword"
             },
@@ -122,6 +134,13 @@
             },
             "remote_port": {
               "type": "long"
+            },
+            "headers": {
+              "properties": {
+                "x-forwarded-for": {
+                  "type": "ip"
+                }
+              }
             },
             "client_id": {
               "ignore_above": 1024,
@@ -151,11 +170,23 @@
         },
         "response": {
           "properties": {
+            "mount_point": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
             "mount_type": {
               "ignore_above": 1024,
               "type": "keyword"
             },
             "mount_accessor": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "mount_running_plugin_version":{
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "mount_class": {
               "ignore_above": 1024,
               "type": "keyword"
             },

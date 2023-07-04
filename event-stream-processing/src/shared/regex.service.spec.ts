@@ -18,11 +18,11 @@ const APACHE_ACCESS_LOG_EVENT_SIGNATURE = Object.freeze({
 const regex_v1 = /^(?<labels__format>v1\.0) (?<service__version>[^ ]+) "(?<url__scheme>[^:]+):\/\/(?<url__domain>[^:]+):(?<url__port>\d+)" "(?<source__ip>[^"]+)" \[(?<extract_timestamp>[^\]]+)\] "(?<extract_httpRequest>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__request__bytes>(-?|\d+)) bytes (?<http__response__bytes>(-?|\d+)) bytes "(?<http__request__referrer>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)" (?<event__duration>\d+) ms, "(?<tls__version_protocol>[^"]+)" "(?<tls__cipher>[^"]+)"$/;
 const regex_apache_standard01 = /^(?<source__ip>[^ ]+) ([^ ]+) (?<user__name>[^ ]+) \[(?<extract_timestamp>[^\]]+)\] "(?<extract_httpRequest>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__response__bytes>(-?|\d+)) "(?<http__request__referrer>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)" (?<event__duration>(-?|\d+))$/;
 const regex_apache_standard02 = /^(?<source__ip>[^ ]+) ([^ ]+) (?<user__name>[^ ]+) \[(?<extract_timestamp>[^\]]+)\] "(?<extract_httpRequest>([^"]|(?<=\\)")*)" (?<http__response__status_code>(-?|\d+)) (?<http__response__bytes>(-?|\d+)) "(?<http__request__referrer>([^"]|(?<=\\)")*)" "(?<user_agent__original>([^"]|(?<=\\)")*)"$/;
-const regex_IIS_stanard01=/^(?<extract_timestamp>\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2})\s((\S+)\s){2}(?<source__ip>(\S+))\s(?<http__request__method>(\S+))\s(?<url__full>(\S+))\s(\S+)\s(?<url__port>(\S+))\s(-|\S+)\s(?<client__ip>(-|\S+))\s(?<extract_httpVersion>(\S+))\s(?<user_agent__original>(\S+))\s((\S+)\s){2}(?<server__address>(\S+))\s(?<http__response__status_code>(-|\d+))\s((-|\d+)\s){2}(?<http__request__bytes>(-|\d+))\s(?<http__response__bytes>(-|\d+))\s(?<event__duration>(-|\d+)).?$/;
+const regex_IIS_standard01=/^(?<extract_timestamp>\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2})\s((\S+)\s){3}(?<http__request__method>(\S+))\s(?<url__path>(\S+))\s(\S+)\s(?<url__port>(\S+))\s(?<user__name>(\S+))\s(?<source__ip>(-|\S+))\s(?<extract_httpVersion>(\S+))\s(?<user_agent__original>(\S+))\s((\S+)\s){2}(?<url__domain>(\S+))\s(?<http__response__status_code>(-|\d+))\s((-|\d+)\s){2}(?<http__request__bytes>(-|\d+))\s(?<http__response__bytes>(-|\d+))\s(?<event__duration>(-|\d+)).?$/;
 
 /* eslint-enable max-len */
 
-const regexArr = [regex_v1, regex_apache_standard01, regex_apache_standard02, regex_IIS_stanard01];
+const regexArr = [regex_v1, regex_apache_standard01, regex_apache_standard02, regex_IIS_standard01];
 
 describe('RegexService', () => {
   const logger = {
@@ -101,18 +101,16 @@ describe('RegexService', () => {
     const parser = new RegexService(logger);
     // eslint-disable-next-line max-len
     const document = {data: JSON.parse(JSON.stringify({...APACHE_ACCESS_LOG_EVENT_SIGNATURE, 'event.original': '2023-06-05 00:59:47 W3SVC14 Stress 142.34.2.162 GET /ftp/HTH/external/!publish/Web/publications/CPRT-Admin-Manual.pdf - 443 - 54.244.166.221 HTTP/1.1 Mozilla/5.0+(Windows+NT+10.0;+Win64;+x64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/105.0.0.0+Safari/537.36 - - testwww.for.gov.bc.ca 401 2 5 1558 270 93'}))} as unknown as OsDocument;
-    /* eslint-enable max-len */
     const metaFields = parser.applyRegex(document, 'event.original', regexArr);
     expect(document.dataExtractedTimestamp).toBe('2023-06-05 00:59:47');
-    expect(document.data).toHaveProperty('source.ip', '142.34.2.162');
     expect(document.data).toHaveProperty('http.request.method', 'GET');
     // eslint-disable-next-line max-len
-    expect(document.data).toHaveProperty('url.full', '/ftp/HTH/external/!publish/Web/publications/CPRT-Admin-Manual.pdf');
+    expect(document.data).toHaveProperty('url.path', '/ftp/HTH/external/!publish/Web/publications/CPRT-Admin-Manual.pdf');
     expect(document.data).toHaveProperty('url.port', '443');
     expect(metaFields.httpVersion).toBe('HTTP/1.1');
     // eslint-disable-next-line max-len
     expect(document.data).toHaveProperty('user_agent.original', 'Mozilla/5.0+(Windows+NT+10.0;+Win64;+x64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/105.0.0.0+Safari/537.36');
-    expect(document.data).toHaveProperty('server.address', 'testwww.for.gov.bc.ca');
+    expect(document.data).toHaveProperty('url.domain', 'testwww.for.gov.bc.ca');
     expect(document.data).toHaveProperty('http.response.status_code', '401');
     expect(document.data).toHaveProperty('http.request.bytes', '1558');
     expect(document.data).toHaveProperty('http.response.bytes', '270');
@@ -122,22 +120,42 @@ describe('RegexService', () => {
     const parser = new RegexService(logger);
     // eslint-disable-next-line max-len
     const document = {data: JSON.parse(JSON.stringify({...APACHE_ACCESS_LOG_EVENT_SIGNATURE, 'event.original': '2023-06-05 01:33:04 W3SVC14 Stress 142.34.2.162 GET / - 443 - 65.49.20.69 HTTP/1.1 Mozilla/5.0+(Windows+NT+10.0;+rv:109.0)+Gecko/20100101+Firefox/109.0 - - 142.34.2.162 401 2 5 1539 156 140'}))} as unknown as OsDocument;
-    /* eslint-enable max-len */
     const metaFields = parser.applyRegex(document, 'event.original', regexArr);
     expect(document.dataExtractedTimestamp).toBe('2023-06-05 01:33:04');
-    expect(document.data).toHaveProperty('source.ip', '142.34.2.162');
     expect(document.data).toHaveProperty('http.request.method', 'GET');
     // eslint-disable-next-line max-len
-    expect(document.data).toHaveProperty('url.full', '/');
+    expect(document.data).toHaveProperty('url.path', '/');
     expect(document.data).toHaveProperty('url.port', '443');
-    expect(document.data).toHaveProperty('client.ip', '65.49.20.69');
+    expect(document.data).toHaveProperty('source.ip', '65.49.20.69');
     expect(metaFields.httpVersion).toBe('HTTP/1.1');
     // eslint-disable-next-line max-len
     expect(document.data).toHaveProperty('user_agent.original', 'Mozilla/5.0+(Windows+NT+10.0;+rv:109.0)+Gecko/20100101+Firefox/109.0');
-    expect(document.data).toHaveProperty('server.address', '142.34.2.162');
+    expect(document.data).toHaveProperty('url.domain', '142.34.2.162');
     expect(document.data).toHaveProperty('http.response.status_code', '401');
     expect(document.data).toHaveProperty('http.request.bytes', '1539');
     expect(document.data).toHaveProperty('http.response.bytes', '156');
+    expect(document.data).toHaveProperty('event.duration', '140');
+  });
+  it('parses Windows IIS entry - 003', () => {
+    const parser = new RegexService(logger);
+    // eslint-disable-next-line max-len
+    const document = {data: JSON.parse(JSON.stringify({...APACHE_ACCESS_LOG_EVENT_SIGNATURE, 'event.original': '2023-06-22 00:00:21 W3SVC14 Stress 142.34.2.162 GET /hva/ecas/techdesign/Images/Interior_Log_Trans1.png - 443 IDIR\JSCOTT 142.29.73.172 HTTP/1.1 Mozilla/5.0+(Windows+NT+10.0;+Win64;+x64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/114.0.0.0+Safari/537.36+Edg/114.0.1823.51 PS_TokenSite=https://chips.gov.bc.ca:7002/psp/CHIPSBC/?gbchrprd-7017-PORTAL-PSJSESSIONID;+SignOnDefault=;+SMSESSION=+U8u8/Pnsneg07Q3CG0VVx/uAt/dFrJPFsvk4ai3cYaDbh8U5W1jgfg4SilpQrW36BvugblWGGS2Q0ogsV8VLMH4UEmew5e+vIqqdeyTeKSq7vd/zAP2jLWpRLMnUYn28f/MaOqem5SNbC9g+S2hg8fh1MKq66Sj+uvQC4+QWW/KikBCLlyxZZMAT8ZySIBkbHvhTtlwFGO+BiLx0euTTXV9anA2o9rbR7UftBBbZzOELL0Tu1sThUf3ifmVaNyukqim2LYXmUl4acwcklfgrG2zPsxE/9kRHueopl8HDtUHfSEs/RFAQ9tU3dRpFcF7OIn3eTPJr05jBdh5YRyID7nikDaFhLvm6qwsEJPfxVTCQ207JpszcU8LSJRWJI8y1qVpS8aJq9G2h+EMT5KV3yfDZJvG7ydbtbyTngUe+i5dd0kvmDr1FjPnwIbT6aWoVtGAMhFbw5HoqeEaPyeGCNEKrWSPmBzf/sZoW35WRcD/9TxJCc/V1gYqDR4rFTGa09Ir6C7EkEn3S/41lp/+Wywl/ZWNnbrXMfhrJ0IZwxzakgtwMAxZI3oM3MxllBbSrXfMjcVVanwBrh1t6HCpIgZBtbcaXdyEYyS9mFbD3CYiqEd4dSx8Xa6Q/DEh1H6zJksH2MPzk98ReRQq5kvUEWGrCLV+2Taqn1XIgu2BYjmqRcoWCGKTQrC42dktEcSEP8m1whS2GYsTUvSnOkqPMIiz8lS2IzVmnXT4ccUziUgX8IcpADsJz/IWJG2vFOY6CnwxQSBwXu+TsM7CfTIRGHSj9QTU1tB9XzYIgXTJ7bF++u73wH6Mwkhox5wQXqrFSBlI7vR+6X9Y4SfhdwW7SWVepTBXBoyL4djMRYF0P6U64lerum4JB2qTeDO4c1sFRziT6j59gfH90Ot0h1SV99JeP7x1KG25x/I7IkrsZVT45SbXwQENXsKBeMn7v30xEsdlbw3uNdQRu8zY63MZ1EXAHAVzZebgBCjzr9IeLxtUr5ltLs+A3r/xCng5nQE6vFx+qeiOsOdwA8dZaoFVqkFBotQRDSsCOmVZG1j50lx/a0h5krDm8Jwkgf4RxY7XFmTh0mSfGPlcT6F2OXcOzAsY2VGBOA5PDIhXruM+OjqGvVZsxSY3jQcfrWTpfSB9O95X3QDWZl2+9dAmtPXJtG9CiQ5vXWF8D7jVDlAr2bTzOaAdyiG4dfS6rTdLAf/94S4KTVDMcjH6hhsb9+Pa3aOZCGiPy9+L;+gbchrprd-7017-PORTAL-PSJSESSIONID=jD_f7tPtYgG2wpXUQfP40XqMEj9rYvej!298189059 https://testwww.for.gov.bc.ca/hva/ecas/techdesign/interior_screens/interior_log_trans.htm testwww.for.gov.bc.ca 200 0 0 79186 2156 140'}))} as unknown as OsDocument;
+    // eslint-enable max-len
+    const metaFields = parser.applyRegex(document, 'event.original', regexArr);
+    expect(document.dataExtractedTimestamp).toBe('2023-06-22 00:00:21');
+    expect(document.data).toHaveProperty('http.request.method', 'GET');
+    // eslint-disable-next-line max-len
+    expect(document.data).toHaveProperty('url.path', '/hva/ecas/techdesign/Images/Interior_Log_Trans1.png');
+    expect(document.data).toHaveProperty('url.port', '443');
+    expect(document.data).toHaveProperty('user.name', 'IDIR\JSCOTT');
+    expect(document.data).toHaveProperty('source.ip', '142.29.73.172');
+    expect(metaFields.httpVersion).toBe('HTTP/1.1');
+    // eslint-disable-next-line max-len
+    expect(document.data).toHaveProperty('user_agent.original', 'Mozilla/5.0+(Windows+NT+10.0;+Win64;+x64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/114.0.0.0+Safari/537.36+Edg/114.0.1823.51');
+    expect(document.data).toHaveProperty('url.domain', 'testwww.for.gov.bc.ca');
+    expect(document.data).toHaveProperty('http.response.status_code', '200');
+    expect(document.data).toHaveProperty('http.request.bytes', '79186');
+    expect(document.data).toHaveProperty('http.response.bytes', '2156');
     expect(document.data).toHaveProperty('event.duration', '140');
   });
 });

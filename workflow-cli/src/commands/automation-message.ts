@@ -30,7 +30,7 @@ export default class AutomationMessage extends Command {
 
     const service = new AwsSqsService(flags);
     await service.assumeIdentity(flags);
-    const message = await service.receiveBatches(queueUrl, flags.batches, flags.dryRun);
+    const message = await service.receiveBatches(queueUrl, flags.maxBatches, flags.dryRun);
     console.log(JSON.stringify(message));
   }
 }

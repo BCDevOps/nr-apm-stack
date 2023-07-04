@@ -7,7 +7,7 @@ import {RegexService} from '../shared/regex.service';
 import lodash from 'lodash';
 
 /* eslint-disable max-len,camelcase,@typescript-eslint/no-unsafe-call */
-const regex_IIS_standard01=/^(?<extract_timestamp>\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2})\s((\S+)\s){2}(?<source__ip>(\S+))\s(?<http__request__method>(\S+))\s(?<url__full>(\S+))\s(\S+)\s(?<url__port>(\S+))\s(-|\S+)\s(?<client__ip>(-|\S+))\s(?<extract_httpVersion>(\S+))\s(?<user_agent__original>(\S+))\s((\S+)\s){2}(?<server__address>(\S+))\s(?<http__response__status_code>(-|\d+))\s((-|\d+)\s){2}(?<http__request__bytes>(-|\d+))\s(?<http__response__bytes>(-|\d+))\s(?<event__duration>(-|\d+)).?$/;
+const regex_IIS_standard01=/^(?<extract_timestamp>\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2})\s((\S+)\s){3}(?<http__request__method>(\S+))\s(?<url__path>(\S+))\s(\S+)\s(?<url__port>(\S+))\s(?<user__name>(\S+))\s(?<source__ip>(-|\S+))\s(?<extract_httpVersion>(\S+))\s(?<extract_userAgent>(\S+))\s(?<extract_cookies>(\S+))\s(?<http__reques__referrer>(\S+))\s(?<url__domain>(\S+))\s(?<http__response__status_code>(-|\d+))\s((-|\d+)\s){2}(?<http__request__bytes>(-|\d+))\s(?<http__response__bytes>(-|\d+))\s(?<event__duration>(-|\d+)).?$/;
 
 /* eslint-enable max-len */
 
@@ -51,6 +51,30 @@ export class IISParser implements Parser {
       if (fullVerStr.toUpperCase().startsWith('HTTP/')) {
         lodash.set(document.data, 'http.version', fullVerStr.substring('HTTP/'.length));
       }
+    }
+    if (!lodash.isNil(extractedFields.userAgent) ) {
+      const userAgent=extractedFields.userAgent;
+      lodash.set(document.data, 'user_agent.original', userAgent.split('+').join(' '));
+    }
+    if (!lodash.isNil(lodash.get(document.data, 'url.port'))) {
+      switch (lodash.get(document.data, 'url.port')) {
+      case '443':
+        lodash.set(document.data, 'url.scheme', 'https');
+        break;
+      case '80':
+        lodash.set(document.data, 'url.scheme', 'http');
+        break;
+      case '21':
+        lodash.set(document.data, 'url.scheme', 'ftp');
+        break;
+      default:
+        break;
+      }
+    }
+    // replace cookies into '-' for event.original
+    if (!lodash.isNil(extractedFields.cookies) && extractedFields.cookies !== '-' ) {
+      const origin_event_string = lodash.get(document.data, 'event.original');
+      lodash.set(document.data, 'event.original', origin_event_string.replace(extractedFields.cookies, '-'));
     }
   }
 }
