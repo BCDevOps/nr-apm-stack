@@ -1,0 +1,85 @@
+{
+  "policy": {
+    "policy_id": "nrm-type-audit-mq-policy",
+    "description": "NRM MQ Audit policy",
+    "schema_version": 1,
+    "last_updated_time": 1628803063474,
+    "error_notification": null,
+    "default_state": "initial",
+    "states": [
+      {
+        "name": "initial",
+        "actions": [],
+        "transitions": [
+          {
+            "state_name": "force_merge",
+            "conditions": {
+              "min_index_age": "7d"
+            }
+          }
+        ]
+      },
+      {
+        "name": "force_merge",
+        "actions": [
+          {
+            "retry": {
+              "count": 10,
+              "backoff": "exponential",
+              "delay": "10m"
+            },
+            "force_merge": {
+              "max_num_segments": 1
+            }
+          }
+        ],
+        "transitions": [
+          {
+            "state_name": "warm",
+            "conditions": {
+              "min_index_age": "10d"
+            }
+          }
+        ]
+      },
+      {
+        "name": "warm",
+        "actions": [
+          {
+            "retry": {
+                "count": 10,
+                "backoff": "exponential",
+                "delay": "10m"
+            },
+            "warm_migration": {}
+          }
+        ],
+        "transitions": [
+          {
+            "state_name": "delete",
+            "conditions": {
+              "min_index_age": "28d"
+            }
+          }
+        ]
+      },
+      {
+        "name": "delete",
+        "actions": [
+          {
+            "delete": {}
+          }
+        ],
+        "transitions": []
+      }
+    ],
+    "ism_template": [
+      {
+        "index_patterns": [
+          "nrm-audit-mq-*"
+        ],
+        "priority": 0
+      }
+    ]
+  }
+}

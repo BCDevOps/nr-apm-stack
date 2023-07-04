@@ -378,6 +378,29 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
   },
   {
+    name: FingerprintCategory.MQ_AUDIT_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
+        dataset: 'mq.audit',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: 'host.hostname,basename(log.file.path),event.sequence,event.original',
+        docId: 'basename(log.file.path),event.sequence,event.hash',
+        index: 'nrm-audit-mq-<%=YYYY.MM.DD=%>',
+        timestampField: '@timestamp',
+        timestampFormat: 'DD-MMM-YYYY HH:mm:ss.SSS',
+        timestampTimezone: 'America/Vancouver',
+        timestampGuard: 'P14D',
+        environmentStandardize: true,
+        keyAsPath: true,
+      },
+    },
+  },
+  {
     name: FingerprintCategory.VAULT_AUDIT_LOGS,
     fingerprint: {
       event: {
