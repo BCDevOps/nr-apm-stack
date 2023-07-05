@@ -1,0 +1,46 @@
+{
+  "event": {
+    "category": "web",
+    "dataset": "generic.access",
+    "duration": 7,
+    "kind": "event"
+  },
+  "ecs": {
+    "version": "8.4.0"
+  },
+  "host": {
+    "architecture": "x64",
+    "hostname": "NH501441",
+    "os": {
+      "type": "linux",
+      "version": "5.10.16.3-microsoft-standard-WSL2"
+    }
+  },
+  "http": {
+    "request": {
+      "method": "GET"
+    },
+    "version": "1.1",
+    "response": {
+      "status_code": 304,
+      "bytes": null
+    }
+  },
+  "labels": {
+    "project": "nr-broker"
+  },
+  "service": {
+    "name": "nr-broker-backend",
+    "environment": "unknown"
+  },
+  "source": {
+    "ip": "::1"
+  },
+  "@timestamp": "2022-02-04T18:22:43.502Z",
+  "url": {
+    "original": "http://localhost:3000/v1/health"
+  },
+  "user_agent": {
+    "original": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+  }
+}

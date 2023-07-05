@@ -17,11 +17,11 @@ The Dockerfile is capable of running the server as well
 The simpliest way is to just use a curl command. Switch to the samples directory and run:
 
 ```
-curl -s -X POST -H "Content-Type: application/json" -d @samples/deployment-metrics.json localhost:3000
+curl -s -X POST -H "Content-Type: application/json" -d @samples/access-logs.json localhost:3000
 ```
 or
 ```
-curl -s -X POST -H "Content-Type: application/json" -d @samples/deployment-metrics.json "http://localhost:3000?print=true"
+curl -s -X POST -H "Content-Type: application/json" -d @samples/access-logs.json "http://localhost:3000?print=true"
 ```
 
 ## Testing with Funbucks

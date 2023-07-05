@@ -1,0 +1,38 @@
+{
+  "event": {
+    "action": "graph-vertex-add",
+    "category": "database",
+    "dataset": "broker.audit",
+    "kind": "event",
+    "type": "change",
+    "outcome": "success"
+  },
+  "ecs": {
+    "version": "8.4.0"
+  },
+  "host": {
+    "architecture": "x64",
+    "hostname": "NH501441",
+    "os": {
+      "type": "linux",
+      "version": "5.10.16.3-microsoft-standard-WSL2"
+    }
+  },
+  "labels": {
+    "project": "nr-broker"
+  },
+  "service": {
+    "name": "nr-broker-backend",
+    "environment": "unknown"
+  },
+  "source": {
+    "ip": "::1"
+  },
+  "@timestamp": "2023-06-26T15:23:24.585Z",
+  "user_agent": {
+    "original": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+  },
+  "@metadata": {
+    "timestampGuard": false
+  }
+}
