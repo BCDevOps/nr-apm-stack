@@ -38,6 +38,7 @@ jobs:
       - name: Build and push Backend Docker image
         uses: docker/build-push-action@v3
         with:
+          registry: ghcr.io
           context: "event-stream-processing"
           push: true
           tags: ${{ steps.meta.outputs.tags }}
