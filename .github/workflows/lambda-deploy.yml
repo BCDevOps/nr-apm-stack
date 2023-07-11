@@ -23,7 +23,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ github.repository }}-lambda
+          images: ghcr.io/${{ github.repository }}-lambda
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
