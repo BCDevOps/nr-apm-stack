@@ -378,6 +378,27 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
   },
   {
+    name: FingerprintCategory.APP_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
+        dataset: 'application.log.utc',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: 'host.hostname,basename(log.file.path),event.sequence,@timestamp',
+        docId: 'basename(log.file.path),event.sequence,event.hash',
+        index: 'nrm-app-generic-<%=YYYY.MM.DD=%>',
+        timestampField: '@timestamp',
+        timestampGuard: 'P14D',
+        environmentStandardize: true,
+        keyAsPath: true,
+      },
+    },
+  },
+  {
     name: FingerprintCategory.MQ_AUDIT_LOGS,
     fingerprint: {
       event: {
@@ -395,6 +416,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         timestampFormat: 'DD-MMM-YYYY HH:mm:ss.SSS',
         timestampTimezone: 'America/Vancouver',
         timestampGuard: 'P14D',
+        geoIp: true,
         environmentStandardize: true,
         keyAsPath: true,
       },
