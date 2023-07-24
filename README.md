@@ -1,21 +1,34 @@
-# About NR AWS OpenSearch Stack
+# NR APM (Application Performance and Monitoring) Stack
 
-OpenSearch is a community-driven, open source search and analytics suite derived from Apache 2.0 licensed ElasticSearch 7.10.2 & Kibana 7.10.2.
+[NR APM (Application Performance and Monitoring) Stack](https://apm.io.nrs.gov.bc.ca/_plugin/_dashboards) allows teams to tactically respond to potential issues and strategically investigate their KPIs. It is delivered using OpenSearch hosted on AWS. OpenSearch is a open source search and analytics suite derived from Elasticsearch & Kibana.
 
-Confluence: [AWS OpenSearch](https://apps.nrs.gov.bc.ca/int/confluence/x/GaRvBQ)
-Url: [Production](https://apm.io.nrs.gov.bc.ca/_plugin/_dashboards)
+<b>This README is for developers deploying NR APM Stack.</b>
 
-### Built With
+# More Documentation
+
+OpenSearch documentation is located here:
+
+https://opensearch.org/docs/latest/
+
+For end-users, our training, use cases and testimonials are located here:
+
+https://apps.nrs.gov.bc.ca/int/confluence/x/GaRvBQ
+
+For developers and product owners, our integration documentation is located here:
+
+https://docs.fluentbit.io
+
+# Getting Started
+
+The product in deployed using Github actions. A Terraform cloud team server handles running the Terraform. A CI pipeline is setup to run static analysis of the Typescript.
+
+## Built With
 
 * [Amazon OpenSearch Service](https://aws.amazon.com/opensearch-service)
 * [Amazon Lambda](https://aws.amazon.com/lambda/)
 * [Terraform](https://www.terraform.io)
 * [Terragrunt](https://terragrunt.gruntwork.io)
 * [Typescript](https://www.typescriptlang.org)
-
-## Getting Started
-
-The product in deployed using Github actions. A Terraform cloud team server handles running the Terraform. A CI pipeline is setup to run static analysis of the Typescript.
 
 Notes:
 
