@@ -8,6 +8,7 @@ Reference: [Elastic Common Schema](https://www.elastic.co/guide/en/ecs/current/i
 - Audit Logs
     - NR Broker
     - Vault
+    - Active MQ
 - Application Logs
 - CPU Metrics
 - Deployment Metrics (Superseded by NR Broker Audit)

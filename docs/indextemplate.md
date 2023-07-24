@@ -1,4 +1,4 @@
-# About Existing OpenSearch Data Indices and Lifecycle
+# OpenSearch Data Indices and Lifecycle
 
 ## Index Format
 nrm - (type) - (qualifier) .(lifecycle) - (date splitter)
