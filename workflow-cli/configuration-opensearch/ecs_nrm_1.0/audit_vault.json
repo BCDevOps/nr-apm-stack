@@ -195,6 +195,14 @@
               "index": false,
               "type": "keyword"
             },
+            "secret": {
+              "properties": {
+                "lease_id": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                }
+              }
+            },
             "warnings": {
               "ignore_above": 1024,
               "type": "keyword"
