@@ -9,8 +9,8 @@
   "bundledDependencies": true,
   "dependencies": {
     "@aws-crypto/sha256-js": "^4.0.0",
-    "@aws-sdk/client-elasticsearch-service": "^3.341.0",
-    "@aws-sdk/client-sqs": "^3.341.0",
+    "@aws-sdk/client-elasticsearch-service": "^3.369.0",
+    "@aws-sdk/client-sqs": "^3.369.0",
     "@aws-sdk/credential-provider-node": "^3.341.0",
     "@aws-sdk/node-http-handler": "^3.341.0",
     "@aws-sdk/protocol-http": "^3.341.0",
