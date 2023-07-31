@@ -7,7 +7,7 @@ import {RegexService} from '../shared/regex.service';
 import lodash from 'lodash';
 
 /* eslint-disable max-len,camelcase,@typescript-eslint/no-unsafe-call */
-const regex_IIS_standard01=/^(?<extract_timestamp>\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2})\s((\S+)\s){3}(?<http__request__method>(\S+))\s(?<url__path>(\S+))\s(\S+)\s(?<url__port>(\S+))\s(?<user__name>(\S+))\s(?<source__ip>(-|\S+))\s(?<extract_httpVersion>(\S+))\s(?<extract_userAgent>(\S+))\s(?<extract_cookies>(\S+))\s(?<http__request__referrer>(\S+))\s(?<url__domain>(\S+))\s(?<http__response__status_code>(-|\d+))\s((-|\d+)\s){2}(?<http__request__bytes>(-|\d+))\s(?<http__response__bytes>(-|\d+))\s(?<event__duration>(-|\d+)).?$/;
+const regex_IIS_standard01=/^(?<extract_timestamp>\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2})\s((\S+)\s){3}(?<http__request__method>(\S+))\s(?<url__path>(\S+))\s(\S+)\s(?<url__port>(\S+))\s(?<extract_userName>(\S+))\s(?<source__ip>(-|\S+))\s(?<extract_httpVersion>(\S+))\s(?<extract_userAgent>(\S+))\s(?<extract_cookies>(\S+))\s(?<http__request__referrer>(\S+))\s(?<url__domain>(\S+))\s(?<http__response__status_code>(-|\d+))\s((-|\d+)\s){2}(?<http__request__bytes>(-|\d+))\s(?<http__response__bytes>(-|\d+))\s(?<event__duration>(-|\d+)).?$/;
 
 /* eslint-enable max-len */
 
@@ -50,6 +50,15 @@ export class IISParser implements Parser {
       const fullVerStr=extractedFields.httpVersion;
       if (fullVerStr.toUpperCase().startsWith('HTTP/')) {
         lodash.set(document.data, 'http.version', fullVerStr.substring('HTTP/'.length));
+      }
+    }
+    if (!lodash.isNil(extractedFields.userName) && extractedFields.userName != '-') {
+      const value=extractedFields.userName;
+      const slashPos=value.indexOf('\\');
+      if (slashPos > 0) {
+        lodash.set(document.data, 'user.name', value.substring(slashPos+1).trim().toLowerCase());
+        // eslint-disable-next-line max-len
+        lodash.set(document.data, 'user.id', value.substring(slashPos+1).trim().toLowerCase()+'@'+value.substring(0, slashPos).toLowerCase());
       }
     }
     if (!lodash.isNil(extractedFields.userAgent) ) {
