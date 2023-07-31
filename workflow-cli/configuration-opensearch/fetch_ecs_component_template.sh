@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ecs_verion=8.4
+ecs_verion=8.9
 
 curl -L -qq https://github.com/elastic/ecs/archive/refs/heads/${ecs_verion}.zip --output ecs.zip
 

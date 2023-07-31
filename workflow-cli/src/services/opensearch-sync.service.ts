@@ -23,8 +23,8 @@ export default class OpenSearchSyncService extends AwsService {
 
   public async syncComponentTemplates(settings: settings): Promise<any> {
     await Promise.all([
-      this.syncEcsComponentTemplates(settings, '1.12'),
       this.syncEcsComponentTemplates(settings, '8.4'),
+      this.syncEcsComponentTemplates(settings, '8.9'),
       this.syncNrmEcsComponentTemplates(settings),
     ]);
 
