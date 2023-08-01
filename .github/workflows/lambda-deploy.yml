@@ -4,6 +4,8 @@ on:
   # Runs on pushes
   push:
     branches: [main]
+    paths: 
+      - 'event-stream-processing/**'
 
   workflow_dispatch:
 
