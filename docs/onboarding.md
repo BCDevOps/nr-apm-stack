@@ -75,32 +75,32 @@ Example:
 
 - event.kind: 'event'
 - event.category: 'web'
-- Mappings on Fingerprinte Category and event.dataset
+- Mappings on Fingerprint Category and event.dataset
 
-| FingerprintCategory   | event.dataset          | service.name | index                  |
-|-----------------------|------------------------|--------------|------------------------|
-| APACHE_ACCESS_LOGS    | apache.access          |              | nrm-access-external-*  |
-| APACHE_ACCESS_LOGS    | apache.access.internal |              | nrm-access-internal-*  |
-| WIN_IIS_ACCESS_LOGS   | iis.access             |              | nrm-access-external-*  |
-| WIN_IIS_ACCESS_LOGS   | iis.access.internal    |              | nrm-access-internal-*  |
-| HTTP_ACCESS_LOGS      | express.access         |              | nrm-access-external-*  |
-| HTTP_ACCESS_LOGS      | generic.access         |              | nrm-access-external-*  |
-| WSO2_ACCESS_LOGS      | wso2.access            |              | nrm-access-internal-*  |
-| TOMCAT_ACCESS_LOGS    | tomcat.access          |              | nrm-access-internal-*  |
-| TOMCAT_LOCALHOST_LOGS | tomcat.localhost       |              | nrm-tomcat-localhost-* |
-| TOMCAT_CATALINA_LOGS  | tomcat.catalina        |              | nrm-tomcat-catalina-*  |
-| APP_LOGS              | application.log        | fmeserver    | nrm-app-generic-*      |
-| APP_LOGS              | application.log        | knox         | nrm-app-generic-*      |
-| APP_LOGS              | wso2.carbon            | api-manager  | nrm-app-generic-*      |
-| APP_LOGS              | application.log        |              | nrm-app-generic-*      |
-| APP_LOGS              | application.log.utc    |              | nrm-app-generic-*      |
-| MQ_AUDIT_LOGS         | mq.audit               |              | nrm-audit-mq-*         |
-| VAULT_AUDIT_LOGS      | vault.audit            |              | nrm-audit-vault-*      |
-| BROKER_AUDIT_LOGS     | broker.audit           |              | nrm-audit-broker-*     |
+| Fingerprint Category   | event.dataset          | service.name | index                  |
+|------------------------|------------------------|--------------|------------------------|
+| APACHE_ACCESS_LOGS     | apache.access          |              | nrm-access-external-*  |
+| APACHE_ACCESS_LOGS     | apache.access.internal |              | nrm-access-internal-*  |
+| WIN_IIS_ACCESS_LOGS    | iis.access             |              | nrm-access-external-*  |
+| WIN_IIS_ACCESS_LOGS    | iis.access.internal    |              | nrm-access-internal-*  |
+| HTTP_ACCESS_LOGS       | express.access         |              | nrm-access-external-*  |
+| HTTP_ACCESS_LOGS       | generic.access         |              | nrm-access-external-*  |
+| WSO2_ACCESS_LOGS       | wso2.access            |              | nrm-access-internal-*  |
+| TOMCAT_ACCESS_LOGS     | tomcat.access          |              | nrm-access-internal-*  |
+| TOMCAT_LOCALHOST_LOGS  | tomcat.localhost       |              | nrm-tomcat-localhost-* |
+| TOMCAT_CATALINA_LOGS   | tomcat.catalina        |              | nrm-tomcat-catalina-*  |
+| APP_LOGS               | application.log        | fmeserver    | nrm-app-generic-*      |
+| APP_LOGS               | application.log        | knox         | nrm-app-generic-*      |
+| APP_LOGS               | wso2.carbon            | api-manager  | nrm-app-generic-*      |
+| APP_LOGS               | application.log        |              | nrm-app-generic-*      |
+| APP_LOGS               | application.log.utc    |              | nrm-app-generic-*      |
+| MQ_AUDIT_LOGS          | mq.audit               |              | nrm-audit-mq-*         |
+| VAULT_AUDIT_LOGS       | vault.audit            |              | nrm-audit-vault-*      |
+| BROKER_AUDIT_LOGS      | broker.audit           |              | nrm-audit-broker-*     |
 
 After configuring and deploying logs part of the server with fluentbit via Github Repo [nr-funbucks](https://github.com/bcgov-nr/nr-funbucks/tree/main/config/server) asssociated with correct dataset, the logs including access, localhost and application will be shown in the OpenSearch.
 
-Documents about configuration for fluentbit is in repo [nr-funbucks](https://github.com/bcgov-nr/nr-funbucks).
+Documents about configuration for fluentbit is in [nr-funbucks](./fluentbit.md).
 
 ## Verification Steps
 

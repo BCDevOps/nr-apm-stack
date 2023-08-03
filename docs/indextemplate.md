@@ -9,6 +9,7 @@ nrm - (type) - (qualifier) .(lifecycle) - (date splitter)
 | qualifier     	| Optional 	| Used when the type is insufficient to determine the fields required for the index. An example is an audit log for an application. As this varies per application, 'nrm-audit' is insufficiently specific. Another example is a subtype where a group of applications may require more (or just different) fields compared to the generic type.  	|
 | lifecycle     	| Avoid    	| Lifecycle should only ever be used in extreme cases where a large portion of the documents stored in the type/qualifier must be deleted much earlier than the standard lifecycle for the type/qualifier combo allows. Really avoid multiple lifecycles on a single index name.                                                                  	|
 | date splitter 	| Required 	| This is usually the year-month-day or year-month. The splitter used is largely up to how much data is incoming and the lifecycle. (You can't delete an index split monthly on a weekly schedule for example.)                                                                                                                                   	|
+
 The 'nrm - (type) - (qualifier)' portion (or without the qualifier) will be referred to as the index name, below.
 
 ## Data Indices
