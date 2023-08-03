@@ -1,8 +1,13 @@
 name: Lambda Deploy
 
 on:
-  workflow_dispatch:
+  # Runs on pushes
+  push:
     branches: [main]
+    paths: 
+      - event-stream-processing/**
+
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
