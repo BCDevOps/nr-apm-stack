@@ -1,11 +1,17 @@
 <!-- docs/_sidebar.md -->
 
 * [Home](/)
-* [Online Training](/learning.md)
-* [OpenSearch Architecture](/architecture.md)
-* [Data Indices and Lifecycle](/indextemplate.md)
-* [OpenSearch Common Schema](/commonschema.md)
-* [Onboarding Process](/onboarding.md)
-* [Funbucks for Flentbit Configuration](/fluentbit.md)
-* [Lambda Testing](/testing.md)
-* [Deployment](/deployment.md)
+* Onboarding Planning
+** [Onboarding Process](/onboarding.md)
+
+* Output Application Events
+** [Funbucks for Flentbit Configuration](/fluentbit.md)
+
+* Events to OpenSearch Documents
+** [Testing Event Stream Processing](/testing.md)
+** [Deployment](/deployment.md)
+
+* Reference
+** [APM Architecture](/architecture.md)
+** [Data Indices and Lifecycle](/indextemplate.md)
+** [Data Schema](/commonschema.md)

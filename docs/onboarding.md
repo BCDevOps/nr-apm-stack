@@ -1,25 +1,8 @@
 # Onboarding Process
-
-## Prerequsition
-
-### Grant User(s) Access to OpenSearch
-PR request on [auth-sync-config-opensearch
-](https://github.com/bcgov-nr/auth-sync-config-opensearch)
-
-Modify integration-roles.json under certain groups with user's email
-
-| Access               | Group Name                                                      |
-|----------------------|-----------------------------------------------------------------|
-| General              | nrm-read-all                                                    |
-| Full Access for Team | (team name)-write-all                                           |
-| Altering             | alerting_ack_alerts, alerting_full_access, alerting_read_access |
-| Anomaly              | anomaly_full_access, anomaly_read_access                        |
-| Admin                | all_access                                                      |
-
 ## Onboarding Server Metrics to OpenSearch
 Configure the new server in Github Repo [nr-funbucks](https://github.com/bcgov-nr/nr-funbucks/tree/main/config/server)
 
-Example: 
+Example:
 
 - Linux: [backup.json](https://github.com/bcgov-nr/nr-funbucks/blob/main/config/server/backup.json)
 
@@ -107,4 +90,4 @@ Documents about configuration for fluentbit is in [nr-funbucks](./fluentbit.md).
 - Login [OpenSearch](https://apm.io.nrs.gov.bc.ca/_dashboards)
 - menu -> Discover
 - choose correct indices from dropdown list
-- type search string in the search bar. For example: host.hostname: stress 
+- type search string in the search bar. For example: host.hostname: stress
