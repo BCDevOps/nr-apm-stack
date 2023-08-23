@@ -17,6 +17,9 @@
 ** [Testing Event Stream Processing](/testing.md)
 ** [Deployment](/deployment.md)
 
+* OpenSearch Operations
+** [Setup Monitor](/monitor.md)
+
 * Reference
 ** [APM Architecture](/architecture.md)
 ** [Data Indices and Lifecycle](/indextemplate.md)
