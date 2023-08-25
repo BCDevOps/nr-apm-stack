@@ -16,3 +16,8 @@ It is unlikely your application will directly log to Elastic Common Schema. It i
 ## Other activities
 
 All servers sending documents should regularly synchronize their clock. In most cases, the server will have been setup to do this already.
+
+## Dead Letter Lifecycle
+Records that fail to be committed to an OpenSearch Index for any reason are added to the dead letter queue (AWS Kinesis Firehose) that outputs to an s3 bucket. The s3 bucket deletes the data after 7 days.
+
+![dead letter queue](./images/dlq-kinesis.png)
