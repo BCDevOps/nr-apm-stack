@@ -52,9 +52,6 @@ Generally, fresher data is examined more often so more resources are utilized to
 - Delete at: When the index is removed.
 - Rollup: Are stats from the indices rolled up into another index for indefinite usage?
 
-## Dead Letter Lifecycle
-Records that fail to be committed to an OpenSearch Index for any reason are added to the dead letter queue (AWS Kinesis Firehose) that outputs to an s3 bucket. The s3 bucket deletes the data after 7 days.
-
 ## Appendix
 Explanation of why certain qualifiers are used or not
 
@@ -63,18 +60,6 @@ Explanation of why certain qualifiers are used or not
 | app   | (blank)   | Never. Types of applications are encouraged to group themselves into generic types.                                |
 | app   | (appname) | Applications will be permitted their own index provided they are extracting unique fields from their log messages. |
 | audit | (blank)   | Never. Audit logs are specific to an application so a generic type would not make sense.                           |
-
-## How to create an alias
-Assume: '- (date splitter)' on end of the pattern
-
-| Pattern(s)                    | Alias                      | Description                                                       |
-|-------------------------------|----------------------------|-------------------------------------------------------------------|
-| nrm - (type)...               | nrm - (type)               |                                                                   |
-| nrm - (type) - (qualifier)... | nrm - (type)               | Qualified types may use the generic type alias if it makes sense. |
-|                               | nrm - (type) - (qualifier) |                                                                   |
-| ... .(lifecycle) ...          | See above                  | Lifecycle should not change alias.                                |
-
-All non-exploratory indices must have a strict dynamic mapping. The type of logs that are sent should be well understood and described. This means no additional fields are added 
 
 ## Standard Lifecycle Modifiers
 These modifiers are for edge cases where the long term cost of a subset of the data greatly outweighs the utility of keeping it around. Lifecycle modifiers are not recommended because fewer indices decreases the overall data size and speeds query response. A fair bit of analysis should go into any decision to use one. 

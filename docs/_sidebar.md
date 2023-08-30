@@ -9,6 +9,7 @@
 
 * Send Events to AWS
 ** [Overview](/send_overview.md)
+** [Kinesis](./kinesis.md)
 ** [Funbucks for Fluentbit Configuration](/fluentbit.md)
 ** [Funbucks Onboarding](/onboarding.md)
 
