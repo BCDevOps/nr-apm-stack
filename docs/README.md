@@ -1,3 +1,5 @@
+<img src="./images/apm-icon_200x200.png" alt="APM Stack" width="100"/>
+
 # NR APM (Application Performance and Monitoring) Stack
 
 [NR APM (Application Performance and Monitoring) Stack](https://apm.io.nrs.gov.bc.ca/_plugin/_dashboards) allows teams to tactically respond to potential issues and strategically investigate their KPIs. It is delivered using OpenSearch hosted on AWS. OpenSearch is a open source search and analytics suite derived from Elasticsearch & Kibana.
