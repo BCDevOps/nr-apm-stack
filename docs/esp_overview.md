@@ -33,3 +33,9 @@ The following table summarizes why you might want to let the fingerprint define 
 We insist that the data fingerprint be used to determine the index. This is so we can centrally control having the data sent to the appropriate index. Index management is central to managing cost and performance.
 
 We recommend that the data fingerprint be used to determine the ID and hash. In some cases, it may be necessary to tweak these on the client-side.
+
+## Dead Letter Lifecycle
+
+Records that fail to be committed to an OpenSearch Index for any reason are added to the dead letter queue (AWS Kinesis Firehose) that outputs to an s3 bucket. The s3 bucket deletes the data after 7 days.
+
+![dead letter queue](./images/dlq-kinesis.png)
