@@ -3,10 +3,7 @@ variable "jwt_token_monitor" {
     name = string
     bucket_level_trigger_id = string
     severity = string
-    action_id = string    
+    action_id = string   
+    destination_id = string 
   })
-}
-
-variable "destination_id" {
-  type = string
 }
