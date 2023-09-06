@@ -5,12 +5,10 @@
 The following will start an http server listening on port 3000.
 
 ```
-npm run start
+podman run -d -p 3000:3000 artifacts.developer.gov.bc.ca/cc20-gen-docker-local/nr-funbucks:latest
 ```
 
 The root (/) will respond with the processed JSON. If for some reason you can't see the response (using fluentbit), you can have it print by setting the query parameter 'print' to be 'true' (?print=true).
-
-The Dockerfile is capable of running the server as well
 
 ### Sending Test Data - curl
 
@@ -26,16 +24,6 @@ curl -s -X POST -H "Content-Type: application/json" -d @samples/access-logs.json
 
 ## Testing with Funbucks
 
-These instructions assume you are using podman. Run the following to build the local lambda image.
+Funbucks is tool for generating FluentBit templated configurations for servers and Kubernetes (OpenShift) deployments. The FluentBit configuration can be setup to read in a sample file and send to a locally running Event Stream Processing Lambda for testing.
 
-```
-./podman-build.sh
-```
-
-Next, start the local lambda listening on the podman machine's port 3000. If you are not running podman on Linux, this may be the podman machine's port (not your machine's port).
-
-```
-./podman-run.sh
-```
-
-Finally, start up a fluentbit server using podman with a rendered funbucks configuration. See the Funbucks repository for how to do that.
+You simply start up the Event Stream Processing Lambda as above. In the Funbucks repo, you generate a configuration for your server using the '-l' flag. Finally, you run Fluenbit either locally or in a container to send the output to the Event Stream Processing Lambda. See the Funbucks repository for more details: https://github.com/bcgov-nr/nr-funbucks#readme
