@@ -10,7 +10,7 @@
 * Send Events to AWS
 ** [Overview](/send_overview.md)
 ** [Kinesis](./kinesis.md)
-** [Funbucks for Fluentbit Configuration](/fluentbit.md)
+** [Funbucks for Fluent Bit Configuration](/fluentbit.md)
 ** [Funbucks Onboarding](/onboarding.md)
 
 * Events to OpenSearch Documents

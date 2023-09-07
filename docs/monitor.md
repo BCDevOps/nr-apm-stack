@@ -11,8 +11,8 @@
 
 After deployment the new SNS topic should be displayed in OpenSearch->Notification->Channels
 
-## Create a Monitor for FluentBit Agent Status with Terraform
-- Ensure target server/# of FluentBit Agents is correct in [fluentbit_agent.csv](https://github.com/bcgov-nr/nr-funbucks/blob/main/scripts/fluentbit_agents.csv)
+## Create a Monitor for Fluent Bit Agent Status with Terraform
+- Ensure target server/# of Fluent Bit Agents is correct in [fluentbit_agent.csv](https://github.com/bcgov-nr/nr-funbucks/blob/main/scripts/fluentbit_agents.csv)
 
 - Command to generate file monitors.json from [nr-funbucks](https://github.com/bcgov-nr/nr-funbucks): ./bin/dev monitors
 

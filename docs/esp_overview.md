@@ -1,8 +1,8 @@
-# Event Streaming Processing Overview
+# Events to OpenSearch Documents
 
-How to utilize the Event Streaming Processing Lambda to manipulate your events and place them in the correct index in OpenSearch.
+Your application events are sent to an AWS Kinesis endpoint. The Event Streaming Processing Lambda pulls the event data from this Kinesis endpoint. It manipulates your events and places them in the correct index in OpenSearch.
 
-## When to use lambda
+## Lambda Data-enrichment
 
 We encourage using the Lambda-based parsers for data-enrichment. It is not recommended that teams implement things like:
 
@@ -17,7 +17,7 @@ There are certain "awkward" or commonly needed tasks that we also provide parser
 
 Activating this parsing is done by either sending metadata to enable it or working with us to define standard parsing to do based on your data's fingerprint. Functionally, there is no difference to sending the metadata or relying on the fingerprint to define the parsing. Metadata sent will override the fingerprint metadata.
 
-# Fingerprint your data
+## Fingerprint Your Data
 
 Teams should discuss the data they plan on sending and work out the fields and values to send so that the data is recognized as belonging to a supported schema and put into the correct index. This also allows us to setup standard processing for your fingerprint if desired.
 
