@@ -81,9 +81,9 @@ Example:
 | VAULT_AUDIT_LOGS       | vault.audit            |              | nrm-audit-vault-*      |
 | BROKER_AUDIT_LOGS      | broker.audit           |              | nrm-audit-broker-*     |
 
-After configuring and deploying logs part of the server with fluentbit via Github Repo [nr-funbucks](https://github.com/bcgov-nr/nr-funbucks/tree/main/config/server) asssociated with correct dataset, the logs including access, localhost and application will be shown in the OpenSearch.
+After configuring and deploying logs part of the server with Fluent Bit via Github Repo [nr-funbucks](https://github.com/bcgov-nr/nr-funbucks/tree/main/config/server) asssociated with correct dataset, the logs including access, localhost and application will be shown in the OpenSearch.
 
-Documents about configuration for fluentbit is in [nr-funbucks](./fluentbit.md).
+Documents about configuration for Fluent Bit is in [nr-funbucks](./fluentbit.md).
 
 ## Verification Steps
 

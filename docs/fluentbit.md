@@ -1,12 +1,12 @@
-# Fluentbit Configuration with Funbucks
+# Fluent Bit Configuration with Funbucks
 Funbucks is tool for generating Fluent Bit templated configurations for servers and Kubernetes (OpenShift) deployments.
 
-Using repo: [nr-funbucks](https://github.com/bcgov-nr/nr-funbucks) to configure Fluentbit configuration for your application or server. Funbucks helps you to generate Fluentbit input, parser, filter and outputs. 
+Using repo: [nr-funbucks](https://github.com/bcgov-nr/nr-funbucks) to configure Fluent Bit configuration for your application or server. Funbucks helps you to generate Fluent Bit input, parser, filter and outputs.
 
 ## Prerequisition
 
-* Create/Modify [server](https://github.com/bcgov-nr/nr-funbucks/tree/main/config/server) configuration 
-* Choose correct [template](https://github.com/bcgov-nr/nr-funbucks/tree/main/config/templates) for log type 
+* Create/Modify [server](https://github.com/bcgov-nr/nr-funbucks/tree/main/config/server) configuration
+* Choose correct [template](https://github.com/bcgov-nr/nr-funbucks/tree/main/config/templates) for log type
 
 | Type                  | Description                                            |
 |-----------------------|--------------------------------------------------------|
@@ -20,19 +20,19 @@ Using repo: [nr-funbucks](https://github.com/bcgov-nr/nr-funbucks) to configure 
 | wso2                  | WSO2 carbon log                                        |
 
 * Modify application portion in the server json, including regex or log path for individual application.
-  
+
   For example:
     ```
     "contTomcatParserRegex": "/^[ \\ta-zA-Z\\D\\r].*|^\\d+\\s+[<>]+.*/"
     "!logs_path": "{% if localLogsPathPrefix %}{{localLogsPathPrefix}}/nrprd{% else %}/sw_ux/httpd01/logs/hot{% endif %}/*-access*.log"
     ```
 
-    - Linux Server Metrics and Application Logs Configuration: [server](https://github.com/bcgov-nr/nr-funbucks/blob/main/config/server/between.json) configuration 
-    
+    - Linux Server Metrics and Application Logs Configuration: [server](https://github.com/bcgov-nr/nr-funbucks/blob/main/config/server/between.json) configuration
 
-    - Windows Server Metrics and IIS Logs Configuration: [server](https://github.com/bcgov-nr/nr-funbucks/blob/main/config/server/tension.json) configuration  
 
-    - OpenShift Application Logs Configuration[server](https://github.com/bcgov-nr/nr-funbucks/blob/main/config/server/app_spar.json) configuration 
+    - Windows Server Metrics and IIS Logs Configuration: [server](https://github.com/bcgov-nr/nr-funbucks/blob/main/config/server/tension.json) configuration
+
+    - OpenShift Application Logs Configuration[server](https://github.com/bcgov-nr/nr-funbucks/blob/main/config/server/app_spar.json) configuration
 
 ## Funbucks Configuration
 
@@ -48,8 +48,8 @@ There are essential [fields](./onboarding.md) for OpensSearch
 * service.type
 
 
-## Generate Fluentbit Configuration Files
-You can generate all the output files with (from Funbucks repo root dir): 
+## Generate Fluent Bit Configuration Files
+You can generate all the output files with (from Funbucks repo root dir):
 
 Example 1: Generate for a server
 ```
@@ -76,7 +76,7 @@ $ ./bin/dev oc -s app_spar
 ```
 The output_pack folder will now contain a ConfigMap and Volume for pasting into a Kubernetes deployment config.
 
-## Running a configuration against the local lambda (nr-apm-stack/event-stream-processing)
+## Running a Configuration Against the Local Lambda (nr-apm-stack/event-stream-processing)
 * Generate your server's configuration using the local (-l) flag and (-a) flag from previous steps
 * Place any documents in ./lambda/data. You will need to lay the files out relative to the log directory like they would be on the server. Check the generated files (inputs.conf) in ./output if you are confused.
 * Ensure the local lambda(apm-stack) is running. See: local [Lambda Testing](./testing.md) on portion 'Testing with Funbucks'
@@ -84,4 +84,4 @@ The output_pack folder will now contain a ConfigMap and Volume for pasting into 
 
 In nr-funbucks side, log files under ./lambda/data have been read and parsed.
 
-In nr-apm-stack/event-stream-processing, the output simulates each record that Fluentbit processed will be received for OpenSearch
+In nr-apm-stack/event-stream-processing, the output simulates each record that Fluent Bit processed will be received for OpenSearch

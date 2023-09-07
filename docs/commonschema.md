@@ -81,7 +81,7 @@ Reference: [https://www.elastic.co/guide/en/ecs/current/ecs-destination.html](ht
 | [event.type](https://www.elastic.co/guide/en/ecs/current/ecs-allowed-values-event-type.html)     |     :bulb:     | keyword[] |                                                                                                                                                                                 | access                                  |
 | [event.original](https://www.elastic.co/guide/en/ecs/current/ecs-event.html#field-event-original) |     :bulb:     | string    | Raw text message of entire event. This is hidden from display from unprivileged users. If there is no need to check data integrity, setting this is optional.                   |                                         |
 | [event.outcome](https://www.elastic.co/guide/en/ecs/current/ecs-allowed-values-event-outcome.html)  |     :bulb:     | keyword   |                                                                                                                                                                                 | failure success unknown                 |
-| [event.sequence](https://www.elastic.co/guide/en/ecs/current/ecs-event.html#field-event-sequence) |     :bulb:     | long      | Supplemental information (like the file byte offset from fluentbit) to determine ordering of closely occurring events. This may also be useful in investigating parsing issues. |                                         |
+| [event.sequence](https://www.elastic.co/guide/en/ecs/current/ecs-event.html#field-event-sequence) |     :bulb:     | long      | Supplemental information (like the file byte offset from Fluent Bit) to determine ordering of closely occurring events. This may also be useful in investigating parsing issues. |                                         |
 
 Reference: [https://www.elastic.co/guide/en/ecs/current/ecs-event.html](https://www.elastic.co/guide/en/ecs/current/ecs-event.html)
 
@@ -142,7 +142,7 @@ Reference: [https://www.elastic.co/guide/en/ecs/current/ecs-group.html](https://
 
 Reference: [https://www.elastic.co/guide/en/ecs/current/ecs-http.html](https://www.elastic.co/guide/en/ecs/current/ecs-http.html)
 
-### Kinesis Fields - EXTENSION 
+### Kinesis Fields - EXTENSION
 | Field                               | Mandatory | Type    | Description | Values |
 |-------------------------------------|-----------|---------|-------------|--------|
 | kinesis.partitionKey                |     :bulb:     | keyword |             |        |
