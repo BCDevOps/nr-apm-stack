@@ -7,7 +7,7 @@ terraform {
   required_providers {
     aws = {
       source = "hashicorp/aws"
-      version = "5.6.2"
+      version = "5.18.1"
     }
     elasticsearch = {
       source = "phillbaker/elasticsearch"
@@ -362,9 +362,9 @@ resource "null_resource" "es_configure" {
     #working_dir = "../"
     #command = "echo %CD%"
     command = <<EOF
-curl -sSL -o /tmp/node-v16.15.0-linux-x64.tar.gz https://nodejs.org/dist/v16.15.0/node-v16.15.0-linux-x64.tar.gz
+curl -sSL -o /tmp/node-v20.7.0-linux-x64.tar.gz https://nodejs.org/dist/v20.7.0/node-v20.7.0-linux-x64.tar.gz
 mkdir /tmp/node
-tar -xf /tmp/node-v16.15.0-linux-x64.tar.gz -C /tmp/node --strip-components=1
+tar -xf /tmp/node-v20.7.0-linux-x64.tar.gz -C /tmp/node --strip-components=1
 export PATH=/tmp/node/bin:$PATH
 export AWS_REGION=ca-central-1
 export OS_URL=apm.io.nrs.gov.bc.ca
