@@ -368,12 +368,12 @@
     "automation_queue_action_id": "b4813a1f9c36786f61dd"
   },
   {
-    "name": "nrm_skittles_fluent-bit.0",
-    "server": "skittles",
+    "name": "nrm_sunburst_fluent-bit.0",
+    "server": "sunburst",
     "agent": "fluent-bit.0",
-    "query_level_trigger_id": "adba42f2f92332439bfa",
-    "teams_channel_action_id": "70338bcd6d009948cb00",
-    "automation_queue_action_id": "4916c84bcd99c0b9233e"
+    "query_level_trigger_id": "fcdbb0f53113f857e862",
+    "teams_channel_action_id": "583b5a75f74a9385de46",
+    "automation_queue_action_id": "e11fa1f57b737b1a17a5"
   },
   {
     "name": "nrm_smarties_fluent-bit.0",
