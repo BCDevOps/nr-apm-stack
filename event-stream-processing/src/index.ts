@@ -1,3 +1,3 @@
 import 'reflect-metadata';
-import {kinesisStreamHandler} from './app';
-export {kinesisStreamHandler};
+import {kinesisStreamHandler, kinesisStreamDummyHandler} from './app';
+export {kinesisStreamHandler, kinesisStreamDummyHandler};
