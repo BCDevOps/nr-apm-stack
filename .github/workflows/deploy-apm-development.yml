@@ -4,10 +4,6 @@ on:
   workflow_dispatch:
     branches: [main]
 
-env:
-  TF_VERSION: 0.15.4
-  TG_VERSION: 0.37.1
-
 permissions:
   id-token: write
   contents: read
@@ -43,7 +39,7 @@ jobs:
           use-installer: true
 
       - name: Get AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
@@ -56,7 +52,7 @@ jobs:
           path: .aws-sam
           key: ${{ github.sha }}-sam-cache
 
-      - name: Run sam build
+      - name: Run SAM build
         if: steps.cache-sam-build.outputs.cache-hit != 'true'
         run: sam build --cached
 
