@@ -114,8 +114,7 @@ dist
 *.lock.hcl
 *.env
 terraform/.terraform.lock.hcl
-/nodejs/asset/GeoLite2-ASN.mmdb
-/nodejs/asset/GeoLite2-City.mmdb
+/layer
 /event-stream-processing/doc/
 /event-stream-processing/event-stream-processing.zip
 /terraform/event-stream-processing.zip

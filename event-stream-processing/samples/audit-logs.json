@@ -26,7 +26,7 @@
     "environment": "unknown"
   },
   "source": {
-    "ip": "::1"
+    "ip": "142.25.142.216"
   },
   "@timestamp": "2023-06-26T15:23:24.585Z",
   "user_agent": {

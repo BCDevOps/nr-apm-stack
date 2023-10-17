@@ -20,6 +20,16 @@ export class KinesisStreamWrapperService {
   ) {}
 
   /**
+   * Handle the Kinesis event by transforming and then bulk uploading to OpenSearch
+   * @param event The event containing the data to transform
+   * @param context The lambda context
+   * @returns A promise to wait on
+   */
+  public async handle(event: KinesisStreamEvent, context: Context): Promise<void> {
+    await this.kinesisStreamService.handle(event, context, true);
+  }
+
+  /**
    * Handle received data by wrapping in a mock KinesisStreamRecord and forwarding on
    * @param data The data to wrap
    * @returns Promise with the result

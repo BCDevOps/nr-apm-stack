@@ -71,7 +71,7 @@
     "esbuild": "^0.19.4",
     "inversify": "^6.0.1",
     "lodash": "^4.17.21",
-    "maxmind": "^4.3.13",
+    "maxmind": "^4.3.16",
     "moment": "^2.29.3",
     "moment-timezone": "^0.5.43",
     "reflect-metadata": "^0.1.13",

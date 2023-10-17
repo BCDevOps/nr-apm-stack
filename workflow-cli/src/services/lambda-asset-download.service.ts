@@ -8,8 +8,10 @@ $MAXMIND_LICENSE_KEY = Read-Host -Prompt 'Input your MaxMind License Key'
 import * as http from 'https';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as tar from 'tar-stream';
+import * as zlib from 'zlib';
 
-const BASE_PATH = path.resolve(__dirname, '../../../nodejs/asset');
+const BASE_PATH = path.resolve(__dirname, '../../../layer/maxmind-geoip-db/nodejs/asset');
 
 export default class LambdaAssetDownloadService {
   public async doMaxMindDownload(licenseKey: string): Promise<void> {
@@ -30,15 +32,35 @@ export default class LambdaAssetDownloadService {
   }
 
   private download(url: string, dest: string) {
+    const extract = tar.extract();
+    const basename = path.basename(dest);
+    const chunks: Uint8Array[] = [];
     // console.log(`Downloading ${url}`) // careful!!! download URL contains license key!!!
     return new Promise<void>((resolve) => {
       http.get(url, function(response) {
         if (response.statusCode === 200) {
           console.log(`Request succesful! Saving to ${dest}`);
-          const stream = fs.createWriteStream(dest);
-          response.pipe(stream);
-          stream.on('finish', function() {
-            stream.close();
+          response
+            .pipe(zlib.createGunzip())
+            .pipe(extract);
+          extract.on('entry', function(header, stream, cb) {
+            if (header.name.endsWith(basename)) {
+              stream.on('data', function(chunk) {
+                chunks.push(chunk);
+              });
+            }
+
+            stream.on('end', function() {
+              cb();
+            });
+
+            stream.resume();
+          });
+          extract.on('finish', function() {
+            if (chunks.length) {
+              const data = Buffer.concat(chunks);
+              fs.writeFileSync(dest, data);
+            }
             resolve();
           });
         } else {

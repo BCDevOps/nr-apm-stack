@@ -7,14 +7,26 @@ Description: >
 Globals:
   Function:
     Timeout: 60
+    MemorySize: 1024
+    Environment:
+      Variables:
+        LOG_LEVEL: !Ref LogLevel
 
 Parameters:
-  StreamShardCount:
+  LambdaHandler:
+    Type: String
+    Default: "index.kinesisStreamHandler"
+  LogLevel:
+    Type: String
+    Default: "info"
+  KinesisStreamShardCount:
     Type: Number
+    MinValue: 1
+    MaxValue: 10
     Default: 1
   OpensearchUrl:
     Type: String
-    Default: https://search-nress-prod-vknktapr2rxt3aze4bqa3pfirq.ca-central-1.es.amazonaws.com
+    Default: ""
 
 Resources:
 
@@ -125,7 +137,7 @@ Resources:
     Properties:
       CompatibleRuntimes:
         - nodejs18.x
-      ContentUri: ./nodejs/asset
+      ContentUri: ./layer/maxmind-geoip-db
       LayerName: maxmind-geoip-db
       RetentionPolicy: Delete
 
@@ -135,17 +147,15 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: event-stream-processing/
-      Handler: index.kinesisStreamHandler
+      Handler: !Ref LambdaHandler
       Role: !GetAtt ApmStreamRole.Arn
       Runtime: nodejs18.x
       Architectures:
       - x86_64
-      MemorySize: 1024
       Environment:
         Variables:
-          DLQ_STREAM_NAME: nress-prod-dlq-stream
+          DLQ_STREAM_NAME: !Ref ApmDlqStream
           ES_URL: !Ref OpensearchUrl
-          LOG_LEVEL: debug
           MAXMIND_DB_DIR: /opt/nodejs/asset
       Layers:
         - !Ref ApmMaxmindGeoIpLayer
@@ -185,7 +195,7 @@ Resources:
     Type: AWS::Kinesis::Stream
     Properties:
       Name: apm-logs
-      ShardCount: !Ref StreamShardCount
+      ShardCount: !Ref KinesisStreamShardCount
       # Enhanced can't be enabled...
       # https://github.com/aws-cloudformation/cloudformation-coverage-roadmap/issues/768
       # shard_level_metrics = [

@@ -20,7 +20,7 @@ resolve_s3 = true
 s3_prefix = "nr-apm-stack"
 region = "ca-central-1"
 image_repositories = []
-parameter_overrides = "StreamShardCount=\"1\" OpensearchUrl=\"https://search-nress-prod-vknktapr2rxt3aze4bqa3pfirq.ca-central-1.es.amazonaws.com\""
+parameter_overrides = "LambdaHandler=\"index.kinesisStreamDummyHandler\" LogLevel=\"info\" KinesisStreamShardCount=\"1\" OpensearchUrl=\"\""
 
 [default.package.parameters]
 resolve_s3 = true
