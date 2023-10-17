@@ -9,7 +9,7 @@ import * as http from 'https';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const BASE_PATH = path.resolve(__dirname, '../../../event-stream-processing/asset');
+const BASE_PATH = path.resolve(__dirname, '../../../nodejs/asset');
 
 export default class LambdaAssetDownloadService {
   public async doMaxMindDownload(licenseKey: string): Promise<void> {

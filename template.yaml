@@ -1,0 +1,219 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  NR APM (Application Performance and Monitoring) Stack
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 60
+
+Parameters:
+  StreamShardCount:
+    Type: Number
+    Default: 1
+  OpensearchUrl:
+    Type: String
+    Default: https://search-nress-prod-vknktapr2rxt3aze4bqa3pfirq.ca-central-1.es.amazonaws.com
+
+Resources:
+
+  ## Roles
+
+  ApmStreamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: 'access_to_kinesis'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                  - kinesis:SubscribeToShard
+                  - kinesis:GetShardIterator
+                  - kinesis:GetRecords
+                  - kinesis:DescribeStream
+                Resource:
+                  - !GetAtt ApmStream.Arn
+                Effect: Allow
+              - Action:
+                  - kinesis:ListStreams
+                  - kinesis:ListShards
+                Resource:
+                  - "*"
+                Effect: Allow
+              - Action:
+                  - firehose:PutRecord
+                  - firehose:PutRecordBatch
+                Resource:
+                  - !GetAtt ApmDlqStream.Arn
+                Effect: Allow
+
+  ApmFirehoseRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - firehose.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: 'firehose-inline-policy'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - glue:GetTable
+                - glue:GetTableVersion
+                - glue:GetTableVersions
+                Resource:
+                  - !Join
+                    - ''
+                    - - "arn:aws:glue:"
+                      - !Ref AWS::Region
+                      - ':'
+                      - !Ref AWS::AccountId
+                      - ':catalog'
+                Effect: Allow
+              - Action:
+                - s3:AbortMultipartUpload
+                - s3:GetBucketLocation
+                - s3:GetObject
+                - s3:ListBucket
+                - s3:ListBucketMultipartUploads
+                - s3:PutObject
+                Resource:
+                  - !GetAtt ApmDlqBucket.Arn
+                  - !Join
+                    - ''
+                    - - !GetAtt ApmDlqBucket.Arn
+                      - "/*"
+                Effect: Allow
+              - Action:
+                - logs:PutLogEvents
+                Resource:
+                  - !Join
+                    - ''
+                    - - "arn:aws:logs:"
+                      - !Ref AWS::Region
+                      - ':'
+                      - !Ref AWS::AccountId
+                      - ':log-group:/aws/kinesisfirehose/'
+                      - 'apm-dlq-stream'
+                      - ':log-stream:DestinationDelivery'
+                Effect: Allow
+
+  ## Opensearch
+
+  ## Lambda layers
+
+  ApmMaxmindGeoIpLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - nodejs18.x
+      ContentUri: ./nodejs/asset
+      LayerName: maxmind-geoip-db
+      RetentionPolicy: Delete
+
+  ## Lambda functions
+
+  ApmEventStreamProcessing:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: event-stream-processing/
+      Handler: index.kinesisStreamHandler
+      Role: !GetAtt ApmStreamRole.Arn
+      Runtime: nodejs18.x
+      Architectures:
+      - x86_64
+      MemorySize: 1024
+      Environment:
+        Variables:
+          DLQ_STREAM_NAME: nress-prod-dlq-stream
+          ES_URL: !Ref OpensearchUrl
+          LOG_LEVEL: debug
+          MAXMIND_DB_DIR: /opt/nodejs/asset
+      Layers:
+        - !Ref ApmMaxmindGeoIpLayer
+      Events:
+        Stream:
+          Type: Kinesis
+          Properties:
+            Stream: !GetAtt ApmStream.Arn
+            BatchSize: 10000
+            ParallelizationFactor: 2
+            MaximumBatchingWindowInSeconds: 10
+            MaximumRecordAgeInSeconds: -1
+            MaximumRetryAttempts: -1
+            StartingPosition: LATEST
+
+    Metadata: # Manage esbuild properties
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: true
+        EntryPoints:
+        - src/index.ts
+
+  ## S3 Buckets
+  ApmDlqBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      LifecycleConfiguration:
+        Rules:
+          - ExpirationInDays: 7
+            Status: Enabled
+
+  ## Stream
+
+  ApmStream:
+    Type: AWS::Kinesis::Stream
+    Properties:
+      Name: apm-logs
+      ShardCount: !Ref StreamShardCount
+      # Enhanced can't be enabled...
+      # https://github.com/aws-cloudformation/cloudformation-coverage-roadmap/issues/768
+      # shard_level_metrics = [
+      #   "IncomingRecords",
+      #   "IncomingBytes",
+      #   "OutgoingBytes",
+      #   "IteratorAgeMilliseconds",
+      #   "OutgoingRecords",
+      #   "ReadProvisionedThroughputExceeded",
+      #   "WriteProvisionedThroughputExceeded"
+      # ]
+
+  ApmDlqStream:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties:
+      DeliveryStreamName: apm-dlq-stream
+      ExtendedS3DestinationConfiguration:
+        RoleARN: !GetAtt ApmFirehoseRole.Arn
+        BucketARN: !GetAtt ApmDlqBucket.Arn
+        CloudWatchLoggingOptions:
+          Enabled: true
+          LogGroupName: /aws/kinesisfirehose/apm-dlq-stream
+          LogStreamName: DestinationDelivery
+
+Outputs:
+  FunctionName:
+    Description: "Function name"
+    Value: !Ref ApmEventStreamProcessing
+  StreamARN:
+    Description: "Stream ARN"
+    Value: !GetAtt ApmStream.Arn

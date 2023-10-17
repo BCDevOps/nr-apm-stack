@@ -9,7 +9,7 @@ import {MaxmindLookupService} from './maxmindLookup.service';
 export class MaxmindCityLookupService implements MaxmindLookupService<CityResponse> {
   private cityLookup: Reader<CityResponse> | null = null;
   public constructor() {
-    const dbPath = process.env.MAXMIND_DB_DIR || path.join(__dirname, '../asset');
+    const dbPath = process.env.MAXMIND_DB_DIR || path.join(__dirname, '../../nodejs/asset');
     const filePath = path.join(dbPath, 'GeoLite2-City.mmdb');
     if (fs.existsSync(filePath)) {
       this.cityLookup = new Reader<CityResponse>(fs.readFileSync(filePath));

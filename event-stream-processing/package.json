@@ -68,6 +68,7 @@
     "@nestjs/core": "^10.2.6",
     "@nestjs/platform-express": "^10.2.6",
     "clean-deep": "^3.4.0",
+    "esbuild": "^0.19.4",
     "inversify": "^6.0.1",
     "lodash": "^4.17.21",
     "maxmind": "^4.3.13",
@@ -75,25 +76,5 @@
     "moment-timezone": "^0.5.43",
     "reflect-metadata": "^0.1.13",
     "ua-parser-js": "^1.0.36"
-  },
-  "bundledDependencies": true,
-  "bundleDependencies": [
-    "@aws-crypto/sha256-js",
-    "@aws-sdk/client-firehose",
-    "@aws-sdk/credential-provider-node",
-    "@aws-sdk/node-http-handler",
-    "@aws-sdk/protocol-http",
-    "@aws-sdk/signature-v4",
-    "@nestjs/common",
-    "@nestjs/core",
-    "@nestjs/platform-express",
-    "clean-deep",
-    "inversify",
-    "lodash",
-    "maxmind",
-    "moment",
-    "moment-timezone",
-    "reflect-metadata",
-    "ua-parser-js"
-  ]
+  }
 }

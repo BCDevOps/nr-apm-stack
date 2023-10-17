@@ -84,21 +84,5 @@
     "test": "mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif readme && git add README.md"
   },
-  "types": "dist/index.d.ts",
-  "bundleDependencies": [
-    "@aws-crypto/sha256-js",
-    "@aws-sdk/client-elasticsearch-service",
-    "@aws-sdk/client-sqs",
-    "@aws-sdk/credential-provider-node",
-    "@aws-sdk/node-http-handler",
-    "@aws-sdk/protocol-http",
-    "@aws-sdk/signature-v4",
-    "@oclif/core",
-    "@oclif/plugin-help",
-    "@oclif/plugin-plugins",
-    "@types/ejs",
-    "ejs",
-    "hpagent",
-    "ora"
-  ]
+  "types": "dist/index.d.ts"
 }
