@@ -16,7 +16,7 @@ describe('DeadLetterQueueService', () => {
   });
 
   afterEach(() => {
-    jest.mocked(FirehoseClient).mockClear();
+    (jest.mocked(FirehoseClient) as any).mockClear();
     jest.mocked(PutRecordBatchCommand).mockClear();
   });
 
@@ -33,7 +33,7 @@ describe('DeadLetterQueueService', () => {
     expect(FirehoseClient).toHaveBeenCalledTimes(1);
     expect(PutRecordBatchCommand).toHaveBeenCalledTimes(0);
 
-    const mockFirehoseClientInstance = jest.mocked(FirehoseClient).mock.instances[0];
+    const mockFirehoseClientInstance = (jest.mocked(FirehoseClient) as any).mock.instances[0];
     // eslint-disable-next-line jest/unbound-method
     const mockSend = mockFirehoseClientInstance.send;
     expect(mockSend).toHaveBeenCalledTimes(0);
@@ -53,7 +53,7 @@ describe('DeadLetterQueueService', () => {
     expect(FirehoseClient).toHaveBeenCalledTimes(1);
     expect(PutRecordBatchCommand).toHaveBeenCalledTimes(1);
 
-    const mockFirehoseClientInstance = jest.mocked(FirehoseClient).mock.instances[0];
+    const mockFirehoseClientInstance = (jest.mocked(FirehoseClient) as any).mock.instances[0];
     // eslint-disable-next-line jest/unbound-method
     const mockSend = mockFirehoseClientInstance.send;
     expect(mockSend).toHaveBeenCalledTimes(1);
