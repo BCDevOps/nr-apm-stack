@@ -32,7 +32,7 @@ Resources:
 
   ## Roles
 
-  ApmStreamRole:
+  StreamRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -55,7 +55,7 @@ Resources:
                   - kinesis:GetRecords
                   - kinesis:DescribeStream
                 Resource:
-                  - !GetAtt ApmStream.Arn
+                  - !GetAtt Stream.Arn
                 Effect: Allow
               - Action:
                   - kinesis:ListStreams
@@ -67,10 +67,10 @@ Resources:
                   - firehose:PutRecord
                   - firehose:PutRecordBatch
                 Resource:
-                  - !GetAtt ApmDlqStream.Arn
+                  - !GetAtt DlqStream.Arn
                 Effect: Allow
 
-  ApmFirehoseRole:
+  FirehoseRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -108,10 +108,10 @@ Resources:
                 - s3:ListBucketMultipartUploads
                 - s3:PutObject
                 Resource:
-                  - !GetAtt ApmDlqBucket.Arn
+                  - !GetAtt DlqBucket.Arn
                   - !Join
                     - ''
-                    - - !GetAtt ApmDlqBucket.Arn
+                    - - !GetAtt DlqBucket.Arn
                       - "/*"
                 Effect: Allow
               - Action:
@@ -132,7 +132,7 @@ Resources:
 
   ## Lambda layers
 
-  ApmMaxmindGeoIpLayer:
+  MaxmindGeoIpLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
       CompatibleRuntimes:
@@ -143,27 +143,27 @@ Resources:
 
   ## Lambda functions
 
-  ApmEventStreamProcessing:
+  EventStreamProcessing:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: event-stream-processing/
       Handler: !Ref LambdaHandler
-      Role: !GetAtt ApmStreamRole.Arn
+      Role: !GetAtt StreamRole.Arn
       Runtime: nodejs18.x
       Architectures:
       - x86_64
       Environment:
         Variables:
-          DLQ_STREAM_NAME: !Ref ApmDlqStream
+          DLQ_STREAM_NAME: !Ref DlqStream
           ES_URL: !Ref OpensearchUrl
           MAXMIND_DB_DIR: /opt/nodejs/asset
       Layers:
-        - !Ref ApmMaxmindGeoIpLayer
+        - !Ref MaxmindGeoIpLayer
       Events:
         Stream:
           Type: Kinesis
           Properties:
-            Stream: !GetAtt ApmStream.Arn
+            Stream: !GetAtt Stream.Arn
             BatchSize: 10000
             ParallelizationFactor: 2
             MaximumBatchingWindowInSeconds: 10
@@ -181,7 +181,7 @@ Resources:
         - src/index.ts
 
   ## S3 Buckets
-  ApmDlqBucket:
+  DlqBucket:
     Type: AWS::S3::Bucket
     Properties:
       LifecycleConfiguration:
@@ -191,7 +191,7 @@ Resources:
 
   ## Stream
 
-  ApmStream:
+  Stream:
     Type: AWS::Kinesis::Stream
     Properties:
       Name: apm-logs
@@ -208,13 +208,13 @@ Resources:
       #   "WriteProvisionedThroughputExceeded"
       # ]
 
-  ApmDlqStream:
+  DlqStream:
     Type: AWS::KinesisFirehose::DeliveryStream
     Properties:
       DeliveryStreamName: apm-dlq-stream
       ExtendedS3DestinationConfiguration:
-        RoleARN: !GetAtt ApmFirehoseRole.Arn
-        BucketARN: !GetAtt ApmDlqBucket.Arn
+        RoleARN: !GetAtt FirehoseRole.Arn
+        BucketARN: !GetAtt DlqBucket.Arn
         CloudWatchLoggingOptions:
           Enabled: true
           LogGroupName: /aws/kinesisfirehose/apm-dlq-stream
@@ -223,7 +223,7 @@ Resources:
 Outputs:
   FunctionName:
     Description: "Function name"
-    Value: !Ref ApmEventStreamProcessing
+    Value: !Ref EventStreamProcessing
   StreamARN:
     Description: "Stream ARN"
-    Value: !GetAtt ApmStream.Arn
+    Value: !GetAtt Stream.Arn

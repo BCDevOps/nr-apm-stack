@@ -1,0 +1,73 @@
+name: Run APM Workflow for Production
+
+on:
+  workflow_dispatch:
+    branches: [main]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-workflow:
+    name: Run APM Workflow
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: NPM install
+        run: npm ci
+        working-directory: ./workflow-cli
+
+      - name: Setup AWS SAM
+        uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+
+      - name: Get AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Build workflow
+        run: npm run build
+
+      - name: workflow-cli opensearch-sync
+        working-directory: ./workflow-cli
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          OS_URL: apm.io.nrs.gov.bc.ca
+          OS_DOMAIN: nress-prod
+          AWS_ACCOUNT_NUMBER: ${{ secrets.AWS_ACCOUNT_NUMBER }}
+        run: |
+          ./bin/run opensearch-sync
+
+      - name: workflow-cli snapshot setup
+        working-directory: ./workflow-cli
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          OS_URL: apm.io.nrs.gov.bc.ca
+          OS_DOMAIN: nress-prod
+          AWS_ACCOUNT_NUMBER: ${{ secrets.AWS_ACCOUNT_NUMBER }}
+        run: |
+          ./bin/run snapshot setup
+
+      - name: workflow-cli opensearch-notify-oneteam-priority
+        working-directory: ./workflow-cli
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          OS_URL: apm.io.nrs.gov.bc.ca
+          OS_DOMAIN: nress-prod
+          AWS_ACCOUNT_NUMBER: ${{ secrets.AWS_ACCOUNT_NUMBER }}
+        run: |
+          ./bin/run snapshot opensearch-notify-oneteam-priority
