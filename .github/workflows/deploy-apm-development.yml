@@ -66,6 +66,7 @@ jobs:
       #       --no-execute-changeset \
       #       --no-fail-on-empty-changeset \
       #       --parameter-overrides \
+      #       "LambdaHandler=index.kinesisStreamDummyHandler" \
       #       "KinesisStreamShardCount=$AWS_KINESIS_STREAM_SHARD_COUNT" \
       #       "OpensearchUrl=$AWS_OPENSEARCH_URL"
 
@@ -79,5 +80,6 @@ jobs:
             --no-confirm-changeset \
             --no-fail-on-empty-changeset \
             --parameter-overrides \
+            "LambdaHandler=index.kinesisStreamDummyHandler" \
             "KinesisStreamShardCount=$AWS_KINESIS_STREAM_SHARD_COUNT" \
             "OpensearchUrl=$AWS_OPENSEARCH_URL"
