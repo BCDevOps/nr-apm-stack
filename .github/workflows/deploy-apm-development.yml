@@ -62,7 +62,7 @@ jobs:
       #     AWS_KINESIS_STREAM_SHARD_COUNT: ${{ vars.AWS_KINESIS_STREAM_SHARD_COUNT }}
       #   run: |
       #     sam deploy \
-      #       --stack-name $STACK_NAME \
+      #       --stack-name nr-apm-stack \
       #       --no-execute-changeset \
       #       --no-fail-on-empty-changeset \
       #       --parameter-overrides \
@@ -75,7 +75,7 @@ jobs:
           AWS_KINESIS_STREAM_SHARD_COUNT: ${{ vars.AWS_KINESIS_STREAM_SHARD_COUNT }}
         run: |
           sam deploy \
-            --stack-name $STACK_NAME \
+            --stack-name nr-apm-stack \
             --no-confirm-changeset \
             --no-fail-on-empty-changeset \
             --parameter-overrides \
