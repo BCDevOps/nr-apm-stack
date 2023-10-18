@@ -31,7 +31,7 @@ jobs:
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ vars.AWS_REGION }}
 
-      - name: SAM destroy
+      - name: SAM delete
         run: |
           sam delete \
             --stack-name nr-apm-stack \
