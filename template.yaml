@@ -32,9 +32,13 @@ Resources:
 
   ## Roles
 
-  StreamRole:
+  LambdaStreamRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: !Join
+        - ''
+        - - !Ref AWS::Region
+          - -nr-apm-stack-lambda-iit-agents
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -44,6 +48,8 @@ Resources:
                 - lambda.amazonaws.com
             Action:
               - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
       Policies:
         - PolicyName: 'access_to_kinesis'
           PolicyDocument:
@@ -148,7 +154,7 @@ Resources:
     Properties:
       CodeUri: event-stream-processing/
       Handler: !Ref LambdaHandler
-      Role: !GetAtt StreamRole.Arn
+      Role: !GetAtt LambdaStreamRole.Arn
       Runtime: nodejs18.x
       Architectures:
       - x86_64
@@ -224,6 +230,9 @@ Outputs:
   FunctionName:
     Description: "Function name"
     Value: !Ref EventStreamProcessing
+  FunctionRole:
+    Description: "Function Role"
+    Value: !Ref LambdaStreamRole.Arn
   StreamARN:
     Description: "Stream ARN"
     Value: !GetAtt Stream.Arn
