@@ -66,4 +66,4 @@ jobs:
           OS_DOMAIN: nress-prod
           AWS_ACCOUNT_NUMBER: ${{ secrets.AWS_ACCOUNT_NUMBER }}
         run: |
-          ./bin/run snapshot opensearch-notify-oneteam-priority
+          ./bin/run opensearch-notify-oneteam-priority
