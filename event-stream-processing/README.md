@@ -1,6 +1,14 @@
 # Event Stream Processing Lambda
 
-## Local Testing
+## Local Testing - SAM
+
+SAM can be used to test the application like it is running on AWS. Run the following in the root of the project.
+
+```
+sam local generate-event kinesis get-records --data "$(jq -c <event-stream-processing/samples/access-logs.json)"  | sam local invoke -e - --skip-pull-image --parameter-overrides LambdaHandler="index.kinesisStreamDummyHandler" LogLevel="debug"
+```
+
+## Local Testing - Server
 
 The following will start an http server listening on port 3000.
 

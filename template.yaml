@@ -13,6 +13,13 @@ Globals:
         LOG_LEVEL: !Ref LogLevel
 
 Parameters:
+  # Environment:
+  #   Type: String
+  #   AllowedValues:
+  #     - dev
+  #     - test
+  #     - prod
+  #   Default: "dev"
   LambdaHandler:
     Type: String
     Default: "index.kinesisStreamHandler"
@@ -38,7 +45,7 @@ Resources:
       RoleName: !Join
         - ''
         - - !Ref AWS::Region
-          - -nr-apm-stack-lambda-iit-agents
+          - -nr-apm-stack-lambda-stream
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -51,7 +58,7 @@ Resources:
       ManagedPolicyArns:
         - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
       Policies:
-        - PolicyName: 'access_to_kinesis'
+        - PolicyName: 'kinesis-consumer'
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -69,6 +76,10 @@ Resources:
                 Resource:
                   - "*"
                 Effect: Allow
+        - PolicyName: 'dlq-producer'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
               - Action:
                   - firehose:PutRecord
                   - firehose:PutRecordBatch
@@ -89,7 +100,7 @@ Resources:
             Action:
               - 'sts:AssumeRole'
       Policies:
-        - PolicyName: 'firehose-inline-policy'
+        - PolicyName: 'firehose-dlq'
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -133,6 +144,32 @@ Resources:
                       - 'apm-dlq-stream'
                       - ':log-stream:DestinationDelivery'
                 Effect: Allow
+
+  ## Policies
+
+  # Access to push documents to kinesis stream consumed by lambda
+  # Roles created for team access to add documents to Opensearch should attach this policy.
+  # (Would) replace nress-prod-nrm-agents policy
+  # Disabled because we can't manage PBMMOps-BCGOV_ roles
+  # AgentPolicy:
+  #   Type: AWS::IAM::Policy
+  #   Properties:
+  #     PolicyName: nr-apm-stack-stream-put-document
+  #     PolicyDocument:
+  #       Version: '2012-10-17'
+  #       Statement:
+  #         - Action:
+  #           - kinesis:PutRecord
+  #           - kinesis:PutRecords
+  #           Resource:
+  #           - !GetAtt Stream.Arn
+  #           Effect: Allow
+  #     Roles:
+  #       - !Join
+  #         - ''
+  #         - - PBMMOps-BCGOV_
+  #           - !Ref Environment
+  #           - _Project_Role_ES_Role
 
   ## Opensearch
 
@@ -200,7 +237,7 @@ Resources:
   Stream:
     Type: AWS::Kinesis::Stream
     Properties:
-      Name: apm-logs
+      Name: nr-apm-stack-documents
       ShardCount: !Ref KinesisStreamShardCount
       # Enhanced can't be enabled...
       # https://github.com/aws-cloudformation/cloudformation-coverage-roadmap/issues/768
@@ -232,7 +269,7 @@ Outputs:
     Value: !Ref EventStreamProcessing
   FunctionRole:
     Description: "Function Role"
-    Value: !Ref LambdaStreamRole.Arn
+    Value: !GetAtt LambdaStreamRole.Arn
   StreamARN:
     Description: "Stream ARN"
     Value: !GetAtt Stream.Arn

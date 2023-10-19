@@ -20,7 +20,9 @@ https://bcdevops.github.io/nr-apm-stack/
 
 # Getting Started
 
-The product runs using AWS services. The CI/CD pipeline uses Github actions.
+This project contains all the source code and supporting files for the APM Stack. It consists of a serverless application for processing documents, a workflow cli for handling maintenance and the AWS SAM template for deploying to AWS.
+
+The CI/CD pipeline uses Github actions to deploy and maintain the product.
 
 ## Built With
 
@@ -41,22 +43,56 @@ The product runs using AWS services. The CI/CD pipeline uses Github actions.
 
 * [Typescript](https://www.typescriptlang.org)
 
+## Local Development Setup
+
+To develop, you need the following tools.
+
+
+* Node.js - [Install Node.js 18](https://nodejs.org/en/), including the NPM package management tool.
+* Podman (Docker) - [Install Podman](https://podman.io/docs/installation)
+
 ## Local Deployment Setup
 
-If you want to run SAM locally, you will need to install the CLI. For production, running the deployment locally is not recommended.
+If you want to run SAM locally, you will need to install the CLI in addition to the development tools.
 
-SAM requires that you setup a number of environment variables.
+* SAM CLI - [Install the SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
 
 ### AWS - Environment Variables
 
-As documented in the [AWS CLI documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html) which can be obtained from the [Cloud PathFinder login page](http://login.nimbus.cloud.gov.bc.ca/) and clicking on "Click for Credentials" of the appropriate project/environment.
+The environment variables that SAM uses are documented in the [AWS CLI documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html). They can be obtained from the [Cloud PathFinder login page](http://login.nimbus.cloud.gov.bc.ca/) and clicking on "Click for Credentials" of the appropriate project/environment.
 
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
 - `AWS_SESSION_TOKEN`
 - `AWS_DEFAULT_REGION`
 
-# Principles
+### Building and deploying
+
+To build and deploy run the following in your shell:
+
+```bash
+sam build
+sam deploy --guided
+```
+
+For production, running the deployment locally is not recommended.
+
+## Github Setup
+
+### Secrets - Environment Specific
+
+- AWS_ACCOUNT_NUMBER - The account number for the environment
+- AWS_ROLE_TO_ASSUME - The role to assume. This role was manually setup in the account. See: [Configuring OpenID Connect in Amazon Web Services](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services)
+
+### Secrets - Global
+
+- MAXMIND_LICENSE_KEY - The maxmind geo ip lookup licence. Also in Vault.
+
+## Pushing to Kinesis
+
+To push to Kinesis, you need the arn of the stream (nr-apm-stack-documents) and a role with a policy with permission to push to that stream. The arn is to be kept secret because it contains the account number.
+
+## Principles
 - Infrastructure as Code
 - Configuration as Code
 - GitOps:
