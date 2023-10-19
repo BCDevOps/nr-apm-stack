@@ -13,6 +13,13 @@ Globals:
         LOG_LEVEL: !Ref LogLevel
 
 Parameters:
+  # Environment:
+  #   Type: String
+  #   AllowedValues:
+  #     - dev
+  #     - test
+  #     - prod
+  #   Default: "dev"
   LambdaHandler:
     Type: String
     Default: "index.kinesisStreamHandler"
@@ -142,20 +149,27 @@ Resources:
 
   # Access to push documents to kinesis stream consumed by lambda
   # Roles created for team access to add documents to Opensearch should attach this policy.
-  # Replaces nress-prod-nrm-agents policy
-  AgentPolicy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName:
-        - nr-apm-stack-stream-put-document
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Action:
-            - kinesis:PutRecord
-            - kinesis:PutRecords
-            Resource:
-            - !GetAtt Stream.Arn
+  # (Would) replace nress-prod-nrm-agents policy
+  # Disabled because we can't manage PBMMOps-BCGOV_ roles
+  # AgentPolicy:
+  #   Type: AWS::IAM::Policy
+  #   Properties:
+  #     PolicyName: nr-apm-stack-stream-put-document
+  #     PolicyDocument:
+  #       Version: '2012-10-17'
+  #       Statement:
+  #         - Action:
+  #           - kinesis:PutRecord
+  #           - kinesis:PutRecords
+  #           Resource:
+  #           - !GetAtt Stream.Arn
+  #           Effect: Allow
+  #     Roles:
+  #       - !Join
+  #         - ''
+  #         - - PBMMOps-BCGOV_
+  #           - !Ref Environment
+  #           - _Project_Role_ES_Role
 
   ## Opensearch
 
@@ -255,7 +269,7 @@ Outputs:
     Value: !Ref EventStreamProcessing
   FunctionRole:
     Description: "Function Role"
-    Value: !Ref LambdaStreamRole.Arn
+    Value: !GetAtt LambdaStreamRole.Arn
   StreamARN:
     Description: "Stream ARN"
     Value: !GetAtt Stream.Arn
