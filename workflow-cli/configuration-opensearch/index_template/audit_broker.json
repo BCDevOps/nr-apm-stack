@@ -52,6 +52,42 @@
             }
           }
         },
+        "graph": {
+          "properties": {
+            "edge": {
+              "properties": {
+                "source": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "target": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                }
+              }
+            },
+            "id": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "name": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "set": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "vertex": {
+              "properties": {
+                "collection": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                }
+              }
+            }
+          }
+        },
         "labels": {
           "type": "object",
           "properties": {
