@@ -74,6 +74,9 @@
               "ignore_above": 1024,
               "type": "keyword"
             },
+            "prop": {
+              "type": "flat_object"
+            },
             "set": {
               "ignore_above": 1024,
               "type": "keyword"
