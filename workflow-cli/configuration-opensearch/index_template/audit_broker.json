@@ -14,6 +14,13 @@
     "mappings": {
       "dynamic": "strict",
       "properties": {
+        "event": {
+          "properties": {
+            "reason_json": {
+              "type": "flat_object"
+            }
+          }
+        },
         "auth": {
           "properties": {
             "client_id": {
