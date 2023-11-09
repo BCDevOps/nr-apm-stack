@@ -14,9 +14,9 @@
     "mappings": {
       "dynamic": "strict",
       "properties": {
-        "event": {
+        "error": {
           "properties": {
-            "reason_json": {
+            "structured_data": {
               "type": "flat_object"
             }
           }
@@ -116,6 +116,7 @@
     "ecs_base_8.9",
     "ecs_cloud_8.9",
     "ecs_ecs_8.9",
+    "ecs_error_8.9",
     "ecs_event_8.9",
     "ecs_host_8.9",
     "ecs_package_8.9",
