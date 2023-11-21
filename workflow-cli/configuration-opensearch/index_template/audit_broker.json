@@ -14,13 +14,6 @@
     "mappings": {
       "dynamic": "strict",
       "properties": {
-        "error": {
-          "properties": {
-            "structured_data": {
-              "type": "flat_object"
-            }
-          }
-        },
         "auth": {
           "properties": {
             "client_id": {
@@ -56,6 +49,13 @@
             "sub": {
               "ignore_above": 1024,
               "type": "keyword"
+            }
+          }
+        },
+        "error": {
+          "properties": {
+            "structured_data": {
+              "type": "flat_object"
             }
           }
         },
@@ -104,6 +104,17 @@
             "action_id": {
               "ignore_above": 1024,
               "type": "keyword"
+            }
+          }
+        },
+        "package": {
+          "properties": {
+            "build_guid": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "build_number": {
+              "type": "long"
             }
           }
         }
