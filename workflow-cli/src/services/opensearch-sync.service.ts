@@ -175,7 +175,7 @@ export default class OpenSearchSyncService extends AwsService {
 
   public async syncMonitors(settings: Settings): Promise<any> {
     const monitors = (await axios.get(MONITORS_URL)).data;
-    console.log(monitors);
+    // console.log(monitors);
 
     for (const monitor of monitors) {
       const existing = await this.executeSignedHttpRequest({
@@ -196,7 +196,7 @@ export default class OpenSearchSyncService extends AwsService {
       }).then((res) => this.waitAndReturnResponseBody(res, [404]));
 
       const body = JSON.parse(existing.body);
-      console.log(body);
+      // console.log(body);
       const monitorJson = JSON.parse(fs.readFileSync(MONITORS_FILE, {encoding: 'utf8'}));
       monitorJson.name = monitor.name;
       monitorJson.inputs[0].search.query.query.bool.filter[1].term['host.hostname'].value = monitor.server;
@@ -230,7 +230,7 @@ export default class OpenSearchSyncService extends AwsService {
       } else {
         // Update
         // PUT _plugins/_alerting/monitors/<monitor_id>
-        console.log(`Update monitor: ${monitor.name} /_plugins/_alerting/monitors/${body.hits.hits[0]._id}`);
+        console.log(`Update monitor: ${monitor.name}`);
         await this.executeSignedHttpRequest({
           method: 'PUT',
           headers: {
