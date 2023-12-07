@@ -26,5 +26,6 @@ export default class OpenSearchSync extends Command {
     await service.getDomain(flags);
     await service.syncComponentTemplates(flags);
     await service.syncStateManagementPolicy(flags);
+    await service.syncMonitors(flags);
   }
 }
