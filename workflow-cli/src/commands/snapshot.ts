@@ -1,5 +1,7 @@
 import {Args, Command, Flags} from '@oclif/core';
 import OpenSearchSnapshotService from '../services/opensearch-snapshot.service';
+import AwsService from '../services/aws.service';
+import OpenSearchDomainService from '../services/opensearch-domain.service';
 
 const ACTION_SETUP = 'setup';
 const ACTION_CREATE = 'create';
@@ -32,10 +34,12 @@ export default class Snapshot extends Command {
   };
 
   public async run(): Promise<void> {
-    const {args} = await this.parse(Snapshot);
-    const {flags} = await this.parse(Snapshot);
+    const {args, flags} = await this.parse(Snapshot);
+    await AwsService.assumeIdentity(flags);
     const service = new OpenSearchSnapshotService();
-    await service.assumeIdentity(flags);
+    const domainService = new OpenSearchDomainService();
+
+    await domainService.getDomain(flags);
     if (args.action === ACTION_SETUP) {
       await service.setupSnapshot(flags);
     } else if (args.action === ACTION_CREATE) {

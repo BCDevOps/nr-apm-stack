@@ -1,6 +1,6 @@
 {
-    "type": "monitor",
     "name": "${var.agent_monitor.name}",
+    "type": "monitor",
     "monitor_type": "query_level_monitor",
     "enabled": true,
     "schedule": {
@@ -111,7 +111,7 @@
                         "unit": "MINUTES"
                     },
                     "subject_template": {
-                        "source": "",
+                        "source": "Notify",
                         "lang" : "mustache"
                     }
                 }
@@ -128,6 +128,5 @@
         "findings_index_pattern": "<.opensearch-alerting-finding-history-{now/d}-1>",
         "query_index": ".opensearch-alerting-queries",
         "query_index_mappings_by_type": {}
-    },
-    "owner": "alerting"
+    }
 }

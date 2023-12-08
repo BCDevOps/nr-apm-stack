@@ -1,5 +1,7 @@
 import {Command, Flags} from '@oclif/core';
 import ReindexService from '../services/reindex.service';
+import AwsService from '../services/aws.service';
+import OpenSearchDomainService from '../services/opensearch-domain.service';
 
 export default class Reindex extends Command {
   static description = 'Bulk reindex runner';
@@ -21,9 +23,12 @@ export default class Reindex extends Command {
 
   public async run(): Promise<void> {
     const {flags} = await this.parse(Reindex);
+    await AwsService.assumeIdentity(flags);
 
     const service = new ReindexService();
-    await service.assumeIdentity(flags);
+    const domainService = new OpenSearchDomainService();
+
+    await domainService.getDomain(flags);
     await service.reindex(flags);
   }
 }

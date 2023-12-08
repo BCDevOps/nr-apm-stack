@@ -1,5 +1,7 @@
 import {Args, Command, Flags} from '@oclif/core';
 import OpenSearchIndicesUsageService from '../services/opensearch-indicesusage.service';
+import AwsService from '../services/aws.service';
+import OpenSearchDomainService from '../services/opensearch-domain.service';
 
 const ACTION_SEARCH = '_search';
 
@@ -35,8 +37,11 @@ export default class OpensearchIndexUsage extends Command {
 
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(OpensearchIndexUsage);
+    await AwsService.assumeIdentity(flags);
     const service = new OpenSearchIndicesUsageService();
-    await service.assumeIdentity(flags);
+    const domainService = new OpenSearchDomainService();
+
+    await domainService.getDomain(flags);
     if (args.action === ACTION_SEARCH) {
       await service.getIndicesUsage(flags);
     } else {
