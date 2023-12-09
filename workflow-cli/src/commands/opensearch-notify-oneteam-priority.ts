@@ -1,5 +1,7 @@
 import {Command, Flags} from '@oclif/core';
 import OpenSearchNotificationsService from '../services/opensearch-notifications.service';
+import AwsService from '../services/aws.service';
+import OpenSearchDomainService from '../services/opensearch-domain.service';
 
 export default class OpenSearchNotificationChannel extends Command {
   static description = 'Create OneTeam Priority SNS notification channel in OpenSearch';
@@ -42,8 +44,11 @@ export default class OpenSearchNotificationChannel extends Command {
 
   public async run(): Promise<void> {
     const {flags} = await this.parse(OpenSearchNotificationChannel);
+    await AwsService.assumeIdentity(flags);
     const service = new OpenSearchNotificationsService();
-    await service.assumeIdentity(flags);
+    const domainService = new OpenSearchDomainService();
+
+    await domainService.getDomain(flags);
     await service.createSnsChannel(flags);
   }
 }

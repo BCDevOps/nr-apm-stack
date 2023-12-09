@@ -1,5 +1,9 @@
 import {Command, Flags} from '@oclif/core';
-import OpenSearchSyncService from '../services/opensearch-sync.service';
+import OpenSearchMonitorService from '../services/opensearch-monitor.service';
+import AwsService from '../services/aws.service';
+import OpenSearchDomainService from '../services/opensearch-domain.service';
+import OpenSearchPolicyService from '../services/opensearch-policy.service';
+import OpenSearchTemplateService from '../services/opensearch-template.service';
 
 export default class OpenSearchSync extends Command {
   static description = 'Sync OpenSearch settings';
@@ -20,11 +24,16 @@ export default class OpenSearchSync extends Command {
   public async run(): Promise<void> {
     const {flags} = await this.parse(OpenSearchSync);
 
-    const service = new OpenSearchSyncService();
-    await service.assumeIdentity(flags);
+    await AwsService.assumeIdentity(flags);
 
-    await service.getDomain(flags);
-    await service.syncComponentTemplates(flags);
-    await service.syncStateManagementPolicy(flags);
+    const domainService = new OpenSearchDomainService();
+    const policyService = new OpenSearchPolicyService();
+    const templateService = new OpenSearchTemplateService();
+    const monitorService = new OpenSearchMonitorService();
+
+    await domainService.getDomain(flags);
+    await templateService.syncComponentTemplates(flags);
+    await policyService.syncStateManagementPolicy(flags);
+    await monitorService.syncMonitors(flags);
   }
 }

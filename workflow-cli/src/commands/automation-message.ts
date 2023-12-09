@@ -1,5 +1,6 @@
 import {Command, Flags} from '@oclif/core';
 import AwsSqsService from '../services/aws-sqs.service';
+import AwsService from '../services/aws.service';
 
 export default class AutomationMessage extends Command {
   static description = 'Automation message recieve tool';
@@ -28,8 +29,8 @@ export default class AutomationMessage extends Command {
     // eslint-disable-next-line max-len
     const queueUrl = `https://sqs.${flags.region}.amazonaws.com/${flags.accountNumber}/${flags.domainName}-message-queue`;
 
+    await AwsService.assumeIdentity(flags);
     const service = new AwsSqsService(flags);
-    await service.assumeIdentity(flags);
     const message = await service.receiveBatches(queueUrl, flags.maxBatches, flags.dryRun);
     console.log(JSON.stringify(message));
   }

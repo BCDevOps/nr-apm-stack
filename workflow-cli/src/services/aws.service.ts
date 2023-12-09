@@ -17,14 +17,14 @@ export interface settings {
 }
 
 export default class AwsService {
-  protected identityAssumed = false;
+  protected static identityAssumed = false;
 
   /**
    * Assume the identity required to make OpenSearch API requests
    * @param settings
    */
-  public async assumeIdentity(settings: settings): Promise<void> {
-    if (!this.identityAssumed && settings.arn) {
+  public static async assumeIdentity(settings: settings): Promise<void> {
+    if (!AwsService.identityAssumed && settings.arn) {
       const stsClient1 = new STSClient(this.configureClientProxy({region: settings.region}));
       const stsAssumeRoleCommand = new AssumeRoleCommand({
         RoleArn: settings.arn,
@@ -36,7 +36,7 @@ export default class AwsService {
         process.env.AWS_ACCESS_KEY_ID = stsAssumedRole.Credentials.AccessKeyId;
         process.env.AWS_SECRET_ACCESS_KEY = stsAssumedRole.Credentials.SecretAccessKey;
         process.env.AWS_SESSION_TOKEN = stsAssumedRole.Credentials.SessionToken;
-        this.identityAssumed = true;
+        AwsService.identityAssumed = true;
         console.log('Identity assumed');
       }
     }
@@ -69,7 +69,7 @@ export default class AwsService {
     });
   }
 
-  protected configureClientProxy(client: any): any {
+  protected static configureClientProxy(client: any): any {
     if (process.env.HTTP_PROXY) {
       const agent = new HttpsProxyAgent({proxy: process.env.HTTP_PROXY});
       client.requestHandler = new NodeHttpHandler({

@@ -16,7 +16,7 @@ export default class AwsSqsService extends AwsService {
   private client: SQSClient;
   constructor(settings: settings) {
     super();
-    this.client = new SQSClient(this.configureClientProxy({region: settings.region}));
+    this.client = new SQSClient(AwsService.configureClientProxy({region: settings.region}));
   }
 
   public async receiveBatches(queueUrl: string, maxBatches: number, dryRun: boolean): Promise<any[]> {
