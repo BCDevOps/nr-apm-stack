@@ -14,7 +14,7 @@ export interface MonitorConfig {
 }
 
 const MONITORS_URL = 'https://raw.githubusercontent.com/bcgov-nr/nr-funbucks/main/monitor/monitors.json';
-const MONITORS_FILE = path.resolve(__dirname, 'agent-monitor.json');
+const MONITORS_FILE = path.resolve(__dirname, '../../agent-monitor.json');
 const MONITORS_PREFIX = 'nrids_agent_fluentbit_';
 
 export default class OpenSearchMonitorService extends AwsService {
