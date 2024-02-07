@@ -179,7 +179,7 @@ Resources:
     Type: AWS::Serverless::LayerVersion
     Properties:
       CompatibleRuntimes:
-        - nodejs18.x
+        - nodejs20.x
       ContentUri: ./layer/maxmind-geoip-db
       LayerName: maxmind-geoip-db
       RetentionPolicy: Delete
@@ -192,7 +192,7 @@ Resources:
       CodeUri: event-stream-processing/
       Handler: !Ref LambdaHandler
       Role: !GetAtt LambdaStreamRole.Arn
-      Runtime: nodejs18.x
+      Runtime: nodejs20.x
       Architectures:
       - x86_64
       Environment:
