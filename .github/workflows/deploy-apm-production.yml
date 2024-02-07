@@ -15,13 +15,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
-      - name: Use Node.js 18
-        uses: actions/setup-node@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       - name: NPM install
         run: npm ci
@@ -47,7 +47,7 @@ jobs:
 
       - name: Cache SAM Build
         id: cache-sam-build
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: .aws-sam
           key: ${{ github.sha }}-sam-cache
