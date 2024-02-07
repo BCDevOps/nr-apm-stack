@@ -48,7 +48,7 @@ The CI/CD pipeline uses Github actions to deploy and maintain the product.
 To develop, you need the following tools.
 
 
-* Node.js - [Install Node.js 18](https://nodejs.org/en/), including the NPM package management tool.
+* Node.js - [Install Node.js 20](https://nodejs.org/en/), including the NPM package management tool.
 * Podman (Docker) - [Install Podman](https://podman.io/docs/installation)
 
 ## Local Deployment Setup
@@ -66,12 +66,21 @@ The environment variables that SAM uses are documented in the [AWS CLI documenta
 - `AWS_SESSION_TOKEN`
 - `AWS_DEFAULT_REGION`
 
-### Building and deploying
+### Building
 
-To build and deploy run the following in your shell:
+To build, run the following in your shell:
 
 ```bash
 sam build
+```
+
+After you build, you can do local testing of the Lambda using sam as well as deploying it.
+
+### Deploy
+
+To deploy, run the following in your shell:
+
+```bash
 sam deploy --guided
 ```
 
