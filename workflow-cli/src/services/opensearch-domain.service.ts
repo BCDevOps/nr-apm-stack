@@ -1,18 +1,10 @@
 import {ElasticsearchServiceClient, DescribeElasticsearchDomainCommand}
   from '@aws-sdk/client-elasticsearch-service';
 import AwsService from './aws.service';
-
-export interface WorkflowSettings {
-  hostname: string;
-  domainName: string;
-  region: string;
-  accessId: string;
-  accessKey: string;
-  arn: string | undefined;
-}
+import {OpenSearchApiSettings} from '../types/settings';
 
 export default class OpenSearchDomainService extends AwsService {
-  public async getDomain(settings: WorkflowSettings): Promise<any> {
+  public async getDomain(settings: OpenSearchApiSettings): Promise<any> {
     const client = new ElasticsearchServiceClient(AwsService.configureClientProxy({region: settings.region}));
     return await this.waitForDomainStatusReady(client, settings.domainName);
   }

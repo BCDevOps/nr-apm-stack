@@ -1,0 +1,4 @@
+{
+  "type": "onpremise-monitor",
+  "prefix": "nrids_agent_fluentbit_"
+}

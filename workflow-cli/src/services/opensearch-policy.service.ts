@@ -3,10 +3,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import AwsService from './aws.service';
-import {WorkflowSettings} from './opensearch-domain.service';
+import {OpenSearchApiSettings} from '../types/settings';
 
 export default class OpenSearchPolicyService extends AwsService {
-  public async syncStateManagementPolicy(settings: WorkflowSettings): Promise<any> {
+  public async syncStateManagementPolicy(settings: OpenSearchApiSettings): Promise<any> {
     const templateDir = path.resolve(__dirname, '../../configuration-opensearch/state_management_policy');
     for (const filePath of fs.readdirSync(templateDir)) {
       if (!filePath.endsWith('.json')) {

@@ -1,19 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import {OpenSearchSnapshotSettings} from '../types/settings';
 import AwsService from './aws.service';
 
-export interface settings {
-  hostname: string;
-  domainName: string;
-  region: string;
-  accessId: string;
-  accessKey: string;
-  accountNumber: string;
-  arn: string | undefined;
-}
-
 export default class OpenSearchSnapshotService extends AwsService {
-  public async setupSnapshot(settings: settings): Promise<any> {
+  public async setupSnapshot(settings: OpenSearchSnapshotSettings): Promise<any> {
     return this.executeSignedHttpRequest({
       method: 'PUT',
       body: JSON.stringify({
@@ -39,7 +30,7 @@ export default class OpenSearchSnapshotService extends AwsService {
       });
   }
 
-  public async createSnapshot(settings: settings): Promise<any> {
+  public async createSnapshot(settings: OpenSearchSnapshotSettings): Promise<any> {
     const timeStamp = this.getTimeStamp();
     return this.executeSignedHttpRequest({
       method: 'PUT',

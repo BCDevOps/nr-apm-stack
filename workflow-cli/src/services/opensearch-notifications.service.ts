@@ -1,23 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, quotes */
 
+import {OpenSearchNotificationsSettings} from '../types/settings';
 import AwsService from './aws.service';
 
-export interface settings {
-  hostname: string;
-  region: string;
-  accountNumber: string;
-  configId: string;
-  configIdName: string;
-  configNameLong: string;
-  configDescription: string;
-  configType: string;
-  isEnabled: boolean;
-  configTopicArnId: string;
-  configRoleArnId: string;
-}
-
 export default class OpenSearchNotificationsService extends AwsService {
-  public async createSnsChannel(settings: settings): Promise<any> {
+  public async createSnsChannel(settings: OpenSearchNotificationsSettings): Promise<any> {
     return this.executeSignedHttpRequest({
       method: 'POST',
       headers: {

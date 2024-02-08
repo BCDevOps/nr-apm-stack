@@ -3,10 +3,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import AwsService from './aws.service';
-import {WorkflowSettings} from './opensearch-domain.service';
+import {OpenSearchApiSettings} from '../types/settings';
 
 export default class OpenSearchTemplateService extends AwsService {
-  public async syncComponentTemplates(settings: WorkflowSettings): Promise<any> {
+  public async syncComponentTemplates(settings: OpenSearchApiSettings): Promise<any> {
     await Promise.all([
       this.syncEcsComponentTemplates(settings, '8.4'),
       this.syncEcsComponentTemplates(settings, '8.9'),
@@ -16,7 +16,7 @@ export default class OpenSearchTemplateService extends AwsService {
     await this.syncIndexTemplates(settings);
   }
 
-  public async syncEcsComponentTemplates(settings: WorkflowSettings, version: string): Promise<any> {
+  public async syncEcsComponentTemplates(settings: OpenSearchApiSettings, version: string): Promise<any> {
     const componentDir = path.resolve(__dirname, `../../configuration-opensearch/ecs_${version}`);
     for (const filePath of fs.readdirSync(componentDir)) {
       if (!filePath.endsWith('.json')) {
@@ -49,7 +49,7 @@ export default class OpenSearchTemplateService extends AwsService {
     }
   }
 
-  public async syncNrmEcsComponentTemplates(settings: WorkflowSettings): Promise<any> {
+  public async syncNrmEcsComponentTemplates(settings: OpenSearchApiSettings): Promise<any> {
     const componentDir = path.resolve(__dirname, '../../configuration-opensearch/ecs_nrm_1.0');
     for (const filePath of fs.readdirSync(componentDir)) {
       if (!filePath.endsWith('.json')) {
@@ -72,7 +72,7 @@ export default class OpenSearchTemplateService extends AwsService {
     }
   }
 
-  public async syncIndexTemplates(settings: WorkflowSettings): Promise<any> {
+  public async syncIndexTemplates(settings: OpenSearchApiSettings): Promise<any> {
     const templateDir = path.resolve(__dirname, '../../configuration-opensearch/index_template');
     for (const filePath of fs.readdirSync(templateDir)) {
       if (!filePath.endsWith('.json')) {

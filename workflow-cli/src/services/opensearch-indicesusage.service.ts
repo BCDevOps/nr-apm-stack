@@ -1,21 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import AwsService from './aws.service';
 import {appendFileSync} from 'fs';
-
-export interface settings {
-  hostname: string;
-  domainName: string;
-  region: string;
-  accessId: string;
-  accessKey: string;
-  accountNumber: string,
-  arn: string | undefined;
-  indicesname: string;
-  fieldname: string;
-}
+import {OpenSearchIndicesUsageSettings} from '../types/settings';
+import AwsService from './aws.service';
 
 export default class OpenSearchIndicesUsageService extends AwsService {
-  public async getIndicesUsage(settings: settings): Promise<any> {
+  public async getIndicesUsage(settings: OpenSearchIndicesUsageSettings): Promise<any> {
     const csvFileName = `./indicesusage-${this.getTimeStamp()}.csv`;
     const header = `index,health,${settings.fieldname},match.count,docs.count,store.size,percentage\n`;
     // write header to csv file
@@ -52,7 +41,7 @@ export default class OpenSearchIndicesUsageService extends AwsService {
     }
   }
 
-  private async getFieldsDocsOfIndices(searchIndex: string, settings: settings): Promise<any> {
+  private async getFieldsDocsOfIndices(searchIndex: string, settings: OpenSearchIndicesUsageSettings): Promise<any> {
     return this.executeSignedHttpRequest({
       method: 'POST',
       headers: {

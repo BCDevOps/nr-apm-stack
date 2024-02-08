@@ -2,9 +2,13 @@ import axios from 'axios';
 import * as fs from 'fs';
 import * as path from 'path';
 import AwsService from './aws.service';
-import {WorkflowSettings} from './opensearch-domain.service';
+import {OpenSearchApiSettings} from '../types/settings';
 
 export interface MonitorConfig {
+  type: 'onpremise-monitor' | 'singleton';
+}
+
+export interface OnpermiseMonitorConfig {
   name: string;
   server: string;
   agent: string;
@@ -13,13 +17,37 @@ export interface MonitorConfig {
   automation_queue_action_id: string;
 }
 
-const MONITORS_URL = 'https://raw.githubusercontent.com/bcgov-nr/nr-funbucks/main/monitor/monitors.json';
+const ONPREMISE_MONITORS_URL = 'https://raw.githubusercontent.com/bcgov-nr/nr-funbucks/main/monitor/monitors.json';
+const MONITORS_DIRECTORY = path.resolve(__dirname, '../../configuration-monitors');
 const MONITORS_FILE = path.resolve(__dirname, '../../agent-monitor.json');
 const MONITORS_PREFIX = 'nrids_agent_fluentbit_';
 
 export default class OpenSearchMonitorService extends AwsService {
-  public async syncMonitors(settings: WorkflowSettings): Promise<any> {
-    const monitors: MonitorConfig[] = (await axios.get(MONITORS_URL)).data;
+  public async syncMonitors(settings: OpenSearchApiSettings): Promise<any> {
+    for (const file of fs.readdirSync(MONITORS_DIRECTORY)) {
+      const monitorPath = path.resolve(MONITORS_DIRECTORY, file);
+      const curMonitorSet = new Set<string>();
+      if (!fs.lstatSync(monitorPath).isDirectory()) {
+        continue;
+      }
+
+      const configJson: MonitorConfig =
+        JSON.parse(fs.readFileSync(path.resolve(monitorPath, 'monitor.json'), {encoding: 'utf8'}));
+      const monitorJson: any =
+        JSON.parse(fs.readFileSync(path.resolve(monitorPath, 'monitor.json'), {encoding: 'utf8'}));
+      switch (configJson.type) {
+        case 'onpremise-monitor':
+
+        break;
+      }
+    };
+
+    await this.syncMonitorsOld(settings);
+  }
+
+
+  public async syncMonitorsOld(settings: OpenSearchApiSettings): Promise<any> {
+    const monitors: OnpermiseMonitorConfig[] = (await axios.get(ONPREMISE_MONITORS_URL)).data;
     // console.log(monitors);
     const curMonitorSet = new Set(monitors.map((monitor) => monitor.name));
 

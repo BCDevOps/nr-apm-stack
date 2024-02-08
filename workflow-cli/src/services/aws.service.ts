@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import {STSClient, AssumeRoleCommand} from '@aws-sdk/client-sts';
-import {NodeHttpHandler} from '@aws-sdk/node-http-handler';
-import {HttpRequest} from '@aws-sdk/protocol-http';
 import {defaultProvider} from '@aws-sdk/credential-provider-node';
 import {Sha256} from '@aws-crypto/sha256-js';
-import {SignatureV4} from '@aws-sdk/signature-v4';
+import {NodeHttpHandler} from '@smithy/node-http-handler';
+import {HttpRequest} from '@smithy/protocol-http';
+import {SignatureV4} from '@smithy/signature-v4';
 import {HttpsProxyAgent} from 'hpagent';
 
 export interface settings {
