@@ -4,7 +4,7 @@ on:
   # Runs on pushes
   push:
     branches: [main]
-    paths: 
+    paths:
       - event-stream-processing/**
 
   workflow_dispatch:
@@ -22,7 +22,7 @@ jobs:
       packages: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Docker meta
         id: meta
