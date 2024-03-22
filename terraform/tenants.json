@@ -63,6 +63,14 @@
       "allowed_actions": ["kibana_all_write"]
     }
   },
+   {
+    "role_name": "fsb-write-all",
+    "description": "Financial Services Branch Tenant",
+    "tenant_permissions": {
+      "tenant_patterns": ["FSB"],
+      "allowed_actions": ["kibana_all_write"]
+    }
+  }, 
   {
     "role_name": "cirras-write-all",
     "description": "CIRRAS Tenant",
