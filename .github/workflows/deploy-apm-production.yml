@@ -1,8 +1,9 @@
 name: APM Deploy for Production
 
 on:
+  schedule:
+  - cron: "30 9 * * 1"
   workflow_dispatch:
-    branches: [main]
 
 permissions:
   id-token: write
