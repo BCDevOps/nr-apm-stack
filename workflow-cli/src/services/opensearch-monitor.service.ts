@@ -32,6 +32,7 @@ export default class OpenSearchMonitorService extends AwsService {
       hostname: settings.hostname,
       path: '/_plugins/_alerting/monitors/_search',
       body: JSON.stringify({
+        'size': 1000,
         'query': {
           'match_bool_prefix': {
             'monitor.name': MONITORS_PREFIX,
