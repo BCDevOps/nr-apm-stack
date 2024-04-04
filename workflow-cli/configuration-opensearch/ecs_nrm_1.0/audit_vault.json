@@ -163,6 +163,10 @@
             },
             "wrap_ttl": {
               "type": "long"
+            },
+            "request_uri": {
+              "ignore_above": 1024,
+              "type": "keyword"
             }
           }
         },
