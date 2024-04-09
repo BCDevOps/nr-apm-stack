@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import {STSClient, AssumeRoleCommand} from '@aws-sdk/client-sts';
-import {NodeHttpHandler} from '@aws-sdk/node-http-handler';
-import {HttpRequest} from '@aws-sdk/protocol-http';
-import {defaultProvider} from '@aws-sdk/credential-provider-node';
-import {Sha256} from '@aws-crypto/sha256-js';
-import {SignatureV4} from '@aws-sdk/signature-v4';
-import {HttpsProxyAgent} from 'hpagent';
+import { STSClient, AssumeRoleCommand } from '@aws-sdk/client-sts';
+import { NodeHttpHandler } from '@smithy/node-http-handler';
+import { HttpRequest } from '@smithy/protocol-http';
+import { defaultProvider } from '@aws-sdk/credential-provider-node';
+import { Sha256 } from '@aws-crypto/sha256-js';
+import { SignatureV4 } from '@smithy/signature-v4';
+import { HttpsProxyAgent } from 'hpagent';
 
+import { injectable } from 'inversify';
 export interface settings {
   hostname: string;
   domainName: string;
@@ -16,6 +17,7 @@ export interface settings {
   arn: string | undefined;
 }
 
+@injectable()
 export default class AwsService {
   protected static identityAssumed = false;
 
@@ -25,7 +27,9 @@ export default class AwsService {
    */
   public static async assumeIdentity(settings: settings): Promise<void> {
     if (!AwsService.identityAssumed && settings.arn) {
-      const stsClient1 = new STSClient(this.configureClientProxy({region: settings.region}));
+      const stsClient1 = new STSClient(
+        this.configureClientProxy({ region: settings.region }),
+      );
       const stsAssumeRoleCommand = new AssumeRoleCommand({
         RoleArn: settings.arn,
         RoleSessionName: 'nrdk',
@@ -34,7 +38,8 @@ export default class AwsService {
       if (stsAssumedRole && stsAssumedRole.Credentials) {
         // Overwrite the environment variables so later requests use assumed identity
         process.env.AWS_ACCESS_KEY_ID = stsAssumedRole.Credentials.AccessKeyId;
-        process.env.AWS_SECRET_ACCESS_KEY = stsAssumedRole.Credentials.SecretAccessKey;
+        process.env.AWS_SECRET_ACCESS_KEY =
+          stsAssumedRole.Credentials.SecretAccessKey;
         process.env.AWS_SESSION_TOKEN = stsAssumedRole.Credentials.SessionToken;
         AwsService.identityAssumed = true;
         console.log('Identity assumed');
@@ -43,25 +48,32 @@ export default class AwsService {
   }
 
   protected async executeSignedHttpRequest(httpRequestParams: any) {
-    const signedHttpRequest = await this.createSignedHttpRequest(httpRequestParams);
+    const signedHttpRequest =
+      await this.createSignedHttpRequest(httpRequestParams);
     const nodeHttpHandler = new NodeHttpHandler();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return nodeHttpHandler.handle(signedHttpRequest as any);
   }
 
-  protected async waitAndReturnResponseBody(res: any, ignoreStatus: number[] = []) {
-    return new Promise<{statusCode: any, body: any}>((resolve, reject) => {
+  protected async waitAndReturnResponseBody(
+    res: any,
+    ignoreStatus: number[] = [],
+  ) {
+    return new Promise<{ statusCode: any; body: any }>((resolve, reject) => {
       const incomingMessage = res.response.body;
       let body = '';
       incomingMessage.on('data', (chunk: any) => {
         body += chunk;
       });
       incomingMessage.on('end', () => {
-        if (res.response.statusCode >= 400 && res.response.statusCode < 500 &&
-          ignoreStatus.indexOf(res.response.statusCode) === -1) {
+        if (
+          res.response.statusCode >= 400 &&
+          res.response.statusCode < 500 &&
+          ignoreStatus.indexOf(res.response.statusCode) === -1
+        ) {
           console.error(body);
         }
-        resolve({statusCode: res.response.statusCode, body});
+        resolve({ statusCode: res.response.statusCode, body });
       });
       incomingMessage.on('error', (err: any) => {
         reject(err);
@@ -71,7 +83,7 @@ export default class AwsService {
 
   protected static configureClientProxy(client: any): any {
     if (process.env.HTTP_PROXY) {
-      const agent = new HttpsProxyAgent({proxy: process.env.HTTP_PROXY});
+      const agent = new HttpsProxyAgent({ proxy: process.env.HTTP_PROXY });
       client.requestHandler = new NodeHttpHandler({
         httpAgent: agent,
         httpsAgent: agent,

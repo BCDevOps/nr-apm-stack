@@ -10,12 +10,18 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as tar from 'tar-stream';
 import * as zlib from 'zlib';
+import { injectable } from 'inversify';
 
-const BASE_PATH = path.resolve(__dirname, '../../../layer/maxmind-geoip-db/nodejs/asset');
+const BASE_PATH = path.resolve(
+  __dirname,
+  '../../../layer/maxmind-geoip-db/nodejs/asset',
+);
 
+@injectable()
 export default class LambdaAssetDownloadService {
   public async doMaxMindDownload(licenseKey: string): Promise<void> {
-    const maxMindDownloadUrl = 'https://download.maxmind.com/app/geoip_download';
+    const maxMindDownloadUrl =
+      'https://download.maxmind.com/app/geoip_download';
     // eslint-disable-next-line max-len
     const dbAsnUrl = `${maxMindDownloadUrl}?edition_id=GeoLite2-ASN&license_key=${licenseKey}&suffix=tar.gz`;
     const dbAsnPath = path.resolve(BASE_PATH, 'GeoLite2-ASN.mmdb');
@@ -24,7 +30,7 @@ export default class LambdaAssetDownloadService {
     const dbCityUrl = `${maxMindDownloadUrl}?edition_id=GeoLite2-City&license_key=${licenseKey}&suffix=tar.gz`;
     const dbCityPath = path.resolve(BASE_PATH, 'GeoLite2-City.mmdb');
 
-    fs.mkdirSync(BASE_PATH, {recursive: true});
+    fs.mkdirSync(BASE_PATH, { recursive: true });
     await Promise.all([
       this.download(dbAsnUrl, dbAsnPath),
       this.download(dbCityUrl, dbCityPath),
@@ -37,26 +43,24 @@ export default class LambdaAssetDownloadService {
     const chunks: Uint8Array[] = [];
     // console.log(`Downloading ${url}`) // careful!!! download URL contains license key!!!
     return new Promise<void>((resolve) => {
-      http.get(url, function(response) {
+      http.get(url, function (response) {
         if (response.statusCode === 200) {
           console.log(`Request succesful! Saving to ${dest}`);
-          response
-            .pipe(zlib.createGunzip())
-            .pipe(extract);
-          extract.on('entry', function(header, stream, cb) {
+          response.pipe(zlib.createGunzip()).pipe(extract);
+          extract.on('entry', function (header, stream, cb) {
             if (header.name.endsWith(basename)) {
-              stream.on('data', function(chunk) {
+              stream.on('data', function (chunk) {
                 chunks.push(chunk);
               });
             }
 
-            stream.on('end', function() {
+            stream.on('end', function () {
               cb();
             });
 
             stream.resume();
           });
-          extract.on('finish', function() {
+          extract.on('finish', function () {
             if (chunks.length) {
               const data = Buffer.concat(chunks);
               fs.writeFileSync(dest, data);

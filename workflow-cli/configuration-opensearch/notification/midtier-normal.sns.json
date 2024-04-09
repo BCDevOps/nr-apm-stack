@@ -1,0 +1,11 @@
+{
+  "id": "midtier-normal-sns",
+  "name": "Midtier SNS",
+  "description": "SNS destination created by nr-apm-stack workflow cli",
+  "configType": "sns",
+  "isEnabled": true,
+  "sns": {
+    "topicArn": "nress-prod-midtier-normal",
+    "roleArn": "opensearch_sns_nress-prod"
+  }
+}

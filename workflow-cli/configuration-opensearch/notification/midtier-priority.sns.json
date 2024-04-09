@@ -1,0 +1,11 @@
+{
+  "id": "midtier-priority-sns",
+  "name": "Midtier Priority SNS",
+  "description": "SNS destination created by nr-apm-stack workflow cli",
+  "configType": "sns",
+  "isEnabled": true,
+  "sns": {
+    "topicArn": "nress-prod-midtier-priority",
+    "roleArn": "opensearch_sns_nress-prod"
+  }
+}

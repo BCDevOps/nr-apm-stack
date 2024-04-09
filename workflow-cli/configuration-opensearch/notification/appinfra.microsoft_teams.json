@@ -1,0 +1,10 @@
+{
+  "id": "appinfra-msteams",
+  "name": "Appinfra Webhook",
+  "description": "SNS destination created by nr-apm-stack workflow cli",
+  "configType": "microsoft_teams",
+  "isEnabled": true,
+  "microsoft_teams": {
+    "url": ""
+  }
+}

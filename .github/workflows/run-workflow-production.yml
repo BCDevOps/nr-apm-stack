@@ -56,13 +56,3 @@ jobs:
           AWS_ACCOUNT_NUMBER: ${{ secrets.AWS_ACCOUNT_NUMBER }}
         run: |
           ./bin/run snapshot setup
-
-      - name: workflow-cli opensearch-notify-oneteam-priority
-        working-directory: ./workflow-cli
-        env:
-          AWS_REGION: ${{ vars.AWS_REGION }}
-          OS_URL: apm.io.nrs.gov.bc.ca
-          OS_DOMAIN: nress-prod
-          AWS_ACCOUNT_NUMBER: ${{ secrets.AWS_ACCOUNT_NUMBER }}
-        run: |
-          ./bin/run opensearch-notify-oneteam-priority

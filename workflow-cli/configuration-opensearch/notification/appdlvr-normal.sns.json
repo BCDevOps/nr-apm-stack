@@ -1,0 +1,11 @@
+{
+  "id": "appdlvr-normal-sns",
+  "name": "Appdlvr SNS",
+  "description": "SNS destination created by nr-apm-stack workflow cli",
+  "configType": "sns",
+  "isEnabled": true,
+  "sns": {
+    "topicArn": "nress-prod-appdlvr-normal",
+    "roleArn": "opensearch_sns_nress-prod"
+  }
+}

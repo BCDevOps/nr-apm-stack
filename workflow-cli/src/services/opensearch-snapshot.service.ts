@@ -19,15 +19,15 @@ export default class OpenSearchSnapshotService extends AwsService {
       body: JSON.stringify({
         type: 's3',
         settings: {
-          'bucket': `${settings.domainName}-snapshot-${settings.accountNumber}`,
-          'region': settings.region,
-          'role_arn': `arn:aws:iam::${settings.accountNumber}:role/${settings.domainName}-opensearch-snapshot`,
+          bucket: `${settings.domainName}-snapshot-${settings.accountNumber}`,
+          region: settings.region,
+          role_arn: `arn:aws:iam::${settings.accountNumber}:role/${settings.domainName}-opensearch-snapshot`,
           'server-side-encryption': true,
         },
       }),
       headers: {
         'Content-Type': 'application/json',
-        'host': settings.hostname,
+        host: settings.hostname,
       },
       hostname: settings.hostname,
       path: `/_snapshot/s3-backup`,
@@ -45,7 +45,7 @@ export default class OpenSearchSnapshotService extends AwsService {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'host': settings.hostname,
+        host: settings.hostname,
       },
       hostname: settings.hostname,
       path: `/_snapshot/s3-backup/${timeStamp}`,
@@ -53,7 +53,9 @@ export default class OpenSearchSnapshotService extends AwsService {
       .then((res) => this.waitAndReturnResponseBody(res))
       .then((res) => {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        console.log(`PUT _snapshot/s3-backup/${timeStamp}\n[${res.statusCode}] Snapshot started`);
+        console.log(
+          `PUT _snapshot/s3-backup/${timeStamp}\n[${res.statusCode}] Snapshot started`,
+        );
       });
   }
 

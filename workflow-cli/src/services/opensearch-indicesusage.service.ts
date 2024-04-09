@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import AwsService from './aws.service';
-import {appendFileSync} from 'fs';
+import { appendFileSync } from 'fs';
 
 export interface settings {
   hostname: string;
@@ -8,7 +8,7 @@ export interface settings {
   region: string;
   accessId: string;
   accessKey: string;
-  accountNumber: string,
+  accountNumber: string;
   arn: string | undefined;
   indicesname: string;
   fieldname: string;
@@ -25,7 +25,7 @@ export default class OpenSearchIndicesUsageService extends AwsService {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'host': settings.hostname,
+        host: settings.hostname,
       },
       hostname: settings.hostname,
       path: `/_cat/indices/${encodeURIComponent(settings.indicesname).replace('*', '%2A')}`,
@@ -38,11 +38,16 @@ export default class OpenSearchIndicesUsageService extends AwsService {
       .then((res) => this.waitAndReturnResponseBody(res))
       .then((res) => JSON.parse(res.body));
     for (const eachIndex of arryIndices) {
-      const existing = await this.getFieldsDocsOfIndices(eachIndex.index, settings);
+      const existing = await this.getFieldsDocsOfIndices(
+        eachIndex.index,
+        settings,
+      );
       const buckets = JSON.parse(existing).aggregations.response_codes.buckets;
 
       for (const bucket of buckets) {
-        const docPercent = Number((bucket.doc_count / eachIndex['docs.count']) * 100).toFixed(2);
+        const docPercent = Number(
+          (bucket.doc_count / eachIndex['docs.count']) * 100,
+        ).toFixed(2);
         // eslint-disable-next-line max-len, @typescript-eslint/restrict-template-expressions
         const csv = `${eachIndex.index},${eachIndex.health},${bucket.key},${bucket.doc_count},${eachIndex['docs.count']},${eachIndex['store.size']},${docPercent}\n`;
         this.saveToCSV(csvFileName, csv);
@@ -52,12 +57,15 @@ export default class OpenSearchIndicesUsageService extends AwsService {
     }
   }
 
-  private async getFieldsDocsOfIndices(searchIndex: string, settings: settings): Promise<any> {
+  private async getFieldsDocsOfIndices(
+    searchIndex: string,
+    settings: settings,
+  ): Promise<any> {
     return this.executeSignedHttpRequest({
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'host': settings.hostname,
+        host: settings.hostname,
       },
       body: JSON.stringify({
         size: 0,

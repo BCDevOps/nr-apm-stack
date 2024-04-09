@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true,
     "declaration": true,
     "importHelpers": true,
     "module": "commonjs",
     "outDir": "dist",
     "rootDir": "src",
     "strict": true,
-    "target": "es2019"
+    "target": "ES2021",
+    "esModuleInterop": true,                  /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
+    "experimentalDecorators": true,           /* Enables experimental support for ES7 decorators. */
+    "emitDecoratorMetadata": true,            /* Enables experimental support for emitting type metadata for decorators. */
   },
   "include": [
     "src/**/*"

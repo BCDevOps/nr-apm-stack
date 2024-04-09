@@ -4,7 +4,7 @@ import {HttpRequest, HttpResponse} from '@aws-sdk/protocol-http';
 import {Sha256} from '@aws-crypto/sha256-js';
 import {defaultProvider} from '@aws-sdk/credential-provider-node';
 import {SignatureV4} from '@aws-sdk/signature-v4';
-import {NodeHttpHandler} from '@aws-sdk/node-http-handler';
+import {NodeHttpHandler} from '@smithy/node-http-handler';
 import {GenericError} from '../util/generic.error';
 import {LoggerService} from './logger.service';
 import {TYPES} from '../inversify.types';

@@ -1,0 +1,11 @@
+{
+  "id": "appdlvr-priority-sns",
+  "name": "Appdlvr Priority SNS",
+  "description": "SNS destination created by nr-apm-stack workflow cli",
+  "configType": "sns",
+  "isEnabled": true,
+  "sns": {
+    "topicArn": "nress-prod-appdlvr-priority",
+    "roleArn": "opensearch_sns_nress-prod"
+  }
+}

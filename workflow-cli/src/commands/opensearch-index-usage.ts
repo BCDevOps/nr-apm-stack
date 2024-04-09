@@ -1,16 +1,23 @@
-import {Args, Command, Flags} from '@oclif/core';
+import { Args, Command, Flags } from '@oclif/core';
 import OpenSearchIndicesUsageService from '../services/opensearch-indicesusage.service';
 import AwsService from '../services/aws.service';
 import OpenSearchDomainService from '../services/opensearch-domain.service';
+import {
+  hostname,
+  domainName,
+  region,
+  accessId,
+  accessKey,
+  accountNumber,
+  arn,
+} from '../flags';
 
 const ACTION_SEARCH = '_search';
 
 export default class OpensearchIndexUsage extends Command {
   static description = 'Index usage generator tool';
 
-  static examples = [
-    '<%= config.bin %> <%= command.id %>',
-  ];
+  static examples = ['<%= config.bin %> <%= command.id %>'];
 
   static args = {
     action: Args.string({
@@ -22,21 +29,28 @@ export default class OpensearchIndexUsage extends Command {
   };
 
   static flags = {
-    hostname: Flags.string({char: 'u', description: 'OpenSearch url', env: 'OS_URL', required: true}),
-    domainName: Flags.string({char: 'd', description: 'OpenSearch Domain', env: 'OS_DOMAIN', required: true}),
-    region: Flags.string({description: 'AWS region', env: 'AWS_REGION', required: true}),
-    accessId: Flags.string({description: 'AWS access key id', env: 'AWS_ACCESS_KEY_ID', required: true}),
-    accessKey: Flags.string({description: 'AWS secret access key', env: 'AWS_SECRET_ACCESS_KEY', required: true}),
-    accountNumber: Flags.string({description: 'AWS account number', env: 'AWS_ACCOUNT_NUMBER', required: true}),
-    arn: Flags.string({description: 'AWS ARN', env: 'AWS_ASSUME_ROLE'}),
-    indicesname: Flags.string({description: 'indices name', env: 'OS_USAGE_INDICES', required: true}),
+    ...hostname,
+    ...domainName,
+    ...region,
+    ...accessId,
+    ...accessKey,
+    ...accountNumber,
+    ...arn,
+    indicesname: Flags.string({
+      description: 'indices name',
+      env: 'OS_USAGE_INDICES',
+      required: true,
+    }),
     fieldname: Flags.string({
-      description: 'field name', env: 'OS_USAGE_FIELD', default: 'organization.id', required: true,
+      description: 'field name',
+      env: 'OS_USAGE_FIELD',
+      default: 'organization.id',
+      required: true,
     }),
   };
 
   public async run(): Promise<void> {
-    const {args, flags} = await this.parse(OpensearchIndexUsage);
+    const { args, flags } = await this.parse(OpensearchIndexUsage);
     await AwsService.assumeIdentity(flags);
     const service = new OpenSearchIndicesUsageService();
     const domainService = new OpenSearchDomainService();
