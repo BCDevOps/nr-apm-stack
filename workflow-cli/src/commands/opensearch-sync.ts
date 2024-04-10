@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Command } from '@oclif/core';
 import AwsService from '../services/aws.service';
-import { bindBroker, vsContainer } from '../inversify.config';
+import { bindBroker, bindVault, vsContainer } from '../inversify.config';
 import {
   accessId,
   accessKey,
@@ -13,6 +13,8 @@ import {
   help,
   hostname,
   region,
+  vaultAddr,
+  vaultToken,
 } from '../flags';
 import OpenSearchController from '../controller/opensearch.controller';
 import { TYPES } from '../inversify.types';
@@ -32,6 +34,8 @@ export default class OpenSearchSync extends Command {
     ...arn,
     ...brokerApiUrl,
     ...brokerToken,
+    ...vaultAddr,
+    ...vaultToken,
     ...help,
   };
 
@@ -41,6 +45,7 @@ export default class OpenSearchSync extends Command {
     await AwsService.assumeIdentity(flags);
 
     bindBroker(flags['broker-api-url'], flags['broker-token']);
+    bindVault(flags['vault-addr'], flags['vault-token']);
 
     await vsContainer
       .get<OpenSearchController>(TYPES.OpenSearchController)

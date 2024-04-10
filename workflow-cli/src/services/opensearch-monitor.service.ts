@@ -171,6 +171,7 @@ export default class OpenSearchMonitorService extends AwsService {
 
     // console.log(removeHits);
     // console.log(JSON.stringify(monitors));
+    // return;
     for (const removeHit of removeHits) {
       console.log(`Remove monitor: ${removeHit._source.name}`);
       // DELETE _plugins/_alerting/monitors/<monitor_id>

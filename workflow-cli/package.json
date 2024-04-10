@@ -79,8 +79,8 @@
   },
   "scripts": {
     "build": "shx rm -rf dist && tsc -b",
-    "lint": "eslint . --ext .ts --config .eslintrc.json",
-    "check-lint": "eslint . --ext .ts --config .eslintrc.json",
+    "lint": "eslint . --ext .ts --config .eslintrc.js",
+    "check-lint": "eslint . --ext .ts --config .eslintrc.js",
     "pack": "npm-pack-zip",
     "postpack": "shx rm -f oclif.manifest.json",
     "posttest": "npm lint",

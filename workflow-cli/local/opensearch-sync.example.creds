@@ -6,6 +6,8 @@ export OS_DOMAIN=nress-prod
 export AWS_ACCOUNT_NUMBER=
 
 export BROKER_TOKEN=
+export VAULT_ADDR=https://knox.io.nrs.gov.bc.ca
+export VAULT_TOKEN=
 
 # Paste in the following from LZ login page
 # Note: You need to update the 'all_access' role to allow your AWS account to use it

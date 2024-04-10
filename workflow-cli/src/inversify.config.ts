@@ -8,6 +8,7 @@ import OpenSearchMonitorService from './services/opensearch-monitor.service';
 import OpenSearchNotificationsService from './services/opensearch-notifications.service';
 import OpenSearchPolicyService from './services/opensearch-policy.service';
 import OpenSearchTemplateService from './services/opensearch-template.service';
+import VaultApi from './vault/vault.api';
 
 const vsContainer = new Container();
 // Controllers
@@ -16,6 +17,7 @@ vsContainer
   .to(OpenSearchController);
 // Services
 vsContainer.bind<BrokerApi>(TYPES.BrokerApi).to(BrokerApi);
+vsContainer.bind<VaultApi>(TYPES.VaultApi).to(VaultApi);
 vsContainer
   .bind<LambdaAssetDownloadService>(TYPES.LambdaAssetDownloadService)
   .to(LambdaAssetDownloadService);
@@ -47,4 +49,14 @@ export function bindBroker(apiUrl: string, token: string | undefined): void {
   if (token) {
     vsContainer.bind<string>(TYPES.BrokerToken).toConstantValue(token);
   }
+}
+
+/**
+ * Bind vault api and token to the vs container
+ * @param addr The vault address
+ * @param token The vault token
+ */
+export function bindVault(addr: string, token: string): void {
+  vsContainer.bind<string>(TYPES.VaultApiUrl).toConstantValue(addr);
+  vsContainer.bind<string>(TYPES.VaultToken).toConstantValue(token);
 }

@@ -1,6 +1,6 @@
 {
-  "id": "appinfra-msteams",
-  "name": "Appinfra Webhook",
+  "id": "wf-prod-msteams",
+  "name": "WF Production Alerts Channel",
   "description": "MS Teams channel (APM Deployment Managed)",
   "configType": "microsoft_teams",
   "isEnabled": true,

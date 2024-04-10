@@ -74,6 +74,22 @@ export const arn = {
   arn: Flags.string({ description: 'AWS ARN', env: 'AWS_ASSUME_ROLE' }),
 };
 
+export const vaultAddr = {
+  'vault-addr': Flags.string({
+    default: 'http://127.0.0.1:8200',
+    description: 'The vault address',
+    env: 'VAULT_ADDR',
+  }),
+};
+
+export const vaultToken = {
+  'vault-token': Flags.string({
+    default: 'myroot',
+    description: 'The vault token',
+    env: 'VAULT_TOKEN',
+  }),
+};
+
 export const dryRun = {
   dryRun: Flags.boolean({
     description: 'Disable deletion of messages',

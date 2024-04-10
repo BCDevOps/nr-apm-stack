@@ -1,7 +1,7 @@
 {
   "id": "midtier-normal-sns",
   "name": "Midtier SNS",
-  "description": "SNS destination created by nr-apm-stack workflow cli",
+  "description": "SNS destination (APM Deployment Managed)",
   "configType": "sns",
   "isEnabled": true,
   "sns": {

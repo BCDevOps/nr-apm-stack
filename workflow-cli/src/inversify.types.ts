@@ -11,6 +11,9 @@ const TYPES = {
   OpenSearchPolicyService: Symbol.for('OpenSearchPolicyService'),
   OpenSearchMonitorService: Symbol.for('OpenSearchMonitorService'),
   OpenSearchNotificationsService: Symbol.for('OpenSearchNotificationsService'),
+  VaultApi: Symbol.for('VaultApi'),
+  VaultApiUrl: Symbol.for('VaultApiUrl'),
+  VaultToken: Symbol.for('VaultToken'),
 };
 
 export { TYPES };

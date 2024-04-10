@@ -1,10 +1,10 @@
 {
   "id": "fsa-delivery-app-msteams",
   "name": "FSA Delivery App Webhook",
-  "description": "SNS destination created by nr-apm-stack workflow cli",
+  "description": "MS Teams channel (APM Deployment Managed)",
   "configType": "microsoft_teams",
   "isEnabled": true,
   "microsoft_teams": {
-    "url": ""
+    "url": "<%= url %>"
   }
 }
