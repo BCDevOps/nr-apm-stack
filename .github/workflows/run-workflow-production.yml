@@ -62,6 +62,7 @@ jobs:
           OS_DOMAIN: nress-prod
           AWS_ACCOUNT_NUMBER: ${{ secrets.AWS_ACCOUNT_NUMBER }}
           VAULT_ADDR: https://knox.io.nrs.gov.bc.ca
+          BROKER_TOKEN: ${{ secrets.BROKER_JWT }}
         run: |
           ./bin/run opensearch-sync
 
