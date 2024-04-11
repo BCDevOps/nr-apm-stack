@@ -1,0 +1,10 @@
+{
+  "id": "appinfra-msteams",
+  "name": "Appinfra Webhook",
+  "description": "MS Teams channel (APM Deployment Managed)",
+  "configType": "microsoft_teams",
+  "isEnabled": true,
+  "microsoft_teams": {
+    "url": "<%= url %>"
+  }
+}

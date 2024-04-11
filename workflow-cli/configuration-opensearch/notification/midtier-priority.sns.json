@@ -1,0 +1,11 @@
+{
+  "id": "midtier-priority-sns",
+  "name": "Midtier Priority SNS",
+  "description": "SNS destination (APM Deployment Managed)",
+  "configType": "sns",
+  "isEnabled": true,
+  "sns": {
+    "topicArn": "nress-prod-midtier-priority",
+    "roleArn": "opensearch_sns_nress-prod"
+  }
+}

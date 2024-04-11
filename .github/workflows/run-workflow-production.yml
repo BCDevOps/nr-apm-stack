@@ -37,6 +37,23 @@ jobs:
         working-directory: ./workflow-cli
         run: npm run build
 
+      - name: Build Intention
+        run: sh ./.github/workflows/broker-intention.sh
+        env:
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+
+      - name: Open intention
+        uses: bcgov-nr/action-broker-intention-open@v2
+        with:
+          broker_jwt: ${{ secrets.BROKER_JWT }}
+          intention_path: workflow-cli/intention.json
+          quickstart: true
+
+      - name: Vault login
+        uses: bcgov-nr/action-broker-vault-login@v2
+        with:
+          action_token: ${{ env.ACTION_TOKEN_CONFIGURE }}
+
       - name: workflow-cli opensearch-sync
         working-directory: ./workflow-cli
         env:
@@ -44,8 +61,14 @@ jobs:
           OS_URL: apm.io.nrs.gov.bc.ca
           OS_DOMAIN: nress-prod
           AWS_ACCOUNT_NUMBER: ${{ secrets.AWS_ACCOUNT_NUMBER }}
+          VAULT_ADDR: https://knox.io.nrs.gov.bc.ca
         run: |
           ./bin/run opensearch-sync
+
+      - name: Revoke Vault Token Action
+        uses: bcgov-nr/action-broker-vault-revoke@v2
+        with:
+          vault_token: ${{ env.VAULT_TOKEN }}
 
       - name: workflow-cli snapshot setup
         working-directory: ./workflow-cli
@@ -57,12 +80,7 @@ jobs:
         run: |
           ./bin/run snapshot setup
 
-      - name: workflow-cli opensearch-notify-oneteam-priority
-        working-directory: ./workflow-cli
-        env:
-          AWS_REGION: ${{ vars.AWS_REGION }}
-          OS_URL: apm.io.nrs.gov.bc.ca
-          OS_DOMAIN: nress-prod
-          AWS_ACCOUNT_NUMBER: ${{ secrets.AWS_ACCOUNT_NUMBER }}
-        run: |
-          ./bin/run opensearch-notify-oneteam-priority
+      - name: Close intention
+        uses: bcgov-nr/action-broker-intention-close@v2
+        with:
+          intention_token: ${{ env.INTENTION_TOKEN }}

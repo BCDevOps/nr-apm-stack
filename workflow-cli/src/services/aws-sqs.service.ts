@@ -1,5 +1,8 @@
 import {
-  SQSClient, ReceiveMessageCommand, DeleteMessageBatchCommand, DeleteMessageBatchRequestEntry,
+  SQSClient,
+  ReceiveMessageCommand,
+  DeleteMessageBatchCommand,
+  DeleteMessageBatchRequestEntry,
 } from '@aws-sdk/client-sqs';
 import AwsService from './aws.service';
 
@@ -16,10 +19,16 @@ export default class AwsSqsService extends AwsService {
   private client: SQSClient;
   constructor(settings: settings) {
     super();
-    this.client = new SQSClient(AwsService.configureClientProxy({region: settings.region}));
+    this.client = new SQSClient(
+      AwsService.configureClientProxy({ region: settings.region }),
+    );
   }
 
-  public async receiveBatches(queueUrl: string, maxBatches: number, dryRun: boolean): Promise<any[]> {
+  public async receiveBatches(
+    queueUrl: string,
+    maxBatches: number,
+    dryRun: boolean,
+  ): Promise<any[]> {
     const batchedMessages: any[] = [];
     for (let i = 0; i < maxBatches; i++) {
       const messages = await this.receiveMessage(queueUrl, dryRun);
@@ -31,7 +40,10 @@ export default class AwsSqsService extends AwsService {
     return batchedMessages;
   }
 
-  public async receiveMessage(queueUrl: string, dryRun: boolean): Promise<any[]> {
+  public async receiveMessage(
+    queueUrl: string,
+    dryRun: boolean,
+  ): Promise<any[]> {
     const cmd = new ReceiveMessageCommand({
       QueueUrl: queueUrl,
       MaxNumberOfMessages: 10,
@@ -47,15 +59,17 @@ export default class AwsSqsService extends AwsService {
         messageArray.push(JSON.parse(bodyContent.Message));
       }
       if (!dryRun) {
-        const batchEntries: DeleteMessageBatchRequestEntry[] = sqsMessage.Messages
-          .map((m) => m.ReceiptHandle)
-          .filter((m): m is string => !!m)
-          .map((m, index) => ({Id: index.toString(), ReceiptHandle: m}));
+        const batchEntries: DeleteMessageBatchRequestEntry[] =
+          sqsMessage.Messages.map((m) => m.ReceiptHandle)
+            .filter((m): m is string => !!m)
+            .map((m, index) => ({ Id: index.toString(), ReceiptHandle: m }));
         if (batchEntries.length > 0) {
-          await this.client.send(new DeleteMessageBatchCommand({
-            QueueUrl: queueUrl,
-            Entries: batchEntries,
-          }));
+          await this.client.send(
+            new DeleteMessageBatchCommand({
+              QueueUrl: queueUrl,
+              Entries: batchEntries,
+            }),
+          );
         }
       }
     }

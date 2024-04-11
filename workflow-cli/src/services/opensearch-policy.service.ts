@@ -3,11 +3,16 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import AwsService from './aws.service';
-import {WorkflowSettings} from './opensearch-domain.service';
+import { WorkflowSettings } from './opensearch-domain.service';
 
 export default class OpenSearchPolicyService extends AwsService {
-  public async syncStateManagementPolicy(settings: WorkflowSettings): Promise<any> {
-    const templateDir = path.resolve(__dirname, '../../configuration-opensearch/state_management_policy');
+  public async syncStateManagementPolicy(
+    settings: WorkflowSettings,
+  ): Promise<any> {
+    const templateDir = path.resolve(
+      __dirname,
+      '../../configuration-opensearch/state_management_policy',
+    );
     for (const filePath of fs.readdirSync(templateDir)) {
       if (!filePath.endsWith('.json')) {
         continue;
@@ -18,7 +23,7 @@ export default class OpenSearchPolicyService extends AwsService {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'host': settings.hostname,
+          host: settings.hostname,
         },
         hostname: settings.hostname,
         path: `/_plugins/_ism/policies/${basename}`,
@@ -28,26 +33,34 @@ export default class OpenSearchPolicyService extends AwsService {
         // Create
         await this.executeSignedHttpRequest({
           method: 'PUT',
-          body: fs.readFileSync(path.resolve(templateDir, filePath), {encoding: 'utf8'}),
+          body: fs.readFileSync(path.resolve(templateDir, filePath), {
+            encoding: 'utf8',
+          }),
           headers: {
             'Content-Type': 'application/json',
-            'host': settings.hostname,
+            host: settings.hostname,
           },
           hostname: settings.hostname,
           path: `/_plugins/_ism/policies/${basename}`,
         })
           .then((res) => this.waitAndReturnResponseBody(res))
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          .then((res) => console.log(`[${res.statusCode}] State Management Policy Added - ${basename}`));
+          .then((res) =>
+            console.log(
+              `[${res.statusCode}] State Management Policy Added - ${basename}`,
+            ),
+          );
       } else {
         // Update
         const bodyJson = JSON.parse(existing.body);
         await this.executeSignedHttpRequest({
           method: 'PUT',
-          body: fs.readFileSync(path.resolve(templateDir, filePath), {encoding: 'utf8'}),
+          body: fs.readFileSync(path.resolve(templateDir, filePath), {
+            encoding: 'utf8',
+          }),
           headers: {
             'Content-Type': 'application/json',
-            'host': settings.hostname,
+            host: settings.hostname,
           },
           hostname: settings.hostname,
           path: `/_plugins/_ism/policies/${basename}`,
@@ -60,7 +73,11 @@ export default class OpenSearchPolicyService extends AwsService {
         })
           .then((res) => this.waitAndReturnResponseBody(res))
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          .then((res) => console.log(`[${res.statusCode}] State Management Policy Update - ${basename}`));
+          .then((res) =>
+            console.log(
+              `[${res.statusCode}] State Management Policy Update - ${basename}`,
+            ),
+          );
       }
     }
   }

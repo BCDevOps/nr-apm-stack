@@ -1,0 +1,10 @@
+{
+  "id": "wf-prod-msteams",
+  "name": "WF Production Alerts Channel",
+  "description": "MS Teams channel (APM Deployment Managed)",
+  "configType": "microsoft_teams",
+  "isEnabled": true,
+  "microsoft_teams": {
+    "url": "<%= url %>"
+  }
+}

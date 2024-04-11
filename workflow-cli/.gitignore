@@ -8,6 +8,7 @@
 node_modules
 oclif.manifest.json
 /workflow-cli.zip
+intention.json
 
 /local/*creds
 !/local/*example.creds

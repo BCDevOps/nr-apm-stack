@@ -1,0 +1,23 @@
+{
+  "event": {
+    "provider": "workflow-cli-github-action",
+    "reason": "Configure APM Stack",
+    "transient": true,
+    "url": "JOB_URL"
+  },
+  "actions": [
+    {
+      "action": "package-configure",
+      "id": "configure",
+      "provision": ["token/self"],
+      "service": {
+        "name": "apm-opensearch-aws",
+        "project": "apm",
+        "environment": "production"
+      }
+    }
+  ],
+  "user": {
+    "name": "github@internal"
+  }
+}

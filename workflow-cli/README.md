@@ -20,7 +20,7 @@ $ npm install -g workflow-cli
 $ workflow-cli COMMAND
 running command...
 $ workflow-cli (--version)
-workflow-cli/1.0.0 darwin-x64 node-v16.17.1
+workflow-cli/1.0.0 darwin-x64 node-v20.11.1
 $ workflow-cli --help [COMMAND]
 USAGE
   $ workflow-cli COMMAND
@@ -30,18 +30,19 @@ USAGE
 # Commands
 <!-- commands -->
 * [`workflow-cli automation-message`](#workflow-cli-automation-message)
-* [`workflow-cli help [COMMANDS]`](#workflow-cli-help-commands)
+* [`workflow-cli help [COMMAND]`](#workflow-cli-help-command)
 * [`workflow-cli lambda-asset-download [FILE]`](#workflow-cli-lambda-asset-download-file)
 * [`workflow-cli opensearch-index-usage ACTION`](#workflow-cli-opensearch-index-usage-action)
 * [`workflow-cli opensearch-sync`](#workflow-cli-opensearch-sync)
 * [`workflow-cli plugins`](#workflow-cli-plugins)
-* [`workflow-cli plugins:install PLUGIN...`](#workflow-cli-pluginsinstall-plugin)
+* [`workflow-cli plugins add PLUGIN`](#workflow-cli-plugins-add-plugin)
 * [`workflow-cli plugins:inspect PLUGIN...`](#workflow-cli-pluginsinspect-plugin)
-* [`workflow-cli plugins:install PLUGIN...`](#workflow-cli-pluginsinstall-plugin-1)
-* [`workflow-cli plugins:link PLUGIN`](#workflow-cli-pluginslink-plugin)
-* [`workflow-cli plugins:uninstall PLUGIN...`](#workflow-cli-pluginsuninstall-plugin)
-* [`workflow-cli plugins:uninstall PLUGIN...`](#workflow-cli-pluginsuninstall-plugin-1)
-* [`workflow-cli plugins:uninstall PLUGIN...`](#workflow-cli-pluginsuninstall-plugin-2)
+* [`workflow-cli plugins install PLUGIN`](#workflow-cli-plugins-install-plugin)
+* [`workflow-cli plugins link PATH`](#workflow-cli-plugins-link-path)
+* [`workflow-cli plugins remove [PLUGIN]`](#workflow-cli-plugins-remove-plugin)
+* [`workflow-cli plugins reset`](#workflow-cli-plugins-reset)
+* [`workflow-cli plugins uninstall [PLUGIN]`](#workflow-cli-plugins-uninstall-plugin)
+* [`workflow-cli plugins unlink [PLUGIN]`](#workflow-cli-plugins-unlink-plugin)
 * [`workflow-cli plugins update`](#workflow-cli-plugins-update)
 * [`workflow-cli reindex`](#workflow-cli-reindex)
 * [`workflow-cli snapshot ACTION`](#workflow-cli-snapshot-action)
@@ -53,18 +54,18 @@ Automation message recieve tool
 ```
 USAGE
   $ workflow-cli automation-message -u <value> -d <value> --region <value> --accessId <value> --accessKey <value>
-    --accountNumber <value> [--arn <value>] [--maxBatches <value>] [--dryRun]
+    --accountNumber <value> [--arn <value>] [--dryRun] [--maxBatches <value>]
 
 FLAGS
-  -d, --domainName=<value>  (required) OpenSearch Domain
-  -u, --hostname=<value>    (required) OpenSearch url
-  --accessId=<value>        (required) AWS access key id
-  --accessKey=<value>       (required) AWS secret access key
-  --accountNumber=<value>   (required) AWS account number
-  --arn=<value>             AWS ARN
-  --dryRun                  Disable deletion of messages
-  --maxBatches=<value>      [default: 10] Number of times to request batch of messages
-  --region=<value>          (required) AWS region
+  -d, --domainName=<value>     (required) OpenSearch Domain
+  -u, --hostname=<value>       (required) OpenSearch url
+      --accessId=<value>       (required) AWS access key id
+      --accessKey=<value>      (required) AWS secret access key
+      --accountNumber=<value>  (required) AWS account number
+      --arn=<value>            AWS ARN
+      --dryRun                 Disable deletion of messages
+      --maxBatches=<value>     [default: 10] Number of times to request batch of messages
+      --region=<value>         (required) AWS region
 
 DESCRIPTION
   Automation message recieve tool
@@ -73,16 +74,16 @@ EXAMPLES
   $ workflow-cli automation-message
 ```
 
-## `workflow-cli help [COMMANDS]`
+## `workflow-cli help [COMMAND]`
 
 Display help for workflow-cli.
 
 ```
 USAGE
-  $ workflow-cli help [COMMANDS] [-n]
+  $ workflow-cli help [COMMAND...] [-n]
 
 ARGUMENTS
-  COMMANDS  Command to show help for.
+  COMMAND...  Command to show help for.
 
 FLAGS
   -n, --nested-commands  Include all nested commands in the output.
@@ -91,7 +92,7 @@ DESCRIPTION
   Display help for workflow-cli.
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.2.9/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.0.20/src/commands/help.ts)_
 
 ## `workflow-cli lambda-asset-download [FILE]`
 
@@ -124,15 +125,15 @@ ARGUMENTS
   ACTION  [default: _search] Search indices usage
 
 FLAGS
-  -d, --domainName=<value>  (required) OpenSearch Domain
-  -u, --hostname=<value>    (required) OpenSearch url
-  --accessId=<value>        (required) AWS access key id
-  --accessKey=<value>       (required) AWS secret access key
-  --accountNumber=<value>   (required) AWS account number
-  --arn=<value>             AWS ARN
-  --fieldname=<value>       (required) [default: organization.id] field name
-  --indicesname=<value>     (required) indices name
-  --region=<value>          (required) AWS region
+  -d, --domainName=<value>     (required) OpenSearch Domain
+  -u, --hostname=<value>       (required) OpenSearch url
+      --accessId=<value>       (required) AWS access key id
+      --accessKey=<value>      (required) AWS secret access key
+      --accountNumber=<value>  (required) AWS account number
+      --arn=<value>            AWS ARN
+      --fieldname=<value>      (required) [default: organization.id] field name
+      --indicesname=<value>    (required) indices name
+      --region=<value>         (required) AWS region
 
 DESCRIPTION
   Index usage generator tool
@@ -147,16 +148,20 @@ Sync OpenSearch settings
 
 ```
 USAGE
-  $ workflow-cli opensearch-sync -u <value> -d <value> --region <value> --accessId <value> --accessKey <value> [--arn
-    <value>]
+  $ workflow-cli opensearch-sync -u <value> -d <value> --region <value> --accessId <value> --accessKey <value>
+    --accountNumber <value> [--arn <value>] [--broker-api-url <value>] [--broker-token <value>] [-h]
 
 FLAGS
-  -d, --domainName=<value>  (required) OpenSearch Domain
-  -u, --hostname=<value>    (required) OpenSearch url
-  --accessId=<value>        (required) AWS access key id
-  --accessKey=<value>       (required) AWS secret access key
-  --arn=<value>             AWS ARN
-  --region=<value>          (required) AWS region
+  -d, --domainName=<value>      (required) OpenSearch Domain
+  -h, --help                    Show CLI help.
+  -u, --hostname=<value>        (required) OpenSearch url
+      --accessId=<value>        (required) AWS access key id
+      --accessKey=<value>       (required) AWS secret access key
+      --accountNumber=<value>   (required) AWS account number
+      --arn=<value>             AWS ARN
+      --broker-api-url=<value>  [default: https://nr-broker.apps.silver.devops.gov.bc.ca/] The broker api base url
+      --broker-token=<value>    The broker JWT
+      --region=<value>          (required) AWS region
 
 DESCRIPTION
   Sync OpenSearch settings
@@ -171,10 +176,13 @@ List installed plugins.
 
 ```
 USAGE
-  $ workflow-cli plugins [--core]
+  $ workflow-cli plugins [--json] [--core]
 
 FLAGS
   --core  Show core plugins.
+
+GLOBAL FLAGS
+  --json  Format output as json.
 
 DESCRIPTION
   List installed plugins.
@@ -183,44 +191,53 @@ EXAMPLES
   $ workflow-cli plugins
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v3.0.1/src/commands/plugins/index.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.7/src/commands/plugins/index.ts)_
 
-## `workflow-cli plugins:install PLUGIN...`
+## `workflow-cli plugins add PLUGIN`
 
-Installs a plugin into the CLI.
+Installs a plugin into workflow-cli.
 
 ```
 USAGE
-  $ workflow-cli plugins:install PLUGIN...
+  $ workflow-cli plugins add PLUGIN... [--json] [-f] [-h] [-s | -v]
 
 ARGUMENTS
-  PLUGIN  Plugin to install.
+  PLUGIN...  Plugin to install.
 
 FLAGS
-  -f, --force    Run yarn install with force flag.
+  -f, --force    Force npm to fetch remote resources even if a local copy exists on disk.
   -h, --help     Show CLI help.
-  -v, --verbose
+  -s, --silent   Silences npm output.
+  -v, --verbose  Show verbose npm output.
+
+GLOBAL FLAGS
+  --json  Format output as json.
 
 DESCRIPTION
-  Installs a plugin into the CLI.
-  Can be installed from npm or a git url.
+  Installs a plugin into workflow-cli.
+
+  Uses bundled npm executable to install plugins into /Users/mbystedt/.local/share/workflow-cli
 
   Installation of a user-installed plugin will override a core plugin.
 
-  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
-  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
-  the CLI without the need to patch and update the whole CLI.
-
+  Use the WORKFLOW_CLI_NPM_LOG_LEVEL environment variable to set the npm loglevel.
+  Use the WORKFLOW_CLI_NPM_REGISTRY environment variable to set the npm registry.
 
 ALIASES
   $ workflow-cli plugins add
 
 EXAMPLES
-  $ workflow-cli plugins:install myplugin 
+  Install a plugin from npm registry.
 
-  $ workflow-cli plugins:install https://github.com/someuser/someplugin
+    $ workflow-cli plugins add myplugin
 
-  $ workflow-cli plugins:install someuser/someplugin
+  Install a plugin from a github url.
+
+    $ workflow-cli plugins add https://github.com/someuser/someplugin
+
+  Install a plugin from a github slug.
+
+    $ workflow-cli plugins add someuser/someplugin
 ```
 
 ## `workflow-cli plugins:inspect PLUGIN...`
@@ -229,10 +246,10 @@ Displays installation properties of a plugin.
 
 ```
 USAGE
-  $ workflow-cli plugins:inspect PLUGIN...
+  $ workflow-cli plugins inspect PLUGIN...
 
 ARGUMENTS
-  PLUGIN  [default: .] Plugin to inspect.
+  PLUGIN...  [default: .] Plugin to inspect.
 
 FLAGS
   -h, --help     Show CLI help.
@@ -245,61 +262,75 @@ DESCRIPTION
   Displays installation properties of a plugin.
 
 EXAMPLES
-  $ workflow-cli plugins:inspect myplugin
+  $ workflow-cli plugins inspect myplugin
 ```
 
-## `workflow-cli plugins:install PLUGIN...`
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.7/src/commands/plugins/inspect.ts)_
 
-Installs a plugin into the CLI.
+## `workflow-cli plugins install PLUGIN`
+
+Installs a plugin into workflow-cli.
 
 ```
 USAGE
-  $ workflow-cli plugins:install PLUGIN...
+  $ workflow-cli plugins install PLUGIN... [--json] [-f] [-h] [-s | -v]
 
 ARGUMENTS
-  PLUGIN  Plugin to install.
+  PLUGIN...  Plugin to install.
 
 FLAGS
-  -f, --force    Run yarn install with force flag.
+  -f, --force    Force npm to fetch remote resources even if a local copy exists on disk.
   -h, --help     Show CLI help.
-  -v, --verbose
+  -s, --silent   Silences npm output.
+  -v, --verbose  Show verbose npm output.
+
+GLOBAL FLAGS
+  --json  Format output as json.
 
 DESCRIPTION
-  Installs a plugin into the CLI.
-  Can be installed from npm or a git url.
+  Installs a plugin into workflow-cli.
+
+  Uses bundled npm executable to install plugins into /Users/mbystedt/.local/share/workflow-cli
 
   Installation of a user-installed plugin will override a core plugin.
 
-  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
-  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
-  the CLI without the need to patch and update the whole CLI.
-
+  Use the WORKFLOW_CLI_NPM_LOG_LEVEL environment variable to set the npm loglevel.
+  Use the WORKFLOW_CLI_NPM_REGISTRY environment variable to set the npm registry.
 
 ALIASES
   $ workflow-cli plugins add
 
 EXAMPLES
-  $ workflow-cli plugins:install myplugin 
+  Install a plugin from npm registry.
 
-  $ workflow-cli plugins:install https://github.com/someuser/someplugin
+    $ workflow-cli plugins install myplugin
 
-  $ workflow-cli plugins:install someuser/someplugin
+  Install a plugin from a github url.
+
+    $ workflow-cli plugins install https://github.com/someuser/someplugin
+
+  Install a plugin from a github slug.
+
+    $ workflow-cli plugins install someuser/someplugin
 ```
 
-## `workflow-cli plugins:link PLUGIN`
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.7/src/commands/plugins/install.ts)_
+
+## `workflow-cli plugins link PATH`
 
 Links a plugin into the CLI for development.
 
 ```
 USAGE
-  $ workflow-cli plugins:link PLUGIN
+  $ workflow-cli plugins link PATH [-h] [--install] [-v]
 
 ARGUMENTS
   PATH  [default: .] path to plugin
 
 FLAGS
-  -h, --help     Show CLI help.
+  -h, --help          Show CLI help.
   -v, --verbose
+      --[no-]install  Install dependencies after linking the plugin.
 
 DESCRIPTION
   Links a plugin into the CLI for development.
@@ -310,19 +341,21 @@ DESCRIPTION
 
 
 EXAMPLES
-  $ workflow-cli plugins:link myplugin
+  $ workflow-cli plugins link myplugin
 ```
 
-## `workflow-cli plugins:uninstall PLUGIN...`
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.7/src/commands/plugins/link.ts)_
+
+## `workflow-cli plugins remove [PLUGIN]`
 
 Removes a plugin from the CLI.
 
 ```
 USAGE
-  $ workflow-cli plugins:uninstall PLUGIN...
+  $ workflow-cli plugins remove [PLUGIN...] [-h] [-v]
 
 ARGUMENTS
-  PLUGIN  plugin to uninstall
+  PLUGIN...  plugin to uninstall
 
 FLAGS
   -h, --help     Show CLI help.
@@ -334,18 +367,36 @@ DESCRIPTION
 ALIASES
   $ workflow-cli plugins unlink
   $ workflow-cli plugins remove
+
+EXAMPLES
+  $ workflow-cli plugins remove myplugin
 ```
 
-## `workflow-cli plugins:uninstall PLUGIN...`
+## `workflow-cli plugins reset`
+
+Remove all user-installed and linked plugins.
+
+```
+USAGE
+  $ workflow-cli plugins reset [--hard] [--reinstall]
+
+FLAGS
+  --hard       Delete node_modules and package manager related files in addition to uninstalling plugins.
+  --reinstall  Reinstall all plugins after uninstalling.
+```
+
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.7/src/commands/plugins/reset.ts)_
+
+## `workflow-cli plugins uninstall [PLUGIN]`
 
 Removes a plugin from the CLI.
 
 ```
 USAGE
-  $ workflow-cli plugins:uninstall PLUGIN...
+  $ workflow-cli plugins uninstall [PLUGIN...] [-h] [-v]
 
 ARGUMENTS
-  PLUGIN  plugin to uninstall
+  PLUGIN...  plugin to uninstall
 
 FLAGS
   -h, --help     Show CLI help.
@@ -357,18 +408,23 @@ DESCRIPTION
 ALIASES
   $ workflow-cli plugins unlink
   $ workflow-cli plugins remove
+
+EXAMPLES
+  $ workflow-cli plugins uninstall myplugin
 ```
 
-## `workflow-cli plugins:uninstall PLUGIN...`
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.7/src/commands/plugins/uninstall.ts)_
+
+## `workflow-cli plugins unlink [PLUGIN]`
 
 Removes a plugin from the CLI.
 
 ```
 USAGE
-  $ workflow-cli plugins:uninstall PLUGIN...
+  $ workflow-cli plugins unlink [PLUGIN...] [-h] [-v]
 
 ARGUMENTS
-  PLUGIN  plugin to uninstall
+  PLUGIN...  plugin to uninstall
 
 FLAGS
   -h, --help     Show CLI help.
@@ -380,6 +436,9 @@ DESCRIPTION
 ALIASES
   $ workflow-cli plugins unlink
   $ workflow-cli plugins remove
+
+EXAMPLES
+  $ workflow-cli plugins unlink myplugin
 ```
 
 ## `workflow-cli plugins update`
@@ -398,6 +457,8 @@ DESCRIPTION
   Update installed plugins.
 ```
 
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.7/src/commands/plugins/update.ts)_
+
 ## `workflow-cli reindex`
 
 Bulk reindex runner
@@ -411,10 +472,10 @@ FLAGS
   -c, --config=<value>      (required) The configuration file name (without .json)
   -d, --domainName=<value>  (required) OpenSearch Domain
   -u, --hostname=<value>    (required) OpenSearch url
-  --accessId=<value>        (required) AWS access key id
-  --accessKey=<value>       (required) AWS secret access key
-  --arn=<value>             AWS ARN
-  --region=<value>          (required) AWS region
+      --accessId=<value>    (required) AWS access key id
+      --accessKey=<value>   (required) AWS secret access key
+      --arn=<value>         AWS ARN
+      --region=<value>      (required) AWS region
 
 DESCRIPTION
   Bulk reindex runner
@@ -436,13 +497,13 @@ ARGUMENTS
   ACTION  (setup|create) [default: create] Snapshot action
 
 FLAGS
-  -d, --domainName=<value>  (required) OpenSearch Domain
-  -u, --hostname=<value>    (required) OpenSearch url
-  --accessId=<value>        (required) AWS access key id
-  --accessKey=<value>       (required) AWS secret access key
-  --accountNumber=<value>   (required) AWS account number
-  --arn=<value>             AWS ARN
-  --region=<value>          (required) AWS region
+  -d, --domainName=<value>     (required) OpenSearch Domain
+  -u, --hostname=<value>       (required) OpenSearch url
+      --accessId=<value>       (required) AWS access key id
+      --accessKey=<value>      (required) AWS secret access key
+      --accountNumber=<value>  (required) AWS account number
+      --arn=<value>            AWS ARN
+      --region=<value>         (required) AWS region
 
 DESCRIPTION
   Snapshot setup and creation tool

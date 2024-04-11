@@ -9,5 +9,6 @@
   },
   "[typescript]": {
     "editor.tabSize": 2
-  }
+  },
+  "eslint.codeActionsOnSave.rules": null
 }

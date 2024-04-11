@@ -1,0 +1,10 @@
+{
+  "id": "epsilon-isss-msteams",
+  "name": "Epsilon ISSS Alerts",
+  "description": "MS Teams channel (APM Deployment Managed)",
+  "configType": "microsoft_teams",
+  "isEnabled": true,
+  "microsoft_teams": {
+    "url": "<%= url %>"
+  }
+}

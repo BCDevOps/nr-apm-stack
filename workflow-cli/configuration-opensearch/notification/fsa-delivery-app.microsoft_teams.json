@@ -1,0 +1,10 @@
+{
+  "id": "fsa-delivery-app-msteams",
+  "name": "FSA Delivery App Webhook",
+  "description": "MS Teams channel (APM Deployment Managed)",
+  "configType": "microsoft_teams",
+  "isEnabled": true,
+  "microsoft_teams": {
+    "url": "<%= url %>"
+  }
+}
