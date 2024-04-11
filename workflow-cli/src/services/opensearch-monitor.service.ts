@@ -115,35 +115,21 @@ export default class OpenSearchMonitorService extends AwsService {
       }
     }
 
-    // Strip monitors where key '$$OMIT' equals true
-    monitors = monitors.filter(
-      (monitor) => !(monitor.$$OMIT && monitor.$$OMIT === 'true'),
-    );
-    for (const monitor of monitors) {
-      if (monitor.$$OMIT) {
-        delete monitor.$$OMIT;
-      }
-
-      // Strip monitor triggers where key '$$OMIT' equals true
-      monitor.triggers = monitor.triggers.filter(
-        (trigger: any) => !(trigger.$$OMIT && trigger.$$OMIT === 'true'),
-      );
-      for (const trigger of monitor.triggers) {
-        if (trigger.$$OMIT) {
-          delete trigger.$$OMIT;
-        }
-        trigger.query_level_trigger.actions =
-          trigger.query_level_trigger.actions.filter(
-            (action: any) => !(action.$$OMIT && action.$$OMIT === 'true'),
-          );
-
-        for (const action of trigger.query_level_trigger.actions) {
-          if (action.$$OMIT) {
-            delete action.$$OMIT;
-          }
-        }
-      }
-    }
+    // Remove objects that have a key '$$OMIT' that equals 'true'
+    monitors = monitors
+      .map((monitor) => {
+        // Wrap monitor in an object so that predicate works on object root (and then unwrap)
+        return this.recursiveOmit(
+          { monitor },
+          (key: any, value: any) =>
+            typeof value === 'object' &&
+            value !== null &&
+            value['$$OMIT'] === 'true',
+          ['$$OMIT'],
+        ).monitor;
+      })
+      // Strip out monitors where root key '$$OMIT' was 'true'
+      .filter((monitor) => monitor !== undefined);
 
     const monitorNameSet = new Set(monitors.map((monitor) => monitor.name));
 
@@ -240,5 +226,33 @@ export default class OpenSearchMonitorService extends AwsService {
         }).then((res) => this.waitAndReturnResponseBody(res, [404]));
       }
     }
+  }
+
+  private recursiveOmit(object: any, predicate: any, omitKeys: string[]): any {
+    if (Array.isArray(object)) {
+      return object
+        .filter((val: any, index) => !predicate(index, val, object))
+        .map((val: any) => this.recursiveOmit(val, predicate, omitKeys));
+    } else if (typeof object !== 'object') {
+      return object;
+    }
+
+    const result: any = {};
+    for (const key of Reflect.ownKeys(object)) {
+      const descriptor = Object.getOwnPropertyDescriptor(object, key);
+
+      if (!descriptor?.enumerable || omitKeys.indexOf(key.toString()) !== -1) {
+        continue;
+      }
+
+      const value = object[key];
+      if (!predicate(key, value, object)) {
+        Object.defineProperty(result, key, descriptor);
+        if (typeof object === 'object' && object !== null) {
+          result[key] = this.recursiveOmit(result[key], predicate, omitKeys);
+        }
+      }
+    }
+    return result;
   }
 }
