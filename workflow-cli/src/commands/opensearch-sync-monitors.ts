@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Command, Flags } from '@oclif/core';
+import { Command } from '@oclif/core';
 import AwsService from '../services/aws.service';
 import { bindBroker, bindVault, vsContainer } from '../inversify.config';
 import {
