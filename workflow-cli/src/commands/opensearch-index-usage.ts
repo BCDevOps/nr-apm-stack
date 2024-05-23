@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { Args, Command, Flags } from '@oclif/core';
 import OpenSearchIndicesUsageService from '../services/opensearch-indicesusage.service';
 import AwsService from '../services/aws.service';

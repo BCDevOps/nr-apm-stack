@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { Command, Flags } from '@oclif/core';
 import AwsSqsService from '../services/aws-sqs.service';
 import AwsService from '../services/aws.service';

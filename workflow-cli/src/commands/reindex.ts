@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { Command, Flags } from '@oclif/core';
 import ReindexService from '../services/reindex.service';
 import AwsService from '../services/aws.service';
