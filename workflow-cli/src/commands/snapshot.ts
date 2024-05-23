@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { Args, Command } from '@oclif/core';
 import OpenSearchSnapshotService from '../services/opensearch-snapshot.service';
 import AwsService from '../services/aws.service';

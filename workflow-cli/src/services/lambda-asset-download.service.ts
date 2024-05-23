@@ -44,11 +44,12 @@ export default class LambdaAssetDownloadService {
     // console.log(`Downloading ${url}`) // careful!!! download URL contains license key!!!
     return new Promise<void>((resolve) => {
       // any because the response type is a bit of a hack
-      http.get(url, (response: any) => {
+      const req = http.get(url, (response: any) => {
         if (response.statusCode === 302 && response.headers.location) {
           this.download(response.headers.location, dest).then(() => {
             resolve();
           });
+          req.destroy();
           return;
         }
 
@@ -73,6 +74,8 @@ export default class LambdaAssetDownloadService {
               const data = Buffer.concat(chunks);
               fs.writeFileSync(dest, data);
             }
+            console.log(`Download succesful! Saved to ${dest}`);
+            req.destroy();
             resolve();
           });
         } else {
