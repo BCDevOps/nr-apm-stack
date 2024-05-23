@@ -43,13 +43,21 @@ export default class LambdaAssetDownloadService {
     const chunks: Uint8Array[] = [];
     // console.log(`Downloading ${url}`) // careful!!! download URL contains license key!!!
     return new Promise<void>((resolve) => {
-      http.get(url, function (response) {
+      // any because the response type is a bit of a hack
+      http.get(url, (response: any) => {
+        if (response.statusCode === 302 && response.headers.location) {
+          this.download(response.headers.location, dest).then(() => {
+            resolve();
+          });
+          return;
+        }
+
         if (response.statusCode === 200) {
           console.log(`Request succesful! Saving to ${dest}`);
           response.pipe(zlib.createGunzip()).pipe(extract);
           extract.on('entry', function (header, stream, cb) {
             if (header.name.endsWith(basename)) {
-              stream.on('data', function (chunk) {
+              stream.on('data', function (chunk: any) {
                 chunks.push(chunk);
               });
             }
