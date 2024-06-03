@@ -9,7 +9,6 @@ import { BrokerApi } from '../broker/broker.api';
 import { GraphServerInstallInstanceDto } from '../broker/dto/graph-server-installs-rest.dto';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../inversify.types';
-import { dryRun } from '../flags';
 
 const ID_MAX_LENGTH = 20;
 
@@ -49,6 +48,10 @@ export default class OpenSearchMonitorService extends AwsService {
   public async sync(settings: WorkflowSettings): Promise<any> {
     const servers = await this.brokerApi.getProjectServices();
     let monitors: any[] = [];
+
+    if (settings.dryRun) {
+      console.log('Dry run: No changes will be made');
+    }
 
     for (const alertFile of fs.readdirSync(ALERT_CONFIG_DIR)) {
       if (!alertFile.endsWith('config.json')) {
@@ -161,7 +164,7 @@ export default class OpenSearchMonitorService extends AwsService {
     // return;
     for (const removeHit of removeHits) {
       console.log(`Remove monitor: ${removeHit._source.name}`);
-      if (!dryRun) {
+      if (!settings.dryRun) {
         // DELETE _plugins/_alerting/monitors/<monitor_id>
         await this.executeSignedHttpRequest({
           method: 'DELETE',
@@ -199,7 +202,7 @@ export default class OpenSearchMonitorService extends AwsService {
         // Add
         // POST _plugins/_alerting/monitors
         console.log(`Add monitor: ${monitor.name}`);
-        if (!dryRun) {
+        if (!settings.dryRun) {
           await this.executeSignedHttpRequest({
             method: 'POST',
             headers: {
@@ -215,7 +218,7 @@ export default class OpenSearchMonitorService extends AwsService {
         // Update
         // PUT _plugins/_alerting/monitors/<monitor_id>
         console.log(`Update monitor: ${monitor.name}`);
-        if (!dryRun) {
+        if (!settings.dryRun) {
           if (!body.hits.hits[0]._source.enabled) {
             // Do not re-enable
             monitor.enabled = false;

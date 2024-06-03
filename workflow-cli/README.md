@@ -20,7 +20,7 @@ $ npm install -g workflow-cli
 $ workflow-cli COMMAND
 running command...
 $ workflow-cli (--version)
-workflow-cli/1.0.0 darwin-x64 node-v20.11.1
+workflow-cli/1.0.0 darwin-arm64 node-v22.1.0
 $ workflow-cli --help [COMMAND]
 USAGE
   $ workflow-cli COMMAND
@@ -34,6 +34,7 @@ USAGE
 * [`workflow-cli lambda-asset-download [FILE]`](#workflow-cli-lambda-asset-download-file)
 * [`workflow-cli opensearch-index-usage ACTION`](#workflow-cli-opensearch-index-usage-action)
 * [`workflow-cli opensearch-sync`](#workflow-cli-opensearch-sync)
+* [`workflow-cli opensearch-sync-monitors`](#workflow-cli-opensearch-sync-monitors)
 * [`workflow-cli plugins`](#workflow-cli-plugins)
 * [`workflow-cli plugins add PLUGIN`](#workflow-cli-plugins-add-plugin)
 * [`workflow-cli plugins:inspect PLUGIN...`](#workflow-cli-pluginsinspect-plugin)
@@ -63,7 +64,7 @@ FLAGS
       --accessKey=<value>      (required) AWS secret access key
       --accountNumber=<value>  (required) AWS account number
       --arn=<value>            AWS ARN
-      --dryRun                 Disable deletion of messages
+      --dryRun                 Enables dry run
       --maxBatches=<value>     [default: 10] Number of times to request batch of messages
       --region=<value>         (required) AWS region
 
@@ -92,7 +93,7 @@ DESCRIPTION
   Display help for workflow-cli.
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.0.20/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.1.0/src/commands/help.ts)_
 
 ## `workflow-cli lambda-asset-download [FILE]`
 
@@ -149,7 +150,8 @@ Sync OpenSearch settings
 ```
 USAGE
   $ workflow-cli opensearch-sync -u <value> -d <value> --region <value> --accessId <value> --accessKey <value>
-    --accountNumber <value> [--arn <value>] [--broker-api-url <value>] [--broker-token <value>] [-h]
+    --accountNumber <value> --broker-token <value> [--arn <value>] [--broker-api-url <value>] [--vault-addr <value>]
+    [--vault-token <value>] [-h]
 
 FLAGS
   -d, --domainName=<value>      (required) OpenSearch Domain
@@ -159,15 +161,49 @@ FLAGS
       --accessKey=<value>       (required) AWS secret access key
       --accountNumber=<value>   (required) AWS account number
       --arn=<value>             AWS ARN
-      --broker-api-url=<value>  [default: https://nr-broker.apps.silver.devops.gov.bc.ca/] The broker api base url
-      --broker-token=<value>    The broker JWT
+      --broker-api-url=<value>  [default: https://broker.io.nrs.gov.bc.ca/] The broker api base url
+      --broker-token=<value>    (required) The broker JWT
       --region=<value>          (required) AWS region
+      --vault-addr=<value>      [default: http://127.0.0.1:8200] The vault address
+      --vault-token=<value>     [default: myroot] The vault token
 
 DESCRIPTION
   Sync OpenSearch settings
 
 EXAMPLES
   $ workflow-cli opensearch-sync
+```
+
+## `workflow-cli opensearch-sync-monitors`
+
+Sync OpenSearch settings
+
+```
+USAGE
+  $ workflow-cli opensearch-sync-monitors -u <value> -d <value> --region <value> --accessId <value> --accessKey <value>
+    --accountNumber <value> --broker-token <value> [--arn <value>] [--broker-api-url <value>] [--vault-addr <value>]
+    [--vault-token <value>] [-h] [--dryRun]
+
+FLAGS
+  -d, --domainName=<value>      (required) OpenSearch Domain
+  -h, --help                    Show CLI help.
+  -u, --hostname=<value>        (required) OpenSearch url
+      --accessId=<value>        (required) AWS access key id
+      --accessKey=<value>       (required) AWS secret access key
+      --accountNumber=<value>   (required) AWS account number
+      --arn=<value>             AWS ARN
+      --broker-api-url=<value>  [default: https://broker.io.nrs.gov.bc.ca/] The broker api base url
+      --broker-token=<value>    (required) The broker JWT
+      --dryRun                  Enables dry run
+      --region=<value>          (required) AWS region
+      --vault-addr=<value>      [default: http://127.0.0.1:8200] The vault address
+      --vault-token=<value>     [default: myroot] The vault token
+
+DESCRIPTION
+  Sync OpenSearch settings
+
+EXAMPLES
+  $ workflow-cli opensearch-sync-monitors
 ```
 
 ## `workflow-cli plugins`
@@ -191,7 +227,7 @@ EXAMPLES
   $ workflow-cli plugins
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.7/src/commands/plugins/index.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.2.1/src/commands/plugins/index.ts)_
 
 ## `workflow-cli plugins add PLUGIN`
 
@@ -265,7 +301,7 @@ EXAMPLES
   $ workflow-cli plugins inspect myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.7/src/commands/plugins/inspect.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.2.1/src/commands/plugins/inspect.ts)_
 
 ## `workflow-cli plugins install PLUGIN`
 
@@ -314,7 +350,7 @@ EXAMPLES
     $ workflow-cli plugins install someuser/someplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.7/src/commands/plugins/install.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.2.1/src/commands/plugins/install.ts)_
 
 ## `workflow-cli plugins link PATH`
 
@@ -344,7 +380,7 @@ EXAMPLES
   $ workflow-cli plugins link myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.7/src/commands/plugins/link.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.2.1/src/commands/plugins/link.ts)_
 
 ## `workflow-cli plugins remove [PLUGIN]`
 
@@ -385,7 +421,7 @@ FLAGS
   --reinstall  Reinstall all plugins after uninstalling.
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.7/src/commands/plugins/reset.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.2.1/src/commands/plugins/reset.ts)_
 
 ## `workflow-cli plugins uninstall [PLUGIN]`
 
@@ -413,7 +449,7 @@ EXAMPLES
   $ workflow-cli plugins uninstall myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.7/src/commands/plugins/uninstall.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.2.1/src/commands/plugins/uninstall.ts)_
 
 ## `workflow-cli plugins unlink [PLUGIN]`
 
@@ -457,7 +493,7 @@ DESCRIPTION
   Update installed plugins.
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.7/src/commands/plugins/update.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.2.1/src/commands/plugins/update.ts)_
 
 ## `workflow-cli reindex`
 
