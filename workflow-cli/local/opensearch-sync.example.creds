@@ -9,7 +9,7 @@ export BROKER_TOKEN=
 export VAULT_ADDR=https://knox.io.nrs.gov.bc.ca
 export VAULT_TOKEN=
 
-# Paste in the following from LZ login page
+# Paste in the following from LZ login page -- https://login.nimbus.cloud.gov.bc.ca
 # Note: You need to update the 'all_access' role to allow your AWS account to use it
 export AWS_ACCESS_KEY_ID=""
 export AWS_SECRET_ACCESS_KEY=""

@@ -20,9 +20,11 @@ https://bcdevops.github.io/nr-apm-stack/
 
 # Getting Started
 
-This project contains all the source code and supporting files for the APM Stack. It consists of a serverless application for processing documents, a workflow cli for handling maintenance and the AWS SAM template for deploying to AWS.
+This project contains all the source code and supporting files for the APM Stack. It consists of a AWS SAM template, GitHub Actions and a Workflow CLI. 
 
-The CI/CD pipeline uses Github actions to deploy and maintain the product.
+AWS SAM is used to deploy the infrastructure on AWS. The infrastructure includes an AWS Lambda application that retrieves documents from an Kinesis endpoint, processes them and passes them on to OpenSearch. GitHub Actions are used to automate the deployment and maintaince of the product.
+
+The Workflow CLI handles the configuration of the OpenSearch product. It also has a support command for downloading GeoIP assets for the SAM deployment. The workflow is documented in it's own [README](./workflow-cli/README.md).
 
 ## Built With
 
@@ -47,7 +49,6 @@ The CI/CD pipeline uses Github actions to deploy and maintain the product.
 
 To develop, you need the following tools.
 
-
 * Node.js - [Install Node.js 20](https://nodejs.org/en/), including the NPM package management tool.
 * Podman (Docker) - [Install Podman](https://podman.io/docs/installation)
 
@@ -59,7 +60,7 @@ If you want to run SAM locally, you will need to install the CLI in addition to 
 
 ### AWS - Environment Variables
 
-The environment variables that SAM uses are documented in the [AWS CLI documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html). They can be obtained from the [Cloud PathFinder login page](http://login.nimbus.cloud.gov.bc.ca/) and clicking on "Click for Credentials" of the appropriate project/environment.
+The environment variables that SAM uses are documented in the [AWS CLI documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html). They can be obtained from the [Cloud PathFinder login page](https://login.nimbus.cloud.gov.bc.ca/) and clicking on "Click for Credentials" of the appropriate project/environment.
 
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`

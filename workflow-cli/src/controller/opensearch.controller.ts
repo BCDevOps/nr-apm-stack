@@ -45,7 +45,11 @@ export default class OpenSearchController {
       ).data.data,
     );
 
-    // console.log('======= Monitor Sync');
-    // await this.monitorService.sync(flags);
+    await this.syncMonitors(flags);
+  }
+
+  public async syncMonitors(flags: any) {
+    console.log('======= Monitor Sync');
+    return this.monitorService.sync(flags);
   }
 }

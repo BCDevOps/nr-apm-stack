@@ -12,6 +12,7 @@ export interface WorkflowSettings {
   accessId: string;
   accessKey: string;
   arn: string | undefined;
+  dryRun?: boolean;
 }
 
 @injectable()

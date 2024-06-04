@@ -92,8 +92,8 @@ export const vaultToken = {
 
 export const dryRun = {
   dryRun: Flags.boolean({
-    description: 'Disable deletion of messages',
-    env: 'AWS_SQS_DRY_RUN',
+    description: 'Enables dry run',
+    env: 'DRY_RUN',
     default: false,
   }),
 };

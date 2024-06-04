@@ -49,6 +49,10 @@ export default class OpenSearchMonitorService extends AwsService {
     const servers = await this.brokerApi.getProjectServices();
     let monitors: any[] = [];
 
+    if (settings.dryRun) {
+      console.log('Dry run: No changes will be made');
+    }
+
     for (const alertFile of fs.readdirSync(ALERT_CONFIG_DIR)) {
       if (!alertFile.endsWith('config.json')) {
         continue;
@@ -160,16 +164,18 @@ export default class OpenSearchMonitorService extends AwsService {
     // return;
     for (const removeHit of removeHits) {
       console.log(`Remove monitor: ${removeHit._source.name}`);
-      // DELETE _plugins/_alerting/monitors/<monitor_id>
-      await this.executeSignedHttpRequest({
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          host: settings.hostname,
-        },
-        hostname: settings.hostname,
-        path: `/_plugins/_alerting/monitors/${removeHit._id}`,
-      }).then((res) => this.waitAndReturnResponseBody(res, [404]));
+      if (!settings.dryRun) {
+        // DELETE _plugins/_alerting/monitors/<monitor_id>
+        await this.executeSignedHttpRequest({
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            host: settings.hostname,
+          },
+          hostname: settings.hostname,
+          path: `/_plugins/_alerting/monitors/${removeHit._id}`,
+        }).then((res) => this.waitAndReturnResponseBody(res, [404]));
+      }
     }
 
     for (const monitor of monitors) {
@@ -196,34 +202,38 @@ export default class OpenSearchMonitorService extends AwsService {
         // Add
         // POST _plugins/_alerting/monitors
         console.log(`Add monitor: ${monitor.name}`);
-        await this.executeSignedHttpRequest({
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            host: settings.hostname,
-          },
-          hostname: settings.hostname,
-          path: '/_plugins/_alerting/monitors',
-          body: JSON.stringify(monitor),
-        }).then((res) => this.waitAndReturnResponseBody(res, [404]));
+        if (!settings.dryRun) {
+          await this.executeSignedHttpRequest({
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              host: settings.hostname,
+            },
+            hostname: settings.hostname,
+            path: '/_plugins/_alerting/monitors',
+            body: JSON.stringify(monitor),
+          }).then((res) => this.waitAndReturnResponseBody(res, [404]));
+        }
       } else {
         // Update
         // PUT _plugins/_alerting/monitors/<monitor_id>
         console.log(`Update monitor: ${monitor.name}`);
-        if (!body.hits.hits[0]._source.enabled) {
-          // Do not re-enable
-          monitor.enabled = false;
+        if (!settings.dryRun) {
+          if (!body.hits.hits[0]._source.enabled) {
+            // Do not re-enable
+            monitor.enabled = false;
+          }
+          await this.executeSignedHttpRequest({
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              host: settings.hostname,
+            },
+            hostname: settings.hostname,
+            path: `/_plugins/_alerting/monitors/${body.hits.hits[0]._id}`,
+            body: JSON.stringify(monitor),
+          }).then((res) => this.waitAndReturnResponseBody(res, [404]));
         }
-        await this.executeSignedHttpRequest({
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            host: settings.hostname,
-          },
-          hostname: settings.hostname,
-          path: `/_plugins/_alerting/monitors/${body.hits.hits[0]._id}`,
-          body: JSON.stringify(monitor),
-        }).then((res) => this.waitAndReturnResponseBody(res, [404]));
       }
     }
   }
