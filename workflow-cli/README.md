@@ -1,13 +1,19 @@
 workflow-cli
 =================
 
-AWS Deployment Workflow CLI
+AWS Deployment Workflow CLI handles the configuration of the OpenSearch product. It also has a support command for downloading GeoIP assets for the SAM deployment.
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 [![Version](https://img.shields.io/npm/v/oclif-hello-world.svg)](https://npmjs.org/package/oclif-hello-world)
 [![CircleCI](https://circleci.com/gh/oclif/hello-world/tree/main.svg?style=shield)](https://circleci.com/gh/oclif/hello-world/tree/main)
 [![Downloads/week](https://img.shields.io/npm/dw/oclif-hello-world.svg)](https://npmjs.org/package/oclif-hello-world)
 [![License](https://img.shields.io/npm/l/oclif-hello-world.svg)](https://github.com/oclif/hello-world/blob/main/package.json)
+
+## Running locally
+
+The easiest way to run it locally is to setup your environment variables using one of the [provided templates](./local/).
+
+Some of the commands support a `--dryRun` option.
 
 <!-- toc -->
 * [Usage](#usage)
