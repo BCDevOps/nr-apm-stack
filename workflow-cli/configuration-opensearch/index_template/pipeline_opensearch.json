@@ -16,11 +16,11 @@
   },
   "priority": 300,
   "composed_of": [
-    "ecs_agent_8.9",
-    "ecs_base_8.9",
-    "ecs_ecs_8.9",
-    "ecs_event_8.9",
-    "ecs_service_8.9",
+    "ecs_agent_8.11",
+    "ecs_base_8.11",
+    "ecs_ecs_8.11",
+    "ecs_event_8.11",
+    "ecs_service_8.11",
     "ecs_nrm_base_1.0",
     "ecs_nrm_batch_1.0",
     "ecs_nrm_kinesis_1.0"

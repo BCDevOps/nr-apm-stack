@@ -37,7 +37,6 @@ export default class OpenSearchTemplateService extends AwsService {
         .readFileSync(path.resolve(componentDir, filePath), {
           encoding: 'utf8',
         })
-        .replace(/match\_only\_text/g, 'text')
         .replace(/wildcard/g, 'keyword')
         .replace(/constant_keyword/g, 'keyword')
         .replace(/flattened/g, 'flat_object');
