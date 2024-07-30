@@ -59,6 +59,32 @@
             }
           }
         },
+        "cloud": {
+          "properties": {
+            "origin": {
+              "properties": {
+                "prop": {
+                  "type": "flat_object"
+                },
+                "propStrategy": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                }
+              }
+            },
+            "target": {
+              "properties": {
+                "prop": {
+                  "type": "flat_object"
+                },
+                "propStrategy": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                }
+              }
+            }
+          }
+        },
         "graph": {
           "properties": {
             "edge": {
