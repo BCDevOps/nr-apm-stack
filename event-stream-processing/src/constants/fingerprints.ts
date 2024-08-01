@@ -475,7 +475,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
         index: 'nrm-audit-broker-<%=YYYY.MM.DD=%>',
         environmentStandardize: true,
         geoIp: true,
-        timestampGuard: 'PT60M',
+        timestampGuard: 'PT300M',
       },
     },
   },
@@ -491,7 +491,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       '@metadata': {
         docId: 'kinesis.eventID',
         index: 'nrm-metrics-<%=YYYY.MM.DD=%>',
-        timestampGuard: 'PT10M',
+        timestampGuard: 'PT300M',
         environmentStandardize: true,
       },
     },
@@ -508,7 +508,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       '@metadata': {
         docId: 'kinesis.eventID',
         index: 'nrm-metrics-<%=YYYY.MM.DD=%>',
-        timestampGuard: 'PT10M',
+        timestampGuard: 'PT300M',
         environmentStandardize: true,
       },
     },
@@ -525,7 +525,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       '@metadata': {
         docId: 'kinesis.eventID',
         index: 'nrm-metrics-<%=YYYY.MM.DD=%>',
-        timestampGuard: 'PT10M',
+        timestampGuard: 'PT300M',
         environmentStandardize: true,
       },
     },
@@ -542,7 +542,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       '@metadata': {
         docId: 'kinesis.eventID',
         index: 'nrm-metrics-<%=YYYY.MM.DD=%>',
-        timestampGuard: 'PT10M',
+        timestampGuard: 'PT300M',
         environmentStandardize: true,
       },
     },
@@ -559,7 +559,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       '@metadata': {
         docId: 'kinesis.eventID',
         index: 'nrm-metrics-<%=YYYY.MM.DD=%>',
-        timestampGuard: 'PT10M',
+        timestampGuard: 'PT300M',
         urlExplode: true,
         environmentStandardize: true,
       },
@@ -577,7 +577,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       '@metadata': {
         docId: 'kinesis.eventID',
         index: 'nrm-metrics-<%=YYYY.MM.DD=%>',
-        timestampGuard: 'PT10M',
+        timestampGuard: 'PT300M',
         environmentStandardize: true,
       },
     },
@@ -594,7 +594,7 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
       '@metadata': {
         docId: 'kinesis.eventID',
         index: 'nrm-pipeline-opensearch-<%=YYYY.MM.DD=%>',
-        timestampGuard: 'PT10M',
+        timestampGuard: 'PT300M',
         environmentStandardize: true,
       },
     },
