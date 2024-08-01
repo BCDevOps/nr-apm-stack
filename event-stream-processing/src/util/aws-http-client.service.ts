@@ -1,17 +1,17 @@
 /* istanbul ignore file */
 import {inject, injectable} from 'inversify';
-import {HttpRequest, HttpResponse} from '@aws-sdk/protocol-http';
+import {HttpRequest, HttpResponse} from '@smithy/protocol-http';
 import {Sha256} from '@aws-crypto/sha256-js';
 import {defaultProvider} from '@aws-sdk/credential-provider-node';
-import {SignatureV4} from '@aws-sdk/signature-v4';
+import {SignatureV4} from '@smithy/signature-v4';
 import {NodeHttpHandler} from '@smithy/node-http-handler';
 import {GenericError} from '../util/generic.error';
 import {LoggerService} from './logger.service';
 import {TYPES} from '../inversify.types';
-import {Endpoint, HttpMessage} from '@aws-sdk/types';
+import {HttpMessage, URI} from '@smithy/types';
 
-export type HttpRequestOptions = Partial<HttpMessage> & Partial<Endpoint> & {
-  method: string;
+type HttpRequestOptions = Partial<HttpMessage> & Partial<URI> & {
+  method?: string;
 };
 
 export interface HttpResponseWrapper {
