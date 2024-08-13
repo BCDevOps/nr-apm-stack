@@ -48,7 +48,6 @@ export class ApplicationClassificationParser implements Parser {
       }
     }
 
-    /* eslint-disable max-len,camelcase,@typescript-eslint/no-unsafe-call */
     if (lodash.isNil(lodash.get(document.data, 'service.target.name'))) {
       for (const regex of [
         knownAppContextRegex_v1,
@@ -84,5 +83,4 @@ export class ApplicationClassificationParser implements Parser {
       }
     }
   }
-  /* eslint-enable max-len */
 }

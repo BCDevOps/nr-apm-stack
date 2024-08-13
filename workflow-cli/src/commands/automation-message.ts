@@ -14,7 +14,7 @@ import {
 } from '../flags';
 
 export default class AutomationMessage extends Command {
-  static description = 'Automation message recieve tool';
+  static description = 'Automation message receive tool';
 
   static examples = ['<%= config.bin %> <%= command.id %>'];
 

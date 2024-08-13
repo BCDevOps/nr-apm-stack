@@ -31,7 +31,6 @@ export class KinesisStreamService {
     @inject(TYPES.LoggerService) private logger: LoggerService,
   ) {}
 
-  /* eslint-disable @typescript-eslint/no-unused-vars */
   /**
    * Handle the Kinesis event by transforming and then bulk uploading to OpenSearch
    * @param event The event containing the data to transform
@@ -53,7 +52,7 @@ export class KinesisStreamService {
     this.logger.debug(`Submitting ${processedCount} documents to OS`);
     // Bulk send documents
     const sentPipeline = await this.openSearch.bulk(transformedPipeline);
-    // const recievedRecords = sentPipeline.documents.length;
+    // const receivedRecords = sentPipeline.documents.length;
     const committedCount = sentPipeline.documents.length;
     const failedCount = sentPipeline.failures.length;
     this.logger.debug(`${committedCount} documents added`);
@@ -70,5 +69,4 @@ export class KinesisStreamService {
 
     return (Promise<void>).resolve();
   }
-  /* eslint-enable @typescript-eslint/no-unused-vars */
 }

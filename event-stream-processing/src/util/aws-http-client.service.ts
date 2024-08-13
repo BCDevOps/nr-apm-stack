@@ -41,7 +41,6 @@ export class AwsHttpClientService {
   waitAndReturnResponseBody(res: {
     response: HttpResponse;
   }): Promise<{ statusCode: number; body: string }> {
-    /* eslint-disable @typescript-eslint/no-unsafe-call */
     return new Promise((resolve, reject) => {
       this.logger.debug(`Received ${res.response.statusCode} from OS`);
       const incomingMessage = res.response.body;
@@ -56,7 +55,6 @@ export class AwsHttpClientService {
         reject(err);
       });
     });
-    /* eslint-enable @typescript-eslint/no-unsafe-call */
   }
 
   private async createSignedHttpRequest(

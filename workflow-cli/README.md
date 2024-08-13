@@ -56,7 +56,7 @@ USAGE
 
 ## `workflow-cli automation-message`
 
-Automation message recieve tool
+Automation message receive tool
 
 ```
 USAGE
@@ -75,7 +75,7 @@ FLAGS
       --region=<value>         (required) AWS region
 
 DESCRIPTION
-  Automation message recieve tool
+  Automation message receive tool
 
 EXAMPLES
   $ workflow-cli automation-message
