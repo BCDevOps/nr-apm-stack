@@ -1,10 +1,10 @@
-import {inject, injectable} from 'inversify';
-import {Parser} from '../types/parser';
+import { inject, injectable } from 'inversify';
+import { Parser } from '../types/parser';
 import lodash from 'lodash';
 import * as crypto from 'crypto';
-import {OsDocument} from '../types/os-document';
-import {FieldExtractorService} from '../shared/field-extractor.service';
-import {TYPES} from '../inversify.types';
+import { OsDocument } from '../types/os-document';
+import { FieldExtractorService } from '../shared/field-extractor.service';
+import { TYPES } from '../inversify.types';
 
 /**
  * @summary Sets the event hash based on a defined pattern.
@@ -19,7 +19,8 @@ export class HashParser implements Parser {
    * Constructor
    */
   constructor(
-    @inject(TYPES.FieldExtractorService) private fieldExtractorService: FieldExtractorService,
+    @inject(TYPES.FieldExtractorService)
+    private fieldExtractorService: FieldExtractorService,
   ) {}
 
   matches(document: OsDocument): boolean {
@@ -38,7 +39,10 @@ export class HashParser implements Parser {
   apply(document: OsDocument): void {
     const hashPattern: string = lodash.get(document.data, '@metadata.hash');
     const hasher = crypto.createHash('sha256');
-    const hashValArr = this.fieldExtractorService.fieldStringToArray(hashPattern, document);
+    const hashValArr = this.fieldExtractorService.fieldStringToArray(
+      hashPattern,
+      document,
+    );
     const lastIndex = hashValArr.length - 1;
     for (let i = 0; i < hashValArr.length; i++) {
       const hashVal = hashValArr[i];

@@ -1,11 +1,11 @@
-import {Context, KinesisStreamEvent} from 'aws-lambda';
-import {BatchSummaryService} from './batch-summary.service';
-import {EcsTransformService} from './ecs-transform.service';
-import {KinesisStreamService} from './kinesis-stream.service';
-import {OpenSearchService} from './open-search.service';
-import {OsDocument} from './types/os-document';
-import {LoggerService} from './util/logger.service';
-import {buildOsDocumentPipeline} from './util/pipeline.util';
+import { Context, KinesisStreamEvent } from 'aws-lambda';
+import { BatchSummaryService } from './batch-summary.service';
+import { EcsTransformService } from './ecs-transform.service';
+import { KinesisStreamService } from './kinesis-stream.service';
+import { OpenSearchService } from './open-search.service';
+import { OsDocument } from './types/os-document';
+import { LoggerService } from './util/logger.service';
+import { buildOsDocumentPipeline } from './util/pipeline.util';
 
 describe('KinesisStreamService', () => {
   it('transforms and then sends data', async () => {
@@ -47,7 +47,7 @@ describe('KinesisStreamService', () => {
       undefined,
       logger,
     );
-    const fakeEvent = {Records: []} as KinesisStreamEvent;
+    const fakeEvent = { Records: [] } as KinesisStreamEvent;
     const fakeContext = {} as Context;
 
     await ks.handle(fakeEvent, fakeContext);
@@ -60,7 +60,9 @@ describe('KinesisStreamService', () => {
     expect(batchService.logSummary).toHaveBeenCalledTimes(1);
     expect(batchService.logMessages).toHaveBeenCalledTimes(1);
     expect(logger.debug).toHaveBeenCalledTimes(4);
-    expect(logger.debug).toHaveBeenCalledWith('Transforming 0 kinesis records to OS documents');
+    expect(logger.debug).toHaveBeenCalledWith(
+      'Transforming 0 kinesis records to OS documents',
+    );
     expect(logger.debug).toHaveBeenCalledWith('Submitting 3 documents to OS');
     expect(logger.debug).toHaveBeenCalledWith('2 documents added');
     expect(logger.debug).toHaveBeenCalledWith('1 documents failed');

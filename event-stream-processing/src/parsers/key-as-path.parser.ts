@@ -1,7 +1,7 @@
-import {injectable} from 'inversify';
-import {Parser} from '../types/parser';
+import { injectable } from 'inversify';
+import { Parser } from '../types/parser';
 import lodash from 'lodash';
-import {OsDocument} from '../types/os-document';
+import { OsDocument } from '../types/os-document';
 
 @injectable()
 /**
@@ -17,7 +17,8 @@ export class KeyAsPathParser implements Parser {
    */
   matches(document: OsDocument): boolean {
     return !!(
-      (document.data['@metadata'] && document.data['@metadata'].keyAsPath) || document.data['@metadata.keyAsPath']
+      (document.data['@metadata'] && document.data['@metadata'].keyAsPath) ||
+      document.data['@metadata.keyAsPath']
     );
   }
 

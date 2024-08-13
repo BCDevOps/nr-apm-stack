@@ -1,4 +1,4 @@
-import {KinesisStreamRecord} from 'aws-lambda';
+import { KinesisStreamRecord } from 'aws-lambda';
 
 export enum FingerprintCategory {
   APACHE_ACCESS_LOGS = 'APACHE_ACCESS_LOGS',
@@ -27,7 +27,7 @@ export interface OsDocumentFingerprint {
   fingerprint: OsDocumentData | null;
   dataDefaults: {
     '@metadata': OsDocumentData;
-  }
+  };
 }
 
 export interface OsDocument {
@@ -41,15 +41,26 @@ export interface OsDocument {
 }
 
 export class PipelineProcessingFailure<T> {
-  constructor(public source: T, public message: string) {}
+  constructor(
+    public source: T,
+    public message: string,
+  ) {}
 }
 
 export class KinesisStreamRecordDecodeFailure extends PipelineProcessingFailure<KinesisStreamRecord> {}
 export class OsDocumentProcessingFailure extends PipelineProcessingFailure<OsDocument> {}
 export class OsDocumentCommitFailure extends PipelineProcessingFailure<OsDocument> {}
 // eslint-disable-next-line max-len
-export type PipelineObject = OsDocument|KinesisStreamRecordDecodeFailure|OsDocumentProcessingFailure|OsDocumentCommitFailure;
+export type PipelineObject =
+  | OsDocument
+  | KinesisStreamRecordDecodeFailure
+  | OsDocumentProcessingFailure
+  | OsDocumentCommitFailure;
 export class OsDocumentPipeline {
   documents: OsDocument[] = [];
-  failures: Array<KinesisStreamRecordDecodeFailure|OsDocumentProcessingFailure|OsDocumentCommitFailure> = [];
+  failures: Array<
+    | KinesisStreamRecordDecodeFailure
+    | OsDocumentProcessingFailure
+    | OsDocumentCommitFailure
+  > = [];
 }

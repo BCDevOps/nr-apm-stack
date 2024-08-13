@@ -1,12 +1,16 @@
-import {DocumentIndexParser} from './document-index.parser';
-import {OsDocument} from '../types/os-document';
+import { DocumentIndexParser } from './document-index.parser';
+import { OsDocument } from '../types/os-document';
 
 describe('IndexNameParser', () => {
   it('matches document with metadata field', () => {
     const parser = new DocumentIndexParser();
 
-    expect(parser.matches({data: {'@metadata': {index: 'bob'}}} as unknown as OsDocument)).toBe(true);
-    expect(parser.matches({data: {}} as unknown as OsDocument)).toBe(false);
+    expect(
+      parser.matches({
+        data: { '@metadata': { index: 'bob' } },
+      } as unknown as OsDocument),
+    ).toBe(true);
+    expect(parser.matches({ data: {} } as unknown as OsDocument)).toBe(false);
   });
 
   it('adds index with no substitution', () => {
@@ -55,7 +59,7 @@ describe('IndexNameParser', () => {
     const parser = new DocumentIndexParser();
     const document = {
       data: {
-        'labels': {
+        labels: {
           cool: 'dude',
         },
         '@timestamp': '2021-05-01T18:47:40.314-07:00',
@@ -80,7 +84,10 @@ describe('IndexNameParser', () => {
       },
     } as unknown as OsDocument;
     parser.apply(document);
-    expect(document).toHaveProperty('index', 'nrm-logs-access-preprod-2021.05.01');
+    expect(document).toHaveProperty(
+      'index',
+      'nrm-logs-access-preprod-2021.05.01',
+    );
   });
 
   it('throws error with undefined field substitution', () => {

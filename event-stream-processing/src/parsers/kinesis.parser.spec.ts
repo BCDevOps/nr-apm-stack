@@ -1,6 +1,6 @@
-import {DateAndTimeService} from '../shared/date-and-time.service';
-import {OsDocument} from '../types/os-document';
-import {KinesisParser} from './kinesis.parser';
+import { DateAndTimeService } from '../shared/date-and-time.service';
+import { OsDocument } from '../types/os-document';
+import { KinesisParser } from './kinesis.parser';
 
 jest.mock('../shared/date-and-time.service');
 
@@ -10,7 +10,6 @@ describe('KinesisParser', () => {
 
     expect(parser.matches()).toBe(true);
   });
-
 
   it('sets kinesis related fields', () => {
     const dateTimeService = {
@@ -61,21 +60,21 @@ describe('KinesisParser', () => {
         },
       },
       data: {
-        '@metadata': {kinesis: 'debug'},
+        '@metadata': { kinesis: 'debug' },
       },
     } as unknown as OsDocument;
     parser.apply(document);
     expect(document.data).toEqual({
-      'event': {
+      event: {
         ingested: 'date',
       },
-      'kinesis': {
+      kinesis: {
         eventID: 'endofdino',
         partitionKey: 'best',
         sequenceNumber: '1234',
         approximateArrivalTimestamp: 'cretaous',
       },
-      '@metadata': {kinesis: 'debug'},
+      '@metadata': { kinesis: 'debug' },
     });
   });
 });

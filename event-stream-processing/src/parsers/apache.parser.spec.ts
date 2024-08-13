@@ -1,13 +1,19 @@
-import {RegexService} from '../shared/regex.service';
-import {OsDocument} from '../types/os-document';
-import {ApacheParser} from './apache.parser';
+import { RegexService } from '../shared/regex.service';
+import { OsDocument } from '../types/os-document';
+import { ApacheParser } from './apache.parser';
 
 describe('ApacheParser', () => {
   it('matches using metadata', () => {
     const parser = new ApacheParser({} as unknown as RegexService);
 
-    expect(parser.matches({data: {'@metadata': {apacheAccessLog: true}}} as unknown as OsDocument)).toBe(true);
-    expect(parser.matches({data: {'@metadata': {}}} as unknown as OsDocument)).toBe(false);
+    expect(
+      parser.matches({
+        data: { '@metadata': { apacheAccessLog: true } },
+      } as unknown as OsDocument),
+    ).toBe(true);
+    expect(
+      parser.matches({ data: { '@metadata': {} } } as unknown as OsDocument),
+    ).toBe(false);
   });
 
   it('calls regexService.applyRegex when apply called', () => {
@@ -19,7 +25,11 @@ describe('ApacheParser', () => {
 
     parser.apply(testDoc);
 
-    expect(service.applyRegex).toHaveBeenCalledWith(testDoc, 'event.original', expect.any(Array));
+    expect(service.applyRegex).toHaveBeenCalledWith(
+      testDoc,
+      'event.original',
+      expect.any(Array),
+    );
     expect(service.applyRegex).toHaveBeenCalledTimes(1);
   });
 });

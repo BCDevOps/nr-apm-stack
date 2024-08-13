@@ -1,18 +1,28 @@
-import {OsDocument} from '../types/os-document';
-import {TimestampFieldParser} from './timestamp-field.parser';
+import { OsDocument } from '../types/os-document';
+import { TimestampFieldParser } from './timestamp-field.parser';
 
 describe('TimestampFieldParser', () => {
   it('matches using metadata and dataExtractedTimestamp', () => {
     const parser = new TimestampFieldParser();
-    expect(parser.matches({data: {}} as unknown as OsDocument)).toBe(false);
-    expect(parser.matches({data: {'@metadata': {'timestampField': 'blah'}}} as unknown as OsDocument)).toBe(false);
-    expect(parser.matches({
-      data: {'@metadata': {'timestampField': 'blah', 'timestampFormat': 'blah'}},
-    } as unknown as OsDocument)).toBe(true);
-    expect(parser.matches({
-      dataExtractedTimestamp: 'blah',
-      data: {'@metadata': {'timestampFormat': 'blah'}},
-    } as unknown as OsDocument)).toBe(true);
+    expect(parser.matches({ data: {} } as unknown as OsDocument)).toBe(false);
+    expect(
+      parser.matches({
+        data: { '@metadata': { timestampField: 'blah' } },
+      } as unknown as OsDocument),
+    ).toBe(false);
+    expect(
+      parser.matches({
+        data: {
+          '@metadata': { timestampField: 'blah', timestampFormat: 'blah' },
+        },
+      } as unknown as OsDocument),
+    ).toBe(true);
+    expect(
+      parser.matches({
+        dataExtractedTimestamp: 'blah',
+        data: { '@metadata': { timestampFormat: 'blah' } },
+      } as unknown as OsDocument),
+    ).toBe(true);
   });
 
   it('throws error when no value set', () => {
@@ -23,7 +33,7 @@ describe('TimestampFieldParser', () => {
           timestampField: 'field',
           timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
         },
-        'field': '',
+        field: '',
       },
     } as unknown as OsDocument;
     expect(() => {
@@ -39,12 +49,14 @@ describe('TimestampFieldParser', () => {
           timestampField: 'field',
           timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
         },
-        'field': 'fefefef',
+        field: 'fefefef',
       },
     } as unknown as OsDocument;
     expect(() => {
       parser.apply(document);
-    }).toThrow('Invalid date: \'fefefef\' invalid for format \'DD/MMM/YYYY:HH:mm:ss Z\'');
+    }).toThrow(
+      "Invalid date: 'fefefef' invalid for format 'DD/MMM/YYYY:HH:mm:ss Z'",
+    );
   });
 
   it('parses apache timestamp', () => {
@@ -55,11 +67,13 @@ describe('TimestampFieldParser', () => {
           timestampField: 'field',
           timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
         },
-        'field': '05/Jun/2020:07:23:23 -0700',
+        field: '05/Jun/2020:07:23:23 -0700',
       },
     } as unknown as OsDocument;
     parser.apply(document);
-    expect(document.data['@timestamp']).toEqual('2020-06-05T07:23:23.000-07:00');
+    expect(document.data['@timestamp']).toEqual(
+      '2020-06-05T07:23:23.000-07:00',
+    );
   });
 
   it('parses another timestamp', () => {
@@ -70,11 +84,13 @@ describe('TimestampFieldParser', () => {
           timestampField: 'field',
           timestampFormat: 'DD MM YYYY hh:mm:ss Z',
         },
-        'field': '05 06 2020 07:23:23 -0700',
+        field: '05 06 2020 07:23:23 -0700',
       },
     } as unknown as OsDocument;
     parser.apply(document);
-    expect(document.data['@timestamp']).toEqual('2020-06-05T07:23:23.000-07:00');
+    expect(document.data['@timestamp']).toEqual(
+      '2020-06-05T07:23:23.000-07:00',
+    );
   });
 
   it('parses using timestamp timezone', () => {
@@ -86,11 +102,13 @@ describe('TimestampFieldParser', () => {
           timestampFormat: 'YYYY-MM-DD HH:mm:ss',
           timestampTimezone: 'America/New_York',
         },
-        'field': '2022-03-04 14:08:59',
+        field: '2022-03-04 14:08:59',
       },
     } as unknown as OsDocument;
     parser.apply(document);
-    expect(document.data['@timestamp']).toEqual('2022-03-04T14:08:59.000-05:00');
+    expect(document.data['@timestamp']).toEqual(
+      '2022-03-04T14:08:59.000-05:00',
+    );
   });
 
   it('parses timestamp in dataExtractedTimestamp', () => {
@@ -104,6 +122,8 @@ describe('TimestampFieldParser', () => {
       },
     } as unknown as OsDocument;
     parser.apply(document);
-    expect(document.data['@timestamp']).toEqual('2020-06-05T07:23:23.000-07:00');
+    expect(document.data['@timestamp']).toEqual(
+      '2020-06-05T07:23:23.000-07:00',
+    );
   });
 });

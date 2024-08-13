@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import {injectable} from 'inversify';
-import {Parser} from '../types/parser';
+import { injectable } from 'inversify';
+import { Parser } from '../types/parser';
 import lodash from 'lodash';
 import * as path from 'path';
-import {format as formatUrl, URL} from 'url';
-import {OsDocument} from '../types/os-document';
-import {ParserError} from '../util/parser.error';
-/* eslint-disable @typescript-eslint/no-unsafe-call */
+import { format as formatUrl, URL } from 'url';
+import { OsDocument } from '../types/os-document';
+import { ParserError } from '../util/parser.error';
 
-const regexUrlWithProtocol = /^\w+\:\/\//;
+const regexUrlWithProtocol = /^\w+:\/\//;
 @injectable()
 /**
  * Add exploded url to document
@@ -20,7 +19,9 @@ export class UrlExplodeParser implements Parser {
    * @returns
    */
   matches(document: OsDocument): boolean {
-    return !!(document.data['@metadata'] && document.data['@metadata'].urlExplode);
+    return !!(
+      document.data['@metadata'] && document.data['@metadata'].urlExplode
+    );
   }
 
   /**
@@ -38,9 +39,14 @@ export class UrlExplodeParser implements Parser {
     try {
       if (urlOriginal.startsWith('/')) {
         // eslint-disable-next-line max-len
-        if (!lodash.isNil(lodash.get(document.data, 'url.scheme')) && !lodash.isNil(lodash.get(document.data, 'url.domain')) && !lodash.isNil(lodash.get(document.data, 'url.port'))) {
-          // eslint-disable-next-line max-len
-          const url = new URL(`${lodash.get(document.data, 'url.scheme')}://${lodash.get(document.data, 'url.domain')}:${lodash.get(document.data, 'url.port')}${urlOriginal}`);
+        if (
+          !lodash.isNil(lodash.get(document.data, 'url.scheme')) &&
+          !lodash.isNil(lodash.get(document.data, 'url.domain')) &&
+          !lodash.isNil(lodash.get(document.data, 'url.port'))
+        ) {
+          const url = new URL(
+            `${lodash.get(document.data, 'url.scheme')}://${lodash.get(document.data, 'url.domain')}:${lodash.get(document.data, 'url.port')}${urlOriginal}`,
+          );
           lodash.merge(document.data.url, this.explodeURL(url));
         } else {
           const url = new URL(`http://localhost:80${urlOriginal}`);
@@ -55,10 +61,16 @@ export class UrlExplodeParser implements Parser {
       } else if (regexUrlWithProtocol.exec(urlOriginal)) {
         lodash.merge(document.data.url, this.explodeURL(new URL(urlOriginal)));
       } else {
-        lodash.merge(document.data.url, this.explodeURL(new URL(`http://${urlOriginal}`)));
+        lodash.merge(
+          document.data.url,
+          this.explodeURL(new URL(`http://${urlOriginal}`)),
+        );
       }
     } catch (e: unknown) {
-      throw new ParserError(`Could not parse [${urlOriginal}]`, this.constructor.name);
+      throw new ParserError(
+        `Could not parse [${urlOriginal}]`,
+        this.constructor.name,
+      );
     }
   }
 
@@ -98,7 +110,7 @@ export class UrlExplodeParser implements Parser {
     if (url.hash.length > 1) {
       lodash.set(record, 'fragment', url.hash.substring(1));
     }
-    lodash.set(record, 'full', formatUrl(url, {auth: false}));
+    lodash.set(record, 'full', formatUrl(url, { auth: false }));
     return record;
   }
 }

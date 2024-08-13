@@ -1,7 +1,7 @@
-import {injectable} from 'inversify';
+import { injectable } from 'inversify';
 import lodash from 'lodash';
-import {OsDocument} from '../types/os-document';
-import {Parser} from '../types/parser';
+import { OsDocument } from '../types/os-document';
+import { Parser } from '../types/parser';
 
 @injectable()
 /**
@@ -27,7 +27,12 @@ export class DeslashParser implements Parser {
   apply(document: OsDocument): void {
     if (!lodash.isNil(lodash.get(document.data, 'log.file.path'))) {
       lodash.set(
-        document.data, 'log.file.path', (lodash.get(document.data, 'log.file.path') as string).replace(/\\/g, '/'),
+        document.data,
+        'log.file.path',
+        (lodash.get(document.data, 'log.file.path') as string).replace(
+          /\\/g,
+          '/',
+        ),
       );
     }
   }

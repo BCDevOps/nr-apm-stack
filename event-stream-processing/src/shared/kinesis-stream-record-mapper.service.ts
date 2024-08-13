@@ -1,19 +1,21 @@
-import {KinesisStreamRecord} from 'aws-lambda';
-import {inject, injectable} from 'inversify';
+import { KinesisStreamRecord } from 'aws-lambda';
+import { inject, injectable } from 'inversify';
 import lodash from 'lodash';
-import {FINGERPRINTS, FINGERPRINT_UNKNOWN} from '../constants/fingerprints';
-import {TYPES} from '../inversify.types';
-import {OsDocument, OsDocumentData, OsDocumentFingerprint} from '../types/os-document';
-import {SubsetService} from './subset.service';
+import { FINGERPRINTS, FINGERPRINT_UNKNOWN } from '../constants/fingerprints';
+import { TYPES } from '../inversify.types';
+import {
+  OsDocument,
+  OsDocumentData,
+  OsDocumentFingerprint,
+} from '../types/os-document';
+import { SubsetService } from './subset.service';
 
 @injectable()
 export class KinesisStreamRecordMapperService {
   /**
    * Constructor
    */
-  constructor(
-    @inject(TYPES.SubsetService) private subset: SubsetService,
-  ) {}
+  constructor(@inject(TYPES.SubsetService) private subset: SubsetService) {}
 
   /**
    * Converts a KinesisStreamRecord to an OsDocument
@@ -21,7 +23,9 @@ export class KinesisStreamRecordMapperService {
    * @returns
    */
   public toOpensearchDocument(record: KinesisStreamRecord): OsDocument {
-    const data = JSON.parse(Buffer.from(record.kinesis.data, 'base64').toString('utf8'));
+    const data = JSON.parse(
+      Buffer.from(record.kinesis.data, 'base64').toString('utf8'),
+    );
     return {
       fingerprint: FINGERPRINT_UNKNOWN,
       id: null,

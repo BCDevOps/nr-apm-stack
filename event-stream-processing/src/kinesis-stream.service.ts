@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import {Context, KinesisStreamEvent} from 'aws-lambda';
-import {injectable, inject, optional} from 'inversify';
-import {OpenSearchService} from './open-search.service';
-import {TYPES} from './inversify.types';
-import {LoggerService} from './util/logger.service';
-import {EcsTransformService} from './ecs-transform.service';
-import {BatchSummaryService} from './batch-summary.service';
-import {DeadLetterQueueService} from './dead-letter-queue.service';
+import { Context, KinesisStreamEvent } from 'aws-lambda';
+import { injectable, inject, optional } from 'inversify';
+import { OpenSearchService } from './open-search.service';
+import { TYPES } from './inversify.types';
+import { LoggerService } from './util/logger.service';
+import { EcsTransformService } from './ecs-transform.service';
+import { BatchSummaryService } from './batch-summary.service';
+import { DeadLetterQueueService } from './dead-letter-queue.service';
 
 @injectable()
 /**
@@ -20,10 +20,14 @@ export class KinesisStreamService {
    * @param logger
    */
   constructor(
-    @inject(TYPES.EcsTransformService) private ecsTransformService: EcsTransformService,
+    @inject(TYPES.EcsTransformService)
+    private ecsTransformService: EcsTransformService,
     @inject(TYPES.OpenSearchService) private openSearch: OpenSearchService,
-    @inject(TYPES.BatchSummaryService) private batchSummary: BatchSummaryService,
-    @inject(TYPES.DeadLetterQueueService) @optional() private deadLetterQueue: DeadLetterQueueService | undefined,
+    @inject(TYPES.BatchSummaryService)
+    private batchSummary: BatchSummaryService,
+    @inject(TYPES.DeadLetterQueueService)
+    @optional()
+    private deadLetterQueue: DeadLetterQueueService | undefined,
     @inject(TYPES.LoggerService) private logger: LoggerService,
   ) {}
 
@@ -34,9 +38,15 @@ export class KinesisStreamService {
    * @param context The lambda context
    * @returns A promise to wait on
    */
-  public async handle(event: KinesisStreamEvent, context: Context, print = false): Promise<void> {
+  public async handle(
+    event: KinesisStreamEvent,
+    context: Context,
+    print = false,
+  ): Promise<void> {
     const receivedCount = event.Records.length;
-    this.logger.debug(`Transforming ${receivedCount} kinesis records to OS documents`);
+    this.logger.debug(
+      `Transforming ${receivedCount} kinesis records to OS documents`,
+    );
     // Extract records from Kinesis event to documents and process according to fingerprint & meta instructions
     const transformedPipeline = this.ecsTransformService.transform(event);
     const processedCount = transformedPipeline.documents.length;

@@ -1,11 +1,15 @@
-import {injectable, inject} from 'inversify';
-import {URL} from 'url';
-import {TYPES} from './inversify.types';
-import {OpenSearchService} from './open-search.service';
+import { injectable, inject } from 'inversify';
+import { URL } from 'url';
+import { TYPES } from './inversify.types';
+import { OpenSearchService } from './open-search.service';
 // eslint-disable-next-line max-len
-import {OsDocument, OsDocumentCommitFailure, OsDocumentPipeline} from './types/os-document';
-import {AwsHttpClientService} from './util/aws-http-client.service';
-import {LoggerService} from './util/logger.service';
+import {
+  OsDocument,
+  OsDocumentCommitFailure,
+  OsDocumentPipeline,
+} from './types/os-document';
+import { AwsHttpClientService } from './util/aws-http-client.service';
+import { LoggerService } from './util/logger.service';
 
 @injectable()
 /**
@@ -15,7 +19,8 @@ export class OpenSearchPostService extends OpenSearchService {
   private url: URL = new URL(process.env.ES_URL || 'http://localhost');
 
   constructor(
-    @inject(TYPES.AwsHttpClientService) private awsHttpClient: AwsHttpClientService,
+    @inject(TYPES.AwsHttpClientService)
+    private awsHttpClient: AwsHttpClientService,
     @inject(TYPES.LoggerService) logger: LoggerService,
   ) {
     super(logger);
@@ -42,13 +47,13 @@ export class OpenSearchPostService extends OpenSearchService {
         body += `, "_id":"${document.id}"`;
       }
       body += `}}\n`;
-      body += JSON.stringify(document.data)+'\n';
+      body += JSON.stringify(document.data) + '\n';
     }
     const query: {
       refresh: string;
       // eslint-disable-next-line camelcase
       filter_path?: string;
-    } = {refresh: 'wait_for'};
+    } = { refresh: 'wait_for' };
     if (filterPath.length > 0) {
       query.filter_path = filterPath;
     }
@@ -58,19 +63,22 @@ export class OpenSearchPostService extends OpenSearchService {
     if (body.length === 0) {
       return Promise.resolve(readyPipeline);
     }
-    return await this.awsHttpClient.executeSignedHttpRequest({
-      hostname: this.url.hostname,
-      protocol: 'https',
-      method: 'POST',
-      body: body,
-      headers: {
-        'Content-Type': 'application/x-ndjson',
-        'host': this.url.hostname,
-      },
-      query: query,
-      path: '/_bulk',
-    })
-      .then(this.awsHttpClient.waitAndReturnResponseBody.bind(this.awsHttpClient))
+    return await this.awsHttpClient
+      .executeSignedHttpRequest({
+        hostname: this.url.hostname,
+        protocol: 'https',
+        method: 'POST',
+        body: body,
+        headers: {
+          'Content-Type': 'application/x-ndjson',
+          host: this.url.hostname,
+        },
+        query: query,
+        path: '/_bulk',
+      })
+      .then(
+        this.awsHttpClient.waitAndReturnResponseBody.bind(this.awsHttpClient),
+      )
       .then((value: any) => {
         if (value.statusCode !== 200) {
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -78,8 +86,11 @@ export class OpenSearchPostService extends OpenSearchService {
           return {
             documents: [],
             failures: [
-              ...readyPipeline.documents.map((doc) => this.createCommitFailure('ES_NETWORK', doc, 'Network down?')),
-              ...readyPipeline.failures],
+              ...readyPipeline.documents.map((doc) =>
+                this.createCommitFailure('ES_NETWORK', doc, 'Network down?'),
+              ),
+              ...readyPipeline.failures,
+            ],
           };
         }
         const body = JSON.parse(value.body);
@@ -90,10 +101,15 @@ export class OpenSearchPostService extends OpenSearchService {
           if (meta.error) {
             const document = index.get(meta._id);
             if (document) {
-              const message = (typeof meta.error.type === 'string' ? meta.error.type as string : 'Unknown') +
-                `: ${typeof meta.error.reason === 'string' ? meta.error.reason as string : 'Unknown'}`;
+              const message =
+                (typeof meta.error.type === 'string'
+                  ? (meta.error.type as string)
+                  : 'Unknown') +
+                `: ${typeof meta.error.reason === 'string' ? (meta.error.reason as string) : 'Unknown'}`;
 
-              readyPipeline.failures.push(this.createCommitFailure('ES_DOCERROR', document, message));
+              readyPipeline.failures.push(
+                this.createCommitFailure('ES_DOCERROR', document, message),
+              );
               index.delete(meta._id);
             } else {
               this.logger.log('ES_ERROR_DOC_NOT_FOUND ' + JSON.stringify(item));
@@ -107,7 +123,11 @@ export class OpenSearchPostService extends OpenSearchService {
       });
   }
 
-  private createCommitFailure(type: string, document: OsDocument, message: string): OsDocumentCommitFailure {
+  private createCommitFailure(
+    type: string,
+    document: OsDocument,
+    message: string,
+  ): OsDocumentCommitFailure {
     const docErrorMsg = this.createErrorMessage(type, document, message);
     this.logger.debug(docErrorMsg);
     this.logger.debug('ES_ERROR ' + JSON.stringify(document.data));

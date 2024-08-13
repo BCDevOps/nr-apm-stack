@@ -1,4 +1,7 @@
-import {OsDocumentFingerprint, FingerprintCategory} from '../types/os-document';
+import {
+  OsDocumentFingerprint,
+  FingerprintCategory,
+} from '../types/os-document';
 
 export const FINGERPRINT_UNKNOWN: OsDocumentFingerprint = {
   name: FingerprintCategory.UNKNOWN,
