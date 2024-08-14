@@ -1,9 +1,9 @@
-import {injectable, inject, tagged} from 'inversify';
-import {TYPES} from './inversify.types';
-import {KinesisStreamService} from './kinesis-stream.service';
-import {OsDocumentData} from './types/os-document';
-import {Context, KinesisStreamEvent, KinesisStreamRecord} from 'aws-lambda';
-import {LoggerService} from './util/logger.service';
+import { injectable, inject, tagged } from 'inversify';
+import { TYPES } from './inversify.types';
+import { KinesisStreamService } from './kinesis-stream.service';
+import { OsDocumentData } from './types/os-document';
+import { Context, KinesisStreamEvent, KinesisStreamRecord } from 'aws-lambda';
+import { LoggerService } from './util/logger.service';
 
 @injectable()
 /**
@@ -15,7 +15,9 @@ export class KinesisStreamWrapperService {
    * @param kinesisStreamService
    */
   constructor(
-    @inject(TYPES.KinesisStreamService) @tagged('localhost', true) private kinesisStreamService: KinesisStreamService,
+    @inject(TYPES.KinesisStreamService)
+    @tagged('localhost', true)
+    private kinesisStreamService: KinesisStreamService,
     @inject(TYPES.LoggerService) private logger: LoggerService,
   ) {}
 
@@ -25,7 +27,10 @@ export class KinesisStreamWrapperService {
    * @param context The lambda context
    * @returns A promise to wait on
    */
-  public async handle(event: KinesisStreamEvent, context: Context): Promise<void> {
+  public async handle(
+    event: KinesisStreamEvent,
+    context: Context,
+  ): Promise<void> {
     await this.kinesisStreamService.handle(event, context, true);
   }
 

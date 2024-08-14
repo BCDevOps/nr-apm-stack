@@ -1,10 +1,10 @@
-import {injectable} from 'inversify';
-import {Parser} from '../types/parser';
+import { injectable } from 'inversify';
+import { Parser } from '../types/parser';
 import lodash from 'lodash';
 import 'moment-timezone';
 import moment from 'moment';
-import {OsDocument} from '../types/os-document';
-import {ParserError} from '../util/parser.error';
+import { OsDocument } from '../types/os-document';
+import { ParserError } from '../util/parser.error';
 
 @injectable()
 /**
@@ -18,9 +18,12 @@ export class TimestampFieldParser implements Parser {
    * @returns
    */
   matches(document: OsDocument): boolean {
-    return !!(document.data['@metadata'] &&
-      (document.data['@metadata'].timestampField || document.dataExtractedTimestamp) &&
-      document.data['@metadata'].timestampFormat);
+    return !!(
+      document.data['@metadata'] &&
+      (document.data['@metadata'].timestampField ||
+        document.dataExtractedTimestamp) &&
+      document.data['@metadata'].timestampFormat
+    );
   }
 
   /**
@@ -31,18 +34,28 @@ export class TimestampFieldParser implements Parser {
     const fieldName: string = document.data['@metadata'].timestampField;
     const tsFormat: string = document.data['@metadata'].timestampFormat;
     const timezone: string = document.data['@metadata'].timestampTimezone;
-    const value: string = fieldName ? lodash.get(document.data, fieldName) : document.dataExtractedTimestamp;
+    const value: string = fieldName
+      ? lodash.get(document.data, fieldName)
+      : document.dataExtractedTimestamp;
 
     if (value) {
       // lodash.set(record.data, fieldName, value)
-      const date = timezone ? moment.tz(value, tsFormat, timezone) : moment(value, tsFormat);
+      const date = timezone
+        ? moment.tz(value, tsFormat, timezone)
+        : moment(value, tsFormat);
       if (date.isValid()) {
         lodash.set(document.data, '@timestamp', date.toISOString(true));
       } else {
-        throw new ParserError(`Invalid date: '${value}' invalid for format '${tsFormat}'`, this.constructor.name);
+        throw new ParserError(
+          `Invalid date: '${value}' invalid for format '${tsFormat}'`,
+          this.constructor.name,
+        );
       }
     } else {
-      throw new ParserError(`No value set for timestamp: ${fieldName}`, this.constructor.name);
+      throw new ParserError(
+        `No value set for timestamp: ${fieldName}`,
+        this.constructor.name,
+      );
     }
   }
 }

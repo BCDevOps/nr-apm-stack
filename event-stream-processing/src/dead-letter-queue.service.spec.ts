@@ -1,14 +1,22 @@
-import {DeadLetterQueueService} from './dead-letter-queue.service';
-import {KinesisStreamRecordDecodeFailure, OsDocumentPipeline} from './types/os-document';
-import {FirehoseClient, PutRecordBatchCommand} from '@aws-sdk/client-firehose';
-import {KinesisStreamRecord} from 'aws-lambda';
-import {LoggerService} from './util/logger.service';
+import { DeadLetterQueueService } from './dead-letter-queue.service';
+import {
+  KinesisStreamRecordDecodeFailure,
+  OsDocumentPipeline,
+} from './types/os-document';
+import {
+  FirehoseClient,
+  PutRecordBatchCommand,
+} from '@aws-sdk/client-firehose';
+import { KinesisStreamRecord } from 'aws-lambda';
+import { LoggerService } from './util/logger.service';
 
 jest.mock('@aws-sdk/client-firehose');
 
 describe('DeadLetterQueueService', () => {
   beforeAll(() => {
-    jest.spyOn(TextEncoder.prototype, 'encode').mockImplementation(() => new Uint8Array());
+    jest
+      .spyOn(TextEncoder.prototype, 'encode')
+      .mockImplementation(() => new Uint8Array());
   });
 
   afterAll(() => {
@@ -33,8 +41,8 @@ describe('DeadLetterQueueService', () => {
     expect(FirehoseClient).toHaveBeenCalledTimes(1);
     expect(PutRecordBatchCommand).toHaveBeenCalledTimes(0);
 
-    const mockFirehoseClientInstance = (jest.mocked(FirehoseClient) as any).mock.instances[0];
-    // eslint-disable-next-line jest/unbound-method
+    const mockFirehoseClientInstance = (jest.mocked(FirehoseClient) as any).mock
+      .instances[0];
     const mockSend = mockFirehoseClientInstance.send;
     expect(mockSend).toHaveBeenCalledTimes(0);
   });
@@ -46,18 +54,25 @@ describe('DeadLetterQueueService', () => {
     } as LoggerService;
     const service = new DeadLetterQueueService(logger);
     const pipeline = new OsDocumentPipeline();
-    pipeline.failures = [new KinesisStreamRecordDecodeFailure('steam' as unknown as KinesisStreamRecord, 'woo')];
+    pipeline.failures = [
+      new KinesisStreamRecordDecodeFailure(
+        'steam' as unknown as KinesisStreamRecord,
+        'woo',
+      ),
+    ];
 
     await service.send(pipeline);
 
     expect(FirehoseClient).toHaveBeenCalledTimes(1);
     expect(PutRecordBatchCommand).toHaveBeenCalledTimes(1);
 
-    const mockFirehoseClientInstance = (jest.mocked(FirehoseClient) as any).mock.instances[0];
-    // eslint-disable-next-line jest/unbound-method
+    const mockFirehoseClientInstance = (jest.mocked(FirehoseClient) as any).mock
+      .instances[0];
     const mockSend = mockFirehoseClientInstance.send;
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(TextEncoder.prototype.encode).toHaveBeenCalledTimes(1);
-    expect(TextEncoder.prototype.encode).toHaveBeenCalledWith('{"source":"steam","message":"woo"}\n');
+    expect(TextEncoder.prototype.encode).toHaveBeenCalledWith(
+      '{"source":"steam","message":"woo"}\n',
+    );
   });
 });

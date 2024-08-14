@@ -1,15 +1,17 @@
-
-import {injectable} from 'inversify';
+import { injectable } from 'inversify';
 import lodash from 'lodash';
-import {Parser} from '../types/parser';
-import {knownDomains} from '../constants/known-domains';
-import {OsDocument} from '../types/os-document';
+import { Parser } from '../types/parser';
+import { knownDomains } from '../constants/known-domains';
+import { OsDocument } from '../types/os-document';
 
-/* eslint-disable max-len,camelcase,@typescript-eslint/no-unsafe-call */
-const knownAppContextRegex_v1 = /^(?<url__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata)))\/(?<labels__target_project>geoserver)(\/.\S*)\/((?<service__target__name>[^\/\.]*))((\/[^\/].*)?)$/;
-const knownAppContextRegex_v2 = /^(?<url__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata)))((\/((geoserver)|(pls)))?)(\/(?<labels__target_project>[^\/]*)?)((\/\S*)?)$/;
-const knownAppContextRegex_v3 = /^(?<url__context>(\/((geoserver)|(pls)))?)(\/(?<labels__target_project>[^\/]*)?)((\/\S*)?)$/;
-/* eslint-enable max-len */
+/* eslint-disable no-useless-escape */
+const knownAppContextRegex_v1 =
+  /^(?<url__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata)))\/(?<labels__target_project>geoserver)(\/.\S*)\/((?<service__target__name>[^\/\.]*))((\/[^\/].*)?)$/;
+const knownAppContextRegex_v2 =
+  /^(?<url__context>\/((int)|(ext)|(pub)|(gov)|(datasets)|(appsdata)))((\/((geoserver)|(pls)))?)(\/(?<labels__target_project>[^\/]*)?)((\/\S*)?)$/;
+const knownAppContextRegex_v3 =
+  /^(?<url__context>(\/((geoserver)|(pls)))?)(\/(?<labels__target_project>[^\/]*)?)((\/\S*)?)$/;
+/* eslint-enable no-useless-escape */
 
 @injectable()
 /**
@@ -24,7 +26,9 @@ export class ApplicationClassificationParser implements Parser {
    * @returns
    */
   matches(document: OsDocument): boolean {
-    return !!(document.data['@metadata'] && document.data['@metadata'].appClassification);
+    return !!(
+      document.data['@metadata'] && document.data['@metadata'].appClassification
+    );
   }
 
   /**
@@ -39,14 +43,17 @@ export class ApplicationClassificationParser implements Parser {
     }
 
     for (const knownDomain of knownDomains) {
-      if ((knownDomain.regex).test(urlDomain.toLowerCase())) {
+      if (knownDomain.regex.test(urlDomain.toLowerCase())) {
         lodash.set(document.data, 'service.target.name', knownDomain.app);
       }
     }
 
-    /* eslint-disable max-len,camelcase,@typescript-eslint/no-unsafe-call */
     if (lodash.isNil(lodash.get(document.data, 'service.target.name'))) {
-      for (const regex of [knownAppContextRegex_v1, knownAppContextRegex_v2, knownAppContextRegex_v3]) {
+      for (const regex of [
+        knownAppContextRegex_v1,
+        knownAppContextRegex_v2,
+        knownAppContextRegex_v3,
+      ]) {
         const m = regex.exec(urlPath);
         if (m !== null && m.groups) {
           for (const groupName of Object.keys(m.groups)) {
@@ -59,16 +66,21 @@ export class ApplicationClassificationParser implements Parser {
           break;
         }
       }
-      if (lodash.isNil(lodash.get(document.data, 'service.target.name')) &&
-        lodash.isString(lodash.get(document.data, 'labels.target_project'))) {
+      if (
+        lodash.isNil(lodash.get(document.data, 'service.target.name')) &&
+        lodash.isString(lodash.get(document.data, 'labels.target_project'))
+      ) {
         const fieldValue = lodash.get(document.data, 'labels.target_project');
         lodash.set(document.data, 'service.target.name', fieldValue);
         const firstdash = fieldValue.indexOf('-');
         if (firstdash > 0) {
-          lodash.set(document.data, 'labels.target_project', fieldValue.substring(0, firstdash));
+          lodash.set(
+            document.data,
+            'labels.target_project',
+            fieldValue.substring(0, firstdash),
+          );
         }
       }
     }
   }
-  /* eslint-enable max-len */
 }

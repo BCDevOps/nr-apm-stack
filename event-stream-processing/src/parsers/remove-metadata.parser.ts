@@ -1,7 +1,7 @@
 import lodash from 'lodash';
-import {injectable} from 'inversify';
-import {Parser} from '../types/parser';
-import {OsDocument} from '../types/os-document';
+import { injectable } from 'inversify';
+import { Parser } from '../types/parser';
+import { OsDocument } from '../types/os-document';
 
 @injectable()
 /**

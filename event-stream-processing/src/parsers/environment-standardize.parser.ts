@@ -1,9 +1,9 @@
-import {injectable} from 'inversify';
-import {OsDocument} from '../types/os-document';
-import {Parser} from '../types/parser';
+import { injectable } from 'inversify';
+import { OsDocument } from '../types/os-document';
+import { Parser } from '../types/parser';
 import lodash from 'lodash';
 
-const envAlias: {[key: string]: string} = {
+const envAlias: { [key: string]: string } = {
   production: 'production',
   test: 'test',
   integration: 'integration',
@@ -31,7 +31,10 @@ export class EnvironmentStandardizeParser implements Parser {
    * @returns
    */
   matches(document: OsDocument): boolean {
-    return !!(document.data['@metadata'] && document.data['@metadata'].environmentStandardize);
+    return !!(
+      document.data['@metadata'] &&
+      document.data['@metadata'].environmentStandardize
+    );
   }
 
   /**

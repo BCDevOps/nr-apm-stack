@@ -1,7 +1,7 @@
-import {injectable} from 'inversify';
-import {Parser} from '../types/parser';
+import { injectable } from 'inversify';
+import { Parser } from '../types/parser';
 import UAParser from 'ua-parser-js';
-import {OsDocument} from '../types/os-document';
+import { OsDocument } from '../types/os-document';
 import cleanDeep from 'clean-deep';
 
 @injectable()
@@ -16,7 +16,9 @@ export class UserAgentParser implements Parser {
    * @returns
    */
   matches(document: OsDocument): boolean {
-    return !!(document.data['@metadata'] && document.data['@metadata'].userAgent);
+    return !!(
+      document.data['@metadata'] && document.data['@metadata'].userAgent
+    );
   }
 
   /**
@@ -24,8 +26,10 @@ export class UserAgentParser implements Parser {
    * @param document The document to modify
    */
   apply(document: OsDocument): void {
-    if (typeof document.data.user_agent?.original !== 'string' ||
-    document.data.user_agent.original.length <= 1) {
+    if (
+      typeof document.data.user_agent?.original !== 'string' ||
+      document.data.user_agent.original.length <= 1
+    ) {
       return;
     }
     const userAgentString: string = document.data.user_agent.original;

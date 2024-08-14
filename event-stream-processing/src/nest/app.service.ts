@@ -1,9 +1,9 @@
 /* eslint-disable new-cap */
-import {Body, Injectable} from '@nestjs/common';
-import {myContainer} from '../inversify.config';
-import {TYPES} from '../inversify.types';
-import {KinesisStreamWrapperService} from '../kinesis-stream-wrapper.service';
-import {OsDocumentData} from '../types/os-document';
+import { Body, Injectable } from '@nestjs/common';
+import { myContainer } from '../inversify.config';
+import { TYPES } from '../inversify.types';
+import { KinesisStreamWrapperService } from '../kinesis-stream-wrapper.service';
+import { OsDocumentData } from '../types/os-document';
 
 @Injectable()
 export class AppService {
@@ -13,8 +13,12 @@ export class AppService {
    * @param print If true, print the data to the console
    * @returns Promise with the result
    */
-  handleKinesisEvent(@Body() data: OsDocumentData, print: boolean): Promise<void> {
-    return myContainer.get<KinesisStreamWrapperService>(TYPES.KinesisStreamWrapperService)
+  handleKinesisEvent(
+    @Body() data: OsDocumentData,
+    print: boolean,
+  ): Promise<void> {
+    return myContainer
+      .get<KinesisStreamWrapperService>(TYPES.KinesisStreamWrapperService)
       .handleData(data, print);
   }
 }

@@ -1,3 +1,3 @@
 export interface Host {
-    hostname: string;
+  hostname: string;
 }

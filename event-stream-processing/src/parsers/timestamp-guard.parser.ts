@@ -1,9 +1,9 @@
-import {injectable} from 'inversify';
-import {Parser} from '../types/parser';
+import { injectable } from 'inversify';
+import { Parser } from '../types/parser';
 import lodash from 'lodash';
 import moment from 'moment';
-import {OsDocument} from '../types/os-document';
-import {ParserError} from '../util/parser.error';
+import { OsDocument } from '../types/os-document';
+import { ParserError } from '../util/parser.error';
 
 @injectable()
 /**
@@ -18,7 +18,9 @@ export class TimestampGuardParser implements Parser {
    * @returns
    */
   matches(document: OsDocument): boolean {
-    return !!(document.data['@metadata'] && document.data['@metadata'].timestampGuard);
+    return !!(
+      document.data['@metadata'] && document.data['@metadata'].timestampGuard
+    );
   }
 
   /**
@@ -29,10 +31,16 @@ export class TimestampGuardParser implements Parser {
     const timestampGuard: string = document.data['@metadata'].timestampGuard;
     const [startStr, endStr = 'PT1M'] = timestampGuard.split(',');
     const timestamp = moment(lodash.get(document.data, '@timestamp'));
-    if (!timestamp.isBetween(
-      moment().subtract(moment.duration(startStr)),
-      moment().add(moment.duration(endStr)))) {
-      throw new ParserError(`Timestamp is outside guard`, this.constructor.name);
+    if (
+      !timestamp.isBetween(
+        moment().subtract(moment.duration(startStr)),
+        moment().add(moment.duration(endStr)),
+      )
+    ) {
+      throw new ParserError(
+        `Timestamp is outside guard`,
+        this.constructor.name,
+      );
     }
   }
 }

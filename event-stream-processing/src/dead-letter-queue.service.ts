@@ -1,21 +1,25 @@
-import {inject, injectable} from 'inversify';
-import {OsDocumentPipeline} from './types/os-document';
-import {FirehoseClient, PutRecordBatchCommand, PutRecordBatchCommandInput} from '@aws-sdk/client-firehose';
-import {TYPES} from './inversify.types';
-import {LoggerService} from './util/logger.service';
+import { inject, injectable } from 'inversify';
+import { OsDocumentPipeline } from './types/os-document';
+import {
+  FirehoseClient,
+  PutRecordBatchCommand,
+  PutRecordBatchCommandInput,
+} from '@aws-sdk/client-firehose';
+import { TYPES } from './inversify.types';
+import { LoggerService } from './util/logger.service';
 
 @injectable()
 /**
  * Service to persist data unable to be sent to OpenSearch
  */
 export class DeadLetterQueueService {
-  constructor(
-    @inject(TYPES.LoggerService) private logger: LoggerService,
-  ) {}
+  constructor(@inject(TYPES.LoggerService) private logger: LoggerService) {}
   private enc = new TextEncoder();
-  private client = new FirehoseClient({region: process.env.AWS_DEFAULT_REGION || 'ca-central-1'});
+  private client = new FirehoseClient({
+    region: process.env.AWS_DEFAULT_REGION || 'ca-central-1',
+  });
 
-  public async send({failures}: OsDocumentPipeline) {
+  public async send({ failures }: OsDocumentPipeline) {
     if (failures.length === 0) {
       return;
     }
@@ -33,9 +37,11 @@ export class DeadLetterQueueService {
       const command = new PutRecordBatchCommand(input);
       try {
         const response = await this.client.send(command);
-        if (response.$metadata.httpStatusCode !== 200 ||
+        if (
+          response.$metadata.httpStatusCode !== 200 ||
           response.FailedPutCount === undefined ||
-          response.FailedPutCount > 0) {
+          response.FailedPutCount > 0
+        ) {
           this.logger.log('DLQ_RESP_ERROR: ' + JSON.stringify(response));
         }
       } catch (error) {

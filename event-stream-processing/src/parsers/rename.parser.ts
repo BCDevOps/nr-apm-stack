@@ -1,7 +1,7 @@
-import {injectable} from 'inversify';
-import {renameField} from '../shared/rename-field';
-import {OsDocument} from '../types/os-document';
-import {Parser} from '../types/parser';
+import { injectable } from 'inversify';
+import { renameField } from '../shared/rename-field';
+import { OsDocument } from '../types/os-document';
+import { Parser } from '../types/parser';
 
 @injectable()
 /**

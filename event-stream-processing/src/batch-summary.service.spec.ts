@@ -1,8 +1,13 @@
-import {KinesisStreamRecord} from 'aws-lambda';
-import {BatchSummaryService} from './batch-summary.service';
-// eslint-disable-next-line max-len
-import {KinesisStreamRecordDecodeFailure, OsDocument, OsDocumentCommitFailure, OsDocumentPipeline, OsDocumentProcessingFailure} from './types/os-document';
-import {LoggerService} from './util/logger.service';
+import { KinesisStreamRecord } from 'aws-lambda';
+import { BatchSummaryService } from './batch-summary.service';
+import {
+  KinesisStreamRecordDecodeFailure,
+  OsDocument,
+  OsDocumentCommitFailure,
+  OsDocumentPipeline,
+  OsDocumentProcessingFailure,
+} from './types/os-document';
+import { LoggerService } from './util/logger.service';
 
 describe('BatchSummaryService', () => {
   it('summarize empty pipeline', () => {
@@ -16,8 +21,9 @@ describe('BatchSummaryService', () => {
 
     bs.logSummary(emptyPipeline);
     expect(logger.log).toHaveBeenCalledTimes(1);
-    // eslint-disable-next-line max-len
-    expect(logger.log).toHaveBeenCalledWith('{"received":0,"decoded":0,"decode_failed":0,"processed":0,"process_failed":0,"committed":0,"commit_failed":0,"failed":0}');
+    expect(logger.log).toHaveBeenCalledWith(
+      '{"received":0,"decoded":0,"decode_failed":0,"processed":0,"process_failed":0,"committed":0,"commit_failed":0,"failed":0}',
+    );
   });
 
   it('summarizes pipeline', () => {
@@ -40,7 +46,8 @@ describe('BatchSummaryService', () => {
 
     bs.logSummary(pipeline);
     expect(logger.log).toHaveBeenCalledTimes(1);
-    // eslint-disable-next-line max-len
-    expect(logger.log).toHaveBeenCalledWith('{"received":7,"decoded":5,"decode_failed":2,"processed":4,"process_failed":1,"committed":2,"commit_failed":2,"failed":5}');
+    expect(logger.log).toHaveBeenCalledWith(
+      '{"received":7,"decoded":5,"decode_failed":2,"processed":4,"process_failed":1,"committed":2,"commit_failed":2,"failed":5}',
+    );
   });
 });

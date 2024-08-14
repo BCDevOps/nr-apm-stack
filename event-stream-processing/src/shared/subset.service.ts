@@ -1,4 +1,4 @@
-import {injectable} from 'inversify';
+import { injectable } from 'inversify';
 
 @injectable()
 /**
@@ -31,24 +31,25 @@ export class SubsetService {
    */
   public isSubset(superset: any, subset: any): boolean {
     if (
-      (typeof superset !== 'object' || superset === null) ||
-      (typeof subset !== 'object' || subset === null)
+      typeof superset !== 'object' ||
+      superset === null ||
+      typeof subset !== 'object' ||
+      subset === null
     ) {
       return false;
     }
 
     return Object.keys(subset).every((key) => {
+      // eslint-disable-next-line no-prototype-builtins
       if (!superset.propertyIsEnumerable(key)) {
         return false;
       }
 
       const subsetItem = subset[key];
       const supersetItem = superset[key];
-      return (
-        (typeof subsetItem === 'object' && subsetItem !== null) ?
-          this.isSubset(supersetItem, subsetItem) :
-          supersetItem === subsetItem
-      );
+      return typeof subsetItem === 'object' && subsetItem !== null
+        ? this.isSubset(supersetItem, subsetItem)
+        : supersetItem === subsetItem;
     });
   }
 }

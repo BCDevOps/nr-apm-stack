@@ -26,7 +26,7 @@ $ npm install -g workflow-cli
 $ workflow-cli COMMAND
 running command...
 $ workflow-cli (--version)
-workflow-cli/1.0.0 darwin-arm64 node-v22.1.0
+workflow-cli/1.0.0 darwin-x64 node-v20.11.1
 $ workflow-cli --help [COMMAND]
 USAGE
   $ workflow-cli COMMAND
@@ -56,7 +56,7 @@ USAGE
 
 ## `workflow-cli automation-message`
 
-Automation message recieve tool
+Automation message receive tool
 
 ```
 USAGE
@@ -75,7 +75,7 @@ FLAGS
       --region=<value>         (required) AWS region
 
 DESCRIPTION
-  Automation message recieve tool
+  Automation message receive tool
 
 EXAMPLES
   $ workflow-cli automation-message
@@ -99,7 +99,7 @@ DESCRIPTION
   Display help for workflow-cli.
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.1.0/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.8/src/commands/help.ts)_
 
 ## `workflow-cli lambda-asset-download [FILE]`
 
@@ -233,7 +233,7 @@ EXAMPLES
   $ workflow-cli plugins
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.2.1/src/commands/plugins/index.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.4/src/commands/plugins/index.ts)_
 
 ## `workflow-cli plugins add PLUGIN`
 
@@ -258,7 +258,7 @@ GLOBAL FLAGS
 DESCRIPTION
   Installs a plugin into workflow-cli.
 
-  Uses bundled npm executable to install plugins into /Users/mbystedt/.local/share/workflow-cli
+  Uses npm to install plugins.
 
   Installation of a user-installed plugin will override a core plugin.
 
@@ -307,7 +307,7 @@ EXAMPLES
   $ workflow-cli plugins inspect myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.2.1/src/commands/plugins/inspect.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.4/src/commands/plugins/inspect.ts)_
 
 ## `workflow-cli plugins install PLUGIN`
 
@@ -332,7 +332,7 @@ GLOBAL FLAGS
 DESCRIPTION
   Installs a plugin into workflow-cli.
 
-  Uses bundled npm executable to install plugins into /Users/mbystedt/.local/share/workflow-cli
+  Uses npm to install plugins.
 
   Installation of a user-installed plugin will override a core plugin.
 
@@ -356,7 +356,7 @@ EXAMPLES
     $ workflow-cli plugins install someuser/someplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.2.1/src/commands/plugins/install.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.4/src/commands/plugins/install.ts)_
 
 ## `workflow-cli plugins link PATH`
 
@@ -386,7 +386,7 @@ EXAMPLES
   $ workflow-cli plugins link myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.2.1/src/commands/plugins/link.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.4/src/commands/plugins/link.ts)_
 
 ## `workflow-cli plugins remove [PLUGIN]`
 
@@ -427,7 +427,7 @@ FLAGS
   --reinstall  Reinstall all plugins after uninstalling.
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.2.1/src/commands/plugins/reset.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.4/src/commands/plugins/reset.ts)_
 
 ## `workflow-cli plugins uninstall [PLUGIN]`
 
@@ -455,7 +455,7 @@ EXAMPLES
   $ workflow-cli plugins uninstall myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.2.1/src/commands/plugins/uninstall.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.4/src/commands/plugins/uninstall.ts)_
 
 ## `workflow-cli plugins unlink [PLUGIN]`
 
@@ -499,7 +499,7 @@ DESCRIPTION
   Update installed plugins.
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.2.1/src/commands/plugins/update.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.4/src/commands/plugins/update.ts)_
 
 ## `workflow-cli reindex`
 

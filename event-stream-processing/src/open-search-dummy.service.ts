@@ -1,17 +1,15 @@
-import {inject, injectable} from 'inversify';
-import {TYPES} from './inversify.types';
-import {OpenSearchService} from './open-search.service';
-import {OsDocument, OsDocumentPipeline} from './types/os-document';
-import {LoggerService} from './util/logger.service';
+import { inject, injectable } from 'inversify';
+import { TYPES } from './inversify.types';
+import { OpenSearchService } from './open-search.service';
+import { OsDocument, OsDocumentPipeline } from './types/os-document';
+import { LoggerService } from './util/logger.service';
 
 @injectable()
 /**
  * Dummy service that echos back the data sent to it
  */
 export class OpenSearchDummyService extends OpenSearchService {
-  constructor(
-    @inject(TYPES.LoggerService) logger: LoggerService,
-  ) {
+  constructor(@inject(TYPES.LoggerService) logger: LoggerService) {
     super(logger);
   }
 

@@ -1,8 +1,8 @@
-import {inject, injectable} from 'inversify';
-import {Parser} from '../types/parser';
-import {TYPES} from '../inversify.types';
-import {GeoIpService} from '../util/geoip.service';
-import {OsDocument} from '../types/os-document';
+import { inject, injectable } from 'inversify';
+import { Parser } from '../types/parser';
+import { TYPES } from '../inversify.types';
+import { GeoIpService } from '../util/geoip.service';
+import { OsDocument } from '../types/os-document';
 
 @injectable()
 /**
@@ -14,9 +14,7 @@ export class GeoIpParser implements Parser {
    * Constructor
    * @param geoIp The GeoIp service
    */
-  constructor(
-    @inject(TYPES.GeoIpService) private geoIp: GeoIpService,
-  ) {}
+  constructor(@inject(TYPES.GeoIpService) private geoIp: GeoIpService) {}
 
   /**
    * Returns true if metadata has a geoIp field.
@@ -24,8 +22,10 @@ export class GeoIpParser implements Parser {
    * @returns
    */
   matches(document: OsDocument): boolean {
-    return !!(document.data['@metadata'] && document.data['@metadata'].geoIp) &&
-      !!(document.data?.source?.ip || document.data?.source?.address);
+    return (
+      !!(document.data['@metadata'] && document.data['@metadata'].geoIp) &&
+      !!(document.data?.source?.ip || document.data?.source?.address)
+    );
   }
 
   /**
@@ -34,9 +34,15 @@ export class GeoIpParser implements Parser {
    */
   apply(document: OsDocument): void {
     if (document.data?.source?.ip) {
-      Object.assign(document.data.source, this.geoIp.lookup(document.data.source.ip));
+      Object.assign(
+        document.data.source,
+        this.geoIp.lookup(document.data.source.ip),
+      );
     } else if (document.data?.source?.address) {
-      Object.assign(document.data.source, this.geoIp.lookup(document.data.source.address));
+      Object.assign(
+        document.data.source,
+        this.geoIp.lookup(document.data.source.address),
+      );
     }
   }
 }

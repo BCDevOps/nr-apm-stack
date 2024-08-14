@@ -1,9 +1,9 @@
-import {inject, injectable} from 'inversify';
-import {Parser} from '../types/parser';
+import { inject, injectable } from 'inversify';
+import { Parser } from '../types/parser';
 import lodash from 'lodash';
-import {TYPES} from '../inversify.types';
-import {DateAndTimeService} from '../shared/date-and-time.service';
-import {OsDocument} from '../types/os-document';
+import { TYPES } from '../inversify.types';
+import { DateAndTimeService } from '../shared/date-and-time.service';
+import { OsDocument } from '../types/os-document';
 
 @injectable()
 /**
@@ -30,13 +30,28 @@ export class KinesisParser implements Parser {
    */
   apply(document: OsDocument): void {
     const debug = document.data['@metadata']?.kinesis === 'debug';
-    lodash.set(document.data, 'event.ingested', this.dateAndTime.now().toISOString(true));
+    lodash.set(
+      document.data,
+      'event.ingested',
+      this.dateAndTime.now().toISOString(true),
+    );
     if (debug) {
       lodash.set(document.data, 'kinesis.eventID', document.record.eventID);
-      lodash.set(document.data, 'kinesis.approximateArrivalTimestamp',
-        document.record.kinesis.approximateArrivalTimestamp);
-      lodash.set(document.data, 'kinesis.partitionKey', document.record.kinesis.partitionKey);
-      lodash.set(document.data, 'kinesis.sequenceNumber', document.record.kinesis.sequenceNumber);
+      lodash.set(
+        document.data,
+        'kinesis.approximateArrivalTimestamp',
+        document.record.kinesis.approximateArrivalTimestamp,
+      );
+      lodash.set(
+        document.data,
+        'kinesis.partitionKey',
+        document.record.kinesis.partitionKey,
+      );
+      lodash.set(
+        document.data,
+        'kinesis.sequenceNumber',
+        document.record.kinesis.sequenceNumber,
+      );
     }
   }
 }

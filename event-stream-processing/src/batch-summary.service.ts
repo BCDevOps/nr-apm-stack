@@ -1,19 +1,20 @@
-import {LoggerService} from './util/logger.service';
-import {SQSBatchResponse} from 'aws-lambda';
-import {inject, injectable} from 'inversify';
-import {TYPES} from './inversify.types';
-// eslint-disable-next-line max-len
-import {KinesisStreamRecordDecodeFailure, OsDocumentCommitFailure, OsDocumentPipeline, OsDocumentProcessingFailure} from './types/os-document';
-
+import { LoggerService } from './util/logger.service';
+import { SQSBatchResponse } from 'aws-lambda';
+import { inject, injectable } from 'inversify';
+import { TYPES } from './inversify.types';
+import {
+  KinesisStreamRecordDecodeFailure,
+  OsDocumentCommitFailure,
+  OsDocumentPipeline,
+  OsDocumentProcessingFailure,
+} from './types/os-document';
 
 @injectable()
 /**
  *
  */
 export class BatchSummaryService {
-  constructor(
-    @inject(TYPES.LoggerService) private logger: LoggerService,
-  ) {}
+  constructor(@inject(TYPES.LoggerService) private logger: LoggerService) {}
 
   /**
    * Summarizes the logs as a JSON object.
@@ -81,7 +82,9 @@ export class BatchSummaryService {
    * @returns An object contianing the failed record ids or null if no errors occurred.
    * SQSBatchResponse has the same interface as a Kinesis batch response.
    */
-  public buildErrorResponse(pipeline: OsDocumentPipeline): SQSBatchResponse | null {
+  public buildErrorResponse(
+    pipeline: OsDocumentPipeline,
+  ): SQSBatchResponse | null {
     if (pipeline.failures.length > 0) {
       const errorResponse = {
         batchItemFailures: pipeline.failures.map((failure) => {

@@ -1,8 +1,8 @@
 import lodash from 'lodash';
-import {LoggerService} from '../util/logger.service';
-import {OsDocument} from '../types/os-document';
-import {injectable, inject} from 'inversify';
-import {TYPES} from '../inversify.types';
+import { LoggerService } from '../util/logger.service';
+import { OsDocument } from '../types/os-document';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../inversify.types';
 
 const underscoreReplaceRegex = /__/g;
 
@@ -19,9 +19,7 @@ export class RegexService {
    * Constructor
    * @param logger
    */
-  constructor(
-    @inject(TYPES.LoggerService) private logger: LoggerService,
-  ) {}
+  constructor(@inject(TYPES.LoggerService) private logger: LoggerService) {}
 
   /**
    * Parse field into fields based on regex
@@ -30,7 +28,12 @@ export class RegexService {
    * @param regexArr An array of regex to test for a match
    * @param skipDash Do not add fields where the value is a dash
    */
-  applyRegex(document: OsDocument, field: string, regexArr: RegExp[], skipDash = true): MetaFields {
+  applyRegex(
+    document: OsDocument,
+    field: string,
+    regexArr: RegExp[],
+    skipDash = true,
+  ): MetaFields {
     const metaFields: MetaFields = {};
     const fieldValue = lodash.get(document.data, field);
     this.logger.debug(`Parsing ${fieldValue as string}`);

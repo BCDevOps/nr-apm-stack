@@ -1,6 +1,6 @@
-import {Test, TestingModule} from '@nestjs/testing';
-import {AppController} from './app.controller';
-import {AppService} from './app.service';
+import { Test, TestingModule } from '@nestjs/testing';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 describe('AppController', () => {
   let appController: AppController;
@@ -13,7 +13,8 @@ describe('AppController', () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [AppController],
       providers: [AppService],
-    }).overrideProvider(AppService)
+    })
+      .overrideProvider(AppService)
       .useValue(appService)
       .compile();
 
@@ -33,7 +34,10 @@ describe('AppController', () => {
       await appController.handleData(expect.any(Object), 'true');
 
       expect(appService.handleKinesisEvent).toHaveBeenCalledTimes(1);
-      expect(appService.handleKinesisEvent).toHaveBeenCalledWith(expect.any(Object), true);
+      expect(appService.handleKinesisEvent).toHaveBeenCalledWith(
+        expect.any(Object),
+        true,
+      );
     });
   });
 });

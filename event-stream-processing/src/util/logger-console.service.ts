@@ -1,7 +1,7 @@
 /* istanbul ignore file */
-import {injectable} from 'inversify';
-import {LoggerService} from './logger.service';
-import {isObjectLike} from 'lodash';
+import { injectable } from 'inversify';
+import { LoggerService } from './logger.service';
+import { isObjectLike } from 'lodash';
 
 @injectable()
 export class LoggerConsoleService implements LoggerService {
@@ -10,7 +10,7 @@ export class LoggerConsoleService implements LoggerService {
       let __message = _message;
       const ___optionalParams: any[] = [];
       if (isObjectLike(_message)) {
-        __message=JSON.stringify(_message);
+        __message = JSON.stringify(_message);
       }
       if (_optionalParams && _optionalParams.length > 0) {
         for (const optionalParam of _optionalParams) {

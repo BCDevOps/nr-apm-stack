@@ -1,7 +1,7 @@
-import {injectable} from 'inversify';
+import { injectable } from 'inversify';
 import lodash from 'lodash';
-import {OsDocument, OsDocumentData} from '../types/os-document';
-import {Parser} from '../types/parser';
+import { OsDocument, OsDocumentData } from '../types/os-document';
+import { Parser } from '../types/parser';
 
 @injectable()
 /**
@@ -28,7 +28,11 @@ export class JoinKvParser implements Parser {
     for (const joinKvPath of joinkvArr) {
       const query = lodash.get(document.data, joinKvPath);
       if (query) {
-        lodash.set(document.data, joinKvPath, this.showQueryParamsAsString(query));
+        lodash.set(
+          document.data,
+          joinKvPath,
+          this.showQueryParamsAsString(query),
+        );
       }
     }
   }

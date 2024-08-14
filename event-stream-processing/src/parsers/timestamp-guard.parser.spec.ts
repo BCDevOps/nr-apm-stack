@@ -1,13 +1,19 @@
 import moment from 'moment';
-import {OsDocument} from '../types/os-document';
-import {TimestampGuardParser} from './timestamp-guard.parser';
+import { OsDocument } from '../types/os-document';
+import { TimestampGuardParser } from './timestamp-guard.parser';
 
 describe('TimestampGuardParser', () => {
   it('matches using metadata', () => {
     const parser = new TimestampGuardParser();
 
-    expect(parser.matches({data: {'@metadata': {timestampGuard: 'P1D,P2D'}}} as unknown as OsDocument)).toBe(true);
-    expect(parser.matches({data: {'@metadata': {}}} as unknown as OsDocument)).toBe(false);
+    expect(
+      parser.matches({
+        data: { '@metadata': { timestampGuard: 'P1D,P2D' } },
+      } as unknown as OsDocument),
+    ).toBe(true);
+    expect(
+      parser.matches({ data: { '@metadata': {} } } as unknown as OsDocument),
+    ).toBe(false);
   });
 
   it('Does not throw if within guard', () => {
@@ -16,8 +22,10 @@ describe('TimestampGuardParser', () => {
     expect(() => {
       parser.apply({
         data: {
-          '@timestamp': moment().subtract(moment.duration('PT5M')).toISOString(),
-          '@metadata': {timestampGuard: 'P1D,P1D'},
+          '@timestamp': moment()
+            .subtract(moment.duration('PT5M'))
+            .toISOString(),
+          '@metadata': { timestampGuard: 'P1D,P1D' },
         },
       } as unknown as OsDocument);
     }).not.toThrow();
@@ -30,7 +38,7 @@ describe('TimestampGuardParser', () => {
       parser.apply({
         data: {
           '@timestamp': moment().subtract(moment.duration('P5D')).toISOString(),
-          '@metadata': {timestampGuard: 'P1D,P1D'},
+          '@metadata': { timestampGuard: 'P1D,P1D' },
         },
       } as unknown as OsDocument);
     }).toThrow();
@@ -43,7 +51,7 @@ describe('TimestampGuardParser', () => {
       parser.apply({
         data: {
           '@timestamp': moment().add(moment.duration('PT30S')).toISOString(),
-          '@metadata': {timestampGuard: 'P1D'},
+          '@metadata': { timestampGuard: 'P1D' },
         },
       } as unknown as OsDocument);
     }).not.toThrow();
@@ -52,7 +60,7 @@ describe('TimestampGuardParser', () => {
       parser.apply({
         data: {
           '@timestamp': moment().add(moment.duration('PT1M10S')).toISOString(),
-          '@metadata': {timestampGuard: 'P1D'},
+          '@metadata': { timestampGuard: 'P1D' },
         },
       } as unknown as OsDocument);
     }).toThrow();

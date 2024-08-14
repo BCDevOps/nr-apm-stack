@@ -1,6 +1,6 @@
 /* eslint-disable new-cap */
-import {Body, Controller, Post, Query} from '@nestjs/common';
-import {AppService} from './app.service';
+import { Body, Controller, Post, Query } from '@nestjs/common';
+import { AppService } from './app.service';
 
 @Controller()
 /**
@@ -13,10 +13,17 @@ export class AppController {
   /**
    * Handle data received as a mock Kinesis event.
    */
-  async handleData(@Body() bodyData: unknown, @Query('print') print: string): Promise<void> {
+  async handleData(
+    @Body() bodyData: unknown,
+    @Query('print') print: string,
+  ): Promise<void> {
     const dataArr = bodyData instanceof Array ? bodyData : [bodyData];
 
-    await Promise.all(dataArr.map((data) => this.appService.handleKinesisEvent(data, print === 'true')));
+    await Promise.all(
+      dataArr.map((data) =>
+        this.appService.handleKinesisEvent(data, print === 'true'),
+      ),
+    );
     return;
   }
 }

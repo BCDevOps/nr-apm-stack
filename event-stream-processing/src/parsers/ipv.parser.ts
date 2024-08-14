@@ -1,7 +1,7 @@
-import {injectable} from 'inversify';
+import { injectable } from 'inversify';
 import lodash from 'lodash';
-import {OsDocument} from '../types/os-document';
-import {Parser} from '../types/parser';
+import { OsDocument } from '../types/os-document';
+import { Parser } from '../types/parser';
 
 @injectable()
 /**
@@ -48,6 +48,8 @@ export class IpvParser implements Parser {
    * @param {string} value - the original record.ip field
    */
   public chooseIpvFormat(value: string): string | undefined {
-    return value.startsWith('::ffff:') ? value.replace(/ /g, '').split(':').slice(-1).pop() : value;
+    return value.startsWith('::ffff:')
+      ? value.replace(/ /g, '').split(':').slice(-1).pop()
+      : value;
   }
 }
