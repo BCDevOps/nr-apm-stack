@@ -237,6 +237,32 @@ export const FINGERPRINTS: OsDocumentFingerprint[] = [
     },
   },
   {
+    name: FingerprintCategory.TOMCAT_ACCESS_LOGS,
+    fingerprint: {
+      event: {
+        kind: 'event',
+        category: 'web',
+        dataset: 'geoserver.audit',
+      },
+    },
+    dataDefaults: {
+      '@metadata': {
+        hash: 'host.hostname,basename(log.file.path),event.sequence,event.original',
+        docId: 'basename(log.file.path),event.sequence,event.hash',
+        index: 'nrm-access-internal-<%=YYYY.MM.DD=%>',
+        timestampFormat: 'DD/MMM/YYYY:HH:mm:ss Z',
+        appClassification: true,
+        deslash: true,
+        environmentStandardize: true,
+        urlExplode: true,
+        httpStatusOutcome: true,
+        timestampGuard: 'P14D',
+        userAgent: true,
+        keyAsPath: true,
+      },
+    },
+  },
+  {
     name: FingerprintCategory.TOMCAT_LOCALHOST_LOGS,
     fingerprint: {
       event: {
