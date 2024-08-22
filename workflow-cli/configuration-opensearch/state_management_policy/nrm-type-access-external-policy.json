@@ -37,7 +37,13 @@
           {
             "state_name": "force_merge",
             "conditions": {
-              "min_index_age": "36d"
+              "min_index_age": "36d",
+              "cron": {
+                "cron": {
+                  "expression": "* 19-23,0-6 * * *",
+                  "timezone": "America/Vancouver"
+                }
+              }
             }
           }
         ]
@@ -46,6 +52,7 @@
         "name": "force_merge",
         "actions": [
           {
+            "timeout": "12h",
             "retry": {
               "count": 10,
               "backoff": "exponential",
@@ -60,7 +67,13 @@
           {
             "state_name": "warm",
             "conditions": {
-              "min_index_age": "40d"
+              "min_index_age": "40d",
+              "cron": {
+                "cron": {
+                  "expression": "* 19-23,0-6 * * *",
+                  "timezone": "America/Vancouver"
+                }
+              }
             }
           }
         ]
@@ -69,6 +82,7 @@
         "name": "warm",
         "actions": [
           {
+            "timeout": "12h",
             "retry": {
                 "count": 10,
                 "backoff": "exponential",
