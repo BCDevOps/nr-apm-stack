@@ -12,9 +12,20 @@
         "actions": [],
         "transitions": [
           {
+            "state_name": "force_merge_standby",
+            "conditions": {
+              "min_index_age": "7d"
+            }
+          }
+        ]
+      },
+      {
+        "name": "force_merge_standby",
+        "actions": [],
+        "transitions": [
+          {
             "state_name": "force_merge",
             "conditions": {
-              "min_index_age": "7d",
               "cron": {
                 "cron": {
                   "expression": "* 19-23,0-6 * * *",
@@ -44,13 +55,7 @@
           {
             "state_name": "warm",
             "conditions": {
-              "min_index_age": "10d",
-              "cron": {
-                "cron": {
-                  "expression": "* 19-23,0-6 * * *",
-                  "timezone": "America/Vancouver"
-                }
-              }
+              "min_index_age": "10d"
             }
           }
         ]
