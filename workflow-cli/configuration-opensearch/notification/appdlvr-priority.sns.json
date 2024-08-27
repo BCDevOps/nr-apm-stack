@@ -9,9 +9,11 @@
     "topicArn": "nress-prod-appdlvr-priority",
     "roleArn": "opensearch_sns_nress-prod",
     "subscriptions": [{
+      "entity": "SnsAppDlvrPriorityEmailAw",
       "endpoint": "andreas.wilson@gov.bc.ca",
       "protocol": "email"
     },{
+      "entity": "SnsAppDlvrPriorityEmailApp",
       "endpoint": "nrids.applicationdelivery@gov.bc.ca",
       "protocol": "email"
     }]

@@ -9,10 +9,12 @@
     "topicArn": "nress-prod-wso2-alert",
     "roleArn": "opensearch_sns_nress-prod",
     "subscriptions": [{
+      "entity": "SnsWso2AlertEmailWf",
       "endpoint": "CSNRINFRAWMB@Victoria1.gov.bc.ca",
       "protocol": "email"
     },
     {
+      "entity": "SnsWso2AlertEmailCn",
       "endpoint": "cary.nukina@gov.bc.ca",
       "protocol": "email"
     }]

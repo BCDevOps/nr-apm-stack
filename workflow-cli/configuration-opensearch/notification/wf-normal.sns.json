@@ -9,6 +9,7 @@
     "topicArn": "nress-prod-wildfire-normal",
     "roleArn": "opensearch_sns_nress-prod",
     "subscriptions": [{
+      "entity": "SnsWildfireNormalEmailWf",
       "endpoint": "CSNRINFRAWMB@Victoria1.gov.bc.ca",
       "protocol": "email"
     }]

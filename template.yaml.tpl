@@ -267,12 +267,13 @@ Resources:
     Type: AWS::SNS::Topic
     Properties:
       TopicName: "<%= notification.sns.topicArn %>"
-      DisplayName: "<%= notification.name %>"<% if (notification.sns.subscriptions) { %>
-      Subscription:<% notification.sns.subscriptions.forEach((sub) => { if (sub.protocol == 'sqs') { %>
-        - Endpoint: !GetAtt <%= sub.entity %>.Arn
-          Protocol: "<%= sub.protocol %>"<% } else if (sub.protocol == 'email' || sub.protocol == 'sns') { %>
-        - Endpoint: "<%= sub.endpoint %>"
-          Protocol: "<%= sub.protocol %>"<% }}) } -%><% if (notification.sns.subscriptions) { notification.sns.subscriptions.forEach((sub) => { if (sub.protocol == 'sqs') { %>
+      DisplayName: "<%= notification.name %>"<% if (notification.sns.subscriptions) { %><% notification.sns.subscriptions.forEach((sub) => { %>
+  <%= sub.entity %>Sub:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Endpoint: <% if (sub.protocol == 'sqs') { %>!GetAtt <%= sub.entity %>.Arn<% } else if (sub.protocol == 'email' || sub.protocol == 'sns') { %>"<%= sub.endpoint %>"<% } %>
+      Protocol: "<%= sub.protocol %>"
+      TopicArn: !GetAtt <%= notification.entity %>.Arn <% if (sub.protocol == 'sqs') { %>
   <%= sub.entity %>:
     Type: AWS::SQS::Queue
     Properties:
