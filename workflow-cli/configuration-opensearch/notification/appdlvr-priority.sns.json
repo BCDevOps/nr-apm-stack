@@ -7,6 +7,13 @@
   "isEnabled": true,
   "sns": {
     "topicArn": "nress-prod-appdlvr-priority",
-    "roleArn": "opensearch_sns_nress-prod"
+    "roleArn": "opensearch_sns_nress-prod",
+    "subscriptions": [{
+      "endpoint": "andreas.wilson@gov.bc.ca",
+      "protocol": "email"
+    },{
+      "endpoint": "nrids.applicationdelivery@gov.bc.ca",
+      "protocol": "email"
+    }]
   }
 }
