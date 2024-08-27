@@ -12,11 +12,6 @@
       "entity": "SnsWso2AlertEmailWf",
       "endpoint": "CSNRINFRAWMB@Victoria1.gov.bc.ca",
       "protocol": "email"
-    },
-    {
-      "entity": "SnsWso2AlertEmailCn",
-      "endpoint": "cary.nukina@gov.bc.ca",
-      "protocol": "email"
     }]
   }
 }
