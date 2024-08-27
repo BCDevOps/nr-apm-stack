@@ -273,7 +273,7 @@ Resources:
     Properties:
       Endpoint: <% if (sub.protocol == 'sqs') { %>!GetAtt <%= sub.entity %>.Arn<% } else if (sub.protocol == 'email' || sub.protocol == 'sns') { %>"<%= sub.endpoint %>"<% } %>
       Protocol: "<%= sub.protocol %>"
-      TopicArn: !GetAtt <%= notification.entity %>.Arn <% if (sub.protocol == 'sqs') { %>
+      TopicArn: !GetAtt <%= notification.entity %>.TopicArn <% if (sub.protocol == 'sqs') { %>
   <%= sub.entity %>:
     Type: AWS::SQS::Queue
     Properties:
