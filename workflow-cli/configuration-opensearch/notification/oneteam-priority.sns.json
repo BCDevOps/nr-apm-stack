@@ -1,5 +1,6 @@
 {
   "id": "oneteam-priority-sns",
+  "entity": "SnsOneTeamPriority",
   "name": "OneTeam Priority SNS",
   "description": "SNS destination (APM Deployment Managed)",
   "configType": "sns",

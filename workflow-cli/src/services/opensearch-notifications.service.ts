@@ -1,57 +1,23 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import ejs from 'ejs';
 import AwsService from './aws.service';
-
-export interface NotificationSettings {
-  hostname: string;
-  region: string;
-  accountNumber: string;
-}
-
-export interface NotificationConfig {
-  id: string;
-  name: string;
-  description: string;
-  configType: string;
-  isEnabled: boolean;
-  sns: {
-    topicArn: string;
-    roleArn: string;
-  };
-  microsoft_teams: {
-    url: string;
-  };
-}
-
-const NOTIFICATION_CONFIG_DIR = path.resolve(
-  __dirname,
-  '../../configuration-opensearch/notification',
-);
+import NotificationService, {
+  NotificationConfig,
+  NotificationSettings,
+} from './notification.service';
+import { inject } from 'inversify';
+import { TYPES } from '../inversify.types';
 
 export default class OpenSearchNotificationsService extends AwsService {
-  public async sync(settings: NotificationSettings, secrets: any) {
-    for (const notificationFile of fs.readdirSync(NOTIFICATION_CONFIG_DIR)) {
-      const configStr = fs.readFileSync(
-        path.resolve(NOTIFICATION_CONFIG_DIR, notificationFile),
-        { encoding: 'utf8' },
-      );
-
-      const config = JSON.parse(
-        this.renderConfig(notificationFile, configStr, secrets),
-      );
-      await this.createSnsChannel(settings, config);
-    }
+  constructor(
+    @inject(TYPES.NotificationService)
+    private notificationService: NotificationService,
+  ) {
+    super();
   }
 
-  private renderConfig(file: string, configStr: string, secrets: any) {
-    if (file.endsWith('microsoft_teams.json')) {
-      const key = `notification_teams_${file.slice(0, -21).replaceAll(/[^a-zA-Z_0-9]/gi, '_')}`;
-      return ejs.render(configStr, {
-        url: secrets[key] ?? '',
-      });
+  public async sync(settings: NotificationSettings, secrets: any) {
+    for (const config of this.notificationService.renderConfigs(secrets)) {
+      await this.createSnsChannel(settings, config);
     }
-    return configStr;
   }
 
   public async createSnsChannel(
@@ -69,7 +35,6 @@ export default class OpenSearchNotificationsService extends AwsService {
     })
       .then((res) => this.waitAndReturnResponseBody(res, [404]))
       .then((res) => {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         // console.log(`Status code: [${res.statusCode}]`);
         return res.statusCode;
       });
@@ -90,7 +55,6 @@ export default class OpenSearchNotificationsService extends AwsService {
       })
         .then((res) => this.waitAndReturnResponseBody(res))
         .then((res) => {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
           console.log(`[${res.statusCode}] Notification Update - ${config.id}`);
         });
     } else {
@@ -107,7 +71,6 @@ export default class OpenSearchNotificationsService extends AwsService {
       })
         .then((res) => this.waitAndReturnResponseBody(res))
         .then((res) => {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
           console.log(`[${res.statusCode}] Notification Create - ${config.id}`);
         });
     }

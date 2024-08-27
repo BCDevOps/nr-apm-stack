@@ -34,6 +34,10 @@ jobs:
         run: ./bin/dev lambda-asset-download
         working-directory: ./workflow-cli
 
+      - name: Generate aws template
+        run: ./bin/dev aws-render
+        working-directory: ./workflow-cli
+
       - name: Setup AWS SAM
         uses: aws-actions/setup-sam@v2
         with:

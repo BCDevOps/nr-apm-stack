@@ -1,5 +1,6 @@
 {
   "id": "appdlvr-normal-sns",
+  "entity": "SnsAppDlvrNormal",
   "name": "Appdlvr SNS",
   "description": "SNS destination (APM Deployment Managed)",
   "configType": "sns",

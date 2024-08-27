@@ -262,6 +262,22 @@ Resources:
           Enabled: true
           LogGroupName: /aws/kinesisfirehose/apm-dlq-stream
           LogStreamName: DestinationDelivery
+<% notifications.filter((n) => n.configType == 'sns').forEach((notification) => { %>
+  <%= notification.entity %>:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: "<%= notification.sns.topicArn %>"
+      DisplayName: "<%= notification.name %>"<% if (notification.sns.subscriptions) { %>
+      Subscription:<% notification.sns.subscriptions.forEach((sub) => { if (sub.protocol == 'sqs') { %>
+        - Endpoint: !GetAtt <%= sub.entity %>.Arn
+          Protocol: "<%= sub.protocol %>"<% } else if (sub.protocol == 'email' || sub.protocol == 'sns') { %>
+        - Endpoint: "<%= sub.endpoint %>"
+          Protocol: "<%= sub.protocol %>"<% }}) } -%><% if (notification.sns.subscriptions) { notification.sns.subscriptions.forEach((sub) => { if (sub.protocol == 'sqs') { %>
+  <%= sub.entity %>:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: "<%= sub.endpoint %>"<% }}) } -%>
+<% }); -%>
 
 Outputs:
   FunctionName:

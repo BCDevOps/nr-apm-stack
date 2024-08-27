@@ -1,5 +1,6 @@
 {
   "id": "wildfire-normal-sns",
+  "entity": "SnsWildfireNormal",
   "name": "Wildfire SNS",
   "description": "SNS destination (APM Deployment Managed)",
   "configType": "sns",
