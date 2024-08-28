@@ -277,7 +277,20 @@ Resources:
   <%= sub.entity %>:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: "<%= sub.endpoint %>"<% }}) } -%>
+      QueueName: "<%= sub.endpoint %>"
+  <%= sub.entity %>InlinePolicy:
+    Type: AWS::SQS::QueueInlinePolicy
+      Properties:
+        Id: "<%= sub.entity %>/SQSDefaultPolicy"
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Sid: "Stmt1/<%= sub.entity %>/SQSDefaultPolicy"
+            Effect: Allow
+            Principal: "*"
+            Action: sqs:SendMessage
+            Resource: !GetAtt <%= sub.entity %>.Arn
+        Queue: !Ref <%= sub.entity %><% }}) } -%>
 <% }); -%>
 
 Outputs:
