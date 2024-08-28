@@ -267,25 +267,24 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       RoleName: "opensearch_sns_nress-prod"
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          Sid: "",
-          Effect: "Allow"
-          Principal: {
-            Service: "es.amazonaws.com"
-          },
-          "Action": "sts:AssumeRole"
       Policies:
-        - PolicyName: 'opensearch_sns_role_policy'
+        - PolicyName: "opensearch_sns_role_policy"
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
-              - Effect: Allow
+              - Effect: "Allow"
                 Action:
-                  - sns:Publish
+                  - "sns:Publish"
                 Resource:<% notifications.filter((n) => n.configType == 'sns').forEach((notification) => { %>
-                - !GetAtt <%= notification.entity %>.TopicArn<% }); -%>
+                - !GetAtt <%= notification.entity %>.TopicArn<% }); %>
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "es.amazonaws.com"
+          Sid: ""
 <% notifications.filter((n) => n.configType == 'sns').forEach((notification) => { %>
   <%= notification.entity %>:
     Type: AWS::SNS::Topic
