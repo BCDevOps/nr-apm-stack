@@ -262,6 +262,30 @@ Resources:
           Enabled: true
           LogGroupName: /aws/kinesisfirehose/apm-dlq-stream
           LogStreamName: DestinationDelivery
+  # SNS role so that opensearch can publish to topics
+  SnsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: "opensearch_sns_nress-prod"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Sid: "",
+          Effect: "Allow"
+          Principal: {
+            Service: "es.amazonaws.com"
+          },
+          "Action": "sts:AssumeRole"
+      Policies:
+        - PolicyName: 'opensearch_sns_role_policy'
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sns:Publish
+                Resource:<% notifications.filter((n) => n.configType == 'sns').forEach((notification) => { %>
+                - !GetAtt <%= notification.entity %>.TopicArn<% }); -%>
 <% notifications.filter((n) => n.configType == 'sns').forEach((notification) => { %>
   <%= notification.entity %>:
     Type: AWS::SNS::Topic
