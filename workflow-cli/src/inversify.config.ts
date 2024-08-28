@@ -9,6 +9,8 @@ import OpenSearchNotificationsService from './services/opensearch-notifications.
 import OpenSearchPolicyService from './services/opensearch-policy.service';
 import OpenSearchTemplateService from './services/opensearch-template.service';
 import VaultApi from './vault/vault.api';
+import AwsRenderService from './services/aws-render.service';
+import NotificationService from './services/notification.service';
 
 const vsContainer = new Container();
 // Controllers
@@ -18,6 +20,10 @@ vsContainer
 // Services
 vsContainer.bind<BrokerApi>(TYPES.BrokerApi).to(BrokerApi);
 vsContainer.bind<VaultApi>(TYPES.VaultApi).to(VaultApi);
+vsContainer.bind<AwsRenderService>(TYPES.AwsRenderService).to(AwsRenderService);
+vsContainer
+  .bind<NotificationService>(TYPES.NotificationService)
+  .to(NotificationService);
 vsContainer
   .bind<LambdaAssetDownloadService>(TYPES.LambdaAssetDownloadService)
   .to(LambdaAssetDownloadService);

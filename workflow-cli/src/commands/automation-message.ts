@@ -38,7 +38,6 @@ export default class AutomationMessage extends Command {
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(AutomationMessage);
-    // eslint-disable-next-line max-len
     const queueUrl = `https://sqs.${flags.region}.amazonaws.com/${flags.accountNumber}/${flags.domainName}-message-queue`;
 
     await AwsService.assumeIdentity(flags);

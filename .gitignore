@@ -121,3 +121,4 @@ terraform/.terraform.lock.hcl
 workflow-cli/indicesusage*.csv
 
 .aws-sam
+/template.yaml
