@@ -259,6 +259,9 @@
                   "ignore_above": 1024,
                   "type": "keyword"
                 },
+                "remaining_uses": {
+                  "type": "long"
+                },
                 "token_policies": {
                   "ignore_above": 1024,
                   "type": "keyword"
