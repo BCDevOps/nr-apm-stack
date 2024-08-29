@@ -304,7 +304,6 @@ Resources:
   <%= sub.entity %>InlinePolicy:
     Type: AWS::SQS::QueueInlinePolicy
     Properties:
-      Id: "<%= sub.entity %>/SQSDefaultPolicy"
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
