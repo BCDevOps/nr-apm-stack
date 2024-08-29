@@ -262,6 +262,29 @@ Resources:
           Enabled: true
           LogGroupName: /aws/kinesisfirehose/apm-dlq-stream
           LogStreamName: DestinationDelivery
+  # SNS role so that opensearch can publish to topics
+  SnsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: "opensearch_sns_nress-prod"
+      Policies:
+        - PolicyName: "opensearch_sns_role_policy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "sns:Publish"
+                Resource:<% notifications.filter((n) => n.configType == 'sns').forEach((notification) => { %>
+                - !GetAtt <%= notification.entity %>.TopicArn<% }); %>
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "es.amazonaws.com"
+          Sid: ""
 <% notifications.filter((n) => n.configType == 'sns').forEach((notification) => { %>
   <%= notification.entity %>:
     Type: AWS::SNS::Topic
@@ -277,7 +300,19 @@ Resources:
   <%= sub.entity %>:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: "<%= sub.endpoint %>"<% }}) } -%>
+      QueueName: "<%= sub.endpoint %>"
+  <%= sub.entity %>InlinePolicy:
+    Type: AWS::SQS::QueueInlinePolicy
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Sid: "Stmt1/<%= sub.entity %>/SQSDefaultPolicy"
+          Effect: Allow
+          Principal: "*"
+          Action: sqs:SendMessage
+          Resource: !GetAtt <%= sub.entity %>.Arn
+      Queue: !Ref <%= sub.entity %><% }}) } -%>
 <% }); -%>
 
 Outputs:
