@@ -20,12 +20,13 @@ export class DeadLetterQueueService {
   });
 
   public async send({ failures }: OsDocumentPipeline) {
-    if (failures.length === 0) {
+    const dlqFailures = failures.filter((failure) => !failure.options?.skipDlq);
+    if (dlqFailures.length === 0) {
       return;
     }
     const chunkSize = 50;
-    for (let i = 0; i < failures.length; i += chunkSize) {
-      const chunk = failures.slice(i, i + chunkSize);
+    for (let i = 0; i < dlqFailures.length; i += chunkSize) {
+      const chunk = dlqFailures.slice(i, i + chunkSize);
       const input: PutRecordBatchCommandInput = {
         DeliveryStreamName: process.env.DLQ_STREAM_NAME,
         Records: chunk.map((pipelineObject) => {

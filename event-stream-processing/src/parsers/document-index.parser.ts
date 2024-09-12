@@ -32,7 +32,7 @@ export class DocumentIndexParser implements Parser {
     if (!indexName) {
       throw new ParserError(
         'Could not map event to an index',
-        this.constructor.name,
+        'DocumentIndexParser',
       );
     }
     indexName = this.applyTimestampSubstitution(document, indexName);
@@ -50,7 +50,7 @@ export class DocumentIndexParser implements Parser {
     if (lodash.isNil(timestamp)) {
       throw new ParserError(
         '@timestamp field value has not been defined',
-        this.constructor.name,
+        'DocumentIndexParser',
       );
     }
     const tsMomement = moment(timestamp);
@@ -60,7 +60,7 @@ export class DocumentIndexParser implements Parser {
       }
       throw new ParserError(
         `Unexpected formatting: ${match}`,
-        this.constructor.name,
+        'DocumentIndexParser',
       );
     });
   }
@@ -75,14 +75,14 @@ export class DocumentIndexParser implements Parser {
         if (lodash.isNil(substitution)) {
           throw new ParserError(
             `${fieldName} field value not in document`,
-            this.constructor.name,
+            'DocumentIndexParser',
           );
         }
         return substitution;
       }
       throw new ParserError(
         `Unexpected formatting: ${match}`,
-        this.constructor.name,
+        'DocumentIndexParser',
       );
     });
   }

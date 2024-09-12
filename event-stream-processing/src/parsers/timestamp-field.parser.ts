@@ -48,13 +48,13 @@ export class TimestampFieldParser implements Parser {
       } else {
         throw new ParserError(
           `Invalid date: '${value}' invalid for format '${tsFormat}'`,
-          this.constructor.name,
+          'TimestampFieldParser',
         );
       }
     } else {
       throw new ParserError(
         `No value set for timestamp: ${fieldName}`,
-        this.constructor.name,
+        'TimestampFieldParser',
       );
     }
   }
