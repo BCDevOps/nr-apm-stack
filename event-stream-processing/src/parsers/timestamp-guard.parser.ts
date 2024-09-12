@@ -38,8 +38,10 @@ export class TimestampGuardParser implements Parser {
       )
     ) {
       throw new ParserError(
-        `Timestamp is outside guard`,
-        this.constructor.name,
+        `Timestamp [${timestamp.toISOString()}] is outside guard [${startStr}, ${endStr}]`,
+        'TimestampGuardParser',
+        undefined,
+        { skipDlq: true },
       );
     }
   }

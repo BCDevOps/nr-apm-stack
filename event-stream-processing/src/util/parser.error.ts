@@ -5,6 +5,7 @@ export class ParserError extends GenericError {
     message: string,
     public parser: string,
     source?: Error | undefined,
+    public options?: { skipDlq: boolean },
   ) {
     super(message, source);
     Object.setPrototypeOf(this, new.target.prototype);

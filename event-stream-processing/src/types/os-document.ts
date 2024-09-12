@@ -18,7 +18,6 @@ export enum FingerprintCategory {
 }
 
 export interface OsDocumentData {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 
@@ -44,13 +43,13 @@ export class PipelineProcessingFailure<T> {
   constructor(
     public source: T,
     public message: string,
+    public options?: { skipDlq: boolean },
   ) {}
 }
 
 export class KinesisStreamRecordDecodeFailure extends PipelineProcessingFailure<KinesisStreamRecord> {}
 export class OsDocumentProcessingFailure extends PipelineProcessingFailure<OsDocument> {}
 export class OsDocumentCommitFailure extends PipelineProcessingFailure<OsDocument> {}
-// eslint-disable-next-line max-len
 export type PipelineObject =
   | OsDocument
   | KinesisStreamRecordDecodeFailure

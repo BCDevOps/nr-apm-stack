@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { KinesisStreamEvent } from 'aws-lambda';
 import { injectable, inject, multiInject } from 'inversify';
 import { Parser } from './types/parser';
 import { TYPES } from './inversify.types';
 import { LoggerService } from './util/logger.service';
 import { GenericError } from './util/generic.error';
-// eslint-disable-next-line max-len
+
 import {
   OsDocument,
   KinesisStreamRecordDecodeFailure,
@@ -81,6 +80,10 @@ export class EcsTransformService {
         } catch (error: unknown) {
           const parser: string =
             error instanceof ParserError ? error.parser : 'unknown';
+          const skipDlq: boolean =
+            error instanceof ParserError && error.options
+              ? error.options.skipDlq
+              : false;
           const message: string =
             error instanceof ParserError || error instanceof GenericError
               ? error.message
@@ -100,14 +103,13 @@ export class EcsTransformService {
           const path: string = document.data.log?.file?.path
             ? document.data.log?.file?.path
             : '';
-          // eslint-disable-next-line max-len
           this.logger.debug(
             `PARSE_ERROR:${parser} ${team} ${hostName} ${serviceName} ${path}:${sequence} ${document.fingerprint.name} : ${message}`,
           );
           return new OsDocumentProcessingFailure(
             document,
-            // eslint-disable-next-line max-len
             `PARSE_ERROR:${parser} ${team} ${hostName} ${serviceName} ${path}:${sequence} ${document.fingerprint.name} : ${message}`,
+            { skipDlq },
           );
         }
       })

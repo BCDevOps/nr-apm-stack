@@ -69,7 +69,7 @@ export class UrlExplodeParser implements Parser {
     } catch (e: unknown) {
       throw new ParserError(
         `Could not parse [${urlOriginal}]`,
-        this.constructor.name,
+        'UrlExplodeParser',
       );
     }
   }
