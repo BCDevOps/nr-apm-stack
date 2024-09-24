@@ -36,7 +36,16 @@ export class BrokerApi {
     };
   }
 
-  public async getProjectServices(): Promise<GraphServerInstallsResponseDto[]> {
+  public getServiceDetails(serviceId: string) {
+    return axios.get(
+      `v1/collection/service/${serviceId}/details`,
+      this.axiosOptions,
+    );
+  }
+
+  public async getGraphServerInstalls(): Promise<
+    GraphServerInstallsResponseDto[]
+  > {
     if (!this.serverInstallsReq) {
       this.serverInstallsReq = axios.get<GraphServerInstallsResponseDto[]>(
         'v1/graph/data/server-installs',
