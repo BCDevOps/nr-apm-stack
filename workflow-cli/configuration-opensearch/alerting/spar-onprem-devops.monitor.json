@@ -5,7 +5,7 @@
   "enabled": true,
   "schedule": {
     "period": {
-    "interval": 1,
+    "interval": 5,
     "unit": "MINUTES"
     }
   },
@@ -21,6 +21,11 @@
           "query": {
             "bool": {
               "must": [
+                {
+                  "wildcard": {
+                    "url.full": "https://apps.nrs.gov.bc.ca/ext/spar/*"
+                  }
+                },
                 {
                   "range": {
                     "http.response.status_code": {
@@ -61,91 +66,17 @@
         },
         "actions": [
           {
-            "id": "<%= idgen('action-teams', service.name, environment) %>",
-            "name": "Notify Teams Channel",
-            "destination_id": "appinfra-msteams",
-            "message_template": {
-              "source": "{ \"text\": \"Monitor {{ctx.monitor.name}} just entered alert status. Please investigate the issue.\n  - Trigger: {{ctx.trigger.name}}\n  - Severity: {{ctx.trigger.severity}}\n  - Period start: {{ctx.periodStart}}\n  - Period end: {{ctx.periodEnd}}\" }",
-              "lang" : "mustache"
-            },
-            "throttle_enabled": true,
-            "throttle": {
-              "value": 10,
-              "unit": "MINUTES"
-            },
-            "subject_template": {
-              "source": "",
-              "lang" : "mustache"
-            }
-          },
-          {
-            "id": "<%= idgen('action-sqs', server.name, agent.index) %>",
-            "name": "Notify Automation Queue",
-            "destination_id": "automation-sqs-sns",
-            "message_template": {
-              "source": "{ \"type\": \"agent_down\", \"server\": \"<%= server.name %>\", \"agent\": \"fluent-bit.<%= agent.index %>\", \"periodStart\": \"{{ctx.periodStart}}\", \"periodEnd\": \"{{ctx.periodEnd}}\" }",
-              "lang" : "mustache"
-            },
-            "throttle_enabled": true,
-            "throttle": {
-              "value": 10,
-              "unit": "MINUTES"
-            },
-            "subject_template": {
-              "source": "Notify",
-              "lang" : "mustache"
-            }
-          },
-          {
-            "$$OMIT": "<%= !serverTag('wildfire') || !serverTag('nonproduction') ? 'true' : 'false' %>",
-            "id": "<%= idgen('action-nonprod-wf', server.name, agent.index) %>",
-            "name": "notify",
-            "destination_id": "wf-nonprod-msteams",
-            "message_template": {
-               "source": "{\"text\": \"No logs received from <%= server.name %> between {{ctx.periodStart}} and {{ctx.periodEnd}}\"}",
-               "lang": "mustache"
-            },
-            "throttle_enabled": true,
-            "subject_template": {
-               "source": "",
-               "lang": "mustache"
-            },
-            "throttle": {
-               "value": 240,
-               "unit": "MINUTES"
-            }
-         },
-         {
-            "$$OMIT": "<%= !serverTag('wildfire') || serverTag('production') ? 'true' : 'false' %>",
-            "id": "<%= idgen('action-nonprod-wf', server.name, agent.index) %>",
-            "name": "notify",
-            "destination_id": "wf-nonprod-msteams",
-            "message_template": {
-              "source": "{\"text\": \"No logs received from <%= server.name %> between {{ctx.periodStart}} and {{ctx.periodEnd}}\"}",
-              "lang": "mustache"
-            },
-            "throttle_enabled": true,
-            "subject_template": {
-              "source": "",
-              "lang": "mustache"
-            },
-            "throttle": {
-              "value": 240,
-              "unit": "MINUTES"
-            }
-          },
-          {
-            "$$OMIT": "<%= !serverTag('wildfire') || !serverTag('production') ? 'true' : 'false' %>",
-            "id": "<%= idgen('action-prod-wf', server.name, agent.index) %>",
+            "$$OMIT": "<%= !serverTag('production') ? 'true' : 'false' %>",
+            "id": "<%= idgen('action-prod-spar-sns') %>",
             "name": "notify",
             "destination_id": "wf-prod-msteams",
             "message_template": {
-               "source": "{\"text\": \"No logs received from <%= server.name %> between {{ctx.periodStart}} and {{ctx.periodEnd}}\"}",
+               "source": "{\"text\": \"High http.response.status_code count between {{ctx.periodStart}} and {{ctx.periodEnd}}\"}",
                "lang": "mustache"
             },
             "throttle_enabled": true,
             "subject_template": {
-               "source": "",
+               "source": "SPAR: http.response.status_code alert",
                "lang": "mustache"
             },
             "throttle": {
