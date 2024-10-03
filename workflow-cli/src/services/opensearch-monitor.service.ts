@@ -234,8 +234,11 @@ export default class OpenSearchMonitorService extends AwsService {
         path: '/_plugins/_alerting/monitors/_search',
         body: JSON.stringify({
           query: {
-            term: {
-              'monitor.name': monitor.name,
+            match: {
+              'monitor.name': {
+                query: monitor.name,
+                operator: 'and',
+              },
             },
           },
         }),
