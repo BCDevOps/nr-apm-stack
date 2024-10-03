@@ -43,7 +43,7 @@ const ALERT_CONFIG_DIR = path.resolve(
   __dirname,
   '../../configuration-opensearch/alerting',
 );
-const MONITORS_PREFIX = 'nrids_agent_';
+const MONITORS_PREFIX = 'nrids_';
 
 @injectable()
 export default class OpenSearchMonitorService extends AwsService {
@@ -110,7 +110,7 @@ export default class OpenSearchMonitorService extends AwsService {
           monitors.push(
             JSON.parse(
               ejs.render(alertMonitorStr, {
-                service: serviceData,
+                service: serviceData.data,
                 environment,
                 idgen,
               }),

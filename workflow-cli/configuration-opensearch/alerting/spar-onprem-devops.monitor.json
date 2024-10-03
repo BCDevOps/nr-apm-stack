@@ -66,12 +66,12 @@
         },
         "actions": [
           {
-            "$$OMIT": "<%= !serverTag('production') ? 'true' : 'false' %>",
+            "$$OMIT": "<%= environment !== 'production' ? 'true' : 'false' %>",
             "id": "<%= idgen('action-prod-spar-sns') %>",
             "name": "notify",
-            "destination_id": "wf-prod-msteams",
+            "destination_id": "epsilon-normal-sns",
             "message_template": {
-               "source": "{\"text\": \"High http.response.status_code count between {{ctx.periodStart}} and {{ctx.periodEnd}}\"}",
+               "source": "High http.response.status_code count between {{ctx.periodStart}} and {{ctx.periodEnd}}",
                "lang": "mustache"
             },
             "throttle_enabled": true,
