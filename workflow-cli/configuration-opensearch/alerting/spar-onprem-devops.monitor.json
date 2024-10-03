@@ -13,7 +13,7 @@
     {
       "search": {
         "indices": [
-          "nrm-metrics"
+          "nrm-access"
         ],
         "query": {
           "size": 0,
