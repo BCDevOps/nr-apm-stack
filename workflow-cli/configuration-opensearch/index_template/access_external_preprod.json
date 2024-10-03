@@ -34,7 +34,8 @@
     "ecs_nrm_base_1.0",
     "ecs_nrm_kinesis_1.0",
     "ecs_nrm_user_agent_1.0",
-    "ecs_nrm_url_context_1.0"
+    "ecs_nrm_url_context_1.0",
+    "ecs_nrm_url_aggregate_1.0"
   ],
   "version": 3,
   "_meta": {
