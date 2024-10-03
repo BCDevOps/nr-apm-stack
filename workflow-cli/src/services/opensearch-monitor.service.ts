@@ -12,7 +12,7 @@ import { TYPES } from '../inversify.types';
 
 const ID_MAX_LENGTH = 20;
 
-export interface MonitorConfig {
+export interface MonitorConfiguration {
   name: string;
   server: string;
   agent: string;
@@ -20,12 +20,30 @@ export interface MonitorConfig {
   teams_channel_action_id: string;
   automation_queue_action_id: string;
 }
+export interface AlertAgentConfiguration {
+  type: 'agent';
+}
+export interface AlertServerConfiguration {
+  type: 'server';
+}
+
+export type EnvironmentNames = 'tools' | 'development' | 'test' | 'production';
+export interface AlertServiceConfiguration {
+  type: 'service';
+  serviceId: string;
+  environments: EnvironmentNames[];
+}
+
+export type AlertConfiguration =
+  | AlertAgentConfiguration
+  | AlertServerConfiguration
+  | AlertServiceConfiguration;
 
 const ALERT_CONFIG_DIR = path.resolve(
   __dirname,
   '../../configuration-opensearch/alerting',
 );
-const MONITORS_PREFIX = 'nrids_agent_';
+const MONITORS_PREFIX = 'nrids_';
 
 @injectable()
 export default class OpenSearchMonitorService extends AwsService {
@@ -45,9 +63,23 @@ export default class OpenSearchMonitorService extends AwsService {
     }
     return 1;
   }
+
   public async sync(settings: WorkflowSettings): Promise<any> {
-    const servers = await this.brokerApi.getProjectServices();
+    const servers = await this.brokerApi.getGraphServerInstalls();
+    const environments: EnvironmentNames[] = [
+      'tools',
+      'development',
+      'test',
+      'production',
+    ];
     let monitors: any[] = [];
+    const idgen = (...args: any) => {
+      return crypto
+        .createHash('sha256')
+        .update(args.join())
+        .digest('hex')
+        .substring(0, ID_MAX_LENGTH);
+    };
 
     if (settings.dryRun) {
       console.log('Dry run: No changes will be made');
@@ -61,11 +93,31 @@ export default class OpenSearchMonitorService extends AwsService {
         path.resolve(ALERT_CONFIG_DIR, alertFile),
         { encoding: 'utf8' },
       );
-      const alertConfig = JSON.parse(alertConfigStr);
+      const alertConfig: AlertConfiguration = JSON.parse(alertConfigStr);
       const alertMonitorStr = fs.readFileSync(
         path.join(ALERT_CONFIG_DIR, `${alertFile.slice(0, -12)}.monitor.json`),
         { encoding: 'utf8' },
       );
+
+      if (alertConfig.type === 'service') {
+        const serviceData = await this.brokerApi.getServiceDetails(
+          alertConfig.serviceId,
+        );
+        for (const environment of environments) {
+          if (alertConfig.environments.indexOf(environment) === -1) {
+            continue;
+          }
+          monitors.push(
+            JSON.parse(
+              ejs.render(alertMonitorStr, {
+                service: serviceData.data,
+                environment,
+                idgen,
+              }),
+            ),
+          );
+        }
+      }
 
       for (const server of servers) {
         const fbInstance = this.getFluentBitInstance(server.instances);
@@ -74,13 +126,6 @@ export default class OpenSearchMonitorService extends AwsService {
           continue;
         }
         const agentCount = this.getAgentCount(fbInstance);
-        const idgen = (...args: any) => {
-          return crypto
-            .createHash('sha256')
-            .update(args.join())
-            .digest('hex')
-            .substring(0, ID_MAX_LENGTH);
-        };
         const installHas = (id: string) => {
           return (
             fbInstance.edgeProp &&
@@ -189,8 +234,11 @@ export default class OpenSearchMonitorService extends AwsService {
         path: '/_plugins/_alerting/monitors/_search',
         body: JSON.stringify({
           query: {
-            term: {
-              'monitor.name': monitor.name,
+            match: {
+              'monitor.name': {
+                query: monitor.name,
+                operator: 'and',
+              },
             },
           },
         }),

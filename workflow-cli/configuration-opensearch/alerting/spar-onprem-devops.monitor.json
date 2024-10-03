@@ -1,0 +1,101 @@
+{
+  "name": "nrids_app_<%= service.name %>_<%= environment %>",
+  "type": "monitor",
+  "monitor_type": "query_level_monitor",
+  "enabled": true,
+  "schedule": {
+    "period": {
+    "interval": 5,
+    "unit": "MINUTES"
+    }
+  },
+  "inputs": [
+    {
+      "search": {
+        "indices": [
+          "nrm-access"
+        ],
+        "query": {
+          "size": 0,
+          "aggregations": {},
+          "query": {
+            "bool": {
+              "must": [
+                {
+                  "wildcard": {
+                    "url.full": "https://apps.nrs.gov.bc.ca/ext/spar/*"
+                  }
+                },
+                {
+                  "range": {
+                    "http.response.status_code": {
+                      "gt": 499
+                    }
+                  }
+                },
+                {
+                  "term": {
+                    "service.environment": "<%= environment %>"
+                  }
+                },
+                {
+                  "range": {
+                    "@timestamp": {
+                      "gte": "now-5m"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "query_level_trigger": {
+        "id": "<%= idgen('trigger', service.name, environment) %>",
+        "name": "<%= service.name %> (<%= environment %>) is responding with http errors",
+        "severity": "1",
+        "condition": {
+          "script": {
+            "source": "ctx.results[0].hits.total.value > 0",
+            "lang": "painless"
+          }
+        },
+        "actions": [
+          {
+            "$$OMIT": "<%= environment !== 'production' ? 'true' : 'false' %>",
+            "id": "<%= idgen('action-prod-spar-sns') %>",
+            "name": "notify",
+            "destination_id": "epsilon-normal-sns",
+            "message_template": {
+               "source": "High http.response.status_code count between {{ctx.periodStart}} and {{ctx.periodEnd}}",
+               "lang": "mustache"
+            },
+            "throttle_enabled": true,
+            "subject_template": {
+               "source": "SPAR: http.response.status_code alert",
+               "lang": "mustache"
+            },
+            "throttle": {
+               "value": 30,
+               "unit": "MINUTES"
+            }
+         }
+        ]
+      }
+    }
+  ],
+  "data_sources": {
+    "alerts_history_index": ".opendistro-alerting-alert-history-write",
+    "alerts_history_index_pattern": "<.opendistro-alerting-alert-history-{now/d}-1>",
+    "alerts_index": ".opendistro-alerting-alerts",
+    "findings_enabled": false,
+    "findings_index": ".opensearch-alerting-finding-history-write",
+    "findings_index_pattern": "<.opensearch-alerting-finding-history-{now/d}-1>",
+    "query_index": ".opensearch-alerting-queries",
+    "query_index_mappings_by_type": {}
+  }
+}

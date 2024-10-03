@@ -1,0 +1,5 @@
+{
+  "type": "service",
+  "serviceId": "644c4d322e2f63acef6bb84a",
+  "environments": ["test", "production"]
+}
