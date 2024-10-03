@@ -60,7 +60,7 @@
         "severity": "1",
         "condition": {
           "script": {
-            "source": "ctx.results[0].hits.total.value == 0",
+            "source": "ctx.results[0].hits.total.value > 0",
             "lang": "painless"
           }
         },
