@@ -42,9 +42,9 @@
                     {
                         "timeout": "12h",
                         "retry": {
-                          "count": 10,
+                          "count": 30,
                           "backoff": "exponential",
-                          "delay": "10m"
+                          "delay": "1m"
                         },
                         "force_merge": {
                             "max_num_segments": 1
@@ -66,9 +66,9 @@
                     {
                         "timeout": "12h",
                         "retry": {
-                            "count": 10,
+                            "count": 30,
                             "backoff": "exponential",
-                            "delay": "10m"
+                            "delay": "1m"
                         },
                         "warm_migration": {}
                     }
