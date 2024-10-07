@@ -66,17 +66,16 @@
         },
         "actions": [
           {
-            "$$OMIT": "<%= environment !== 'production' ? 'true' : 'false' %>",
             "id": "<%= idgen('action-prod-spar-sns') %>",
             "name": "notify",
             "destination_id": "epsilon-normal-sns",
             "message_template": {
-               "source": "High http.response.status_code count between {{ctx.periodStart}} and {{ctx.periodEnd}}",
+               "source": "High http.response.status_code count between {{ctx.periodStart}} and {{ctx.periodEnd}} in <%= environment %>.",
                "lang": "mustache"
             },
             "throttle_enabled": true,
             "subject_template": {
-               "source": "SPAR: http.response.status_code alert",
+               "source": "SPAR: http.response.status_code alert (<%= environment %>)",
                "lang": "mustache"
             },
             "throttle": {
