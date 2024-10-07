@@ -68,7 +68,7 @@
           {
             "id": "<%= idgen('action-prod-spar-sns') %>",
             "name": "notify",
-            "destination_id": "epsilon-normal-sns",
+            "destination_id": "evergreen-normal-sns",
             "message_template": {
                "source": "High http.response.status_code count between {{ctx.periodStart}} and {{ctx.periodEnd}} in <%= environment %>.",
                "lang": "mustache"
