@@ -42,7 +42,7 @@
                     {
                         "timeout": "12h",
                         "retry": {
-                          "count": 30,
+                          "count": 60,
                           "backoff": "exponential",
                           "delay": "1m"
                         },
@@ -66,7 +66,7 @@
                     {
                         "timeout": "12h",
                         "retry": {
-                            "count": 30,
+                            "count": 60,
                             "backoff": "exponential",
                             "delay": "1m"
                         },
